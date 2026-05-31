@@ -11,7 +11,7 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Client::withCount('invoices')->with('invoices');
+        $query = Client::where('user_id', auth()->id())->withCount('invoices');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -40,7 +40,7 @@ class ClientController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();
-        $data['is_active'] = $request->has('is_active');
+        $data['is_active'] = $request->boolean('is_active', true);
 
         Client::create($data);
 
@@ -49,10 +49,9 @@ class ClientController extends Controller
 
     public function show(Client $client)
     {
-        $client->load(['invoices.payments', 'invoices.items']);
         $invoices = $client->invoices()->with(['payments'])->orderBy('created_at', 'desc')->paginate(10);
         $totalBilled = $client->invoices()->sum('total');
-        $totalPaid = $client->invoices()->with('payments')->get()->sum('amount_paid');
+        $totalPaid = $client->invoices()->with('payments')->get()->sum(fn($inv) => $inv->amount_paid);
 
         return view('clients.show', compact('client', 'invoices', 'totalBilled', 'totalPaid'));
     }
@@ -65,7 +64,7 @@ class ClientController extends Controller
     public function update(UpdateClientRequest $request, Client $client)
     {
         $data = $request->validated();
-        $data['is_active'] = $request->has('is_active');
+        $data['is_active'] = $request->boolean('is_active');
         $client->update($data);
 
         return redirect()->route('clients.index')->with('success', 'Client updated successfully.');

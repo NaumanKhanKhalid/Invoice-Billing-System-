@@ -12,19 +12,26 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalClients = Client::count();
-        $totalInvoices = Invoice::count();
-        $totalRevenue = Invoice::where('status', 'paid')->sum('total');
-        $pendingAmount = Invoice::whereIn('status', ['sent', 'overdue'])->sum('total')
-            - Payment::whereHas('invoice', fn($q) => $q->whereIn('status', ['sent', 'overdue']))->sum('amount');
+        $userId = auth()->id();
+
+        $totalClients = Client::where('user_id', $userId)->count();
+        $totalInvoices = Invoice::where('user_id', $userId)->count();
+        $totalRevenue = Invoice::where('user_id', $userId)->where('status', 'paid')->sum('total');
+        $pendingAmount = Invoice::where('user_id', $userId)
+            ->whereIn('status', ['sent', 'overdue'])
+            ->with('payments')
+            ->get()
+            ->sum('amount_due');
 
         $overdueInvoices = Invoice::with('client')
+            ->where('user_id', $userId)
             ->where('status', 'overdue')
             ->orderBy('due_date')
             ->limit(5)
             ->get();
 
         $recentInvoices = Invoice::with('client')
+            ->where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
@@ -35,9 +42,10 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
             $monthlyLabels[] = $month->format('M Y');
-            $revenue = Invoice::where('status', 'paid')
-                ->whereYear('updated_at', $month->year)
-                ->whereMonth('updated_at', $month->month)
+            $revenue = Invoice::where('user_id', $userId)
+                ->where('status', 'paid')
+                ->whereYear('issue_date', $month->year)
+                ->whereMonth('issue_date', $month->month)
                 ->sum('total');
             $monthlyRevenue[] = round($revenue, 2);
         }

@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Product::where('user_id', auth()->id());
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -39,7 +39,7 @@ class ProductController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();
-        $data['is_active'] = $request->has('is_active') ? $request->is_active : true;
+        $data['is_active'] = $request->boolean('is_active', true);
 
         Product::create($data);
 
@@ -54,7 +54,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $data = $request->validated();
-        $data['is_active'] = $request->has('is_active') ? true : false;
+        $data['is_active'] = $request->boolean('is_active');
         $product->update($data);
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');

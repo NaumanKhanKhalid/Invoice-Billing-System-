@@ -21,7 +21,7 @@ class InvoiceController extends Controller
 
     public function index(Request $request)
     {
-        $query = Invoice::with('client')->orderBy('created_at', 'desc');
+        $query = Invoice::with('client')->where('user_id', auth()->id())->orderBy('created_at', 'desc');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -40,15 +40,15 @@ class InvoiceController extends Controller
         }
 
         $invoices = $query->paginate(15)->withQueryString();
-        $clients = Client::active()->orderBy('name')->get();
+        $clients = Client::where('user_id', auth()->id())->where('is_active', true)->orderBy('name')->get();
 
         return view('invoices.index', compact('invoices', 'clients'));
     }
 
     public function create()
     {
-        $clients = Client::active()->orderBy('name')->get();
-        $products = Product::active()->orderBy('name')->get();
+        $clients = Client::where('user_id', auth()->id())->where('is_active', true)->orderBy('name')->get();
+        $products = Product::where('user_id', auth()->id())->where('is_active', true)->orderBy('name')->get();
         $invoiceNumber = $this->invoiceService->generateInvoiceNumber();
 
         return view('invoices.create', compact('clients', 'products', 'invoiceNumber'));
@@ -110,8 +110,8 @@ class InvoiceController extends Controller
             return back()->with('error', 'Only draft or sent invoices can be edited.');
         }
 
-        $clients = Client::active()->orderBy('name')->get();
-        $products = Product::active()->orderBy('name')->get();
+        $clients = Client::where('user_id', auth()->id())->where('is_active', true)->orderBy('name')->get();
+        $products = Product::where('user_id', auth()->id())->where('is_active', true)->orderBy('name')->get();
 
         return view('invoices.edit', compact('invoice', 'clients', 'products'));
     }

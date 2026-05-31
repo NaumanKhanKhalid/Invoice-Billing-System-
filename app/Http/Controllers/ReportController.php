@@ -15,13 +15,16 @@ class ReportController extends Controller
         $fromDate = $request->input('from_date', now()->startOfYear()->toDateString());
         $toDate = $request->input('to_date', now()->toDateString());
 
+        $userId = auth()->id();
+
         // Revenue by month for last 12 months
         $monthlyData = [];
         $monthlyLabels = [];
         for ($i = 11; $i >= 0; $i--) {
             $month = now()->subMonths($i);
             $monthlyLabels[] = $month->format('M Y');
-            $revenue = Invoice::where('status', 'paid')
+            $revenue = Invoice::where('user_id', $userId)
+                ->where('status', 'paid')
                 ->whereYear('issue_date', $month->year)
                 ->whereMonth('issue_date', $month->month)
                 ->sum('total');
@@ -29,26 +32,30 @@ class ReportController extends Controller
         }
 
         // Top 5 clients by billed amount in date range
-        $topClients = Client::withSum(['invoices' => function ($q) use ($fromDate, $toDate) {
-            $q->whereBetween('issue_date', [$fromDate, $toDate]);
-        }], 'total')
+        $topClients = Client::where('user_id', $userId)
+            ->withSum(['invoices' => function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('issue_date', [$fromDate, $toDate]);
+            }], 'total')
             ->orderByDesc('invoices_sum_total')
             ->limit(5)
             ->get();
 
         // Invoice status summary
-        $statusSummary = Invoice::whereBetween('issue_date', [$fromDate, $toDate])
+        $statusSummary = Invoice::where('user_id', $userId)
+            ->whereBetween('issue_date', [$fromDate, $toDate])
             ->selectRaw('status, COUNT(*) as count, SUM(total) as total')
             ->groupBy('status')
             ->get()
             ->keyBy('status');
 
         // Revenue in date range
-        $totalRevenue = Invoice::where('status', 'paid')
+        $totalRevenue = Invoice::where('user_id', $userId)
+            ->where('status', 'paid')
             ->whereBetween('issue_date', [$fromDate, $toDate])
             ->sum('total');
 
-        $totalPending = Invoice::whereIn('status', ['sent', 'overdue'])
+        $totalPending = Invoice::where('user_id', $userId)
+            ->whereIn('status', ['sent', 'overdue'])
             ->whereBetween('issue_date', [$fromDate, $toDate])
             ->sum('total');
 
