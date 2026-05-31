@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users — InvoicePro Admin</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            sidebar: '#0f172a',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+
+    /* ── Sidebar ── */
+    #sidebar { transition: transform 0.25s ease, width 0.25s ease; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 8px;
+      color: #94a3b8; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s, color 0.15s;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: #1e293b; color: #e2e8f0; }
+    .nav-item.active { background: #6366f1; color: #fff; }
+    .nav-item .icon { flex-shrink: 0; width: 18px; height: 18px; }
+
+    /* ── Sidebar overlay (mobile) ── */
+    #overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 30;
+    }
+    #overlay.show { display: block; }
+
+    /* ── Stat cards ── */
+    .stat-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+
+    /* ── Table rows ── */
+    tbody tr { transition: background 0.12s; }
+    tbody tr:hover { background: #f8fafc; }
+
+    /* ── Checkbox custom ── */
+    input[type="checkbox"] {
+      accent-color: #6366f1; width: 15px; height: 15px; cursor: pointer;
+    }
+
+    /* ── Bulk action bar ── */
+    #bulkBar {
+      display: none; align-items: center; gap: 12px;
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 8px; padding: 10px 16px; margin-bottom: 12px;
+    }
+    #bulkBar.show { display: flex; }
+
+    /* ── Pagination ── */
+    .page-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 6px; font-size: 13px;
+      font-weight: 500; color: #475569; border: 1px solid #e2e8f0;
+      cursor: pointer; transition: all 0.15s; background: #fff;
+    }
+    .page-btn:hover:not(:disabled) { background: #f1f5f9; border-color: #cbd5e1; }
+    .page-btn.active { background: #6366f1; color: #fff; border-color: #6366f1; }
+    .page-btn:disabled { opacity: .45; cursor: default; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500;
+    }
+    .badge-green  { background: #dcfce7; color: #15803d; }
+    .badge-red    { background: #fee2e2; color: #b91c1c; }
+    .badge-yellow { background: #fef9c3; color: #92400e; }
+
+    /* ── Avatar circle ── */
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; flex-shrink: 0; color: #fff;
+    }
+
+    /* ── Mobile sidebar state ── */
+    @media (max-width: 768px) {
+      #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 40; transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- ═══════════════════════════════════════════
+     MOBILE OVERLAY
+════════════════════════════════════════════ -->
+<div id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════ -->
+<aside id="sidebar" class="w-64 bg-sidebar h-screen fixed top-0 left-0 flex flex-col z-40 select-none">
+
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-800">
+    <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0">
+      <i data-lucide="zap" class="w-4 h-4 text-white"></i>
+    </div>
+    <span class="text-white font-semibold text-base tracking-tight">InvoicePro</span>
+    <!-- Mobile close -->
+    <button onclick="closeSidebar()" class="ml-auto text-slate-500 hover:text-slate-300 md:hidden">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+
+    <p class="text-slate-600 text-xs font-semibold uppercase tracking-widest px-3 mb-2">Menu</p>
+
+    <a href="#" class="nav-item" data-page="dashboard">
+      <i data-lucide="layout-dashboard" class="icon"></i> Dashboard
+    </a>
+    <a href="#" class="nav-item" data-page="clients">
+      <i data-lucide="users" class="icon"></i> Clients
+    </a>
+    <a href="#" class="nav-item" data-page="products">
+      <i data-lucide="package" class="icon"></i> Products
+    </a>
+    <a href="#" class="nav-item active" data-page="users">
+      <i data-lucide="file-text" class="icon"></i> Invoices
+    </a>
+    <a href="#" class="nav-item" data-page="payments">
+      <i data-lucide="credit-card" class="icon"></i> Payments
+    </a>
+
+    <p class="text-slate-600 text-xs font-semibold uppercase tracking-widest px-3 mt-5 mb-2">Analytics</p>
+
+    <a href="#" class="nav-item" data-page="reports">
+      <i data-lucide="bar-chart-2" class="icon"></i> Reports
+    </a>
+
+    <p class="text-slate-600 text-xs font-semibold uppercase tracking-widest px-3 mt-5 mb-2">General</p>
+
+    <a href="#" class="nav-item" data-page="settings">
+      <i data-lucide="settings" class="icon"></i> Settings
+    </a>
+  </nav>
+
+  <!-- Bottom user area -->
+  <div class="border-t border-slate-800 px-3 py-4">
+    <div class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer group">
+      <div class="avatar flex-shrink-0" style="background:#6366f1; width:34px; height:34px;">NK</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-slate-200 truncate">Nauman Khan</p>
+        <p class="text-xs text-slate-500 truncate">admin@invoicepro.io</p>
+      </div>
+      <button onclick="confirmLogout()" title="Logout"
+        class="text-slate-500 group-hover:text-slate-300 transition-colors">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<main id="main" class="ml-64 min-h-screen flex flex-col">
+
+  <!-- ── Top Header Bar ── -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+    <div class="flex items-center justify-between px-6 py-4 gap-4">
+
+      <!-- Left: hamburger (mobile) + title -->
+      <div class="flex items-center gap-3">
+        <button onclick="openSidebar()" class="md:hidden text-slate-500 hover:text-slate-700">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <h1 class="text-lg font-semibold text-slate-900">Users</h1>
+          <p class="text-xs text-slate-500 hidden sm:block">Manage your system users and their permissions</p>
+        </div>
+      </div>
+
+      <!-- Right: search + add -->
+      <div class="flex items-center gap-3">
+        <!-- Search -->
+        <div class="relative hidden sm:block">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+          <input type="text" id="searchInput" placeholder="Search users…"
+            oninput="filterRows()"
+            class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                   w-56 transition-all placeholder:text-slate-400" />
+        </div>
+
+        <!-- Add User -->
+        <button onclick="openAddModal()"
+          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800
+                 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Add User</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ── Page Body ── -->
+  <div class="flex-1 p-6 space-y-6">
+
+    <!-- ── Breadcrumb ── -->
+    <nav class="flex items-center gap-1.5 text-xs text-slate-500">
+      <span class="hover:text-slate-700 cursor-pointer">Home</span>
+      <i data-lucide="chevron-right" class="w-3 h-3"></i>
+      <span class="text-slate-800 font-medium">Users</span>
+    </nav>
+
+    <!-- ════════════════════════════════════
+         STAT CARDS
+    ════════════════════════════════════ -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+      <!-- Total Users -->
+      <div class="stat-card">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Users</p>
+            <p class="text-3xl font-bold text-slate-900 mt-1">248</p>
+            <p class="text-xs text-slate-500 mt-1">
+              <span class="text-blue-600 font-semibold">+12%</span> vs last month
+            </p>
+          </div>
+          <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Users -->
+      <div class="stat-card">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Users</p>
+            <p class="text-3xl font-bold text-slate-900 mt-1">192</p>
+            <p class="text-xs text-slate-500 mt-1">
+              <span class="text-green-600 font-semibold">+8%</span> vs last month
+            </p>
+          </div>
+          <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i data-lucide="user-check" class="w-5 h-5 text-green-600"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inactive Users -->
+      <div class="stat-card">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Inactive Users</p>
+            <p class="text-3xl font-bold text-slate-900 mt-1">41</p>
+            <p class="text-xs text-slate-500 mt-1">
+              <span class="text-red-500 font-semibold">+3%</span> vs last month
+            </p>
+          </div>
+          <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i data-lucide="user-x" class="w-5 h-5 text-red-500"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- New This Month -->
+      <div class="stat-card">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">New This Month</p>
+            <p class="text-3xl font-bold text-slate-900 mt-1">15</p>
+            <p class="text-xs text-slate-500 mt-1">
+              <span class="text-purple-600 font-semibold">+22%</span> vs last month
+            </p>
+          </div>
+          <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i data-lucide="user-plus" class="w-5 h-5 text-purple-600"></i>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /stat cards -->
+
+    <!-- ════════════════════════════════════
+         USER TABLE CARD
+    ════════════════════════════════════ -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+
+      <!-- Table toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100">
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Role filter -->
+          <select id="roleFilter" onchange="filterRows()"
+            class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-600 cursor-pointer">
+            <option value="">All Roles</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="Accountant">Accountant</option>
+            <option value="Staff">Staff</option>
+          </select>
+
+          <!-- Status filter -->
+          <select id="statusFilter" onchange="filterRows()"
+            class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-600 cursor-pointer">
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+
+        <!-- Export -->
+        <button onclick="exportUsers()"
+          class="inline-flex items-center gap-2 text-sm font-medium text-slate-600
+                 border border-slate-200 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+          <i data-lucide="download" class="w-4 h-4"></i> Export
+        </button>
+      </div>
+
+      <!-- Bulk action bar -->
+      <div id="bulkBar" class="mx-5 mt-4">
+        <i data-lucide="check-square" class="w-4 h-4 text-blue-600"></i>
+        <span id="bulkCount" class="text-sm font-medium text-blue-700">0 selected</span>
+        <button onclick="bulkDelete()"
+          class="inline-flex items-center gap-1 text-xs font-medium text-red-600 border border-red-200
+                 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Selected
+        </button>
+        <button onclick="bulkDeactivate()"
+          class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 border border-slate-200
+                 bg-white hover:bg-slate-50 px-3 py-1.5 rounded-md transition-colors">
+          <i data-lucide="user-x" class="w-3.5 h-3.5"></i> Deactivate
+        </button>
+        <button onclick="clearSelection()"
+          class="ml-auto text-slate-400 hover:text-slate-600 transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="userTable">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="w-10 px-5 py-3 text-left">
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" />
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
+                User
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
+                Role
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
+                Status
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap hidden md:table-cell">
+                Joined
+              </th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state (hidden by default) -->
+      <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+        <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+          <i data-lucide="search-x" class="w-6 h-6 text-slate-400"></i>
+        </div>
+        <p class="text-slate-600 font-medium">No users found</p>
+        <p class="text-slate-400 text-sm mt-1">Try adjusting your filters or search term.</p>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-t border-slate-100">
+        <p id="paginationInfo" class="text-sm text-slate-500">Showing 1–8 of 24 users</p>
+        <div class="flex items-center gap-1">
+          <button class="page-btn" disabled title="Previous">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn" onclick="changePage(this)">2</button>
+          <button class="page-btn" onclick="changePage(this)">3</button>
+          <button class="page-btn" title="Next">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /table card -->
+
+  </div><!-- /page body -->
+
+  <!-- ── Footer ── -->
+  <footer class="border-t border-slate-200 px-6 py-3 text-xs text-slate-400 flex items-center justify-between">
+    <span>© 2025 InvoicePro. All rights reserved.</span>
+    <span>v2.4.1</span>
+  </footer>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     ADD USER MODAL
+════════════════════════════════════════════ -->
+<div id="addModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden"
+  style="background:rgba(15,23,42,.5); backdrop-filter:blur(4px);">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      <h2 class="text-base font-semibold text-slate-900">Add New User</h2>
+      <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div class="px-6 py-5 space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1.5">First Name</label>
+          <input type="text" placeholder="John"
+            class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1.5">Last Name</label>
+          <input type="text" placeholder="Doe"
+            class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-700 mb-1.5">Email Address</label>
+        <input type="email" placeholder="john.doe@example.com"
+          class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400" />
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1.5">Role</label>
+          <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-600">
+            <option>Staff</option>
+            <option>Accountant</option>
+            <option>Manager</option>
+            <option>Admin</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1.5">Status</label>
+          <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-600">
+            <option>Active</option>
+            <option>Inactive</option>
+            <option>Pending</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-700 mb-1.5">Temporary Password</label>
+        <input type="password" placeholder="Min. 8 characters"
+          class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400" />
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
+      <button onclick="closeAddModal()"
+        class="text-sm font-medium text-slate-600 border border-slate-200 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+        Cancel
+      </button>
+      <button onclick="saveUser()"
+        class="text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-lg transition-colors shadow-sm">
+        Save User
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+/* ── Sample data ── */
+const USERS = [
+  { id:1,  name:'Sarah Mitchell',  email:'sarah.m@invoicepro.io',    role:'Admin',      status:'Active',   joined:'Jan 12, 2024', color:'#6366f1', initials:'SM' },
+  { id:2,  name:'James Thornton',  email:'j.thornton@invoicepro.io', role:'Manager',    status:'Active',   joined:'Feb 3, 2024',  color:'#0ea5e9', initials:'JT' },
+  { id:3,  name:'Priya Sharma',    email:'priya.s@invoicepro.io',    role:'Accountant', status:'Active',   joined:'Mar 18, 2024', color:'#10b981', initials:'PS' },
+  { id:4,  name:'Carlos Ruiz',     email:'c.ruiz@invoicepro.io',     role:'Staff',      status:'Inactive', joined:'Apr 7, 2024',  color:'#f59e0b', initials:'CR' },
+  { id:5,  name:'Emily Watson',    email:'emily.w@invoicepro.io',    role:'Manager',    status:'Active',   joined:'Apr 22, 2024', color:'#ec4899', initials:'EW' },
+  { id:6,  name:'David Kim',       email:'d.kim@invoicepro.io',      role:'Accountant', status:'Pending',  joined:'May 5, 2024',  color:'#8b5cf6', initials:'DK' },
+  { id:7,  name:'Aisha Johnson',   email:'a.johnson@invoicepro.io',  role:'Staff',      status:'Active',   joined:'May 14, 2024', color:'#14b8a6', initials:'AJ' },
+  { id:8,  name:'Thomas Weber',    email:'t.weber@invoicepro.io',    role:'Staff',      status:'Inactive', joined:'May 28, 2024', color:'#f97316', initials:'TW' },
+];
+
+/* ── Role badge colors ── */
+const ROLE_COLORS = {
+  Admin:      'bg-indigo-50 text-indigo-700',
+  Manager:    'bg-sky-50 text-sky-700',
+  Accountant: 'bg-emerald-50 text-emerald-700',
+  Staff:      'bg-slate-100 text-slate-600',
+};
+
+/* ── Build table rows ── */
+function buildRows(data) {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+
+  if (data.length === 0) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    empty.classList.add('flex');
+    return;
+  }
+  empty.classList.add('hidden');
+  empty.classList.remove('flex');
+
+  tbody.innerHTML = data.map(u => `
+    <tr class="border-b border-slate-50 last:border-0 transition-colors" data-id="${u.id}"
+        data-role="${u.role}" data-status="${u.status}" data-name="${u.name.toLowerCase()}" data-email="${u.email.toLowerCase()}">
+
+      <!-- Checkbox -->
+      <td class="px-5 py-3.5 w-10">
+        <input type="checkbox" class="row-checkbox" onchange="updateBulkBar()" />
+      </td>
+
+      <!-- Avatar + Name + Email -->
+      <td class="px-4 py-3.5">
+        <div class="flex items-center gap-3">
+          <div class="avatar" style="background:${u.color}">${u.initials}</div>
+          <div>
+            <p class="font-medium text-slate-900 text-sm leading-tight">${u.name}</p>
+            <p class="text-xs text-slate-400 mt-0.5">${u.email}</p>
+          </div>
+        </div>
+      </td>
+
+      <!-- Role -->
+      <td class="px-4 py-3.5">
+        <span class="inline-flex text-xs font-medium px-2.5 py-1 rounded-md ${ROLE_COLORS[u.role]}">${u.role}</span>
+      </td>
+
+      <!-- Status -->
+      <td class="px-4 py-3.5">
+        ${statusBadge(u.status)}
+      </td>
+
+      <!-- Joined -->
+      <td class="px-4 py-3.5 text-sm text-slate-500 hidden md:table-cell whitespace-nowrap">${u.joined}</td>
+
+      <!-- Actions -->
+      <td class="px-4 py-3.5 text-right">
+        <div class="flex items-center justify-end gap-1">
+          <button onclick="editUser(${u.id})"
+            class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600
+                   border border-slate-200 px-2.5 py-1.5 rounded-md hover:bg-slate-50 hover:border-slate-300 transition-all">
+            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Edit</span>
+          </button>
+          <button onclick="deleteUser(${u.id}, '${u.name}')"
+            class="inline-flex items-center gap-1.5 text-xs font-medium text-red-600
+                   border border-red-100 bg-red-50 px-2.5 py-1.5 rounded-md hover:bg-red-100 hover:border-red-200 transition-all">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Delete</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  lucide.createIcons();
+}
+
+function statusBadge(status) {
+  const map = {
+    Active:   ['badge badge-green',  'circle-check'],
+    Inactive: ['badge badge-red',    'circle-x'],
+    Pending:  ['badge badge-yellow', 'clock'],
+  };
+  const [cls, icon] = map[status] || map['Pending'];
+  return `<span class="${cls}"><i data-lucide="${icon}" style="width:12px;height:12px;"></i>${status}</span>`;
+}
+
+/* ── Filter ── */
+function filterRows() {
+  const search  = document.getElementById('searchInput')?.value.toLowerCase() || '';
+  const role    = document.getElementById('roleFilter').value;
+  const status  = document.getElementById('statusFilter').value;
+
+  const filtered = USERS.filter(u => {
+    const matchSearch = !search || u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search);
+    const matchRole   = !role   || u.role === role;
+    const matchStatus = !status || u.status === status;
+    return matchSearch && matchRole && matchStatus;
+  });
+
+  buildRows(filtered);
+  document.getElementById('paginationInfo').textContent =
+    `Showing 1–${filtered.length} of ${filtered.length} users`;
+}
+
+/* ── Select all ── */
+function toggleSelectAll() {
+  const all = document.getElementById('selectAll').checked;
+  document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = all);
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const checked = document.querySelectorAll('.row-checkbox:checked').length;
+  const bar = document.getElementById('bulkBar');
+  document.getElementById('selectAll').checked =
+    checked === document.querySelectorAll('.row-checkbox').length && checked > 0;
+  document.getElementById('bulkCount').textContent = `${checked} selected`;
+  if (checked > 0) bar.classList.add('show'); else bar.classList.remove('show');
+}
+
+function clearSelection() {
+  document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+  document.getElementById('selectAll').checked = false;
+  updateBulkBar();
+}
+
+/* ── Actions ── */
+function deleteUser(id, name) {
+  if (confirm(`Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`)) {
+    const idx = USERS.findIndex(u => u.id === id);
+    if (idx !== -1) USERS.splice(idx, 1);
+    filterRows();
+    showToast(`"${name}" has been deleted.`, 'red');
+  }
+}
+
+function editUser(id) {
+  const u = USERS.find(u => u.id === id);
+  if (u) showToast(`Opening editor for ${u.name}…`);
+}
+
+function bulkDelete() {
+  const count = document.querySelectorAll('.row-checkbox:checked').length;
+  if (confirm(`Delete ${count} selected user(s)? This cannot be undone.`)) {
+    const checked = [...document.querySelectorAll('.row-checkbox:checked')].map(
+      cb => parseInt(cb.closest('tr').dataset.id)
+    );
+    checked.forEach(id => { const i = USERS.findIndex(u => u.id === id); if (i !== -1) USERS.splice(i, 1); });
+    filterRows();
+    showToast(`${count} user(s) deleted.`, 'red');
+  }
+}
+
+function bulkDeactivate() {
+  const checkedRows = [...document.querySelectorAll('.row-checkbox:checked')];
+  checkedRows.forEach(cb => {
+    const id = parseInt(cb.closest('tr').dataset.id);
+    const u = USERS.find(u => u.id === id);
+    if (u) u.status = 'Inactive';
+  });
+  filterRows();
+  showToast(`${checkedRows.length} user(s) deactivated.`);
+}
+
+function exportUsers() { showToast('Exporting users to CSV…'); }
+function saveUser()    { closeAddModal(); showToast('New user created successfully!'); }
+
+/* ── Pagination ── */
+function changePage(btn) {
+  document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Sidebar ── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ── Sidebar nav active state ── */
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+/* ── Modal ── */
+function openAddModal()  { document.getElementById('addModal').classList.remove('hidden'); }
+function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
+document.getElementById('addModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAddModal();
+});
+
+/* ── Logout ── */
+function confirmLogout() {
+  if (confirm('Are you sure you want to log out?')) showToast('Logging out…');
+}
+
+/* ── Toast notification ── */
+function showToast(msg, color = 'green') {
+  const colors = {
+    green: 'bg-emerald-600',
+    red:   'bg-red-600',
+  };
+  const toast = document.createElement('div');
+  toast.className = `fixed bottom-6 right-6 z-50 ${colors[color]} text-white text-sm font-medium
+    px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-fade-in`;
+  toast.innerHTML = `<i data-lucide="${color === 'red' ? 'alert-circle' : 'check-circle-2'}" class="w-4 h-4"></i> ${msg}`;
+  document.body.appendChild(toast);
+  lucide.createIcons({ nodes: [toast] });
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* ── Init ── */
+buildRows(USERS);
+lucide.createIcons();
+</script>
+
+</body>
+</html>
