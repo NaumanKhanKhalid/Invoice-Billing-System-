@@ -50,6 +50,40 @@
         .badge-slate { background: #f1f5f9; color: #475569; }
         .badge-purple { background: #ede9fe; color: #7c3aed; }
 
+        /* ── Toast notifications ── */
+        #toast-container {
+            position: fixed; bottom: 24px; right: 24px;
+            z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 18px; border-radius: 12px;
+            font-size: 14px; font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            pointer-events: all; min-width: 280px; max-width: 380px;
+            animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        .toast.hiding { animation: toastOut 0.25s ease forwards; }
+        .toast-success { background: #10b981; color: #fff; }
+        .toast-error   { background: #ef4444; color: #fff; }
+        .toast-warning { background: #f59e0b; color: #fff; }
+        .toast-info    { background: #6366f1; color: #fff; }
+        .toast-close {
+            margin-left: auto; opacity: 0.7; cursor: pointer;
+            background: none; border: none; color: inherit; padding: 0;
+            flex-shrink: 0;
+        }
+        .toast-close:hover { opacity: 1; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(60px) scale(0.9); }
+            to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to   { opacity: 0; transform: translateX(60px) scale(0.9); }
+        }
+
         @media (max-width: 768px) {
             #sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transform: translateX(-100%); }
             #sidebar.open { transform: translateX(0); }
@@ -158,23 +192,12 @@
 
         <!-- Page content -->
         <main class="flex-1 p-6">
-            @if(session('success'))
-                <div class="mb-4 flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm">
-                    <i data-lucide="check-circle-2" class="w-4 h-4 flex-shrink-0"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
-                    <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
-
             @yield('content')
         </main>
     </div>
+
+    <!-- ── Global Toast Container ── -->
+    <div id="toast-container"></div>
 
     <script>
         lucide.createIcons();
@@ -187,6 +210,71 @@
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('overlay').classList.remove('show');
         }
+
+        /* ── Toast System ── */
+        const TOAST_ICONS = {
+            success: 'check-circle-2',
+            error:   'alert-circle',
+            warning: 'alert-triangle',
+            info:    'info',
+        };
+
+        function showToast(message, type = 'success', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                    ${getIconPath(TOAST_ICONS[type] || 'info')}
+                </svg>
+                <span style="flex:1">${message}</span>
+                <button class="toast-close" onclick="dismissToast(this.parentElement)" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>`;
+            container.appendChild(toast);
+            if (duration > 0) setTimeout(() => dismissToast(toast), duration);
+        }
+
+        function dismissToast(toast) {
+            if (!toast || toast.classList.contains('hiding')) return;
+            toast.classList.add('hiding');
+            toast.addEventListener('animationend', () => toast.remove(), { once: true });
+        }
+
+        function getIconPath(name) {
+            const paths = {
+                'check-circle-2': '<circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>',
+                'alert-circle':   '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+                'alert-triangle': '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+                'info':           '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+            };
+            return paths[name] || paths['info'];
+        }
+
+        /* ── Auto-fire toasts from Laravel session flash ── */
+        @if(session('success'))
+            document.addEventListener('DOMContentLoaded', () =>
+                showToast(@json(session('success')), 'success'));
+        @endif
+        @if(session('error'))
+            document.addEventListener('DOMContentLoaded', () =>
+                showToast(@json(session('error')), 'error'));
+        @endif
+        @if(session('warning'))
+            document.addEventListener('DOMContentLoaded', () =>
+                showToast(@json(session('warning')), 'warning'));
+        @endif
+        @if(session('info'))
+            document.addEventListener('DOMContentLoaded', () =>
+                showToast(@json(session('info')), 'info'));
+        @endif
     </script>
 
     @stack('scripts')
