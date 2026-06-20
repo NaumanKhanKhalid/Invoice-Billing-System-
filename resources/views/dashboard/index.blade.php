@@ -1,176 +1,138 @@
 @extends('layouts.app')
-@section('title', 'Dashboard')
-
+@section('title','Dashboard')
 @section('content')
-<div class="max-w-7xl mx-auto space-y-6">
-    <!-- Page header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
-            <p class="text-sm text-slate-500 mt-1">Welcome back, {{ auth()->user()->name }}</p>
-        </div>
-        <a href="{{ route('invoices.create') }}"
-           class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            New Invoice
-        </a>
+<div class="space-y-6">
+  <div><h1 class="text-2xl font-bold text-slate-900">Dashboard</h1><p class="text-sm text-slate-500 mt-0.5">Anwar Chicken Center — Today: {{ now()->format('d M Y') }}</p></div>
+
+  {{-- Today's stats --}}
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+      <p class="text-xs text-green-600 font-medium uppercase tracking-wider">Today Sales</p>
+      <p class="text-xl font-bold text-green-700 mt-1">PKR {{ number_format($todaySales,0) }}</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Today Purchases</p>
+      <p class="text-xl font-bold text-slate-900 mt-1">PKR {{ number_format($todayPurchases,0) }}</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Today Expenses</p>
+      <p class="text-xl font-bold text-orange-600 mt-1">PKR {{ number_format($todayExpenses,0) }}</p>
+    </div>
+    <div class="bg-{{ $todayProfit>=0?'green':'red' }}-50 border border-{{ $todayProfit>=0?'green':'red' }}-200 rounded-xl p-4 text-center">
+      <p class="text-xs text-{{ $todayProfit>=0?'green':'red' }}-600 font-medium uppercase tracking-wider">Today Profit</p>
+      <p class="text-xl font-bold text-{{ $todayProfit>=0?'green-700':'red-700' }} mt-1">PKR {{ number_format(abs($todayProfit),0) }}</p>
+    </div>
+  </div>
+
+  {{-- Monthly stats --}}
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Month Sales</p>
+      <p class="text-lg font-bold text-green-600 mt-1">PKR {{ number_format($monthSales,0) }}</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Supplier Due</p>
+      <p class="text-lg font-bold text-slate-900 mt-1">PKR {{ number_format($supplierDue,0) }}</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Customer Due</p>
+      <p class="text-lg font-bold text-orange-600 mt-1">PKR {{ number_format($customerDue,0) }}</p>
+    </div>
+    <div class="bg-{{ $overdueSales>0?'red':'white' }}-50 border border-{{ $overdueSales>0?'red':'slate' }}-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-{{ $overdueSales>0?'red':'slate' }}-500 font-medium uppercase tracking-wider">Overdue Sales</p>
+      <p class="text-lg font-bold text-{{ $overdueSales>0?'red-600':'slate-400' }} mt-1">{{ $overdueSales }} orders</p>
+    </div>
+  </div>
+
+  {{-- Alerts --}}
+  @if($lowStock->isNotEmpty())
+  <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+    <div class="flex items-center gap-2 mb-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-600"></i><p class="text-sm font-semibold text-yellow-800">Low Stock Alert</p></div>
+    <div class="flex flex-wrap gap-2">
+      @foreach($lowStock as $s)
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">{{ $s->chickenType?->name ?? '-' }}: {{ number_format($s->closing_stock_kg,1) }} kg</span>
+      @endforeach
+    </div>
+  </div>
+  @endif
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {{-- Sales chart --}}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <h2 class="font-semibold text-slate-900 mb-4">6-Month Sales Trend</h2>
+      <canvas id="salesChart" height="100"></canvas>
     </div>
 
-    <!-- Overdue alert -->
-    @if($overdueInvoices->count() > 0)
-    <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
-        <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0"></i>
-        <span>
-            <strong>{{ $overdueInvoices->count() }} overdue invoice(s)</strong> require your attention.
-            <a href="{{ route('invoices.index', ['status' => 'overdue']) }}" class="underline ml-1">View all</a>
-        </span>
+    {{-- Overdue orders --}}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h2 class="font-semibold text-slate-900">Overdue Payments</h2>
+        <a href="{{ route('sales.index') }}?status=unpaid" class="text-xs text-green-600 hover:underline">View all</a>
+      </div>
+      <table class="w-full">
+        <tbody class="divide-y divide-slate-100">
+          @forelse($overdueOrders as $o)
+          <tr class="hover:bg-red-50">
+            <td class="px-4 py-3">
+              <p class="text-sm font-medium text-slate-900">{{ $o->customer?->name ?? 'Walk-in' }}</p>
+              <p class="text-xs text-slate-500">{{ $o->invoice_number }}</p>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <p class="text-sm font-bold text-red-600">PKR {{ number_format($o->amount_due,0) }}</p>
+              <p class="text-xs text-slate-400">Due {{ \Carbon\Carbon::parse($o->due_date)->diffForHumans() }}</p>
+            </td>
+          </tr>
+          @empty
+          <tr><td colspan="2" class="px-4 py-6 text-center text-slate-400 text-sm">No overdue payments.</td></tr>
+          @endforelse
+        </tbody>
+      </table>
     </div>
-    @endif
+  </div>
 
-    <!-- Stat cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <x-stat-card
-            title="Total Clients"
-            value="{{ number_format($totalClients) }}"
-            icon="users"
-            color="blue"
-        />
-        <x-stat-card
-            title="Total Invoices"
-            value="{{ number_format($totalInvoices) }}"
-            icon="file-text"
-            color="purple"
-        />
-        <x-stat-card
-            title="Total Revenue"
-            value="PKR {{ number_format($totalRevenue, 0) }}"
-            icon="trending-up"
-            color="green"
-        />
-        <x-stat-card
-            title="Pending Amount"
-            value="PKR {{ number_format(max(0,$pendingAmount), 0) }}"
-            icon="clock"
-            color="orange"
-        />
+  {{-- Recent sales --}}
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="font-semibold text-slate-900">Recent Sales</h2>
+      <a href="{{ route('sales.index') }}" class="text-xs text-green-600 hover:underline">View all</a>
     </div>
-
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- Revenue Chart -->
-        <div class="xl:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="font-semibold text-slate-900">Revenue Overview</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Last 6 months</p>
-                </div>
-            </div>
-            <canvas id="revenueChart" height="220"></canvas>
-        </div>
-
-        <!-- Overdue invoices panel -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <h2 class="font-semibold text-slate-900 mb-4">Overdue Invoices</h2>
-            @if($overdueInvoices->isEmpty())
-                <div class="text-center py-8 text-slate-400">
-                    <i data-lucide="check-circle-2" class="w-8 h-8 mx-auto mb-2 text-emerald-300"></i>
-                    <p class="text-sm">No overdue invoices</p>
-                </div>
-            @else
-                <div class="space-y-3">
-                    @foreach($overdueInvoices as $inv)
-                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                        <div>
-                            <p class="text-sm font-medium text-slate-800">{{ $inv->invoice_number }}</p>
-                            <p class="text-xs text-slate-500">{{ $inv->client->name }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-red-600">PKR {{ number_format($inv->total, 0) }}</p>
-                            <p class="text-xs text-slate-400">Due {{ $inv->due_date->format('d M') }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-    </div>
-
-    <!-- Recent Invoices -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-            <h2 class="font-semibold text-slate-900">Recent Invoices</h2>
-            <a href="{{ route('invoices.index') }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                View all →
-            </a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b border-slate-100">
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Invoice</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Client</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                        <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($recentInvoices as $invoice)
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-5 py-3.5 font-medium text-slate-900">{{ $invoice->invoice_number }}</td>
-                        <td class="px-5 py-3.5 text-slate-600">{{ $invoice->client->name }}</td>
-                        <td class="px-5 py-3.5 text-slate-500">{{ $invoice->issue_date->format('d M Y') }}</td>
-                        <td class="px-5 py-3.5 font-medium text-slate-900">PKR {{ number_format($invoice->total, 0) }}</td>
-                        <td class="px-5 py-3.5">
-                            <x-badge :status="$invoice->status" />
-                        </td>
-                        <td class="px-5 py-3.5 text-right">
-                            <a href="{{ route('invoices.show', $invoice) }}"
-                               class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 border border-slate-200 px-2.5 py-1.5 rounded-md hover:bg-slate-50 transition-all">
-                                <i data-lucide="eye" class="w-3.5 h-3.5"></i> View
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-5 py-10 text-center text-slate-400">No invoices yet.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <table class="w-full">
+      <thead class="bg-slate-50"><tr>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Invoice</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Customer</th>
+        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+      </tr></thead>
+      <tbody class="divide-y divide-slate-100">
+        @forelse($recentSales as $s)
+        <tr class="hover:bg-slate-50">
+          <td class="px-4 py-3"><a href="{{ route('sales.show',$s) }}" class="text-sm font-medium text-green-600 hover:underline">{{ $s->invoice_number }}</a><p class="text-xs text-slate-400">{{ \Carbon\Carbon::parse($s->date)->format('d M Y') }}</p></td>
+          <td class="px-4 py-3 text-sm text-slate-700">{{ $s->customer?->name ?? 'Walk-in' }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($s->total_amount,0) }}</td>
+          <td class="px-4 py-3">
+            @if($s->payment_status==='paid')<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Paid</span>
+            @elseif($s->payment_status==='partial')<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">Partial</span>
+            @else<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">Unpaid</span>@endif
+          </td>
+        </tr>
+        @empty
+        <tr><td colspan="4" class="px-4 py-6 text-center text-slate-400 text-sm">No sales yet.</td></tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
 </div>
-@endsection
 
 @push('scripts')
 <script>
-const ctx = document.getElementById('revenueChart').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',
+new Chart(document.getElementById('salesChart').getContext('2d'), {
+    type: 'line',
     data: {
         labels: @json($monthlyLabels),
-        datasets: [{
-            label: 'Revenue (PKR)',
-            data: @json($monthlyRevenue),
-            backgroundColor: 'rgba(99, 102, 241, 0.15)',
-            borderColor: '#6366f1',
-            borderWidth: 2,
-            borderRadius: 6,
-        }]
+        datasets: [{ label: 'Sales (PKR)', data: @json($monthlySales), borderColor: '#16a34a', backgroundColor: '#16a34a22', tension: 0.4, fill: true }]
     },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: { color: 'rgba(0,0,0,0.04)' },
-                ticks: { callback: v => 'PKR ' + v.toLocaleString() }
-            },
-            x: { grid: { display: false } }
-        }
-    }
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
 });
 </script>
 @endpush
+@endsection

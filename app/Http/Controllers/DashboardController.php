@@ -2,63 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\Payment;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Customer;
+use App\Models\DailyInventory;
+use App\Models\Expense;
+use App\Models\PurchaseOrder;
+use App\Models\SalesOrder;
+use App\Models\Supplier;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $userId = auth()->id();
+        // Today's quick stats
+        $todaySales     = SalesOrder::whereDate('date', today())->sum('total_amount');
+        $todayPurchases = PurchaseOrder::whereDate('date', today())->sum('total_amount');
+        $todayExpenses  = Expense::whereDate('date', today())->sum('amount');
+        $todayProfit    = $todaySales - $todayPurchases - $todayExpenses;
 
-        $totalClients = Client::where('user_id', $userId)->count();
-        $totalInvoices = Invoice::where('user_id', $userId)->count();
-        $totalRevenue = Invoice::where('user_id', $userId)->where('status', 'paid')->sum('total');
-        $pendingAmount = Invoice::where('user_id', $userId)
-            ->whereIn('status', ['sent', 'overdue'])
-            ->with('payments')
-            ->get()
-            ->sum('amount_due');
+        // Outstanding balances
+        $supplierDue  = Supplier::sum('balance');
+        $customerDue  = Customer::sum('current_balance');
+        $overdueSales = SalesOrder::where('payment_status', '!=', 'paid')
+            ->whereDate('due_date', '<', today())
+            ->count();
 
-        $overdueInvoices = Invoice::with('client')
-            ->where('user_id', $userId)
-            ->where('status', 'overdue')
+        // This month
+        $monthSales     = SalesOrder::whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('total_amount');
+        $monthPurchases = PurchaseOrder::whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('total_amount');
+        $monthExpenses  = Expense::whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $monthProfit    = $monthSales - $monthPurchases - $monthExpenses;
+
+        // Recent sales (last 10)
+        $recentSales = SalesOrder::with(['customer', 'chickenType'])
+            ->latest('date')
+            ->limit(10)
+            ->get();
+
+        // Low stock alerts
+        $lowStock = DailyInventory::with('chickenType')
+            ->whereDate('date', today())
+            ->where('closing_stock_kg', '<', 50)
+            ->get();
+
+        // Overdue sales
+        $overdueOrders = SalesOrder::with('customer')
+            ->where('payment_status', '!=', 'paid')
+            ->whereDate('due_date', '<', today())
             ->orderBy('due_date')
             ->limit(5)
             ->get();
 
-        $recentInvoices = Invoice::with('client')
-            ->where('user_id', $userId)
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
-
-        // Monthly revenue for last 6 months
-        $monthlyRevenue = [];
+        // 6-month sales trend
         $monthlyLabels = [];
+        $monthlySales  = [];
         for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
-            $monthlyLabels[] = $month->format('M Y');
-            $revenue = Invoice::where('user_id', $userId)
-                ->where('status', 'paid')
-                ->whereYear('issue_date', $month->year)
-                ->whereMonth('issue_date', $month->month)
-                ->sum('total');
-            $monthlyRevenue[] = round($revenue, 2);
+            $m = now()->subMonths($i);
+            $monthlyLabels[] = $m->format('M Y');
+            $monthlySales[]  = (float) SalesOrder::whereYear('date', $m->year)->whereMonth('date', $m->month)->sum('total_amount');
         }
 
-        return view('dashboard.index', compact(
-            'totalClients',
-            'totalInvoices',
-            'totalRevenue',
-            'pendingAmount',
-            'overdueInvoices',
-            'recentInvoices',
-            'monthlyRevenue',
-            'monthlyLabels'
+        return view('dashboard', compact(
+            'todaySales', 'todayPurchases', 'todayExpenses', 'todayProfit',
+            'supplierDue', 'customerDue', 'overdueSales',
+            'monthSales', 'monthPurchases', 'monthExpenses', 'monthProfit',
+            'recentSales', 'lowStock', 'overdueOrders',
+            'monthlyLabels', 'monthlySales'
         ));
     }
 }
