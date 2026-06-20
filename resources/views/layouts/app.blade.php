@@ -163,9 +163,14 @@
 
             <div class="nav-section">Inventory</div>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('inventory.index') }}" class="nav-item {{ request()->routeIs('inventory.*') ? 'active' : '' }}">
                 <i data-lucide="package" class="w-4 h-4"></i>
                 Daily Stock
+            </a>
+
+            <a href="{{ route('inventory.create') }}" class="nav-item {{ request()->routeIs('inventory.create') ? 'active' : '' }}">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Add Stock Entry
             </a>
 
             <div class="nav-section">Expenses</div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyRateController;
@@ -94,6 +95,10 @@ Route::middleware(['auth'])->group(function () {
     // Sales
     Route::resource('sales', SaleController::class);
     Route::post('/sales/{sale}/payment', [SaleController::class, 'storePayment'])->name('sales.payment');
+
+    // Inventory
+    Route::resource('inventory', InventoryController::class)->except(['edit','update','destroy']);
+    Route::post('/inventory/{inventory}/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
 });
 
 require __DIR__.'/auth.php';
