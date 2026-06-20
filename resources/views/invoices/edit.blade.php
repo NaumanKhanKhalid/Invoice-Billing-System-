@@ -16,7 +16,9 @@
     <form method="POST" action="{{ route('invoices.update', $invoice) }}">
         @csrf @method('PUT')
 
-        <div x-data="invoiceForm(@json($products->values()), @json($invoice->items))" class="space-y-5">
+        <div x-data="invoiceForm(JSON.parse(document.getElementById('products-data').textContent), JSON.parse(document.getElementById('items-data').textContent))" class="space-y-5">
+        <script id="products-data" type="application/json">@json($products->values())</script>
+        <script id="items-data" type="application/json">@json($invoice->items)</script>
 
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
@@ -179,7 +181,7 @@
 
 @push('scripts')
 <script>
-window.invoiceForm = function invoiceForm(products, existingItems) {
+function invoiceForm(products, existingItems) {
     return {
         products: products,
         items: existingItems.length ? existingItems.map(i => ({

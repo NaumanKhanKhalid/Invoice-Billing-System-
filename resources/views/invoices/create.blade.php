@@ -16,7 +16,8 @@
     <form method="POST" action="{{ route('invoices.store') }}" id="invoice-form">
         @csrf
 
-        <div x-data="invoiceForm(@json($products->values()))" class="space-y-5">
+        <div x-data="invoiceForm(JSON.parse(document.getElementById('products-data').textContent))" class="space-y-5">
+        <script id="products-data" type="application/json">@json($products->values())</script>
 
             <!-- Header section -->
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -196,7 +197,7 @@
 
 @push('scripts')
 <script>
-window.invoiceForm = function invoiceForm(products) {
+function invoiceForm(products) {
     return {
         products: products,
         items: [{
