@@ -187,7 +187,7 @@
 
             <div class="nav-section">Reports</div>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                 Reports
             </a>
