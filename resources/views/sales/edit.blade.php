@@ -1,0 +1,97 @@
+@extends('layouts.app')
+@section('title','Edit Sale')
+@section('content')
+<div class="max-w-3xl mx-auto space-y-5" x-data="{
+    dressedKg: {{ $sale->dressed_weight_kg }},
+    ratePerKg: {{ $sale->rate_per_kg }},
+    orderType: '{{ $sale->order_type }}',
+    get totalAmount() { return (parseFloat(this.dressedKg||0)*parseFloat(this.ratePerKg||0)).toFixed(2); }
+}">
+  <div class="flex items-center gap-3">
+    <a href="{{ route('sales.show',$sale) }}" class="text-slate-400 hover:text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
+    <div><h1 class="text-2xl font-bold text-slate-900">Edit Sale</h1><p class="text-sm text-slate-500">{{ $sale->invoice_number }}</p></div>
+  </div>
+
+  <form method="POST" action="{{ route('sales.update',$sale) }}" class="space-y-5">
+    @csrf
+    @method('PUT')
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
+      <h2 class="font-semibold text-slate-900 border-b border-slate-100 pb-3">Sale Details</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Order Type <span class="text-red-500">*</span></label>
+          <select name="order_type" x-model="orderType" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
+            <option value="retail" {{ $sale->order_type==='retail'?'selected':'' }}>Retail (Walk-in)</option>
+            <option value="supply" {{ $sale->order_type==='supply'?'selected':'' }}>Supply (Hotel/Restaurant)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Date <span class="text-red-500">*</span></label>
+          <input type="date" name="date" value="{{ old('date', $sale->date->format('Y-m-d')) }}" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Customer</label>
+          <select name="customer_id" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
+            <option value="">Walk-in / No Customer</option>
+            @foreach($customers as $c)<option value="{{ $c->id }}" {{ old('customer_id',$sale->customer_id)==$c->id?'selected':'' }}>{{ $c->name }} ({{ ucfirst($c->type) }})</option>@endforeach
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Chicken Type <span class="text-red-500">*</span></label>
+          <select name="chicken_type_id" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
+            <option value="">— Select Type —</option>
+            @foreach($chickenTypes as $t)<option value="{{ $t->id }}" {{ old('chicken_type_id',$sale->chicken_type_id)==$t->id?'selected':'' }}>{{ $t->name }}</option>@endforeach
+          </select>
+          @error('chicken_type_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
+      <h2 class="font-semibold text-slate-900 border-b border-slate-100 pb-3">Weight &amp; Pricing</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Dressed Weight (kg) <span class="text-red-500">*</span></label>
+          <input type="number" name="dressed_weight_kg" x-model="dressedKg" value="{{ old('dressed_weight_kg', $sale->dressed_weight_kg) }}" step="0.001" min="0.001" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+          @error('dressed_weight_kg')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Rate per kg (Dressed) <span class="text-red-500">*</span></label>
+          <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">PKR</span>
+          <input type="number" name="rate_per_kg" x-model="ratePerKg" value="{{ old('rate_per_kg', $sale->rate_per_kg) }}" step="0.01" min="0" required class="w-full pl-12 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none"></div>
+        </div>
+      </div>
+
+      <div class="bg-green-50 rounded-lg p-4 border border-green-100 flex items-center justify-between">
+        <div>
+          <p class="text-sm text-green-700 font-medium">Total Amount</p>
+          <p class="text-xs text-green-600 mt-0.5" x-text="dressedKg + ' kg × PKR ' + ratePerKg + '/kg'"></p>
+        </div>
+        <p class="text-2xl font-bold text-green-700" x-text="'PKR ' + parseFloat(totalAmount).toLocaleString('en-PK',{minimumFractionDigits:0})">PKR 0</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4" x-show="orderType==='supply'">
+      <h2 class="font-semibold text-slate-900 border-b border-slate-100 pb-3">Delivery Details</h2>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Delivery Address</label>
+        <textarea name="delivery_address" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">{{ old('delivery_address', $sale->delivery_address) }}</textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Delivery Notes</label>
+        <input type="text" name="delivery_notes" value="{{ old('delivery_notes', $sale->delivery_notes) }}" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+      <textarea name="notes" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">{{ old('notes', $sale->notes) }}</textarea>
+    </div>
+
+    <div class="flex gap-3">
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors">Update Sale</button>
+      <a href="{{ route('sales.show',$sale) }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-6 py-2 rounded-lg text-sm font-medium transition-colors">Cancel</a>
+    </div>
+  </form>
+</div>
+@endsection

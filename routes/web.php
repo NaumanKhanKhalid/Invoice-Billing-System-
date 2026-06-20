@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -89,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
     // Purchases
     Route::resource('purchases', PurchaseController::class);
     Route::post('/purchases/{purchase}/payment', [PurchaseController::class, 'storePayment'])->name('purchases.payment');
+
+    // Sales
+    Route::resource('sales', SaleController::class);
+    Route::post('/sales/{sale}/payment', [SaleController::class, 'storePayment'])->name('sales.payment');
 });
 
 require __DIR__.'/auth.php';

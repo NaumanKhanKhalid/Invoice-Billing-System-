@@ -137,12 +137,12 @@
 
             <div class="nav-section">Sales</div>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('sales.create') }}" class="nav-item {{ request()->routeIs('sales.create') ? 'active' : '' }}">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
                 New Sale
             </a>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('sales.index') }}" class="nav-item {{ request()->routeIs('sales.index','sales.show','sales.edit') ? 'active' : '' }}">
                 <i data-lucide="receipt" class="w-4 h-4"></i>
                 All Sales
             </a>
