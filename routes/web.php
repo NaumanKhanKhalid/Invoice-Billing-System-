@@ -69,6 +69,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
+    // ── Phase 2 ────────────────────────────────────────────────────────────────
+
     // Suppliers
     Route::resource('suppliers', SupplierController::class);
     Route::post('/suppliers/{supplier}/toggle-status', [SupplierController::class, 'toggleStatus'])->name('suppliers.toggle-status');
