@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'InvoicePro') — InvoicePro</title>
+    <title>@yield('title', 'Anwar Chicken') — Anwar Chicken</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -104,7 +104,7 @@
             <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i data-lucide="zap" class="w-4 h-4 text-white"></i>
             </div>
-            <span class="text-white font-bold text-lg">InvoicePro</span>
+            <span class="text-white font-bold text-lg">Anwar Chicken</span>
         </div>
 
         <!-- Navigation -->
@@ -115,46 +115,79 @@
                 Dashboard
             </a>
 
-            <div class="nav-section">Management</div>
+            <div class="nav-section">Purchases</div>
 
-            <a href="{{ route('clients.index') }}"
-               class="nav-item {{ request()->routeIs('clients.*') ? 'active' : '' }}">
-                <i data-lucide="users" class="w-4 h-4"></i>
-                Clients
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                New Purchase
             </a>
 
-            <a href="{{ route('products.index') }}"
-               class="nav-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
-                <i data-lucide="package" class="w-4 h-4"></i>
-                Products & Services
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                All Purchases
             </a>
 
-            <div class="nav-section">Billing</div>
-
-            <a href="{{ route('invoices.index') }}"
-               class="nav-item {{ request()->routeIs('invoices.index') || request()->routeIs('invoices.show') ? 'active' : '' }}">
-                <i data-lucide="file-text" class="w-4 h-4"></i>
-                Invoices
+            <a href="{{ route('suppliers.index') }}"
+               class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+                <i data-lucide="truck" class="w-4 h-4"></i>
+                Suppliers
             </a>
 
-            <a href="{{ route('invoices.create') }}"
-               class="nav-item {{ request()->routeIs('invoices.create') ? 'active' : '' }}">
+            <div class="nav-section">Sales</div>
+
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                New Invoice
+                New Sale
             </a>
 
-            <div class="nav-section">Analytics</div>
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+                <i data-lucide="receipt" class="w-4 h-4"></i>
+                All Sales
+            </a>
 
-            <a href="{{ route('reports.index') }}"
-               class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+            <a href="{{ route('customers.index') }}"
+               class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                Customers
+            </a>
+
+            <div class="nav-section">Daily Rates</div>
+
+            <a href="{{ route('daily-rates.index') }}"
+               class="nav-item {{ request()->routeIs('daily-rates.*') ? 'active' : '' }}">
+                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                Daily Rates
+            </a>
+
+            <div class="nav-section">Inventory</div>
+
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+                <i data-lucide="package" class="w-4 h-4"></i>
+                Daily Stock
+            </a>
+
+            <div class="nav-section">Expenses</div>
+
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+                Daily Expenses
+            </a>
+
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+                Staff & Salaries
+            </a>
+
+            <div class="nav-section">Reports</div>
+
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                 Reports
             </a>
 
             <div class="nav-section">System</div>
 
-            <a href="{{ route('settings.index') }}"
-               class="nav-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
                 <i data-lucide="settings" class="w-4 h-4"></i>
                 Settings
             </a>
@@ -187,7 +220,7 @@
             <button onclick="openSidebar()" class="text-slate-600">
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
-            <span class="font-semibold text-slate-800">InvoicePro</span>
+            <span class="font-semibold text-slate-800">Anwar Chicken</span>
         </header>
 
         <!-- Page content -->

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DailyRateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
@@ -8,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -65,6 +68,20 @@ Route::middleware(['auth'])->group(function () {
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+    // Suppliers
+    Route::resource('suppliers', SupplierController::class);
+    Route::post('/suppliers/{supplier}/toggle-status', [SupplierController::class, 'toggleStatus'])->name('suppliers.toggle-status');
+
+    // Customers
+    Route::resource('customers', CustomerController::class);
+    Route::post('/customers/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggle-status');
+    Route::post('/customers/{customer}/toggle-blacklist', [CustomerController::class, 'toggleBlacklist'])->name('customers.toggle-blacklist');
+
+    // Daily Rates
+    Route::get('/daily-rates', [DailyRateController::class, 'index'])->name('daily-rates.index');
+    Route::post('/daily-rates', [DailyRateController::class, 'store'])->name('daily-rates.store');
+    Route::get('/daily-rates/today', [DailyRateController::class, 'today'])->name('daily-rates.today');
 });
 
 require __DIR__.'/auth.php';
