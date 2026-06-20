@@ -179,7 +179,7 @@
 
 @push('scripts')
 <script>
-function invoiceForm(products, existingItems) {
+window.invoiceForm = function invoiceForm(products, existingItems) {
     return {
         products: products,
         items: existingItems.length ? existingItems.map(i => ({

@@ -196,7 +196,7 @@
 
 @push('scripts')
 <script>
-function invoiceForm(products) {
+window.invoiceForm = function invoiceForm(products) {
     return {
         products: products,
         items: [{
