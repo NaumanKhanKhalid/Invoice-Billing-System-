@@ -175,12 +175,12 @@
 
             <div class="nav-section">Expenses</div>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i>
                 Daily Expenses
             </a>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('staff.index') }}" class="nav-item {{ request()->routeIs('staff.*') ? 'active' : '' }}">
                 <i data-lucide="user-check" class="w-4 h-4"></i>
                 Staff & Salaries
             </a>

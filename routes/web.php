@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyRateController;
@@ -99,6 +101,14 @@ Route::middleware(['auth'])->group(function () {
     // Inventory
     Route::resource('inventory', InventoryController::class)->except(['edit','update','destroy']);
     Route::post('/inventory/{inventory}/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+
+    // Expenses
+    Route::resource('expenses', ExpenseController::class)->except(['show']);
+
+    // Staff
+    Route::resource('staff', StaffController::class);
+    Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
+    Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
 });
 
 require __DIR__.'/auth.php';
