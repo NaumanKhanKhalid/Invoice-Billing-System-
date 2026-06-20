@@ -117,12 +117,14 @@
 
             <div class="nav-section">Purchases</div>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('purchases.create') }}"
+               class="nav-item {{ request()->routeIs('purchases.create') ? 'active' : '' }}">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                 New Purchase
             </a>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('purchases.index') }}"
+               class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit') ? 'active' : '' }}">
                 <i data-lucide="list" class="w-4 h-4"></i>
                 All Purchases
             </a>

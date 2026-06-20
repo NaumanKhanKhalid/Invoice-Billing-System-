@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyRateController;
 use App\Http\Controllers\DashboardController;
@@ -84,6 +85,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/daily-rates', [DailyRateController::class, 'index'])->name('daily-rates.index');
     Route::post('/daily-rates', [DailyRateController::class, 'store'])->name('daily-rates.store');
     Route::get('/daily-rates/today', [DailyRateController::class, 'today'])->name('daily-rates.today');
+
+    // Purchases
+    Route::resource('purchases', PurchaseController::class);
+    Route::post('/purchases/{purchase}/payment', [PurchaseController::class, 'storePayment'])->name('purchases.payment');
 });
 
 require __DIR__.'/auth.php';
