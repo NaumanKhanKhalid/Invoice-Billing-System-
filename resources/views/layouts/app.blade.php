@@ -161,11 +161,6 @@
                 Daily Expenses
             </a>
 
-            <a href="{{ route('staff.index') }}" class="nav-item {{ request()->routeIs('staff.*') ? 'active' : '' }}">
-                <i data-lucide="user-check" class="w-4 h-4"></i>
-                Staff & Salaries
-            </a>
-
             <div class="nav-section">Reports</div>
 
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
@@ -173,34 +168,39 @@
                 Reports
             </a>
 
-            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*'); @endphp
+            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*','staff.*'); @endphp
             <div x-data="{ open: {{ $systemOpen ? 'true' : 'false' }} }">
-              <button @click="open = !open" class="nav-item w-full justify-between">
-                <span class="flex items-center gap-2.5">
-                  <i data-lucide="settings-2" class="w-4 h-4"></i>
-                  System
-                </span>
-                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+              <button @click="open = !open"
+                      class="nav-item w-full"
+                      :class="open ? 'bg-white/10 text-slate-100' : ''">
+                <i data-lucide="settings-2" class="w-4 h-4"></i>
+                <span class="flex-1 text-left">System</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform duration-200 opacity-50" :class="open ? 'rotate-90' : ''"></i>
               </button>
               <div x-show="open"
                    x-transition:enter="transition ease-out duration-150"
-                   x-transition:enter-start="opacity-0 -translate-y-1"
-                   x-transition:enter-end="opacity-100 translate-y-0"
-                   class="mt-0.5 space-y-0.5 pl-3 ml-4 border-l border-slate-700">
+                   x-transition:enter-start="opacity-0 scale-y-95"
+                   x-transition:enter-end="opacity-100 scale-y-100"
+                   class="mx-2 mt-1 mb-1 rounded-lg overflow-hidden bg-slate-900/60">
                 <a href="{{ route('suppliers.index') }}"
-                   class="nav-item text-[13px] py-2 {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
-                  <i data-lucide="truck" class="w-3.5 h-3.5"></i>
-                  Suppliers
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('suppliers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="truck" class="w-3.5 h-3.5 flex-shrink-0"></i> Suppliers
                 </a>
                 <a href="{{ route('customers.index') }}"
-                   class="nav-item text-[13px] py-2 {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-                  <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-                  Hotels / Companies
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('customers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="building-2" class="w-3.5 h-3.5 flex-shrink-0"></i> Hotels / Companies
+                </a>
+                <a href="{{ route('staff.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('staff.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="user-check" class="w-3.5 h-3.5 flex-shrink-0"></i> Staff & Salaries
                 </a>
                 <a href="{{ route('settings.index') }}"
-                   class="nav-item text-[13px] py-2 {{ request()->routeIs('settings.*') ? 'active' : '' }}">
-                  <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                  Settings
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('settings.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="settings" class="w-3.5 h-3.5 flex-shrink-0"></i> Settings
                 </a>
               </div>
             </div>
