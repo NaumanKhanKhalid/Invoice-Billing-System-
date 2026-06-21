@@ -16,8 +16,9 @@ class DailyRateSeeder extends Seeder
         DailyRate::insert([
             [
                 'chicken_type_id'    => $broiler->id,
-                'rate_per_kg'        => 380.00,
-                'rate_per_kg_dressed'=> 550.00,
+                'live_rate_per_kg'   => 380.00,
+                'retail_rate_per_kg' => 420.00,
+                'supply_rate_per_kg' => 550.00,
                 'date'               => today()->toDateString(),
                 'notes'              => 'Opening rate',
                 'created_at'         => now(),
@@ -25,8 +26,9 @@ class DailyRateSeeder extends Seeder
             ],
             [
                 'chicken_type_id'    => $desi->id,
-                'rate_per_kg'        => 600.00,
-                'rate_per_kg_dressed'=> 850.00,
+                'live_rate_per_kg'   => 600.00,
+                'retail_rate_per_kg' => 680.00,
+                'supply_rate_per_kg' => 850.00,
                 'date'               => today()->toDateString(),
                 'notes'              => 'Opening rate',
                 'created_at'         => now(),
