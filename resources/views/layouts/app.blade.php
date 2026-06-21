@@ -115,6 +115,15 @@
                 Dashboard
             </a>
 
+            <a href="{{ route('udhar.index') }}" class="nav-item {{ request()->routeIs('udhar.*') ? 'active' : '' }}">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+                Udhar Book
+                @php $overdueUdhar = \App\Models\CreditSale::where('status','!=','paid')->whereDate('due_date','<=',today())->count(); @endphp
+                @if($overdueUdhar > 0)
+                <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $overdueUdhar }}</span>
+                @endif
+            </a>
+
 
             <a href="{{ route('purchases.index') }}"
                class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit','purchases.create') ? 'active' : '' }}">
