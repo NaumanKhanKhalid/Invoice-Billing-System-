@@ -123,28 +123,19 @@
                 Purchases
             </a>
 
-            @php $partiesOpen = request()->routeIs('suppliers.*') || request()->routeIs('customers.*'); @endphp
-            <div x-data="{ open: {{ $partiesOpen ? 'true' : 'false' }} }">
-              <button @click="open = !open" class="nav-item w-full justify-between">
-                <span class="flex items-center gap-2.5">
-                  <i data-lucide="users-2" class="w-4 h-4"></i>
-                  Parties
-                </span>
-                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
-              </button>
-              <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="pl-3 mt-0.5 space-y-0.5 border-l border-slate-700 ml-5">
-                <a href="{{ route('suppliers.index') }}"
-                   class="nav-item text-[13px] py-2 {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
-                  <i data-lucide="truck" class="w-3.5 h-3.5"></i>
-                  Suppliers
-                </a>
-                <a href="{{ route('customers.index') }}"
-                   class="nav-item text-[13px] py-2 {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-                  <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-                  Hotels / Companies
-                </a>
-              </div>
-            </div>
+            <div class="nav-section">Parties</div>
+
+            <a href="{{ route('suppliers.index') }}"
+               class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+                <i data-lucide="truck" class="w-4 h-4"></i>
+                Suppliers
+            </a>
+
+            <a href="{{ route('customers.index') }}"
+               class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                <i data-lucide="building-2" class="w-4 h-4"></i>
+                Hotels / Companies
+            </a>
 
             <div class="nav-section">Aaj Ka Rate</div>
 
@@ -196,7 +187,7 @@
                 Reports
             </a>
 
-            <div class="nav-section">System</div>
+            <div class="nav-section">Setting</div>
 
             <a href="{{ route('settings.index') }}" class="nav-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <i data-lucide="settings" class="w-4 h-4"></i>
