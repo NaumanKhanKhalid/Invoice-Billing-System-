@@ -31,10 +31,6 @@
       <option value="">All Customers</option>
       @foreach($customers as $c)<option value="{{ $c->id }}" {{ request('customer_id')==$c->id?'selected':'' }}>{{ $c->name }}</option>@endforeach
     </select>
-    <select name="chicken_type_id" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-      <option value="">All Chicken Types</option>
-      @foreach($chickenTypes as $t)<option value="{{ $t->id }}" {{ request('chicken_type_id')==$t->id?'selected':'' }}>{{ $t->name }}</option>@endforeach
-    </select>
     <select name="status" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
       <option value="">All Status</option>
       <option value="unpaid" {{ request('status')=='unpaid'?'selected':'' }}>Unpaid</option>
@@ -44,7 +40,7 @@
     <input type="date" name="from_date" value="{{ request('from_date') }}" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
     <input type="date" name="to_date" value="{{ request('to_date') }}" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
     <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
-    @if(request()->hasAny(['customer_id','chicken_type_id','status','from_date','to_date']))<a href="{{ route('supply.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
+    @if(request()->hasAny(['customer_id','status','from_date','to_date']))<a href="{{ route('supply.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
   </form>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

@@ -40,7 +40,6 @@
           <div><p class="text-slate-500">Customer</p><p class="font-medium text-slate-900 mt-0.5">{{ $supply->customer?->name ?? '—' }}</p></div>
           <div><p class="text-slate-500">Date</p><p class="font-medium text-slate-900 mt-0.5">{{ \Carbon\Carbon::parse($supply->date)->format('d M Y') }}</p></div>
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $supply->due_date ? \Carbon\Carbon::parse($supply->due_date)->format('d M Y') : 'Same day' }}</p></div>
-          <div><p class="text-slate-500">Chicken Type</p><p class="font-medium text-slate-900 mt-0.5">{{ $supply->chickenType?->name ?? '—' }}</p></div>
           <div><p class="text-slate-500">Dressed Weight</p><p class="font-medium text-slate-900 mt-0.5">{{ number_format($supply->dressed_weight_kg,3) }} kg</p></div>
           <div><p class="text-slate-500">Rate per kg</p><p class="font-medium text-slate-900 mt-0.5">PKR {{ number_format($supply->rate_per_kg,2) }}</p></div>
           <div><p class="text-slate-500">Total Amount</p><p class="font-bold text-green-700 mt-0.5 text-base">PKR {{ number_format($supply->total_amount,0) }}</p></div>

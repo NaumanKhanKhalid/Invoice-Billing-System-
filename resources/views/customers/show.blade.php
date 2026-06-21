@@ -112,7 +112,6 @@ $typeBadge = [
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($order->date)->format('d M Y') }}</td>
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $order->invoice_number ?? '-' }}</td>
-          <td class="px-4 py-3 text-sm text-slate-600">{{ $order->chickenType->name ?? '-' }}</td>
           <td class="px-4 py-3 text-sm text-right">{{ number_format($order->quantity_kg ?? 0, 1) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($order->total_amount,0) }}</td>
           <td class="px-4 py-3 text-sm text-right text-green-600">PKR {{ number_format($order->amount_paid ?? 0, 0) }}</td>

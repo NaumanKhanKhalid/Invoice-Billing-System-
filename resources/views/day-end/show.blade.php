@@ -7,7 +7,6 @@
       <a href="{{ route('day-end.index') }}" class="text-slate-400 hover:text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
       <div>
         <h1 class="text-2xl font-bold text-slate-900">{{ \Carbon\Carbon::parse($dayEnd->date)->format('d M Y') }}</h1>
-        <p class="text-sm text-slate-500">{{ $dayEnd->chickenType?->name }} — Day End Record</p>
       </div>
     </div>
     @if(!$dayEnd->is_closed)

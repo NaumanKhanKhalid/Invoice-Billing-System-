@@ -28,7 +28,6 @@
         @forelse($records as $record)
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ \Carbon\Carbon::parse($record->date)->format('d M Y') }}</td>
-          <td class="px-4 py-3 text-sm text-slate-600">{{ $record->chickenType?->name ?? '—' }}</td>
           <td class="px-4 py-3 text-sm text-right text-blue-600">PKR {{ number_format($record->total_supply_revenue,0) }}</td>
           <td class="px-4 py-3 text-sm text-right text-slate-700">PKR {{ number_format($record->counter_cash,0) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-green-700">PKR {{ number_format($record->total_revenue,0) }}</td>

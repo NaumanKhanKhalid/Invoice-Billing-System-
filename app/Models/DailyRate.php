@@ -9,15 +9,15 @@ class DailyRate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['chicken_type_id', 'live_rate_per_kg', 'retail_rate_per_kg', 'supply_rate_per_kg', 'date', 'notes'];
+    protected $fillable = ['date', 'live_rate_per_kg', 'retail_rate_per_kg', 'supply_rate_per_kg', 'notes'];
 
     protected function casts(): array
     {
-        return ['live_rate_per_kg' => 'float', 'retail_rate_per_kg' => 'float', 'supply_rate_per_kg' => 'float', 'date' => 'date'];
-    }
-
-    public function chickenType()
-    {
-        return $this->belongsTo(ChickenType::class);
+        return [
+            'date'               => 'date',
+            'live_rate_per_kg'   => 'float',
+            'retail_rate_per_kg' => 'float',
+            'supply_rate_per_kg' => 'float',
+        ];
     }
 }

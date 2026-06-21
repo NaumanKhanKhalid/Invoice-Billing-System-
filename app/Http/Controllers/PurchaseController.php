@@ -1,6 +1,5 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\ChickenType;
 use App\Models\DailyRate;
 use App\Models\PurchaseOrder;
 use App\Models\PurchasePayment;
@@ -11,36 +10,30 @@ class PurchaseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PurchaseOrder::with(['supplier','chickenType'])->orderByDesc('date')->orderByDesc('id');
-        if ($request->filled('supplier_id'))     { $query->where('supplier_id', $request->supplier_id); }
-        if ($request->filled('chicken_type_id')) { $query->where('chicken_type_id', $request->chicken_type_id); }
-        if ($request->filled('status'))          { $query->where('payment_status', $request->status); }
-        if ($request->filled('from_date'))       { $query->where('date', '>=', $request->from_date); }
-        if ($request->filled('to_date'))         { $query->where('date', '<=', $request->to_date); }
+        $query = PurchaseOrder::with('supplier')->orderByDesc('date')->orderByDesc('id');
+        if ($request->filled('supplier_id')) { $query->where('supplier_id', $request->supplier_id); }
+        if ($request->filled('status'))      { $query->where('payment_status', $request->status); }
+        if ($request->filled('from_date'))   { $query->where('date', '>=', $request->from_date); }
+        if ($request->filled('to_date'))     { $query->where('date', '<=', $request->to_date); }
         $orders = $query->paginate(15)->withQueryString();
-        $suppliers    = Supplier::where('is_active',true)->orderBy('name')->get();
-        $chickenTypes = ChickenType::where('is_active',true)->get();
+        $suppliers = Supplier::where('is_active',true)->orderBy('name')->get();
         $stats = [
-            'total_orders'   => PurchaseOrder::count(),
-            'total_amount'   => PurchaseOrder::sum('total_amount'),
-            'total_paid'     => PurchaseOrder::sum('amount_paid'),
-            'total_due'      => PurchaseOrder::where('payment_status','!=','paid')->sum('amount_due'),
-            'overdue_count'  => PurchaseOrder::where('payment_status','!=','paid')->where('due_date','<',today())->count(),
+            'total_orders'  => PurchaseOrder::count(),
+            'total_amount'  => PurchaseOrder::sum('total_amount'),
+            'total_paid'    => PurchaseOrder::sum('amount_paid'),
+            'total_due'     => PurchaseOrder::where('payment_status','!=','paid')->sum('amount_due'),
+            'overdue_count' => PurchaseOrder::where('payment_status','!=','paid')->where('due_date','<',today())->count(),
         ];
-        return view('purchases.index', compact('orders','suppliers','chickenTypes','stats'));
+        return view('purchases.index', compact('orders','suppliers','stats'));
     }
 
     public function create()
     {
-        $suppliers    = Supplier::where('is_active',true)->orderBy('name')->get();
-        $chickenTypes = ChickenType::where('is_active',true)->get();
-        $todayRates   = DailyRate::where('date', today()->toDateString())->get()->keyBy('chicken_type_id');
-        // fallback to latest rate if today not set
-        if ($todayRates->isEmpty()) {
-            $todayRates = DailyRate::whereDate('date','<',today())->orderByDesc('date')->get()->unique('chicken_type_id')->keyBy('chicken_type_id');
-        }
+        $suppliers  = Supplier::where('is_active',true)->orderBy('name')->get();
+        $todayRate  = DailyRate::where('date', today()->toDateString())->first()
+                   ?? DailyRate::whereDate('date','<',today())->orderByDesc('date')->first();
         $nextNumber = $this->generateInvoiceNumber();
-        return view('purchases.create', compact('suppliers','chickenTypes','todayRates','nextNumber'));
+        return view('purchases.create', compact('suppliers','todayRate','nextNumber'));
     }
 
     public function store(Request $request)
@@ -48,7 +41,6 @@ class PurchaseController extends Controller
         $data = $request->validate([
             'supplier_id'        => 'required|exists:suppliers,id',
             'date'               => 'required|date',
-            'chicken_type_id'    => 'required|exists:chicken_types,id',
             'live_weight_kg'     => 'required|numeric|min:0.001',
             'dead_on_arrival_kg' => 'nullable|numeric|min:0',
             'rate_per_kg_live'   => 'required|numeric|min:0',
@@ -57,7 +49,6 @@ class PurchaseController extends Controller
 
         $supplier = Supplier::findOrFail($data['supplier_id']);
         $liveKg   = (float)$data['live_weight_kg'];
-        $doa      = (float)($data['dead_on_arrival_kg'] ?? 0);
         $total    = round($liveKg * (float)$data['rate_per_kg_live'], 2);
         $dueDate  = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
 
@@ -65,9 +56,8 @@ class PurchaseController extends Controller
             'supplier_id'        => $data['supplier_id'],
             'date'               => $data['date'],
             'invoice_number'     => $this->generateInvoiceNumber(),
-            'chicken_type_id'    => $data['chicken_type_id'],
             'live_weight_kg'     => $liveKg,
-            'dead_on_arrival_kg' => $doa,
+            'dead_on_arrival_kg' => (float)($data['dead_on_arrival_kg'] ?? 0),
             'rate_per_kg_live'   => $data['rate_per_kg_live'],
             'total_amount'       => $total,
             'amount_paid'        => 0,
@@ -77,15 +67,14 @@ class PurchaseController extends Controller
             'notes'              => $data['notes'] ?? null,
         ]);
 
-        // Update supplier balance
         $supplier->increment('balance', $total);
 
-        return redirect()->route('purchases.show', $order)->with('success', "Purchase order {$order->invoice_number} created successfully.");
+        return redirect()->route('purchases.show', $order)->with('success', "Purchase order {$order->invoice_number} created.");
     }
 
     public function show(PurchaseOrder $purchase)
     {
-        $purchase->load(['supplier','chickenType','purchasePayments']);
+        $purchase->load(['supplier','purchasePayments']);
         return view('purchases.show', compact('purchase'));
     }
 
@@ -94,9 +83,8 @@ class PurchaseController extends Controller
         if ($purchase->payment_status === 'paid') {
             return back()->with('error', 'Paid purchase orders cannot be edited.');
         }
-        $suppliers    = Supplier::where('is_active',true)->orderBy('name')->get();
-        $chickenTypes = ChickenType::where('is_active',true)->get();
-        return view('purchases.edit', compact('purchase','suppliers','chickenTypes'));
+        $suppliers = Supplier::where('is_active',true)->orderBy('name')->get();
+        return view('purchases.edit', compact('purchase','suppliers'));
     }
 
     public function update(Request $request, PurchaseOrder $purchase)
@@ -107,7 +95,6 @@ class PurchaseController extends Controller
         $data = $request->validate([
             'supplier_id'        => 'required|exists:suppliers,id',
             'date'               => 'required|date',
-            'chicken_type_id'    => 'required|exists:chicken_types,id',
             'live_weight_kg'     => 'required|numeric|min:0.001',
             'dead_on_arrival_kg' => 'nullable|numeric|min:0',
             'rate_per_kg_live'   => 'required|numeric|min:0',
@@ -115,26 +102,22 @@ class PurchaseController extends Controller
         ]);
         $supplier   = Supplier::findOrFail($data['supplier_id']);
         $liveKg     = (float)$data['live_weight_kg'];
-        $doa        = (float)($data['dead_on_arrival_kg'] ?? 0);
         $newTotal   = round($liveKg * (float)$data['rate_per_kg_live'], 2);
         $oldTotal   = $purchase->total_amount;
-        $amountPaid = $purchase->amount_paid;
         $dueDate    = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
 
         $purchase->update([
             'supplier_id'        => $data['supplier_id'],
             'date'               => $data['date'],
-            'chicken_type_id'    => $data['chicken_type_id'],
             'live_weight_kg'     => $liveKg,
-            'dead_on_arrival_kg' => $doa,
+            'dead_on_arrival_kg' => (float)($data['dead_on_arrival_kg'] ?? 0),
             'rate_per_kg_live'   => $data['rate_per_kg_live'],
             'total_amount'       => $newTotal,
-            'amount_due'         => max(0, $newTotal - $amountPaid),
+            'amount_due'         => max(0, $newTotal - $purchase->amount_paid),
             'due_date'           => $dueDate,
             'notes'              => $data['notes'] ?? null,
         ]);
 
-        // Adjust supplier balance
         $supplier->increment('balance', $newTotal - $oldTotal);
 
         return redirect()->route('purchases.show', $purchase)->with('success', 'Purchase order updated.');
@@ -143,7 +126,7 @@ class PurchaseController extends Controller
     public function destroy(PurchaseOrder $purchase)
     {
         if ($purchase->payment_status !== 'unpaid') {
-            return back()->with('error', 'Only unpaid orders with no payments can be deleted.');
+            return back()->with('error', 'Only unpaid orders can be deleted.');
         }
         $purchase->supplier->decrement('balance', $purchase->total_amount);
         $purchase->delete();
@@ -163,12 +146,10 @@ class PurchaseController extends Controller
 
         $newPaid = $purchase->amount_paid + (float)$data['amount'];
         $newDue  = max(0, $purchase->total_amount - $newPaid);
-        $status  = $newDue <= 0 ? 'paid' : 'partial';
-
-        $purchase->update(['amount_paid' => $newPaid, 'amount_due' => $newDue, 'payment_status' => $status]);
+        $purchase->update(['amount_paid' => $newPaid, 'amount_due' => $newDue, 'payment_status' => $newDue <= 0 ? 'paid' : 'partial']);
         $purchase->supplier->decrement('balance', (float)$data['amount']);
 
-        return back()->with('success', 'Payment recorded successfully.');
+        return back()->with('success', 'Payment recorded.');
     }
 
     private function generateInvoiceNumber(): string

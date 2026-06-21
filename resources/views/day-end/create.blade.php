@@ -18,7 +18,6 @@
     <button type="submit" class="bg-slate-700 text-white px-4 py-2 text-sm rounded-lg">Load</button>
   </form>
 
-  @foreach($chickenTypes as $ct)
   @php
     $sup  = $supplyTotals[$ct->id] ?? ['dressed_kg'=>0,'revenue'=>0];
     $pur  = $purchaseTotals[$ct->id] ?? ['live_kg'=>0,'cost'=>0];
@@ -31,7 +30,6 @@
     <form method="POST" action="{{ route('day-end.store') }}" class="p-6 space-y-5">
       @csrf
       <input type="hidden" name="date" value="{{ $date }}">
-      <input type="hidden" name="chicken_type_id" value="{{ $ct->id }}">
 
       {{-- Opening Stock (auto from yesterday) --}}
       <div class="bg-slate-50 rounded-lg p-4">

@@ -27,13 +27,7 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Date <span class="text-red-500">*</span></label>
           <input type="date" name="date" value="{{ old('date',$purchase->date->format('Y-m-d')) }}" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
         </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Chicken Type <span class="text-red-500">*</span></label>
-          <select name="chicken_type_id" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
-            @foreach($chickenTypes as $t)<option value="{{ $t->id }}" {{ old('chicken_type_id',$purchase->chicken_type_id)==$t->id?'selected':'' }}>{{ $t->name }}</option>@endforeach
-          </select>
-        </div>
-        <div>
+        <div class="sm:col-span-2">
           <label class="block text-sm font-medium text-slate-700 mb-1">Invoice #</label>
           <input type="text" value="{{ $purchase->invoice_number }}" disabled class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed">
         </div>

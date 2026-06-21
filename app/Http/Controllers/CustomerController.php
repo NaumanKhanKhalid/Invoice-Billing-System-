@@ -54,7 +54,6 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
-        $orders      = $customer->supplyOrders()->with('chickenType')->orderByDesc('date')->paginate(10);
         $totalBilled = $customer->supplyOrders()->sum('total_amount');
         $totalPaid   = $customer->supplyOrders()->sum('amount_paid');
         $outstanding = $totalBilled - $totalPaid;

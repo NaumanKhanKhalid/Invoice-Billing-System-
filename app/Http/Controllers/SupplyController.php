@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ChickenType;
 use App\Models\Customer;
 use App\Models\SupplyOrder;
 use Carbon\Carbon;
@@ -12,13 +11,12 @@ class SupplyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SupplyOrder::with(['customer', 'chickenType'])->latest('date');
+        $query = SupplyOrder::with('customer')->latest('date');
 
-        if ($request->customer_id)     $query->where('customer_id', $request->customer_id);
-        if ($request->chicken_type_id) $query->where('chicken_type_id', $request->chicken_type_id);
-        if ($request->status)          $query->where('payment_status', $request->status);
-        if ($request->from_date)       $query->whereDate('date', '>=', $request->from_date);
-        if ($request->to_date)         $query->whereDate('date', '<=', $request->to_date);
+        if ($request->customer_id) $query->where('customer_id', $request->customer_id);
+        if ($request->status)      $query->where('payment_status', $request->status);
+        if ($request->from_date)   $query->whereDate('date', '>=', $request->from_date);
+        if ($request->to_date)     $query->whereDate('date', '<=', $request->to_date);
 
         $orders = $query->paginate(20)->withQueryString();
 
@@ -29,20 +27,18 @@ class SupplyController extends Controller
             'this_month_kg' => SupplyOrder::whereMonth('date', now()->month)->sum('dressed_weight_kg'),
         ];
 
-        $customers    = Customer::where('is_active', true)->orderBy('name')->get();
-        $chickenTypes = ChickenType::where('is_active', true)->get();
+        $customers = Customer::where('is_active', true)->orderBy('name')->get();
 
-        return view('supply.index', compact('orders', 'stats', 'customers', 'chickenTypes'));
+        return view('supply.index', compact('orders', 'stats', 'customers'));
     }
 
     public function create()
     {
-        $customers    = Customer::where('is_active', true)->where('is_blacklisted', false)
-            ->whereIn('type', ['hotel', 'company'])->orderBy('name')->get();
-        $chickenTypes = ChickenType::where('is_active', true)->get();
-        $nextNumber   = $this->nextInvoiceNumber();
+        $customers  = Customer::where('is_active', true)->where('is_blacklisted', false)
+            ->whereIn('type', ['hotel', 'catering', 'restaurant', 'company', 'reseller'])->orderBy('name')->get();
+        $nextNumber = $this->nextInvoiceNumber();
 
-        return view('supply.create', compact('customers', 'chickenTypes', 'nextNumber'));
+        return view('supply.create', compact('customers', 'nextNumber'));
     }
 
     public function store(Request $request)
@@ -50,7 +46,6 @@ class SupplyController extends Controller
         $data = $request->validate([
             'customer_id'       => 'required|exists:customers,id',
             'date'              => 'required|date',
-            'chicken_type_id'   => 'required|exists:chicken_types,id',
             'dressed_weight_kg' => 'required|numeric|min:0.001',
             'rate_per_kg'       => 'required|numeric|min:0',
             'delivery_address'  => 'nullable|string',
@@ -60,8 +55,7 @@ class SupplyController extends Controller
 
         $total      = round($data['dressed_weight_kg'] * $data['rate_per_kg'], 2);
         $customer   = Customer::findOrFail($data['customer_id']);
-        $creditDays = $customer->credit_days ?? 30;
-        $dueDate    = Carbon::parse($data['date'])->addDays($creditDays)->toDateString();
+        $dueDate    = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
 
         $order = SupplyOrder::create(array_merge($data, [
             'invoice_number' => $this->nextInvoiceNumber(),
@@ -74,24 +68,21 @@ class SupplyController extends Controller
 
         $customer->increment('current_balance', $total);
 
-        return redirect()->route('supply.show', $order)
-            ->with('success', 'Supply order recorded: ' . $order->invoice_number);
+        return redirect()->route('supply.show', $order)->with('success', 'Supply order recorded: ' . $order->invoice_number);
     }
 
     public function show(SupplyOrder $supply)
     {
-        $supply->load(['customer', 'chickenType', 'payments']);
+        $supply->load(['customer', 'payments']);
 
         $whatsappLink = null;
-        if ($supply->customer && $supply->customer->phone) {
+        if ($supply->customer?->phone) {
             $phone = preg_replace('/\D/', '', $supply->customer->phone);
             if (str_starts_with($phone, '0')) $phone = '92' . substr($phone, 1);
-            $msg  = "Dear {$supply->customer->name},\n";
-            $msg .= "Invoice: {$supply->invoice_number}\n";
+            $msg  = "Dear {$supply->customer->name},\nInvoice: {$supply->invoice_number}\n";
             $msg .= "Date: " . Carbon::parse($supply->date)->format('d M Y') . "\n";
             $msg .= "Amount: PKR " . number_format($supply->total_amount, 0) . "\n";
-            $msg .= "Due: PKR " . number_format($supply->amount_due, 0) . "\n";
-            $msg .= "- Anwar Chicken Center";
+            $msg .= "Due: PKR " . number_format($supply->amount_due, 0) . "\n- Anwar Chicken Center";
             $whatsappLink = "https://wa.me/{$phone}?text=" . urlencode($msg);
         }
 
@@ -101,10 +92,8 @@ class SupplyController extends Controller
     public function edit(SupplyOrder $supply)
     {
         abort_if($supply->payment_status === 'paid', 403, 'Cannot edit a fully paid order.');
-        $customers    = Customer::where('is_active', true)->whereIn('type', ['hotel', 'company'])->orderBy('name')->get();
-        $chickenTypes = ChickenType::where('is_active', true)->get();
-
-        return view('supply.edit', compact('supply', 'customers', 'chickenTypes'));
+        $customers = Customer::where('is_active', true)->orderBy('name')->get();
+        return view('supply.edit', compact('supply', 'customers'));
     }
 
     public function update(Request $request, SupplyOrder $supply)
@@ -114,7 +103,6 @@ class SupplyController extends Controller
         $data = $request->validate([
             'customer_id'       => 'required|exists:customers,id',
             'date'              => 'required|date',
-            'chicken_type_id'   => 'required|exists:chicken_types,id',
             'dressed_weight_kg' => 'required|numeric|min:0.001',
             'rate_per_kg'       => 'required|numeric|min:0',
             'delivery_address'  => 'nullable|string',
@@ -125,8 +113,7 @@ class SupplyController extends Controller
         $oldTotal   = $supply->total_amount;
         $newTotal   = round($data['dressed_weight_kg'] * $data['rate_per_kg'], 2);
         $customer   = Customer::findOrFail($data['customer_id']);
-        $creditDays = $customer->credit_days ?? 30;
-        $dueDate    = Carbon::parse($data['date'])->addDays($creditDays)->toDateString();
+        $dueDate    = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
 
         $supply->update(array_merge($data, [
             'total_amount' => $newTotal,
@@ -134,8 +121,7 @@ class SupplyController extends Controller
             'due_date'     => $dueDate,
         ]));
 
-        $oldCustomerId = $supply->getOriginal('customer_id');
-        if ($oldCustomerId) Customer::findOrFail($oldCustomerId)->decrement('current_balance', $oldTotal);
+        if ($supply->customer_id) Customer::findOrFail($supply->customer_id)->decrement('current_balance', $oldTotal);
         Customer::findOrFail($data['customer_id'])->increment('current_balance', $newTotal);
 
         return redirect()->route('supply.show', $supply)->with('success', 'Order updated.');
@@ -148,7 +134,6 @@ class SupplyController extends Controller
             Customer::findOrFail($supply->customer_id)->decrement('current_balance', $supply->total_amount);
         }
         $supply->delete();
-
         return redirect()->route('supply.index')->with('success', 'Order deleted.');
     }
 
@@ -165,20 +150,18 @@ class SupplyController extends Controller
 
         $newPaid = $supply->amount_paid + $data['amount'];
         $newDue  = $supply->total_amount - $newPaid;
-        $status  = $newDue <= 0 ? 'paid' : 'partial';
 
         $supply->update([
             'amount_paid'    => $newPaid,
             'amount_due'     => max(0, $newDue),
-            'payment_status' => $status,
+            'payment_status' => $newDue <= 0 ? 'paid' : 'partial',
         ]);
 
         if ($supply->customer_id) {
             Customer::findOrFail($supply->customer_id)->decrement('current_balance', $data['amount']);
         }
 
-        return redirect()->route('supply.show', $supply)
-            ->with('success', 'Payment of PKR ' . number_format($data['amount'], 0) . ' recorded.');
+        return redirect()->route('supply.show', $supply)->with('success', 'Payment of PKR ' . number_format($data['amount'], 0) . ' recorded.');
     }
 
     private function nextInvoiceNumber(): string

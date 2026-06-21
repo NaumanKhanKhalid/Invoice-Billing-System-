@@ -10,7 +10,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            ChickenTypeSeeder::class,
             SettingSeeder::class,
             DailyRateSeeder::class,
             SupplierSeeder::class,

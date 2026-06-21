@@ -19,12 +19,11 @@
   {{-- Filters --}}
   <form method="GET" class="flex flex-wrap gap-3">
     <select name="supplier_id" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white"><option value="">All Suppliers</option>@foreach($suppliers as $s)<option value="{{ $s->id }}" {{ request('supplier_id')==$s->id?'selected':'' }}>{{ $s->name }}</option>@endforeach</select>
-    <select name="chicken_type_id" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white"><option value="">All Types</option>@foreach($chickenTypes as $t)<option value="{{ $t->id }}" {{ request('chicken_type_id')==$t->id?'selected':'' }}>{{ $t->name }}</option>@endforeach</select>
     <select name="status" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white"><option value="">All Status</option><option value="unpaid" {{ request('status')=='unpaid'?'selected':'' }}>Unpaid</option><option value="partial" {{ request('status')=='partial'?'selected':'' }}>Partial</option><option value="paid" {{ request('status')=='paid'?'selected':'' }}>Paid</option></select>
     <input type="date" name="from_date" value="{{ request('from_date') }}" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
     <input type="date" name="to_date" value="{{ request('to_date') }}" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
     <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
-    @if(request()->hasAny(['supplier_id','chicken_type_id','status','from_date','to_date']))<a href="{{ route('purchases.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
+    @if(request()->hasAny(['supplier_id','status','from_date','to_date']))<a href="{{ route('purchases.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
   </form>
 
   {{-- Table --}}
@@ -34,7 +33,6 @@
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Invoice #</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Supplier</th>
-        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Live Kg</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Due</th>
@@ -48,7 +46,6 @@
           <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($order->date)->format('d M Y') }}</td>
           <td class="px-4 py-3 text-sm font-medium"><a href="{{ route('purchases.show',$order) }}" class="text-slate-900 hover:text-green-600">{{ $order->invoice_number }}</a></td>
           <td class="px-4 py-3 text-sm text-slate-700">{{ $order->supplier->name }}</td>
-          <td class="px-4 py-3 text-sm text-slate-600">{{ $order->chickenType->name??'-' }}</td>
           <td class="px-4 py-3 text-sm text-right text-slate-700">{{ number_format($order->live_weight_kg,1) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($order->total_amount,0) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium {{ $isOverdue?'text-red-600':($order->amount_due>0?'text-orange-600':'text-slate-400') }}">PKR {{ number_format($order->amount_due,0) }}</td>

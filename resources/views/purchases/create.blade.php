@@ -4,17 +4,8 @@
 <div class="max-w-3xl mx-auto space-y-5" x-data="{
     liveKg: 0,
     doa: 0,
-    ratePerKg: 0,
-    get totalAmount() { return (parseFloat(this.liveKg||0)*parseFloat(this.ratePerKg||0)).toFixed(2); },
-    setRateFromType(typeId) {
-        if(!typeId) return;
-        fetch('{{ route('daily-rates.today') }}')
-            .then(r=>r.json())
-            .then(rates=>{
-                var rate = rates.find(r=>r.chicken_type_id==typeId);
-                if(rate) this.ratePerKg = rate.live_rate_per_kg;
-            });
-    }
+    ratePerKg: {{ $todayRate?->live_rate_per_kg ?? 0 }},
+    get totalAmount() { return (parseFloat(this.liveKg||0)*parseFloat(this.ratePerKg||0)).toFixed(2); }
 }">
   <div class="flex items-center gap-3">
     <a href="{{ route('purchases.index') }}" class="text-slate-400 hover:text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
@@ -38,15 +29,7 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Date <span class="text-red-500">*</span></label>
           <input type="date" name="date" value="{{ old('date', today()->toDateString()) }}" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
         </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Chicken Type <span class="text-red-500">*</span></label>
-          <select name="chicken_type_id" required @change="setRateFromType($event.target.value)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
-            <option value="">— Select Type —</option>
-            @foreach($chickenTypes as $t)<option value="{{ $t->id }}" {{ old('chicken_type_id')==$t->id?'selected':'' }}>{{ $t->name }}</option>@endforeach
-          </select>
-          @error('chicken_type_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-        </div>
-        <div>
+        <div class="sm:col-span-2">
           <label class="block text-sm font-medium text-slate-700 mb-1">Invoice # <span class="text-slate-400">(auto)</span></label>
           <input type="text" value="{{ $nextNumber }}" disabled class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed">
         </div>

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\ChickenType;
 use App\Models\Customer;
 use App\Models\PurchaseOrder;
 use App\Models\PurchasePayment;
@@ -14,11 +13,9 @@ class SampleDataSeeder extends Seeder
 {
     public function run(): void
     {
-        $broiler  = ChickenType::where('name', 'Broiler')->first();
         $supplier = Supplier::first();
         $hotel    = Customer::where('type', 'hotel')->first();
 
-        if (! $broiler || ! $hotel) return;
 
         // Sample purchase order
         $po = PurchaseOrder::create([
@@ -27,7 +24,6 @@ class SampleDataSeeder extends Seeder
             'invoice_number'     => 'PO-' . date('Y') . '-001',
             'live_weight_kg'     => 200.000,
             'dead_on_arrival_kg' => 2.000,
-            'chicken_type_id'    => $broiler->id,
             'rate_per_kg_live'   => 380.00,
             'total_amount'       => 76000.00,
             'amount_paid'        => 30000.00,
@@ -49,7 +45,6 @@ class SampleDataSeeder extends Seeder
             'customer_id'       => $hotel->id,
             'date'              => today()->toDateString(),
             'invoice_number'    => 'SO-' . date('Y') . '-001',
-            'chicken_type_id'   => $broiler->id,
             'dressed_weight_kg' => 50.000,
             'rate_per_kg'       => 550.00,
             'total_amount'      => 27500.00,

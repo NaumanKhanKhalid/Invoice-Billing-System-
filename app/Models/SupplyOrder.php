@@ -12,7 +12,7 @@ class SupplyOrder extends Model
     protected $table = 'supply_orders';
 
     protected $fillable = [
-        'customer_id', 'chicken_type_id', 'date', 'invoice_number',
+        'customer_id', 'date', 'invoice_number',
         'dressed_weight_kg', 'rate_per_kg', 'total_amount',
         'amount_paid', 'amount_due', 'due_date', 'payment_status',
         'delivery_address', 'delivery_notes', 'whatsapp_notified', 'notes',
@@ -35,11 +35,6 @@ class SupplyOrder extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    public function chickenType()
-    {
-        return $this->belongsTo(ChickenType::class);
     }
 
     public function payments()

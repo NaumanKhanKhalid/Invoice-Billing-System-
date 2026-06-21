@@ -29,7 +29,6 @@
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div><p class="text-slate-500">Supplier</p><p class="font-medium text-slate-900 mt-0.5">{{ $purchase->supplier->name }}</p></div>
           <div><p class="text-slate-500">Date</p><p class="font-medium text-slate-900 mt-0.5">{{ \Carbon\Carbon::parse($purchase->date)->format('d M Y') }}</p></div>
-          <div><p class="text-slate-500">Chicken Type</p><p class="font-medium text-slate-900 mt-0.5">{{ $purchase->chickenType->name??'-' }}</p></div>
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $purchase->due_date ? \Carbon\Carbon::parse($purchase->due_date)->format('d M Y') : '-' }}</p></div>
         </div>
         <div class="mt-5 grid grid-cols-2 gap-4">
