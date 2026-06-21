@@ -21,15 +21,31 @@ class SupplyController extends Controller
         $orders = $query->paginate(20)->withQueryString();
 
         $stats = [
-            'total_today'   => SupplyOrder::whereDate('date', today())->sum('total_amount'),
-            'total_due'     => SupplyOrder::where('payment_status', '!=', 'paid')->sum('amount_due'),
-            'overdue_count' => SupplyOrder::where('payment_status', '!=', 'paid')->whereDate('due_date', '<', today())->count(),
-            'this_month_kg' => SupplyOrder::whereMonth('date', now()->month)->sum('dressed_weight_kg'),
+            'total_today'    => SupplyOrder::whereDate('date', today())->sum('total_amount'),
+            'total_due'      => SupplyOrder::where('payment_status', '!=', 'paid')->sum('amount_due'),
+            'overdue_count'  => SupplyOrder::where('payment_status', '!=', 'paid')->whereDate('due_date', '<', today())->count(),
+            'this_month_kg'  => SupplyOrder::whereMonth('date', now()->month)->sum('dressed_weight_kg'),
         ];
 
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
 
         return view('supply.index', compact('orders', 'stats', 'customers'));
+    }
+
+    public function schedule()
+    {
+        $today    = today();
+        $tomorrow = today()->addDay();
+        $dayAfter = today()->addDays(2);
+
+        $baseQuery = fn() => SupplyOrder::with('customer')->where('payment_status', '!=', 'paid');
+
+        $overdue  = (clone $baseQuery())->whereDate('delivery_date', '<', $today)->orderBy('delivery_date')->get();
+        $todayOrders    = (clone $baseQuery())->whereDate('delivery_date', $today)->orderBy('delivery_date')->get();
+        $tomorrowOrders = (clone $baseQuery())->whereDate('delivery_date', $tomorrow)->orderBy('delivery_date')->get();
+        $upcoming = (clone $baseQuery())->whereDate('delivery_date', '>', $tomorrow)->orderBy('delivery_date')->get();
+
+        return view('supply.schedule', compact('overdue', 'todayOrders', 'tomorrowOrders', 'upcoming', 'today', 'tomorrow', 'dayAfter'));
     }
 
     public function create()
@@ -46,6 +62,7 @@ class SupplyController extends Controller
         $data = $request->validate([
             'customer_id'       => 'required|exists:customers,id',
             'date'              => 'required|date',
+            'delivery_date'     => 'nullable|date',
             'dressed_weight_kg' => 'required|numeric|min:0.001',
             'rate_per_kg'       => 'required|numeric|min:0',
             'delivery_address'  => 'nullable|string',
@@ -53,9 +70,11 @@ class SupplyController extends Controller
             'notes'             => 'nullable|string',
         ]);
 
-        $total      = round($data['dressed_weight_kg'] * $data['rate_per_kg'], 2);
-        $customer   = Customer::findOrFail($data['customer_id']);
-        $dueDate    = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
+        $data['delivery_date'] = $data['delivery_date'] ?? $data['date'];
+
+        $total    = round($data['dressed_weight_kg'] * $data['rate_per_kg'], 2);
+        $customer = Customer::findOrFail($data['customer_id']);
+        $dueDate  = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
 
         $order = SupplyOrder::create(array_merge($data, [
             'invoice_number' => $this->nextInvoiceNumber(),
@@ -103,6 +122,7 @@ class SupplyController extends Controller
         $data = $request->validate([
             'customer_id'       => 'required|exists:customers,id',
             'date'              => 'required|date',
+            'delivery_date'     => 'nullable|date',
             'dressed_weight_kg' => 'required|numeric|min:0.001',
             'rate_per_kg'       => 'required|numeric|min:0',
             'delivery_address'  => 'nullable|string',
@@ -110,10 +130,12 @@ class SupplyController extends Controller
             'notes'             => 'nullable|string',
         ]);
 
-        $oldTotal   = $supply->total_amount;
-        $newTotal   = round($data['dressed_weight_kg'] * $data['rate_per_kg'], 2);
-        $customer   = Customer::findOrFail($data['customer_id']);
-        $dueDate    = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
+        $data['delivery_date'] = $data['delivery_date'] ?? $data['date'];
+
+        $oldTotal = $supply->total_amount;
+        $newTotal = round($data['dressed_weight_kg'] * $data['rate_per_kg'], 2);
+        $customer = Customer::findOrFail($data['customer_id']);
+        $dueDate  = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
 
         $supply->update(array_merge($data, [
             'total_amount' => $newTotal,

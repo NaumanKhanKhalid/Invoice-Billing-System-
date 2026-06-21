@@ -54,9 +54,15 @@
               @error('customer_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-500 mb-1.5">Date <span class="text-red-500">*</span></label>
+              <label class="block text-xs font-medium text-slate-500 mb-1.5">Order Date <span class="text-red-500">*</span></label>
               <input type="date" name="date" value="{{ old('date', today()->toDateString()) }}" required
                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1.5">Delivery Date <span class="text-slate-400 font-normal">(agar alag ho)</span></label>
+              <input type="date" name="delivery_date" value="{{ old('delivery_date') }}"
+                     class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+              <p class="text-[11px] text-slate-400 mt-1">Khali chhoro agar aaj hi deliver karna hai</p>
             </div>
           </div>
         </div>

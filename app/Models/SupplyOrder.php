@@ -12,7 +12,7 @@ class SupplyOrder extends Model
     protected $table = 'supply_orders';
 
     protected $fillable = [
-        'customer_id', 'date', 'invoice_number',
+        'customer_id', 'date', 'delivery_date', 'invoice_number',
         'dressed_weight_kg', 'rate_per_kg', 'total_amount',
         'amount_paid', 'amount_due', 'due_date', 'payment_status',
         'delivery_address', 'delivery_notes', 'whatsapp_notified', 'notes',
@@ -27,6 +27,7 @@ class SupplyOrder extends Model
             'amount_paid'       => 'float',
             'amount_due'        => 'float',
             'date'              => 'date',
+            'delivery_date'     => 'date',
             'due_date'          => 'date',
             'whatsapp_notified' => 'boolean',
         ];

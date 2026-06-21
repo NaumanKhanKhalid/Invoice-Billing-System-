@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Supply Orders (Hotels / Companies)
     Route::get('/supply', [SupplyController::class, 'index'])->name('supply.index');
+    Route::get('/supply/schedule', [SupplyController::class, 'schedule'])->name('supply.schedule');
     Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.create');
     Route::post('/supply', [SupplyController::class, 'store'])->name('supply.store');
     Route::get('/supply/{supply}', [SupplyController::class, 'show'])->name('supply.show');

@@ -139,6 +139,15 @@
 
             <div class="nav-section">Supply Orders</div>
 
+            <a href="{{ route('supply.schedule') }}" class="nav-item {{ request()->routeIs('supply.schedule') ? 'active' : '' }}">
+                <i data-lucide="calendar-clock" class="w-4 h-4"></i>
+                Schedule
+                @php $todayCount = \App\Models\SupplyOrder::where('payment_status','!=','paid')->whereDate('delivery_date', today())->count(); @endphp
+                @if($todayCount > 0)
+                <span class="ml-auto bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $todayCount }}</span>
+                @endif
+            </a>
+
             <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit','supply.create') ? 'active' : '' }}">
                 <i data-lucide="receipt" class="w-4 h-4"></i>
                 Supply Orders
