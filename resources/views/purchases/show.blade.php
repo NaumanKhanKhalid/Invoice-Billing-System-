@@ -80,9 +80,9 @@
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">
         <h2 class="font-semibold text-slate-900">Payment Summary</h2>
         <div class="flex justify-between text-sm"><span class="text-slate-500">Rate/kg (live)</span><span class="font-medium">PKR {{ formatKg($purchase->rate_per_kg_live) }}</span></div>
-        <div class="flex justify-between text-sm"><span class="text-slate-500">Total Amount</span><span class="font-bold text-slate-900">PKR {{ number_format($purchase->total_amount,0) }}</span></div>
-        <div class="flex justify-between text-sm"><span class="text-slate-500">Amount Paid</span><span class="font-medium text-green-600">PKR {{ number_format($purchase->amount_paid,0) }}</span></div>
-        <div class="border-t border-slate-100 pt-3 flex justify-between"><span class="font-semibold text-slate-700">Amount Due</span><span class="font-bold text-xl {{ $purchase->amount_due>0?'text-red-600':'text-green-600' }}">PKR {{ number_format($purchase->amount_due,0) }}</span></div>
+        <div class="flex justify-between text-sm"><span class="text-slate-500">Total Amount</span><span class="font-bold text-slate-900">{{ formatCurrency($purchase->total_amount) }}</span></div>
+        <div class="flex justify-between text-sm"><span class="text-slate-500">Amount Paid</span><span class="font-medium text-green-600">{{ formatCurrency($purchase->amount_paid) }}</span></div>
+        <div class="border-t border-slate-100 pt-3 flex justify-between"><span class="font-semibold text-slate-700">Amount Due</span><span class="font-bold text-xl {{ $purchase->amount_due>0?'text-red-600':'text-green-600' }}">{{ formatCurrency($purchase->amount_due) }}</span></div>
         <div class="pt-1">
           @if($purchase->payment_status==='paid')<span class="badge badge-green w-full justify-center py-2">Fully Paid</span>
           @elseif($purchase->payment_status==='partial')<span class="badge badge-yellow w-full justify-center py-2">Partially Paid</span>

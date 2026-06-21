@@ -8,7 +8,7 @@
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex items-center gap-4">
-    <div><p class="text-xs text-slate-500 uppercase tracking-wider">Monthly Salary Bill</p><p class="text-2xl font-bold text-green-700 mt-0.5">PKR {{ number_format($totalSalary,0) }}</p></div>
+    <div><p class="text-xs text-slate-500 uppercase tracking-wider">Monthly Salary Bill</p><p class="text-2xl font-bold text-green-700 mt-0.5">{{ formatCurrency($totalSalary) }}</p></div>
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -28,7 +28,7 @@
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $s->name }}</td>
           <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">{{ ucfirst($s->role) }}</span></td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $s->phone ?? '-' }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($s->salary,0) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($s->salary) }}</td>
           <td class="px-4 py-3 text-sm text-slate-500">{{ $s->joining_date->format('d M Y') }}</td>
           <td class="px-4 py-3">
             @if($s->is_active)<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Active</span>

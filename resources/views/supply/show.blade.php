@@ -42,7 +42,7 @@
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $supply->due_date ? \Carbon\Carbon::parse($supply->due_date)->format('d M Y') : 'Same day' }}</p></div>
           <div><p class="text-slate-500">Dressed Weight</p><p class="font-medium text-slate-900 mt-0.5">{{ formatKg($supply->dressed_weight_kg) }} kg</p></div>
           <div><p class="text-slate-500">Rate per kg</p><p class="font-medium text-slate-900 mt-0.5">PKR {{ formatKg($supply->rate_per_kg) }}</p></div>
-          <div><p class="text-slate-500">Total Amount</p><p class="font-bold text-green-700 mt-0.5 text-base">PKR {{ number_format($supply->total_amount,0) }}</p></div>
+          <div><p class="text-slate-500">Total Amount</p><p class="font-bold text-green-700 mt-0.5 text-base">{{ formatCurrency($supply->total_amount) }}</p></div>
         </div>
         @if($supply->delivery_address)
         <div class="mt-4 p-3 bg-slate-50 rounded-lg">
@@ -91,11 +91,11 @@
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">
         <h2 class="font-semibold text-slate-900">Payment Summary</h2>
         <div class="flex justify-between text-sm text-slate-500"><span>{{ formatKg($supply->dressed_weight_kg) }} kg × PKR {{ formatKg($supply->rate_per_kg) }}/kg</span></div>
-        <div class="flex justify-between text-sm"><span class="text-slate-500">Total</span><span class="font-bold text-slate-900">PKR {{ number_format($supply->total_amount,0) }}</span></div>
-        <div class="flex justify-between text-sm"><span class="text-slate-500">Paid</span><span class="font-medium text-green-600">PKR {{ number_format($supply->amount_paid,0) }}</span></div>
+        <div class="flex justify-between text-sm"><span class="text-slate-500">Total</span><span class="font-bold text-slate-900">{{ formatCurrency($supply->total_amount) }}</span></div>
+        <div class="flex justify-between text-sm"><span class="text-slate-500">Paid</span><span class="font-medium text-green-600">{{ formatCurrency($supply->amount_paid) }}</span></div>
         <div class="border-t border-slate-100 pt-3 flex justify-between">
           <span class="font-semibold text-slate-700">Due</span>
-          <span class="font-bold text-xl {{ $supply->amount_due>0?'text-red-600':'text-green-600' }}">PKR {{ number_format($supply->amount_due,0) }}</span>
+          <span class="font-bold text-xl {{ $supply->amount_due>0?'text-red-600':'text-green-600' }}">{{ formatCurrency($supply->amount_due) }}</span>
         </div>
         <div>
           @if($supply->payment_status==='paid')<span class="inline-flex w-full justify-center items-center px-3 py-2 rounded text-sm font-medium bg-green-100 text-green-700">Fully Paid</span>

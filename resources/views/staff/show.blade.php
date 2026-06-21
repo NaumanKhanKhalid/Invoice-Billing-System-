@@ -20,10 +20,10 @@
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div><p class="text-slate-500">Phone</p><p class="font-medium text-slate-900 mt-0.5">{{ $staff->phone ?? '-' }}</p></div>
           <div><p class="text-slate-500">Role</p><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 mt-0.5">{{ ucfirst($staff->role) }}</span></div>
-          <div><p class="text-slate-500">Monthly Salary</p><p class="font-bold text-green-700 mt-0.5 text-base">PKR {{ number_format($staff->salary,0) }}</p></div>
+          <div><p class="text-slate-500">Monthly Salary</p><p class="font-bold text-green-700 mt-0.5 text-base">{{ formatCurrency($staff->salary) }}</p></div>
           <div><p class="text-slate-500">Joining Date</p><p class="font-medium text-slate-900 mt-0.5">{{ $staff->joining_date->format('d M Y') }}</p></div>
           <div><p class="text-slate-500">Status</p><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $staff->is_active?'bg-green-100 text-green-700':'bg-slate-100 text-slate-500' }} mt-0.5">{{ $staff->is_active?'Active':'Inactive' }}</span></div>
-          <div><p class="text-slate-500">Total Paid</p><p class="font-medium text-slate-900 mt-0.5">PKR {{ number_format($totalPaid,0) }}</p></div>
+          <div><p class="text-slate-500">Total Paid</p><p class="font-medium text-slate-900 mt-0.5">{{ formatCurrency($totalPaid) }}</p></div>
         </div>
       </div>
 
@@ -40,7 +40,7 @@
             @forelse($staff->salaryPayments->sortByDesc('payment_date') as $p)
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-3 text-sm text-slate-700">{{ \Carbon\Carbon::createFromDate($p->year,$p->month,1)->format('M Y') }}</td>
-              <td class="px-4 py-3 text-sm text-right font-medium text-green-600">PKR {{ number_format($p->amount,0) }}</td>
+              <td class="px-4 py-3 text-sm text-right font-medium text-green-600">{{ formatCurrency($p->amount) }}</td>
               <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($p->payment_date)->format('d M Y') }}</td>
               <td class="px-4 py-3 text-sm text-slate-500">{{ $p->note ?? '-' }}</td>
             </tr>

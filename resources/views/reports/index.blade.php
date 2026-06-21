@@ -22,22 +22,22 @@
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Sales Revenue</p>
-      <p class="text-xl font-bold text-green-700 mt-1">PKR {{ number_format($salesTotal,0) }}</p>
+      <p class="text-xl font-bold text-green-700 mt-1">{{ formatCurrency($salesTotal) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">{{ number_format($salesKg,1) }} kg sold</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Purchase Cost</p>
-      <p class="text-xl font-bold text-red-600 mt-1">PKR {{ number_format($purchaseTotal,0) }}</p>
+      <p class="text-xl font-bold text-red-600 mt-1">{{ formatCurrency($purchaseTotal) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">{{ number_format($purchaseKg,1) }} kg live</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Expenses + Salaries</p>
-      <p class="text-xl font-bold text-orange-600 mt-1">PKR {{ number_format($expensesTotal+$salariesTotal,0) }}</p>
+      <p class="text-xl font-bold text-orange-600 mt-1">{{ formatCurrency($expensesTotal+$salariesTotal) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">Exp: {{ number_format($expensesTotal,0) }} | Sal: {{ number_format($salariesTotal,0) }}</p>
     </div>
     <div class="bg-{{ $netProfit>=0?'green':'red' }}-50 rounded-xl border border-{{ $netProfit>=0?'green':'red' }}-200 shadow-sm p-4">
       <p class="text-xs text-{{ $netProfit>=0?'green':'red' }}-600 font-medium uppercase tracking-wider">Net Profit</p>
-      <p class="text-xl font-bold text-{{ $netProfit>=0?'green-700':'red-700' }} mt-1">PKR {{ number_format(abs($netProfit),0) }}</p>
+      <p class="text-xl font-bold text-{{ $netProfit>=0?'green-700':'red-700' }} mt-1">{{ formatCurrency(abs($netProfit)) }}</p>
       <p class="text-xs text-{{ $netProfit>=0?'green':'red' }}-500 mt-0.5">{{ $netProfit>=0?'Profit':'Loss' }} | Gross: {{ number_format($grossProfit,0) }}</p>
     </div>
   </div>
@@ -63,7 +63,7 @@
           <tr class="hover:bg-slate-50">
             <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $c->customer?->name ?? 'Walk-in' }}</td>
             <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $c->orders }}</td>
-            <td class="px-4 py-3 text-sm text-right font-medium text-green-600">PKR {{ number_format($c->total,0) }}</td>
+            <td class="px-4 py-3 text-sm text-right font-medium text-green-600">{{ formatCurrency($c->total) }}</td>
           </tr>
           @empty
           <tr><td colspan="3" class="px-4 py-6 text-center text-slate-400 text-sm">No sales in period.</td></tr>
@@ -86,7 +86,7 @@
           @forelse($expenseByCategory as $e)
           <tr class="hover:bg-slate-50">
             <td class="px-4 py-3 text-sm text-slate-700">{{ $e->category }}</td>
-            <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($e->total,0) }}</td>
+            <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($e->total) }}</td>
             <td class="px-4 py-3 text-sm text-right text-slate-500">{{ number_format(($e->total/$expTotal)*100,1) }}%</td>
           </tr>
           @empty

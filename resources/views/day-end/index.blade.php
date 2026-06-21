@@ -28,11 +28,11 @@
         @forelse($records as $record)
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ \Carbon\Carbon::parse($record->date)->format('d M Y') }}</td>
-          <td class="px-4 py-3 text-sm text-right text-blue-600">PKR {{ number_format($record->total_supply_revenue,0) }}</td>
-          <td class="px-4 py-3 text-sm text-right text-slate-700">PKR {{ number_format($record->counter_cash,0) }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-green-700">PKR {{ number_format($record->total_revenue,0) }}</td>
+          <td class="px-4 py-3 text-sm text-right text-blue-600">{{ formatCurrency($record->total_supply_revenue) }}</td>
+          <td class="px-4 py-3 text-sm text-right text-slate-700">{{ formatCurrency($record->counter_cash) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-green-700">{{ formatCurrency($record->total_revenue) }}</td>
           <td class="px-4 py-3 text-sm text-right font-bold {{ $record->net_profit>=0?'text-green-600':'text-red-600' }}">
-            {{ $record->net_profit>=0?'+':'' }}PKR {{ number_format($record->net_profit,0) }}
+            {{ $record->net_profit>=0?'+':'' }}{{ formatCurrency($record->net_profit) }}
           </td>
           <td class="px-4 py-3">
             @if($record->is_closed)

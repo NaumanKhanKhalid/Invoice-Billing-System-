@@ -28,22 +28,22 @@
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase">Supply Revenue</p>
-      <p class="text-xl font-bold text-blue-600 mt-1">PKR {{ number_format($dayEnd->total_supply_revenue,0) }}</p>
+      <p class="text-xl font-bold text-blue-600 mt-1">{{ formatCurrency($dayEnd->total_supply_revenue) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">{{ formatKg($dayEnd->total_supply_dressed_kg) }} kg</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase">Counter Cash</p>
-      <p class="text-xl font-bold text-slate-900 mt-1">PKR {{ number_format($dayEnd->counter_cash,0) }}</p>
+      <p class="text-xl font-bold text-slate-900 mt-1">{{ formatCurrency($dayEnd->counter_cash) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">Retail</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase">Total Revenue</p>
-      <p class="text-xl font-bold text-green-700 mt-1">PKR {{ number_format($dayEnd->total_revenue,0) }}</p>
+      <p class="text-xl font-bold text-green-700 mt-1">{{ formatCurrency($dayEnd->total_revenue) }}</p>
     </div>
     <div class="bg-{{ $dayEnd->net_profit>=0?'green':'red' }}-50 rounded-xl border border-{{ $dayEnd->net_profit>=0?'green':'red' }}-200 shadow-sm p-4">
       <p class="text-xs text-{{ $dayEnd->net_profit>=0?'green':'red' }}-600 font-medium uppercase">Net Profit</p>
       <p class="text-xl font-bold text-{{ $dayEnd->net_profit>=0?'green-700':'red-700' }} mt-1">
-        {{ $dayEnd->net_profit>=0?'+':'' }}PKR {{ number_format(abs($dayEnd->net_profit),0) }}
+        {{ $dayEnd->net_profit>=0?'+':'' }}{{ formatCurrency(abs($dayEnd->net_profit)) }}
       </p>
     </div>
   </div>
@@ -61,7 +61,7 @@
           <tr><td class="py-2 text-slate-500">Dead / Spoilage</td><td class="py-2 text-right text-orange-500">-{{ formatKg($dayEnd->dead_kg+$dayEnd->spoilage_kg) }} kg</td></tr>
           <tr class="border-t-2 border-slate-200"><td class="py-2 font-semibold">Closing Live Stock</td><td class="py-2 text-right font-bold">{{ formatKg($dayEnd->closing_stock_live_kg) }} kg</td></tr>
           <tr><td class="py-2 font-semibold">Closing Dressed Stock</td><td class="py-2 text-right font-bold">{{ formatKg($dayEnd->closing_stock_dressed_kg) }} kg</td></tr>
-          <tr><td class="py-2 text-slate-500">Closing Stock Value</td><td class="py-2 text-right font-medium text-green-600">PKR {{ number_format($dayEnd->closing_stock_value,0) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Closing Stock Value</td><td class="py-2 text-right font-medium text-green-600">{{ formatCurrency($dayEnd->closing_stock_value) }}</td></tr>
         </tbody>
       </table>
     </div>
@@ -71,18 +71,18 @@
       <h2 class="font-semibold text-slate-900 mb-4">Profit & Loss</h2>
       <table class="w-full text-sm">
         <tbody class="divide-y divide-slate-100">
-          <tr><td class="py-2 text-slate-500">Supply Revenue</td><td class="py-2 text-right font-medium text-green-600">PKR {{ number_format($dayEnd->total_supply_revenue,0) }}</td></tr>
-          <tr><td class="py-2 text-slate-500">Counter Cash</td><td class="py-2 text-right font-medium text-green-600">PKR {{ number_format($dayEnd->counter_cash,0) }}</td></tr>
-          <tr class="bg-green-50"><td class="py-2 font-semibold text-green-700 px-2 rounded-l">Total Revenue</td><td class="py-2 text-right font-bold text-green-700 px-2 rounded-r">PKR {{ number_format($dayEnd->total_revenue,0) }}</td></tr>
-          <tr><td class="py-2 text-slate-500">Purchase Cost</td><td class="py-2 text-right font-medium text-red-500">-PKR {{ number_format($dayEnd->purchase_cost,0) }}</td></tr>
-          <tr><td class="py-2 text-slate-500">Closing Stock Value</td><td class="py-2 text-right font-medium text-green-600">+PKR {{ number_format($dayEnd->closing_stock_value,0) }}</td></tr>
-          <tr><td class="py-2 text-slate-500">Net Cost</td><td class="py-2 text-right font-medium text-red-500">-PKR {{ number_format($dayEnd->total_cost,0) }}</td></tr>
-          <tr class="bg-slate-50"><td class="py-2 font-semibold px-2 rounded-l">Gross Profit</td><td class="py-2 text-right font-bold px-2 rounded-r {{ $dayEnd->gross_profit>=0?'text-green-700':'text-red-600' }}">PKR {{ number_format($dayEnd->gross_profit,0) }}</td></tr>
-          <tr><td class="py-2 text-slate-500">Total Expenses</td><td class="py-2 text-right font-medium text-orange-600">-PKR {{ number_format($dayEnd->total_expenses,0) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Supply Revenue</td><td class="py-2 text-right font-medium text-green-600">{{ formatCurrency($dayEnd->total_supply_revenue) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Counter Cash</td><td class="py-2 text-right font-medium text-green-600">{{ formatCurrency($dayEnd->counter_cash) }}</td></tr>
+          <tr class="bg-green-50"><td class="py-2 font-semibold text-green-700 px-2 rounded-l">Total Revenue</td><td class="py-2 text-right font-bold text-green-700 px-2 rounded-r">{{ formatCurrency($dayEnd->total_revenue) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Purchase Cost</td><td class="py-2 text-right font-medium text-red-500">-{{ formatCurrency($dayEnd->purchase_cost) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Closing Stock Value</td><td class="py-2 text-right font-medium text-green-600">+{{ formatCurrency($dayEnd->closing_stock_value) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Net Cost</td><td class="py-2 text-right font-medium text-red-500">-{{ formatCurrency($dayEnd->total_cost) }}</td></tr>
+          <tr class="bg-slate-50"><td class="py-2 font-semibold px-2 rounded-l">Gross Profit</td><td class="py-2 text-right font-bold px-2 rounded-r {{ $dayEnd->gross_profit>=0?'text-green-700':'text-red-600' }}">{{ formatCurrency($dayEnd->gross_profit) }}</td></tr>
+          <tr><td class="py-2 text-slate-500">Total Expenses</td><td class="py-2 text-right font-medium text-orange-600">-{{ formatCurrency($dayEnd->total_expenses) }}</td></tr>
           <tr class="border-t-2 border-slate-300 bg-{{ $dayEnd->net_profit>=0?'green':'red' }}-50">
             <td class="py-3 font-bold text-lg px-2 rounded-l">Net Profit</td>
             <td class="py-3 text-right font-bold text-xl px-2 rounded-r {{ $dayEnd->net_profit>=0?'text-green-700':'text-red-600' }}">
-              {{ $dayEnd->net_profit>=0?'+':'' }}PKR {{ number_format($dayEnd->net_profit,0) }}
+              {{ $dayEnd->net_profit>=0?'+':'' }}{{ formatCurrency($dayEnd->net_profit) }}
             </td>
           </tr>
         </tbody>
