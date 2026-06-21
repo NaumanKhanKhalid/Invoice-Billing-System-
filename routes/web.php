@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreditSaleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyRateController;
 use App\Http\Controllers\DashboardController;
@@ -78,6 +79,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class);
     Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
     Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
+
+    // Udhar Book (Credit Sales)
+    Route::get('/udhar', [CreditSaleController::class, 'index'])->name('udhar.index');
+    Route::get('/udhar/create', [CreditSaleController::class, 'create'])->name('udhar.create');
+    Route::post('/udhar', [CreditSaleController::class, 'store'])->name('udhar.store');
+    Route::get('/udhar/{creditSale}', [CreditSaleController::class, 'show'])->name('udhar.show');
+    Route::post('/udhar/{creditSale}/payment', [CreditSaleController::class, 'storePayment'])->name('udhar.payment');
+    Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->name('udhar.destroy');
 });
 
 require __DIR__.'/auth.php';
