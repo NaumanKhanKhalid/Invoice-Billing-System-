@@ -26,13 +26,13 @@ class ChickenType extends Model
         return $this->hasMany(PurchaseOrder::class);
     }
 
-    public function salesOrders()
+    public function supplyOrders()
     {
-        return $this->hasMany(SalesOrder::class);
+        return $this->hasMany(SupplyOrder::class);
     }
 
-    public function dailyInventories()
+    public function dailyRecords()
     {
-        return $this->hasMany(DailyInventory::class);
+        return $this->hasMany(DailyRecord::class);
     }
 }

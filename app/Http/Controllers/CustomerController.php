@@ -7,9 +7,9 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Customer::withCount('salesOrders')
-            ->withSum('salesOrders','total_amount')
-            ->withSum('salesOrders','amount_paid');
+        $query = Customer::withCount('supplyOrders')
+            ->withSum('supplyOrders','total_amount')
+            ->withSum('supplyOrders','amount_paid');
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(fn($q) => $q->where('name','like',"%$s%")->orWhere('phone','like',"%$s%"));
@@ -20,7 +20,7 @@ class CustomerController extends Controller
         $stats = [
             'total'       => Customer::count(),
             'active'      => Customer::where('is_active',true)->count(),
-            'billed'      => \DB::table('sales_orders')->sum('total_amount'),
+            'billed'      => \DB::table('supply_orders')->sum('total_amount'),
             'outstanding' => Customer::sum('current_balance'),
         ];
         return view('customers.index', compact('customers','stats'));
@@ -55,9 +55,9 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
-        $orders      = $customer->salesOrders()->with('chickenType')->orderByDesc('date')->paginate(10);
-        $totalBilled = $customer->salesOrders()->sum('total_amount');
-        $totalPaid   = $customer->salesOrders()->sum('amount_paid');
+        $orders      = $customer->supplyOrders()->with('chickenType')->orderByDesc('date')->paginate(10);
+        $totalBilled = $customer->supplyOrders()->sum('total_amount');
+        $totalPaid   = $customer->supplyOrders()->sum('amount_paid');
         $outstanding = $totalBilled - $totalPaid;
         return view('customers.show', compact('customer','orders','totalBilled','totalPaid','outstanding'));
     }
@@ -85,7 +85,7 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
-        if ($customer->salesOrders()->count() > 0) {
+        if ($customer->supplyOrders()->count() > 0) {
             return back()->with('error', 'Cannot delete customer with order history.');
         }
         $customer->delete();

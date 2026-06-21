@@ -16,18 +16,18 @@ class Customer extends Model
         return ['credit_limit' => 'float', 'current_balance' => 'float', 'is_active' => 'boolean', 'is_blacklisted' => 'boolean'];
     }
 
-    public function salesOrders()
+    public function supplyOrders()
     {
-        return $this->hasMany(SalesOrder::class);
+        return $this->hasMany(SupplyOrder::class);
     }
 
     public function getTotalPurchasedAttribute()
     {
-        return $this->salesOrders()->sum('total_amount');
+        return $this->supplyOrders()->sum('total_amount');
     }
 
     public function getTotalPaidAttribute()
     {
-        return $this->salesOrders()->sum('amount_paid');
+        return $this->supplyOrders()->sum('amount_paid');
     }
 }
