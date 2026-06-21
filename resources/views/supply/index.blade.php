@@ -46,7 +46,8 @@
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full">
       <thead class="bg-slate-50"><tr>
-        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Order Date</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Delivery Date</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Invoice #</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Customer</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Kg</th>
@@ -58,9 +59,24 @@
       </tr></thead>
       <tbody class="divide-y divide-slate-100">
         @forelse($orders as $order)
-        @php $isOverdue = $order->payment_status!=='paid' && $order->due_date && \Carbon\Carbon::parse($order->due_date)->isPast(); @endphp
-        <tr class="hover:bg-slate-50 transition-colors {{ $isOverdue?'bg-red-50':'' }}">
+        @php
+          $isOverdue = $order->payment_status!=='paid' && $order->due_date && \Carbon\Carbon::parse($order->due_date)->isPast();
+          $deliveryDate = $order->delivery_date ? \Carbon\Carbon::parse($order->delivery_date) : null;
+          $deliveryOverdue = $deliveryDate && !$order->is_delivered && $deliveryDate->isPast();
+          $deliveryToday = $deliveryDate && !$order->is_delivered && $deliveryDate->isToday();
+          $rowClass = $isOverdue ? 'bg-red-50' : ($deliveryOverdue ? 'bg-orange-50' : '');
+        @endphp
+        <tr class="hover:bg-slate-50 transition-colors {{ $rowClass }}">
           <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($order->date)->format('d M Y') }}</td>
+          <td class="px-4 py-3 text-sm {{ $deliveryOverdue ? 'text-red-600 font-semibold' : ($deliveryToday ? 'text-amber-600 font-semibold' : 'text-slate-500') }}">
+            @if($deliveryDate)
+              {{ $deliveryDate->format('d M Y') }}
+              @if($deliveryToday)<p class="text-[10px] text-amber-500">Aaj</p>@endif
+              @if($deliveryOverdue)<p class="text-[10px] text-red-400">{{ $deliveryDate->diffInDays(today()) }} din late</p>@endif
+            @else
+              <span class="text-slate-300">—</span>
+            @endif
+          </td>
           <td class="px-4 py-3 text-sm font-medium"><a href="{{ route('supply.show',$order) }}" class="text-slate-900 hover:text-green-600">{{ $order->invoice_number }}</a></td>
           <td class="px-4 py-3 text-sm text-slate-700">{{ $order->customer?->name ?? '—' }}</td>
           <td class="px-4 py-3 text-sm text-right">{{ formatKg($order->dressed_weight_kg) }}</td>
@@ -96,7 +112,7 @@
           </td>
         </tr>
         @empty
-        <tr><td colspan="9" class="px-4 py-12 text-center">
+        <tr><td colspan="10" class="px-4 py-12 text-center">
           <i data-lucide="receipt" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
           <p class="text-slate-500 font-medium">No supply orders yet</p>
           <a href="{{ route('supply.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Record first order</a>

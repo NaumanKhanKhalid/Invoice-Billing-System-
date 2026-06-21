@@ -143,14 +143,6 @@
             </a>
 
 
-            <a href="{{ route('supply.schedule') }}" class="nav-item {{ request()->routeIs('supply.schedule') ? 'active' : '' }}">
-                <i data-lucide="calendar-clock" class="w-4 h-4"></i>
-                Schedule
-                @php $todayCount = \App\Models\SupplyOrder::where('payment_status','!=','paid')->whereDate('delivery_date', today())->count(); @endphp
-                @if($todayCount > 0)
-                <span class="ml-auto bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $todayCount }}</span>
-                @endif
-            </a>
 
             <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit','supply.create') ? 'active' : '' }}">
                 <i data-lucide="receipt" class="w-4 h-4"></i>
@@ -263,10 +255,6 @@
         <a href="{{ route('day-end.create') }}" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-900 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
           Din Band Karo
-        </a>
-        <a href="{{ route('supply.schedule') }}" class="flex items-center gap-2.5 bg-amber-500 hover:bg-amber-600 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
-          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i></div>
-          Aaj ka Schedule
         </a>
         <a href="{{ route('purchases.create') }}" class="flex items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i></div>
