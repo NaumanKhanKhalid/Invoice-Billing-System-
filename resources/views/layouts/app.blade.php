@@ -232,6 +232,43 @@
     <!-- ── Global Toast Container ── -->
     <div id="toast-container"></div>
 
+    <!-- ── Floating Speed Dial ── -->
+    <div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+      {{-- Actions (shown when open) --}}
+      <div x-show="open" x-transition:enter="transition ease-out duration-150"
+           x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+           x-transition:leave="transition ease-in duration-100"
+           x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
+           class="flex flex-col items-end gap-2 mb-1">
+        <a href="{{ route('day-end.create') }}" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-900 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
+          Din Band Karo
+        </a>
+        <a href="{{ route('supply.schedule') }}" class="flex items-center gap-2.5 bg-amber-500 hover:bg-amber-600 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i></div>
+          Aaj ka Schedule
+        </a>
+        <a href="{{ route('purchases.create') }}" class="flex items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i></div>
+          New Purchase
+        </a>
+        <a href="{{ route('supply.create') }}" class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="plus" class="w-3.5 h-3.5"></i></div>
+          New Supply Order
+        </a>
+      </div>
+
+      {{-- Main FAB button --}}
+      <button @click="open = !open"
+              class="w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all duration-200"
+              :class="open ? 'rotate-45 bg-slate-700 hover:bg-slate-800' : ''">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    {{-- Backdrop --}}
+    <div x-data x-show="false" class="fixed inset-0 z-40" style="display:none"></div>
+
     <script>
         lucide.createIcons();
 

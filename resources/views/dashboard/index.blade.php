@@ -2,7 +2,40 @@
 @section('title','Dashboard')
 @section('content')
 <div class="space-y-6">
-  <div><h1 class="text-2xl font-bold text-slate-900">Dashboard</h1><p class="text-sm text-slate-500 mt-0.5">Anwar Chicken Center — {{ now()->format('d M Y') }}</p></div>
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Anwar Chicken Center — {{ now()->format('d M Y') }}</p>
+    </div>
+  </div>
+
+  {{-- Quick Actions --}}
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <a href="{{ route('supply.create') }}" class="group flex flex-col items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl p-4 transition-colors shadow-sm">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+        <i data-lucide="plus" class="w-5 h-5"></i>
+      </div>
+      <span class="text-sm font-semibold">New Supply Order</span>
+    </a>
+    <a href="{{ route('purchases.create') }}" class="group flex flex-col items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-4 transition-colors shadow-sm">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+      </div>
+      <span class="text-sm font-semibold">New Purchase</span>
+    </a>
+    <a href="{{ route('supply.schedule') }}" class="group flex flex-col items-center gap-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl p-4 transition-colors shadow-sm">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+        <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+      </div>
+      <span class="text-sm font-semibold">Aaj ka Schedule</span>
+    </a>
+    <a href="{{ route('day-end.create') }}" class="group flex flex-col items-center gap-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl p-4 transition-colors shadow-sm">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+        <i data-lucide="moon" class="w-5 h-5"></i>
+      </div>
+      <span class="text-sm font-semibold">Din Band Karo</span>
+    </a>
+  </div>
 
   {{-- Today's stats --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
