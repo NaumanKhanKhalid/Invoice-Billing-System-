@@ -140,9 +140,18 @@ class PurchaseController extends Controller
             'payment_date' => 'required|date',
             'method'       => 'required|in:cash,bank,jazzcash,easypaisa',
             'note'         => 'nullable|string',
+            'proof'        => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        PurchasePayment::create(array_merge($data, ['purchase_order_id' => $purchase->id]));
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('payment-proofs', 'public');
+        }
+
+        PurchasePayment::create(array_merge($data, [
+            'purchase_order_id' => $purchase->id,
+            'proof_path'        => $proofPath,
+        ]));
 
         $newPaid = $purchase->amount_paid + (float)$data['amount'];
         $newDue  = max(0, $purchase->total_amount - $newPaid);

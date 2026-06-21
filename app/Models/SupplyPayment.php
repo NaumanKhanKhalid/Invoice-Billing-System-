@@ -3,15 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SupplyPayment extends Model
 {
-    use HasFactory;
-
-    protected $table = 'supply_payments';
-
-    protected $fillable = ['supply_order_id', 'amount', 'payment_date', 'method', 'note'];
+    protected $fillable = ['supply_order_id', 'amount', 'payment_date', 'method', 'note', 'proof_path'];
 
     protected function casts(): array
     {

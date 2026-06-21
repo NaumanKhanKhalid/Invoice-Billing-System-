@@ -77,15 +77,15 @@ $typeBadge = [
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Total Billed</p>
-      <p class="text-2xl font-bold text-slate-900 mt-1">PKR {{ number_format($totalBilled,0) }}</p>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ formatCurrency($totalBilled) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Total Paid</p>
-      <p class="text-2xl font-bold text-green-600 mt-1">PKR {{ number_format($totalPaid,0) }}</p>
+      <p class="text-2xl font-bold text-green-600 mt-1">{{ formatCurrency($totalPaid) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Outstanding</p>
-      <p class="text-2xl font-bold text-red-600 mt-1">PKR {{ number_format($outstanding,0) }}</p>
+      <p class="text-2xl font-bold text-red-600 mt-1">{{ formatCurrency($outstanding) }}</p>
     </div>
   </div>
 
@@ -112,9 +112,9 @@ $typeBadge = [
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($order->date)->format('d M Y') }}</td>
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $order->invoice_number ?? '-' }}</td>
-          <td class="px-4 py-3 text-sm text-right">{{ number_format($order->quantity_kg ?? 0, 1) }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($order->total_amount,0) }}</td>
-          <td class="px-4 py-3 text-sm text-right text-green-600">PKR {{ number_format($order->amount_paid ?? 0, 0) }}</td>
+          <td class="px-4 py-3 text-sm text-right">{{ formatKg($order->quantity_kg ?? 0) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($order->total_amount) }}</td>
+          <td class="px-4 py-3 text-sm text-right text-green-600">{{ formatCurrency($order->amount_paid ?? 0) }}</td>
           <td class="px-4 py-3">
             <span class="badge {{ ($order->payment_status??'unpaid')==='paid'?'badge-green':(($order->payment_status??'unpaid')==='partial'?'badge-yellow':'badge-red') }}">
               {{ ucfirst($order->payment_status ?? 'unpaid') }}

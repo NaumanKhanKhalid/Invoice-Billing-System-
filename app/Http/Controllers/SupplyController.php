@@ -144,9 +144,15 @@ class SupplyController extends Controller
             'payment_date' => 'required|date',
             'method'       => 'required|in:cash,bank,jazzcash,easypaisa',
             'note'         => 'nullable|string',
+            'proof'        => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $supply->payments()->create($data);
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('payment-proofs', 'public');
+        }
+
+        $supply->payments()->create(array_merge($data, ['proof_path' => $proofPath]));
 
         $newPaid = $supply->amount_paid + $data['amount'];
         $newDue  = $supply->total_amount - $newPaid;

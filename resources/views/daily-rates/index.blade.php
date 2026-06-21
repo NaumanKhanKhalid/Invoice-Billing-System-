@@ -83,9 +83,9 @@
             {{ \Carbon\Carbon::parse($rate->date)->format('d M Y') }}
             @if($rate->date->isToday())<span class="badge badge-green ml-1 text-xs">Today</span>@endif
           </td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($rate->live_rate_per_kg,2) }}</td>
-          <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $rate->retail_rate_per_kg ? 'PKR '.number_format($rate->retail_rate_per_kg,2) : '-' }}</td>
-          <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $rate->supply_rate_per_kg ? 'PKR '.number_format($rate->supply_rate_per_kg,2) : '-' }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ formatKg($rate->live_rate_per_kg) }}</td>
+          <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $rate->retail_rate_per_kg ? formatCurrency($rate->retail_rate_per_kg) : '-' }}</td>
+          <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $rate->supply_rate_per_kg ? formatCurrency($rate->supply_rate_per_kg) : '-' }}</td>
           <td class="px-4 py-3 text-sm text-slate-500">{{ $rate->notes ?? '-' }}</td>
         </tr>
         @empty

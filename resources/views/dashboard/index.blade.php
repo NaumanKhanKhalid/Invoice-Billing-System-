@@ -8,19 +8,19 @@
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
       <p class="text-xs text-green-600 font-medium uppercase tracking-wider">Today Supply</p>
-      <p class="text-xl font-bold text-green-700 mt-1">PKR {{ number_format($todaySupply,0) }}</p>
+      <p class="text-xl font-bold text-green-700 mt-1">{{ formatCurrency($todaySupply) }}</p>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Counter Cash</p>
-      <p class="text-xl font-bold text-slate-900 mt-1">PKR {{ number_format($todayCounter,0) }}</p>
+      <p class="text-xl font-bold text-slate-900 mt-1">{{ formatCurrency($todayCounter) }}</p>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Today Purchases</p>
-      <p class="text-xl font-bold text-orange-600 mt-1">PKR {{ number_format($todayPurchases,0) }}</p>
+      <p class="text-xl font-bold text-orange-600 mt-1">{{ formatCurrency($todayPurchases) }}</p>
     </div>
     <div class="bg-{{ $todayProfit>=0?'green':'red' }}-50 border border-{{ $todayProfit>=0?'green':'red' }}-200 rounded-xl p-4 text-center">
       <p class="text-xs text-{{ $todayProfit>=0?'green':'red' }}-600 font-medium uppercase tracking-wider">Today Profit</p>
-      <p class="text-xl font-bold text-{{ $todayProfit>=0?'green-700':'red-700' }} mt-1">PKR {{ number_format(abs($todayProfit),0) }}</p>
+      <p class="text-xl font-bold text-{{ $todayProfit>=0?'green-700':'red-700' }} mt-1">{{ formatCurrency(abs($todayProfit)) }}</p>
     </div>
   </div>
 
@@ -28,15 +28,15 @@
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Month Supply</p>
-      <p class="text-lg font-bold text-green-600 mt-1">PKR {{ number_format($monthSupply,0) }}</p>
+      <p class="text-lg font-bold text-green-600 mt-1">{{ formatCurrency($monthSupply) }}</p>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Supplier Due</p>
-      <p class="text-lg font-bold text-slate-900 mt-1">PKR {{ number_format($supplierDue,0) }}</p>
+      <p class="text-lg font-bold text-slate-900 mt-1">{{ formatCurrency($supplierDue) }}</p>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Customer Due</p>
-      <p class="text-lg font-bold text-orange-600 mt-1">PKR {{ number_format($customerDue,0) }}</p>
+      <p class="text-lg font-bold text-orange-600 mt-1">{{ formatCurrency($customerDue) }}</p>
     </div>
     <div class="bg-{{ $overdueCount>0?'red':'white' }}-50 border border-{{ $overdueCount>0?'red':'slate' }}-200 rounded-xl p-4 shadow-sm">
       <p class="text-xs text-{{ $overdueCount>0?'red':'slate' }}-500 font-medium uppercase tracking-wider">Overdue Orders</p>
@@ -66,7 +66,7 @@
               <p class="text-xs text-slate-500">{{ $o->invoice_number }}</p>
             </td>
             <td class="px-4 py-3 text-right">
-              <p class="text-sm font-bold text-red-600">PKR {{ number_format($o->amount_due,0) }}</p>
+              <p class="text-sm font-bold text-red-600">{{ formatCurrency($o->amount_due) }}</p>
               <p class="text-xs text-slate-400">Due {{ \Carbon\Carbon::parse($o->due_date)->diffForHumans() }}</p>
             </td>
           </tr>
@@ -96,7 +96,7 @@
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3"><a href="{{ route('supply.show',$s) }}" class="text-sm font-medium text-green-600 hover:underline">{{ $s->invoice_number }}</a><p class="text-xs text-slate-400">{{ \Carbon\Carbon::parse($s->date)->format('d M Y') }}</p></td>
           <td class="px-4 py-3 text-sm text-slate-700">{{ $s->customer?->name ?? '—' }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($s->total_amount,0) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($s->total_amount) }}</td>
           <td class="px-4 py-3">
             @if($s->payment_status==='paid')<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Paid</span>
             @elseif($s->payment_status==='partial')<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">Partial</span>

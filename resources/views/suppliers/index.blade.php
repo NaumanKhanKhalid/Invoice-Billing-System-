@@ -24,11 +24,11 @@
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Purchased</p>
-      <p class="text-2xl font-bold text-slate-900 mt-1">PKR {{ number_format($stats['purchased'],0) }}</p>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ formatCurrency($stats['purchased']) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Outstanding</p>
-      <p class="text-2xl font-bold text-red-600 mt-1">PKR {{ number_format($stats['outstanding'],0) }}</p>
+      <p class="text-2xl font-bold text-red-600 mt-1">{{ formatCurrency($stats['outstanding']) }}</p>
     </div>
   </div>
 
@@ -72,8 +72,8 @@
           </td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $supplier->phone }}</td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $supplier->credit_days }} days</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($supplier->purchase_orders_sum_total_amount??0,0) }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium {{ ($supplier->balance??0)>0?'text-red-600':'text-slate-500' }}">PKR {{ number_format($supplier->balance??0,0) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($supplier->purchase_orders_sum_total_amount??0) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium {{ ($supplier->balance??0)>0?'text-red-600':'text-slate-500' }}">{{ formatCurrency($supplier->balance??0) }}</td>
           <td class="px-4 py-3">
             <span class="badge {{ $supplier->is_active?'badge-green':'badge-gray' }}">{{ $supplier->is_active?'Active':'Inactive' }}</span>
           </td>

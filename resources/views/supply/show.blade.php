@@ -40,8 +40,8 @@
           <div><p class="text-slate-500">Customer</p><p class="font-medium text-slate-900 mt-0.5">{{ $supply->customer?->name ?? '—' }}</p></div>
           <div><p class="text-slate-500">Date</p><p class="font-medium text-slate-900 mt-0.5">{{ \Carbon\Carbon::parse($supply->date)->format('d M Y') }}</p></div>
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $supply->due_date ? \Carbon\Carbon::parse($supply->due_date)->format('d M Y') : 'Same day' }}</p></div>
-          <div><p class="text-slate-500">Dressed Weight</p><p class="font-medium text-slate-900 mt-0.5">{{ number_format($supply->dressed_weight_kg,3) }} kg</p></div>
-          <div><p class="text-slate-500">Rate per kg</p><p class="font-medium text-slate-900 mt-0.5">PKR {{ number_format($supply->rate_per_kg,2) }}</p></div>
+          <div><p class="text-slate-500">Dressed Weight</p><p class="font-medium text-slate-900 mt-0.5">{{ formatKg($supply->dressed_weight_kg) }} kg</p></div>
+          <div><p class="text-slate-500">Rate per kg</p><p class="font-medium text-slate-900 mt-0.5">PKR {{ formatKg($supply->rate_per_kg) }}</p></div>
           <div><p class="text-slate-500">Total Amount</p><p class="font-bold text-green-700 mt-0.5 text-base">PKR {{ number_format($supply->total_amount,0) }}</p></div>
         </div>
         @if($supply->delivery_address)
@@ -62,17 +62,25 @@
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Method</th>
             <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Note</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Proof</th>
           </tr></thead>
           <tbody class="divide-y divide-slate-100">
             @forelse($supply->payments as $payment)
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</td>
               <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">{{ ucfirst($payment->method) }}</span></td>
-              <td class="px-4 py-3 text-sm text-right font-medium text-green-600">PKR {{ number_format($payment->amount,0) }}</td>
+              <td class="px-4 py-3 text-sm text-right font-medium text-green-600">{{ formatCurrency($payment->amount) }}</td>
               <td class="px-4 py-3 text-sm text-slate-500">{{ $payment->note ?? '—' }}</td>
+              <td class="px-4 py-3 text-sm">
+                @if($payment->proof_path)
+                  <a href="{{ Storage::url($payment->proof_path) }}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 text-xs font-medium"><i data-lucide="paperclip" class="w-3 h-3"></i>View</a>
+                @else
+                  <span class="text-slate-300">—</span>
+                @endif
+              </td>
             </tr>
             @empty
-            <tr><td colspan="4" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
+            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -82,7 +90,7 @@
     <div class="space-y-5">
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">
         <h2 class="font-semibold text-slate-900">Payment Summary</h2>
-        <div class="flex justify-between text-sm text-slate-500"><span>{{ number_format($supply->dressed_weight_kg,1) }} kg × PKR {{ number_format($supply->rate_per_kg,2) }}/kg</span></div>
+        <div class="flex justify-between text-sm text-slate-500"><span>{{ formatKg($supply->dressed_weight_kg) }} kg × PKR {{ formatKg($supply->rate_per_kg) }}/kg</span></div>
         <div class="flex justify-between text-sm"><span class="text-slate-500">Total</span><span class="font-bold text-slate-900">PKR {{ number_format($supply->total_amount,0) }}</span></div>
         <div class="flex justify-between text-sm"><span class="text-slate-500">Paid</span><span class="font-medium text-green-600">PKR {{ number_format($supply->amount_paid,0) }}</span></div>
         <div class="border-t border-slate-100 pt-3 flex justify-between">
@@ -99,7 +107,7 @@
       @if($supply->payment_status!=='paid')
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
         <h2 class="font-semibold text-slate-900 mb-4">Record Payment</h2>
-        <form method="POST" action="{{ route('supply.payment',$supply) }}" class="space-y-4">
+        <form method="POST" action="{{ route('supply.payment',$supply) }}" class="space-y-4" enctype="multipart/form-data">
           @csrf
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Amount <span class="text-red-500">*</span></label>
@@ -123,6 +131,11 @@
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Note</label>
             <input type="text" name="note" value="{{ old('note') }}" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Payment Proof <span class="text-slate-400 font-normal">(optional)</span></label>
+            <input type="file" name="proof" accept="image/*,.pdf" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
+            <p class="text-xs text-slate-400 mt-1">Screenshot ya receipt upload karo (JPG, PNG, PDF · max 2MB)</p>
           </div>
           <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">Record Payment</button>
         </form>

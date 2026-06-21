@@ -29,7 +29,7 @@
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase">Supply Revenue</p>
       <p class="text-xl font-bold text-blue-600 mt-1">PKR {{ number_format($dayEnd->total_supply_revenue,0) }}</p>
-      <p class="text-xs text-slate-400 mt-0.5">{{ number_format($dayEnd->total_supply_dressed_kg,1) }} kg</p>
+      <p class="text-xs text-slate-400 mt-0.5">{{ formatKg($dayEnd->total_supply_dressed_kg) }} kg</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase">Counter Cash</p>
@@ -54,13 +54,13 @@
       <h2 class="font-semibold text-slate-900 mb-4">Stock Movement</h2>
       <table class="w-full text-sm">
         <tbody class="divide-y divide-slate-100">
-          <tr><td class="py-2 text-slate-500">Opening Live Stock</td><td class="py-2 text-right font-medium">{{ number_format($dayEnd->opening_stock_live_kg,3) }} kg</td></tr>
-          <tr><td class="py-2 text-slate-500">Opening Dressed Stock</td><td class="py-2 text-right font-medium">{{ number_format($dayEnd->opening_stock_dressed_kg,3) }} kg</td></tr>
-          <tr><td class="py-2 text-slate-500">Purchased Live</td><td class="py-2 text-right font-medium text-blue-600">+{{ number_format($dayEnd->total_purchased_live_kg,3) }} kg</td></tr>
-          <tr><td class="py-2 text-slate-500">Supplied (Dressed)</td><td class="py-2 text-right font-medium text-red-500">-{{ number_format($dayEnd->total_supply_dressed_kg,3) }} kg</td></tr>
-          <tr><td class="py-2 text-slate-500">Dead / Spoilage</td><td class="py-2 text-right text-orange-500">-{{ number_format($dayEnd->dead_kg+$dayEnd->spoilage_kg,3) }} kg</td></tr>
-          <tr class="border-t-2 border-slate-200"><td class="py-2 font-semibold">Closing Live Stock</td><td class="py-2 text-right font-bold">{{ number_format($dayEnd->closing_stock_live_kg,3) }} kg</td></tr>
-          <tr><td class="py-2 font-semibold">Closing Dressed Stock</td><td class="py-2 text-right font-bold">{{ number_format($dayEnd->closing_stock_dressed_kg,3) }} kg</td></tr>
+          <tr><td class="py-2 text-slate-500">Opening Live Stock</td><td class="py-2 text-right font-medium">{{ formatKg($dayEnd->opening_stock_live_kg) }} kg</td></tr>
+          <tr><td class="py-2 text-slate-500">Opening Dressed Stock</td><td class="py-2 text-right font-medium">{{ formatKg($dayEnd->opening_stock_dressed_kg) }} kg</td></tr>
+          <tr><td class="py-2 text-slate-500">Purchased Live</td><td class="py-2 text-right font-medium text-blue-600">+{{ formatKg($dayEnd->total_purchased_live_kg) }} kg</td></tr>
+          <tr><td class="py-2 text-slate-500">Supplied (Dressed)</td><td class="py-2 text-right font-medium text-red-500">-{{ formatKg($dayEnd->total_supply_dressed_kg) }} kg</td></tr>
+          <tr><td class="py-2 text-slate-500">Dead / Spoilage</td><td class="py-2 text-right text-orange-500">-{{ formatKg($dayEnd->dead_kg+$dayEnd->spoilage_kg) }} kg</td></tr>
+          <tr class="border-t-2 border-slate-200"><td class="py-2 font-semibold">Closing Live Stock</td><td class="py-2 text-right font-bold">{{ formatKg($dayEnd->closing_stock_live_kg) }} kg</td></tr>
+          <tr><td class="py-2 font-semibold">Closing Dressed Stock</td><td class="py-2 text-right font-bold">{{ formatKg($dayEnd->closing_stock_dressed_kg) }} kg</td></tr>
           <tr><td class="py-2 text-slate-500">Closing Stock Value</td><td class="py-2 text-right font-medium text-green-600">PKR {{ number_format($dayEnd->closing_stock_value,0) }}</td></tr>
         </tbody>
       </table>

@@ -10,15 +10,15 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Today</p>
-      <p class="text-xl font-bold text-slate-900 mt-1">PKR {{ number_format($stats['today'],0) }}</p>
+      <p class="text-xl font-bold text-slate-900 mt-1">{{ formatCurrency($stats['today']) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">This Month</p>
-      <p class="text-xl font-bold text-orange-600 mt-1">PKR {{ number_format($stats['this_month'],0) }}</p>
+      <p class="text-xl font-bold text-orange-600 mt-1">{{ formatCurrency($stats['this_month']) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">All Time</p>
-      <p class="text-xl font-bold text-slate-700 mt-1">PKR {{ number_format($stats['total'],0) }}</p>
+      <p class="text-xl font-bold text-slate-700 mt-1">{{ formatCurrency($stats['total']) }}</p>
     </div>
   </div>
 
@@ -50,7 +50,7 @@
           <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">{{ $e->category }}</span></td>
           <td class="px-4 py-3 text-sm text-slate-700">{{ $e->description }}</td>
           <td class="px-4 py-3 text-sm text-slate-500">{{ $e->paid_to ?? '-' }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($e->amount,0) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($e->amount) }}</td>
           <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">
               <a href="{{ route('expenses.edit',$e) }}" class="text-slate-400 hover:text-blue-600"><i data-lucide="pencil" class="w-4 h-4"></i></a>

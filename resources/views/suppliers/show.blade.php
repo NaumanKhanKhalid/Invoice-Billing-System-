@@ -21,15 +21,15 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Total Purchased</p>
-      <p class="text-2xl font-bold text-slate-900 mt-1">PKR {{ number_format($totalPurchased,0) }}</p>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ formatCurrency($totalPurchased) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Total Paid</p>
-      <p class="text-2xl font-bold text-green-600 mt-1">PKR {{ number_format($totalPaid,0) }}</p>
+      <p class="text-2xl font-bold text-green-600 mt-1">{{ formatCurrency($totalPaid) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Outstanding</p>
-      <p class="text-2xl font-bold text-red-600 mt-1">PKR {{ number_format($outstanding,0) }}</p>
+      <p class="text-2xl font-bold text-red-600 mt-1">{{ formatCurrency($outstanding) }}</p>
     </div>
   </div>
 
@@ -54,8 +54,8 @@
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($order->date)->format('d M Y') }}</td>
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $order->invoice_number }}</td>
-          <td class="px-4 py-3 text-sm text-right">{{ number_format($order->live_weight_kg,1) }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($order->total_amount,0) }}</td>
+          <td class="px-4 py-3 text-sm text-right">{{ formatKg($order->live_weight_kg) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($order->total_amount) }}</td>
           <td class="px-4 py-3">
             <span class="badge {{ $order->payment_status==='paid'?'badge-green':($order->payment_status==='partial'?'badge-yellow':'badge-red') }}">
               {{ ucfirst($order->payment_status) }}

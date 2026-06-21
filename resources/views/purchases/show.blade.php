@@ -32,8 +32,8 @@
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $purchase->due_date ? \Carbon\Carbon::parse($purchase->due_date)->format('d M Y') : '-' }}</p></div>
         </div>
         <div class="mt-5 grid grid-cols-2 gap-4">
-          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Live Weight</p><p class="text-lg font-bold text-slate-900 mt-1">{{ number_format($purchase->live_weight_kg,3) }} kg</p></div>
-          <div class="bg-green-50 rounded-lg p-3 text-center border border-green-100"><p class="text-xs text-green-600">Rate / kg (Live)</p><p class="text-lg font-bold text-green-700 mt-1">PKR {{ number_format($purchase->rate_per_kg_live,2) }}</p></div>
+          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Live Weight</p><p class="text-lg font-bold text-slate-900 mt-1">{{ formatKg($purchase->live_weight_kg) }} kg</p></div>
+          <div class="bg-green-50 rounded-lg p-3 text-center border border-green-100"><p class="text-xs text-green-600">Rate / kg (Live)</p><p class="text-lg font-bold text-green-700 mt-1">PKR {{ formatKg($purchase->rate_per_kg_live) }}</p></div>
         </div>
         @if($purchase->dead_on_arrival_kg > 0)
         <p class="mt-3 text-sm text-red-600"><i data-lucide="alert-triangle" class="w-3 h-3 inline mr-1"></i>Dead on arrival: {{ $purchase->dead_on_arrival_kg }} kg</p>
@@ -50,17 +50,25 @@
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Method</th>
             <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Note</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Proof</th>
           </tr></thead>
           <tbody class="divide-y divide-slate-100">
             @forelse($purchase->purchasePayments as $payment)
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</td>
               <td class="px-4 py-3 text-sm"><span class="badge badge-blue">{{ ucfirst($payment->method) }}</span></td>
-              <td class="px-4 py-3 text-sm text-right font-medium text-green-600">PKR {{ number_format($payment->amount,0) }}</td>
+              <td class="px-4 py-3 text-sm text-right font-medium text-green-600">{{ formatCurrency($payment->amount) }}</td>
               <td class="px-4 py-3 text-sm text-slate-500">{{ $payment->note??'-' }}</td>
+              <td class="px-4 py-3 text-sm">
+                @if($payment->proof_path)
+                  <a href="{{ Storage::url($payment->proof_path) }}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 text-xs font-medium"><i data-lucide="paperclip" class="w-3 h-3"></i>View</a>
+                @else
+                  <span class="text-slate-300">—</span>
+                @endif
+              </td>
             </tr>
             @empty
-            <tr><td colspan="4" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
+            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -71,7 +79,7 @@
     <div class="space-y-5">
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">
         <h2 class="font-semibold text-slate-900">Payment Summary</h2>
-        <div class="flex justify-between text-sm"><span class="text-slate-500">Rate/kg (live)</span><span class="font-medium">PKR {{ number_format($purchase->rate_per_kg_live,2) }}</span></div>
+        <div class="flex justify-between text-sm"><span class="text-slate-500">Rate/kg (live)</span><span class="font-medium">PKR {{ formatKg($purchase->rate_per_kg_live) }}</span></div>
         <div class="flex justify-between text-sm"><span class="text-slate-500">Total Amount</span><span class="font-bold text-slate-900">PKR {{ number_format($purchase->total_amount,0) }}</span></div>
         <div class="flex justify-between text-sm"><span class="text-slate-500">Amount Paid</span><span class="font-medium text-green-600">PKR {{ number_format($purchase->amount_paid,0) }}</span></div>
         <div class="border-t border-slate-100 pt-3 flex justify-between"><span class="font-semibold text-slate-700">Amount Due</span><span class="font-bold text-xl {{ $purchase->amount_due>0?'text-red-600':'text-green-600' }}">PKR {{ number_format($purchase->amount_due,0) }}</span></div>
@@ -85,7 +93,7 @@
       @if($purchase->payment_status !== 'paid')
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
         <h2 class="font-semibold text-slate-900 mb-4">Record Payment</h2>
-        <form method="POST" action="{{ route('purchases.payment',$purchase) }}" class="space-y-4">
+        <form method="POST" action="{{ route('purchases.payment',$purchase) }}" class="space-y-4" enctype="multipart/form-data">
           @csrf
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Amount <span class="text-red-500">*</span></label>
@@ -108,6 +116,11 @@
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Note</label>
             <input type="text" name="note" value="{{ old('note') }}" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Payment Proof <span class="text-slate-400 font-normal">(optional)</span></label>
+            <input type="file" name="proof" accept="image/*,.pdf" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
+            <p class="text-xs text-slate-400 mt-1">Screenshot ya receipt upload karo (JPG, PNG, PDF · max 2MB)</p>
           </div>
           <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">Record Payment</button>
         </form>

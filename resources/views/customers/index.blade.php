@@ -33,11 +33,11 @@ $typeBadge = [
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Billed</p>
-      <p class="text-2xl font-bold text-slate-900 mt-1">PKR {{ number_format($stats['billed'],0) }}</p>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ formatCurrency($stats['billed']) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Outstanding</p>
-      <p class="text-2xl font-bold text-red-600 mt-1">PKR {{ number_format($stats['outstanding'],0) }}</p>
+      <p class="text-2xl font-bold text-red-600 mt-1">{{ formatCurrency($stats['outstanding']) }}</p>
     </div>
   </div>
 
@@ -92,7 +92,7 @@ $typeBadge = [
           </td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $customer->credit_days }} days</td>
           <td class="px-4 py-3 text-sm text-right font-medium {{ ($customer->current_balance??0)>0?'text-red-600':'text-slate-500' }}">
-            PKR {{ number_format($customer->current_balance??0,0) }}
+            {{ formatCurrency($customer->current_balance??0) }}
           </td>
           <td class="px-4 py-3">
             <span class="badge {{ $customer->is_active?'badge-green':'badge-gray' }}">{{ $customer->is_active?'Active':'Inactive' }}</span>
