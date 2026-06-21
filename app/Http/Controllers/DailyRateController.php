@@ -26,13 +26,14 @@ class DailyRateController extends Controller
     {
         $request->validate(['rates' => 'required|array']);
         foreach ($request->rates as $typeId => $rateData) {
-            if (empty($rateData['rate_per_kg'])) continue;
+            if (empty($rateData['live_rate_per_kg'])) continue;
             DailyRate::updateOrCreate(
                 ['chicken_type_id' => $typeId, 'date' => $rateData['date'] ?? today()->toDateString()],
                 [
-                    'rate_per_kg'         => $rateData['rate_per_kg'],
-                    'rate_per_kg_dressed' => $rateData['rate_per_kg_dressed'] ?? 0,
-                    'notes'               => $rateData['notes'] ?? null,
+                    'live_rate_per_kg'   => $rateData['live_rate_per_kg'],
+                    'retail_rate_per_kg' => $rateData['retail_rate_per_kg'] ?? 0,
+                    'supply_rate_per_kg' => $rateData['supply_rate_per_kg'] ?? 0,
+                    'notes'              => $rateData['notes'] ?? null,
                 ]
             );
         }

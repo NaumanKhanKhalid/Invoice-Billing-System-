@@ -46,7 +46,6 @@
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Invoice #</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Live Kg</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Dressed Kg</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
         </tr>
@@ -58,7 +57,6 @@
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $order->invoice_number }}</td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $order->chickenType->name ?? '-' }}</td>
           <td class="px-4 py-3 text-sm text-right">{{ number_format($order->live_weight_kg,1) }}</td>
-          <td class="px-4 py-3 text-sm text-right">{{ number_format($order->dressed_weight_kg,1) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($order->total_amount,0) }}</td>
           <td class="px-4 py-3">
             <span class="badge {{ $order->payment_status==='paid'?'badge-green':($order->payment_status==='partial'?'badge-yellow':'badge-red') }}">
@@ -68,7 +66,7 @@
         </tr>
         @empty
         <tr>
-          <td colspan="7" class="px-4 py-8 text-center text-slate-400 text-sm">No purchase orders yet.</td>
+          <td colspan="6" class="px-4 py-8 text-center text-slate-400 text-sm">No purchase orders yet.</td>
         </tr>
         @endforelse
       </tbody>

@@ -5,7 +5,7 @@
 <div class="max-w-3xl mx-auto space-y-5">
     <div>
         <h1 class="text-2xl font-bold text-slate-900">Settings</h1>
-        <p class="text-sm text-slate-500 mt-1">Manage your company and invoice settings</p>
+        <p class="text-sm text-slate-500 mt-1">Company information manage karo</p>
     </div>
 
     <form method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data" class="space-y-5">
@@ -49,35 +49,6 @@
                     <textarea name="company_address" rows="2"
                               class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none resize-none"
                               placeholder="Company address...">{{ $settings['company_address'] ?? '' }}</textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- Invoice Settings -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <h2 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
-                Invoice Settings
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Invoice Number Prefix</label>
-                    <input type="text" name="invoice_prefix" value="{{ $settings['invoice_prefix'] ?? 'INV' }}"
-                           class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none"
-                           placeholder="INV">
-                    <p class="text-xs text-slate-400 mt-1">e.g. INV → INV-2024-0001</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Default Tax Rate (%)</label>
-                    <input type="number" name="default_tax_rate" value="{{ $settings['default_tax_rate'] ?? '5' }}"
-                           step="0.01" min="0" max="100"
-                           class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none">
-                </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Default Terms & Conditions</label>
-                    <textarea name="default_terms" rows="3"
-                              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none resize-none"
-                              placeholder="Payment is due within 30 days of invoice date...">{{ $settings['default_terms'] ?? '' }}</textarea>
                 </div>
             </div>
         </div>

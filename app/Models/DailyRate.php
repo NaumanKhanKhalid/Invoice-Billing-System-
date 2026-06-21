@@ -9,11 +9,11 @@ class DailyRate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['chicken_type_id', 'rate_per_kg', 'rate_per_kg_dressed', 'date', 'notes'];
+    protected $fillable = ['chicken_type_id', 'live_rate_per_kg', 'retail_rate_per_kg', 'supply_rate_per_kg', 'date', 'notes'];
 
     protected function casts(): array
     {
-        return ['rate_per_kg' => 'float', 'rate_per_kg_dressed' => 'float', 'date' => 'date'];
+        return ['live_rate_per_kg' => 'float', 'retail_rate_per_kg' => 'float', 'supply_rate_per_kg' => 'float', 'date' => 'date'];
     }
 
     public function chickenType()

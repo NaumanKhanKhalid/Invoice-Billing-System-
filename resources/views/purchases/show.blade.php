@@ -32,11 +32,9 @@
           <div><p class="text-slate-500">Chicken Type</p><p class="font-medium text-slate-900 mt-0.5">{{ $purchase->chickenType->name??'-' }}</p></div>
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $purchase->due_date ? \Carbon\Carbon::parse($purchase->due_date)->format('d M Y') : '-' }}</p></div>
         </div>
-        <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Live Weight</p><p class="text-lg font-bold text-slate-900 mt-1">{{ number_format($purchase->live_weight_kg,1) }} kg</p></div>
-          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Dressed Weight</p><p class="text-lg font-bold text-slate-900 mt-1">{{ number_format($purchase->dressed_weight_kg,1) }} kg</p></div>
-          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Waste</p><p class="text-lg font-bold text-slate-900 mt-1">{{ number_format($purchase->waste_weight_kg,1) }} kg</p></div>
-          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Yield</p><p class="text-lg font-bold {{ $purchase->yield_percentage >= 68 && $purchase->yield_percentage <= 75 ? 'text-green-600':'text-orange-600' }} mt-1">{{ $purchase->yield_percentage }}%</p></div>
+        <div class="mt-5 grid grid-cols-2 gap-4">
+          <div class="bg-slate-50 rounded-lg p-3 text-center"><p class="text-xs text-slate-500">Live Weight</p><p class="text-lg font-bold text-slate-900 mt-1">{{ number_format($purchase->live_weight_kg,3) }} kg</p></div>
+          <div class="bg-green-50 rounded-lg p-3 text-center border border-green-100"><p class="text-xs text-green-600">Rate / kg (Live)</p><p class="text-lg font-bold text-green-700 mt-1">PKR {{ number_format($purchase->rate_per_kg_live,2) }}</p></div>
         </div>
         @if($purchase->dead_on_arrival_kg > 0)
         <p class="mt-3 text-sm text-red-600"><i data-lucide="alert-triangle" class="w-3 h-3 inline mr-1"></i>Dead on arrival: {{ $purchase->dead_on_arrival_kg }} kg</p>

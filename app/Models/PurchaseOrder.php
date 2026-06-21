@@ -9,15 +9,12 @@ class PurchaseOrder extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['supplier_id', 'date', 'invoice_number', 'live_weight_kg', 'dressed_weight_kg', 'waste_weight_kg', 'yield_percentage', 'dead_on_arrival_kg', 'chicken_type_id', 'rate_per_kg_live', 'total_amount', 'amount_paid', 'amount_due', 'due_date', 'payment_status', 'notes'];
+    protected $fillable = ['supplier_id', 'date', 'invoice_number', 'live_weight_kg', 'dead_on_arrival_kg', 'chicken_type_id', 'rate_per_kg_live', 'total_amount', 'amount_paid', 'amount_due', 'due_date', 'payment_status', 'notes'];
 
     protected function casts(): array
     {
         return [
             'live_weight_kg' => 'float',
-            'dressed_weight_kg' => 'float',
-            'waste_weight_kg' => 'float',
-            'yield_percentage' => 'float',
             'dead_on_arrival_kg' => 'float',
             'rate_per_kg_live' => 'float',
             'total_amount' => 'float',

@@ -37,7 +37,7 @@ class CustomerController extends Controller
             'name'             => 'required|string|max:255',
             'phone'            => 'required|string|max:20',
             'address'          => 'nullable|string',
-            'type'             => 'required|in:retail,hotel,restaurant,company,reseller',
+            'type'             => 'required|in:hotel,catering,restaurant,company,reseller',
             'credit_days'      => 'integer|min:0',
             'credit_limit'     => 'numeric|min:0',
             'whatsapp_number'  => 'nullable|string|max:20',
@@ -45,7 +45,6 @@ class CustomerController extends Controller
         $data['is_active']      = $request->boolean('is_active', true);
         $data['current_balance'] = 0;
         $data['credit_days']    = $data['credit_days'] ?? match($data['type']) {
-            'retail'   => 0,
             'reseller' => 7,
             default    => 30,
         };
@@ -73,7 +72,7 @@ class CustomerController extends Controller
             'name'            => 'required|string|max:255',
             'phone'           => 'required|string|max:20',
             'address'         => 'nullable|string',
-            'type'            => 'required|in:retail,hotel,restaurant,company,reseller',
+            'type'            => 'required|in:hotel,catering,restaurant,company,reseller',
             'credit_days'     => 'integer|min:0',
             'credit_limit'    => 'numeric|min:0',
             'whatsapp_number' => 'nullable|string|max:20',

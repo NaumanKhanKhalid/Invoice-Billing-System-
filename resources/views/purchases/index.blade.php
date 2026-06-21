@@ -36,7 +36,6 @@
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Supplier</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Live Kg</th>
-        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Dressed Kg</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Due</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
@@ -51,7 +50,6 @@
           <td class="px-4 py-3 text-sm text-slate-700">{{ $order->supplier->name }}</td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $order->chickenType->name??'-' }}</td>
           <td class="px-4 py-3 text-sm text-right text-slate-700">{{ number_format($order->live_weight_kg,1) }}</td>
-          <td class="px-4 py-3 text-sm text-right text-slate-700">{{ number_format($order->dressed_weight_kg,1) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">PKR {{ number_format($order->total_amount,0) }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium {{ $isOverdue?'text-red-600':($order->amount_due>0?'text-orange-600':'text-slate-400') }}">PKR {{ number_format($order->amount_due,0) }}</td>
           <td class="px-4 py-3">
@@ -71,7 +69,7 @@
           </td>
         </tr>
         @empty
-        <tr><td colspan="10" class="px-4 py-12 text-center"><i data-lucide="shopping-cart" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i><p class="text-slate-500 font-medium">No purchase orders yet</p><a href="{{ route('purchases.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Record first purchase</a></td></tr>
+        <tr><td colspan="9" class="px-4 py-12 text-center"><i data-lucide="shopping-cart" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i><p class="text-slate-500 font-medium">No purchase orders yet</p><a href="{{ route('purchases.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Record first purchase</a></td></tr>
         @endforelse
       </tbody>
     </table>

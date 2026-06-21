@@ -50,20 +50,16 @@ class PurchaseController extends Controller
             'date'               => 'required|date',
             'chicken_type_id'    => 'required|exists:chicken_types,id',
             'live_weight_kg'     => 'required|numeric|min:0.001',
-            'dressed_weight_kg'  => 'required|numeric|min:0.001',
             'dead_on_arrival_kg' => 'nullable|numeric|min:0',
             'rate_per_kg_live'   => 'required|numeric|min:0',
             'notes'              => 'nullable|string',
         ]);
 
         $supplier = Supplier::findOrFail($data['supplier_id']);
-        $liveKg     = (float)$data['live_weight_kg'];
-        $dressedKg  = (float)$data['dressed_weight_kg'];
-        $doa        = (float)($data['dead_on_arrival_kg'] ?? 0);
-        $wasteKg    = $liveKg - $dressedKg - $doa;
-        $yield      = $liveKg > 0 ? round(($dressedKg / $liveKg) * 100, 2) : 0;
-        $total      = round($liveKg * (float)$data['rate_per_kg_live'], 2);
-        $dueDate    = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
+        $liveKg   = (float)$data['live_weight_kg'];
+        $doa      = (float)($data['dead_on_arrival_kg'] ?? 0);
+        $total    = round($liveKg * (float)$data['rate_per_kg_live'], 2);
+        $dueDate  = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
 
         $order = PurchaseOrder::create([
             'supplier_id'        => $data['supplier_id'],
@@ -71,9 +67,6 @@ class PurchaseController extends Controller
             'invoice_number'     => $this->generateInvoiceNumber(),
             'chicken_type_id'    => $data['chicken_type_id'],
             'live_weight_kg'     => $liveKg,
-            'dressed_weight_kg'  => $dressedKg,
-            'waste_weight_kg'    => max(0, $wasteKg),
-            'yield_percentage'   => $yield,
             'dead_on_arrival_kg' => $doa,
             'rate_per_kg_live'   => $data['rate_per_kg_live'],
             'total_amount'       => $total,
@@ -116,28 +109,23 @@ class PurchaseController extends Controller
             'date'               => 'required|date',
             'chicken_type_id'    => 'required|exists:chicken_types,id',
             'live_weight_kg'     => 'required|numeric|min:0.001',
-            'dressed_weight_kg'  => 'required|numeric|min:0.001',
             'dead_on_arrival_kg' => 'nullable|numeric|min:0',
             'rate_per_kg_live'   => 'required|numeric|min:0',
             'notes'              => 'nullable|string',
         ]);
-        $supplier  = Supplier::findOrFail($data['supplier_id']);
-        $liveKg    = (float)$data['live_weight_kg'];
-        $dressedKg = (float)$data['dressed_weight_kg'];
-        $doa       = (float)($data['dead_on_arrival_kg'] ?? 0);
-        $newTotal  = round($liveKg * (float)$data['rate_per_kg_live'], 2);
-        $oldTotal  = $purchase->total_amount;
+        $supplier   = Supplier::findOrFail($data['supplier_id']);
+        $liveKg     = (float)$data['live_weight_kg'];
+        $doa        = (float)($data['dead_on_arrival_kg'] ?? 0);
+        $newTotal   = round($liveKg * (float)$data['rate_per_kg_live'], 2);
+        $oldTotal   = $purchase->total_amount;
         $amountPaid = $purchase->amount_paid;
-        $dueDate   = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
+        $dueDate    = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
 
         $purchase->update([
             'supplier_id'        => $data['supplier_id'],
             'date'               => $data['date'],
             'chicken_type_id'    => $data['chicken_type_id'],
             'live_weight_kg'     => $liveKg,
-            'dressed_weight_kg'  => $dressedKg,
-            'waste_weight_kg'    => max(0, $liveKg - $dressedKg - $doa),
-            'yield_percentage'   => $liveKg > 0 ? round(($dressedKg/$liveKg)*100,2) : 0,
             'dead_on_arrival_kg' => $doa,
             'rate_per_kg_live'   => $data['rate_per_kg_live'],
             'total_amount'       => $newTotal,
