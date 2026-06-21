@@ -6,9 +6,8 @@ use App\Models\ChickenType;
 use App\Models\Customer;
 use App\Models\PurchaseOrder;
 use App\Models\PurchasePayment;
-use App\Models\SalesOrder;
-use App\Models\SalePayment;
 use App\Models\Supplier;
+use App\Models\SupplyOrder;
 use Illuminate\Database\Seeder;
 
 class SampleDataSeeder extends Seeder
@@ -18,11 +17,12 @@ class SampleDataSeeder extends Seeder
         $broiler  = ChickenType::where('name', 'Broiler')->first();
         $supplier = Supplier::first();
         $hotel    = Customer::where('type', 'hotel')->first();
-        $retail   = Customer::where('name', 'Walk-in Retail')->first();
+
+        if (! $broiler || ! $hotel) return;
 
         // Sample purchase order
         $po = PurchaseOrder::create([
-            'supplier_id'        => $supplier->id,
+            'supplier_id'        => optional($supplier)->id ?? 1,
             'date'               => today()->toDateString(),
             'invoice_number'     => 'PO-' . date('Y') . '-001',
             'live_weight_kg'     => 200.000,
@@ -47,12 +47,11 @@ class SampleDataSeeder extends Seeder
             'note'              => 'Advance payment',
         ]);
 
-        // Sample sale 1 — hotel supply
-        $so1 = SalesOrder::create([
+        // Sample supply order — hotel
+        $so = SupplyOrder::create([
             'customer_id'       => $hotel->id,
             'date'              => today()->toDateString(),
             'invoice_number'    => 'SO-' . date('Y') . '-001',
-            'order_type'        => 'supply',
             'chicken_type_id'   => $broiler->id,
             'dressed_weight_kg' => 50.000,
             'rate_per_kg'       => 550.00,
@@ -63,26 +62,6 @@ class SampleDataSeeder extends Seeder
             'payment_status'    => 'unpaid',
         ]);
 
-        // Sample sale 2 — retail walk-in
-        $so2 = SalesOrder::create([
-            'customer_id'       => $retail->id,
-            'date'              => today()->toDateString(),
-            'invoice_number'    => 'SO-' . date('Y') . '-002',
-            'order_type'        => 'retail',
-            'chicken_type_id'   => $broiler->id,
-            'dressed_weight_kg' => 5.500,
-            'rate_per_kg'       => 550.00,
-            'total_amount'      => 3025.00,
-            'amount_paid'       => 3025.00,
-            'amount_due'        => 0.00,
-            'payment_status'    => 'paid',
-        ]);
-
-        SalePayment::create([
-            'sales_order_id' => $so2->id,
-            'amount'         => 3025.00,
-            'payment_date'   => today()->toDateString(),
-            'method'         => 'cash',
-        ]);
+        $hotel->increment('current_balance', 27500.00);
     }
 }

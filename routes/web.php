@@ -1,21 +1,17 @@
 <?php
 
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyRateController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DayEndController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\SaleController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,50 +27,12 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Clients
-    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
-    Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
-    Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
-    Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
-    Route::get('/clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit');
-    Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
-    Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
-    Route::post('/clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
-
-    // Products
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-    Route::post('/products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
-
-    // Invoices
-    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
-    Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
-    Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
-    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
-    Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
-    Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
-    Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
-    Route::post('/invoices/{invoice}/mark-sent', [InvoiceController::class, 'markAsSent'])->name('invoices.mark-sent');
-    Route::post('/invoices/{invoice}/mark-paid', [InvoiceController::class, 'markAsPaid'])->name('invoices.mark-paid');
-    Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
-    Route::post('/invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->name('invoices.duplicate');
-
-    // Payments
-    Route::post('/invoices/{invoice}/payments', [PaymentController::class, 'store'])->name('payments.store');
-    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
-
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-
-    // ── Phase 2 ────────────────────────────────────────────────────────────────
 
     // Suppliers
     Route::resource('suppliers', SupplierController::class);
@@ -94,13 +52,22 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('purchases', PurchaseController::class);
     Route::post('/purchases/{purchase}/payment', [PurchaseController::class, 'storePayment'])->name('purchases.payment');
 
-    // Sales
-    Route::resource('sales', SaleController::class);
-    Route::post('/sales/{sale}/payment', [SaleController::class, 'storePayment'])->name('sales.payment');
+    // Supply Orders (Hotels / Companies)
+    Route::get('/supply', [SupplyController::class, 'index'])->name('supply.index');
+    Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.create');
+    Route::post('/supply', [SupplyController::class, 'store'])->name('supply.store');
+    Route::get('/supply/{supply}', [SupplyController::class, 'show'])->name('supply.show');
+    Route::get('/supply/{supply}/edit', [SupplyController::class, 'edit'])->name('supply.edit');
+    Route::put('/supply/{supply}', [SupplyController::class, 'update'])->name('supply.update');
+    Route::delete('/supply/{supply}', [SupplyController::class, 'destroy'])->name('supply.destroy');
+    Route::post('/supply/{supply}/payment', [SupplyController::class, 'storePayment'])->name('supply.payment');
 
-    // Inventory
-    Route::resource('inventory', InventoryController::class)->except(['edit','update','destroy']);
-    Route::post('/inventory/{inventory}/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+    // Day End Entry (Din Band Karo — CORE)
+    Route::get('/day-end', [DayEndController::class, 'index'])->name('day-end.index');
+    Route::get('/day-end/create', [DayEndController::class, 'create'])->name('day-end.create');
+    Route::post('/day-end', [DayEndController::class, 'store'])->name('day-end.store');
+    Route::get('/day-end/{dayEnd}', [DayEndController::class, 'show'])->name('day-end.show');
+    Route::post('/day-end/{dayEnd}/close', [DayEndController::class, 'close'])->name('day-end.close');
 
     // Expenses
     Route::resource('expenses', ExpenseController::class)->except(['show']);

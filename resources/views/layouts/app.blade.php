@@ -135,25 +135,7 @@
                 Suppliers
             </a>
 
-            <div class="nav-section">Sales</div>
-
-            <a href="{{ route('sales.create') }}" class="nav-item {{ request()->routeIs('sales.create') ? 'active' : '' }}">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                New Sale
-            </a>
-
-            <a href="{{ route('sales.index') }}" class="nav-item {{ request()->routeIs('sales.index','sales.show','sales.edit') ? 'active' : '' }}">
-                <i data-lucide="receipt" class="w-4 h-4"></i>
-                All Sales
-            </a>
-
-            <a href="{{ route('customers.index') }}"
-               class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-                <i data-lucide="users" class="w-4 h-4"></i>
-                Customers
-            </a>
-
-            <div class="nav-section">Daily Rates</div>
+            <div class="nav-section">Aaj Ka Rate</div>
 
             <a href="{{ route('daily-rates.index') }}"
                class="nav-item {{ request()->routeIs('daily-rates.*') ? 'active' : '' }}">
@@ -161,16 +143,34 @@
                 Daily Rates
             </a>
 
-            <div class="nav-section">Inventory</div>
+            <div class="nav-section">Supply Orders</div>
 
-            <a href="{{ route('inventory.index') }}" class="nav-item {{ request()->routeIs('inventory.*') ? 'active' : '' }}">
-                <i data-lucide="package" class="w-4 h-4"></i>
-                Daily Stock
+            <a href="{{ route('supply.create') }}" class="nav-item {{ request()->routeIs('supply.create') ? 'active' : '' }}">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                New Supply Order
             </a>
 
-            <a href="{{ route('inventory.create') }}" class="nav-item {{ request()->routeIs('inventory.create') ? 'active' : '' }}">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                Add Stock Entry
+            <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit') ? 'active' : '' }}">
+                <i data-lucide="receipt" class="w-4 h-4"></i>
+                All Orders
+            </a>
+
+            <a href="{{ route('customers.index') }}"
+               class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                Hotels / Companies
+            </a>
+
+            <div class="nav-section">Din Band Karo</div>
+
+            <a href="{{ route('day-end.create') }}" class="nav-item {{ request()->routeIs('day-end.create') ? 'active' : '' }}">
+                <i data-lucide="moon" class="w-4 h-4"></i>
+                Day End Entry
+            </a>
+
+            <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.index','day-end.show') ? 'active' : '' }}">
+                <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                Daily Records
             </a>
 
             <div class="nav-section">Expenses</div>
@@ -194,7 +194,7 @@
 
             <div class="nav-section">System</div>
 
-            <a href="javascript:void(0)" class="nav-item cursor-not-allowed opacity-50">
+            <a href="{{ route('settings.index') }}" class="nav-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <i data-lucide="settings" class="w-4 h-4"></i>
                 Settings
             </a>
