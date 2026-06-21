@@ -53,7 +53,7 @@
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Note</th>
           </tr></thead>
           <tbody class="divide-y divide-slate-100">
-            @forelse($purchase->payments as $payment)
+            @forelse($purchase->purchasePayments as $payment)
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</td>
               <td class="px-4 py-3 text-sm"><span class="badge badge-blue">{{ ucfirst($payment->method) }}</span></td>
