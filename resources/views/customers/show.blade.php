@@ -128,9 +128,6 @@ $typeBadge = [
         @endforelse
       </tbody>
     </table>
-    @if($orders->hasPages())
-      <div class="px-4 py-3 border-t border-slate-100">{{ $orders->links() }}</div>
-    @endif
   </div>
 </div>
 @endsection
