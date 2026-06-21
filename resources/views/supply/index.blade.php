@@ -52,7 +52,8 @@
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Kg</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Due</th>
-        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Payment</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Delivery</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
       </tr></thead>
       <tbody class="divide-y divide-slate-100">
@@ -72,6 +73,21 @@
             @else<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">Unpaid</span>@endif
           </td>
           <td class="px-4 py-3">
+            @if($order->is_delivered)
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
+                <i data-lucide="check" class="w-3 h-3"></i>Delivered
+              </span>
+            @else
+              <form method="POST" action="{{ route('supply.deliver',$order) }}" class="inline">
+                @csrf @method('PATCH')
+                <button type="submit" onclick="return confirm('Mark as delivered?')"
+                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 transition-colors cursor-pointer">
+                  <i data-lucide="truck" class="w-3 h-3"></i>Pending
+                </button>
+              </form>
+            @endif
+          </td>
+          <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">
               <a href="{{ route('supply.show',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
               @if($order->payment_status!=='paid')<a href="{{ route('supply.edit',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>@endif
@@ -80,7 +96,7 @@
           </td>
         </tr>
         @empty
-        <tr><td colspan="8" class="px-4 py-12 text-center">
+        <tr><td colspan="9" class="px-4 py-12 text-center">
           <i data-lucide="receipt" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
           <p class="text-slate-500 font-medium">No supply orders yet</p>
           <a href="{{ route('supply.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Record first order</a>
