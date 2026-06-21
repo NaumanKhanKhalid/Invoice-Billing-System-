@@ -36,8 +36,8 @@
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">
-              <a href="{{ route('staff.show',$s) }}" class="text-slate-400 hover:text-green-600"><i data-lucide="eye" class="w-4 h-4"></i></a>
-              <a href="{{ route('staff.edit',$s) }}" class="text-slate-400 hover:text-blue-600"><i data-lucide="pencil" class="w-4 h-4"></i></a>
+              <a href="{{ route('staff.show',$s) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
+              <a href="{{ route('staff.edit',$s) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>
               <form method="POST" action="{{ route('staff.toggle-status',$s) }}" class="inline">@csrf
                 <button type="submit" class="text-slate-400 hover:text-{{ $s->is_active?'red':'green' }}-600" title="{{ $s->is_active?'Deactivate':'Activate' }}">
                   <i data-lucide="{{ $s->is_active?'user-x':'user-check' }}" class="w-4 h-4"></i>

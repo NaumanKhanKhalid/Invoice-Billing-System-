@@ -42,7 +42,7 @@
             @endif
           </td>
           <td class="px-4 py-3 text-right">
-            <a href="{{ route('day-end.show',$record) }}" class="text-slate-400 hover:text-green-600"><i data-lucide="eye" class="w-4 h-4"></i></a>
+            <a href="{{ route('day-end.show',$record) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
           </td>
         </tr>
         @empty

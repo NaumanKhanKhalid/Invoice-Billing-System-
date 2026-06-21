@@ -53,8 +53,8 @@
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($e->amount) }}</td>
           <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">
-              <a href="{{ route('expenses.edit',$e) }}" class="text-slate-400 hover:text-blue-600"><i data-lucide="pencil" class="w-4 h-4"></i></a>
-              <form method="POST" action="{{ route('expenses.destroy',$e) }}" class="inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button type="submit" class="text-slate-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button></form>
+              <a href="{{ route('expenses.edit',$e) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>
+              <form method="POST" action="{{ route('expenses.destroy',$e) }}" class="inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button></form>
             </div>
           </td>
         </tr>

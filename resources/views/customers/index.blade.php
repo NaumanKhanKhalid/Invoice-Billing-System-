@@ -98,23 +98,23 @@ $typeBadge = [
             <span class="badge {{ $customer->is_active?'badge-green':'badge-gray' }}">{{ $customer->is_active?'Active':'Inactive' }}</span>
           </td>
           <td class="px-4 py-3">
-            <div class="flex items-center justify-end gap-2">
-              <a href="{{ route('customers.show',$customer) }}" class="text-slate-400 hover:text-green-600" title="View">
-                <i data-lucide="eye" class="w-4 h-4"></i>
+            <div class="flex items-center justify-end gap-1.5">
+              <a href="{{ route('customers.show',$customer) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>View
               </a>
-              <a href="{{ route('customers.edit',$customer) }}" class="text-slate-400 hover:text-blue-600" title="Edit">
-                <i data-lucide="pencil" class="w-4 h-4"></i>
+              <a href="{{ route('customers.edit',$customer) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
               </a>
               <form method="POST" action="{{ route('customers.toggle-status',$customer) }}" class="inline">
                 @csrf
-                <button type="submit" class="text-slate-400 hover:text-yellow-600" title="{{ $customer->is_active?'Deactivate':'Activate' }}">
-                  <i data-lucide="{{ $customer->is_active?'toggle-right':'toggle-left' }}" class="w-4 h-4"></i>
+                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-yellow-100 text-slate-500 hover:text-yellow-700 text-xs font-medium transition-colors">
+                  <i data-lucide="{{ $customer->is_active?'toggle-right':'toggle-left' }}" class="w-3.5 h-3.5"></i>{{ $customer->is_active?'Active':'Inactive' }}
                 </button>
               </form>
               <form method="POST" action="{{ route('customers.destroy',$customer) }}" class="inline" onsubmit="return confirm('Delete this customer?')">
                 @csrf @method('DELETE')
-                <button type="submit" class="text-slate-400 hover:text-red-600" title="Delete">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete
                 </button>
               </form>
             </div>
