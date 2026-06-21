@@ -115,7 +115,6 @@
                 Dashboard
             </a>
 
-            <div class="nav-section">Purchases</div>
 
             <a href="{{ route('purchases.index') }}"
                class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit','purchases.create') ? 'active' : '' }}">
@@ -123,7 +122,6 @@
                 Purchases
             </a>
 
-            <div class="nav-section">Aaj Ka Rate</div>
 
             <a href="{{ route('daily-rates.index') }}"
                class="nav-item {{ request()->routeIs('daily-rates.*') ? 'active' : '' }}">
@@ -131,7 +129,6 @@
                 Daily Rates
             </a>
 
-            <div class="nav-section">Supply Orders</div>
 
             <a href="{{ route('supply.schedule') }}" class="nav-item {{ request()->routeIs('supply.schedule') ? 'active' : '' }}">
                 <i data-lucide="calendar-clock" class="w-4 h-4"></i>
@@ -147,21 +144,18 @@
                 Supply Orders
             </a>
 
-            <div class="nav-section">Din Band Karo</div>
 
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i>
                 Daily Records
             </a>
 
-            <div class="nav-section">Expenses</div>
 
             <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i>
                 Daily Expenses
             </a>
 
-            <div class="nav-section">Reports</div>
 
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
