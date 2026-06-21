@@ -49,6 +49,7 @@ class SupplierController extends Controller
 
     public function show(Supplier $supplier)
     {
+        $orders         = $supplier->purchaseOrders()->with('purchasePayments')->latest('date')->get();
         $totalPurchased = $supplier->purchaseOrders()->sum('total_amount');
         $totalPaid      = $supplier->purchaseOrders()->sum('amount_paid');
         $outstanding    = $totalPurchased - $totalPaid;
