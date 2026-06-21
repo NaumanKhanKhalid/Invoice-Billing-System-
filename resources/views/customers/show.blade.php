@@ -100,7 +100,6 @@ $typeBadge = [
         <tr>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Invoice #</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Qty (Kg)</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Paid</th>
@@ -112,7 +111,7 @@ $typeBadge = [
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($order->date)->format('d M Y') }}</td>
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $order->invoice_number ?? '-' }}</td>
-          <td class="px-4 py-3 text-sm text-right">{{ formatKg($order->quantity_kg ?? 0) }}</td>
+          <td class="px-4 py-3 text-sm text-right">{{ formatKg($order->dressed_weight_kg) }} kg</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($order->total_amount) }}</td>
           <td class="px-4 py-3 text-sm text-right text-green-600">{{ formatCurrency($order->amount_paid ?? 0) }}</td>
           <td class="px-4 py-3">
