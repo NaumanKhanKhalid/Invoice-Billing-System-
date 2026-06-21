@@ -8,8 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Only daily_records still has chicken_type_id — drop its unique index then the column
         Schema::table('daily_records', function (Blueprint $table) {
+            // MySQL requires FK dropped before unique index, before column
+            $table->dropForeign(['chicken_type_id']);
             $table->dropUnique('daily_records_date_chicken_type_id_unique');
             $table->dropColumn('chicken_type_id');
             $table->unique('date');
