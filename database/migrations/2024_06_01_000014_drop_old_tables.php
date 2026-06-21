@@ -8,11 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('invoice_items');
         Schema::dropIfExists('invoices');
         Schema::dropIfExists('payments');
         Schema::dropIfExists('clients');
         Schema::dropIfExists('products');
+        Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void
