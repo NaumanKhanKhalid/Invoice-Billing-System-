@@ -10,13 +10,10 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            'company_name' => 'InvoicePro Ltd.',
-            'company_email' => 'billing@invoicepro.pk',
-            'company_phone' => '+92 21 1234567',
-            'company_address' => 'Suite 301, Business Center, Main Boulevard, Karachi, Pakistan',
-            'invoice_prefix' => 'INV',
-            'default_tax_rate' => '5',
-            'default_terms' => 'Payment is due within 30 days of invoice date. Late payments may incur a 2% monthly fee. Please make payments via bank transfer or EasyPaisa.',
+            'company_name'    => 'Anwar Chicken Center',
+            'company_email'   => 'anwar@example.pk',
+            'company_phone'   => '+92 21 1234567',
+            'company_address' => 'Main Market, Karachi, Pakistan',
         ];
 
         foreach ($settings as $key => $value) {
