@@ -2,20 +2,22 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        // Drop FK + column from every table that still references chicken_types
+        // purchase_orders FK was created on this table directly
         Schema::table('purchase_orders', function (Blueprint $table) {
             $table->dropForeign(['chicken_type_id']);
             $table->dropColumn('chicken_type_id');
         });
 
+        // supply_orders was RENAMED from sales_orders, so FK name uses old table name
         Schema::table('supply_orders', function (Blueprint $table) {
-            $table->dropForeign(['chicken_type_id']);
+            $table->dropForeign('sales_orders_chicken_type_id_foreign');
             $table->dropColumn('chicken_type_id');
         });
 
