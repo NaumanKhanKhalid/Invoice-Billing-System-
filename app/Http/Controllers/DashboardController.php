@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditSale;
 use App\Models\Customer;
 use App\Models\DailyRecord;
 use App\Models\Expense;
@@ -52,12 +53,19 @@ class DashboardController extends Controller
             $monthlySales[]  = (float) SupplyOrder::whereYear('date', $m->year)->whereMonth('date', $m->month)->sum('total_amount');
         }
 
+        $udharTotalDue      = CreditSale::whereIn('status', ['unpaid', 'partial'])->sum('amount_due');
+        $udharOverdueCount  = CreditSale::whereIn('status', ['unpaid', 'partial'])->whereDate('due_date', '<', today())->count();
+        $udharDueTodayCount = CreditSale::whereIn('status', ['unpaid', 'partial'])->whereDate('due_date', today())->count();
+        $udharDueThisWeek   = CreditSale::whereIn('status', ['unpaid', 'partial'])
+            ->whereBetween('due_date', [today(), today()->addDays(7)])->count();
+
         return view('dashboard.index', compact(
             'todaySupply', 'todayPurchases', 'todayExpenses', 'todayCounter', 'todayProfit',
             'supplierDue', 'customerDue', 'overdueCount',
             'monthSupply', 'monthPurchases', 'monthExpenses', 'monthProfit',
             'recentOrders', 'overdueOrders',
-            'monthlyLabels', 'monthlySales'
+            'monthlyLabels', 'monthlySales',
+            'udharTotalDue', 'udharOverdueCount', 'udharDueTodayCount', 'udharDueThisWeek'
         ));
     }
 }

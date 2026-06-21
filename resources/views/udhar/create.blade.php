@@ -2,9 +2,9 @@
 @section('title','New Udhar')
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6" x-data="{
-    amount: 0,
-    dueDays: 7,
-    saleDate: '{{ today()->toDateString() }}',
+    amount: {{ old('amount', 0) }},
+    dueDays: {{ old('due_days', 7) }},
+    saleDate: '{{ old('sale_date', today()->toDateString()) }}',
     get dueDate() {
         if (!this.saleDate || !this.dueDays) return '';
         const d = new Date(this.saleDate);
@@ -45,26 +45,52 @@
               <i data-lucide="user" class="w-3.5 h-3.5 text-slate-600"></i>
             </span>
             <div>
-              <p class="text-sm font-semibold text-slate-800">Udhar Details</p>
-              <p class="text-xs text-slate-500">Customer and credit information</p>
+              <p class="text-sm font-semibold text-slate-800">Customer</p>
+              <p class="text-xs text-slate-500">Select registered or enter manually</p>
             </div>
           </div>
           <div class="p-5 space-y-4">
 
+            {{-- Customer dropdown --}}
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-medium text-slate-500">Registered Customer</label>
+                <a href="{{ route('udhar-customers.create', ['redirect_to_udhar' => 1]) }}"
+                   class="text-xs text-green-600 hover:underline flex items-center gap-1">
+                  <i data-lucide="plus" class="w-3 h-3"></i>Add New Customer
+                </a>
+              </div>
+              <select name="udhar_customer_id"
+                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white"
+                      onchange="fillCustomerFields(this)">
+                <option value="">— Walk-in (no account) —</option>
+                @foreach($udharCustomers as $uc)
+                <option value="{{ $uc->id }}"
+                        data-name="{{ $uc->name }}"
+                        data-phone="{{ $uc->phone }}"
+                        data-notes="{{ $uc->notes }}"
+                        {{ old('udhar_customer_id', $selectedCustomer?->id) == $uc->id ? 'selected' : '' }}>
+                  {{ $uc->name }}{{ $uc->notes ? ' — ' . Str::limit($uc->notes, 30) : '' }}
+                </option>
+                @endforeach
+              </select>
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1.5">Customer Name <span class="text-red-500">*</span></label>
-                <input type="text" name="customer_name" value="{{ old('customer_name') }}" required
+                <input type="text" name="customer_name" id="customer_name"
+                       value="{{ old('customer_name', $selectedCustomer?->name) }}" required
                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                        placeholder="e.g. Ahmed Bhai">
                 @error('customer_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1.5">Phone <span class="text-slate-400 font-normal">(WhatsApp)</span></label>
-                <input type="text" name="phone" value="{{ old('phone') }}"
+                <input type="text" name="phone" id="customer_phone"
+                       value="{{ old('phone', $selectedCustomer?->phone) }}"
                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                        placeholder="03001234567">
-                <p class="text-xs text-slate-400 mt-1">Used for WhatsApp reminder</p>
                 @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
               </div>
             </div>
@@ -151,4 +177,22 @@
     </div>
   </form>
 </div>
+
+<script>
+function fillCustomerFields(sel) {
+    const opt = sel.selectedOptions[0];
+    if (opt && opt.value) {
+        document.getElementById('customer_name').value = opt.dataset.name || '';
+        document.getElementById('customer_phone').value = opt.dataset.phone || '';
+    } else {
+        document.getElementById('customer_name').value = '';
+        document.getElementById('customer_phone').value = '';
+    }
+}
+// Pre-fill on load if customer selected
+document.addEventListener('DOMContentLoaded', function () {
+    const sel = document.querySelector('select[name="udhar_customer_id"]');
+    if (sel && sel.value) fillCustomerFields(sel);
+});
+</script>
 @endsection

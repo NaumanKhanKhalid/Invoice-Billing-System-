@@ -13,6 +13,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
+use App\Http\Controllers\UdharCustomerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -80,13 +81,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
     Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
 
-    // Udhar Book (Credit Sales)
+    // Udhar Book (Credit Sales) — report & customers BEFORE wildcard {creditSale}
+    Route::get('/udhar/report', [CreditSaleController::class, 'report'])->name('udhar.report');
     Route::get('/udhar', [CreditSaleController::class, 'index'])->name('udhar.index');
     Route::get('/udhar/create', [CreditSaleController::class, 'create'])->name('udhar.create');
     Route::post('/udhar', [CreditSaleController::class, 'store'])->name('udhar.store');
     Route::get('/udhar/{creditSale}', [CreditSaleController::class, 'show'])->name('udhar.show');
     Route::post('/udhar/{creditSale}/payment', [CreditSaleController::class, 'storePayment'])->name('udhar.payment');
     Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->name('udhar.destroy');
+
+    // Udhar Customers
+    Route::resource('udhar-customers', UdharCustomerController::class)->except(['destroy']);
 });
 
 require __DIR__.'/auth.php';

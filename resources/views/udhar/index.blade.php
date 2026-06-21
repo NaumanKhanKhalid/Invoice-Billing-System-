@@ -9,9 +9,17 @@
       <h1 class="text-2xl font-bold text-slate-900">Udhar Book</h1>
       <p class="text-sm text-slate-500 mt-0.5">Credit sales and payment tracking</p>
     </div>
-    <a href="{{ route('udhar.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-      <i data-lucide="plus" class="w-4 h-4"></i>New Udhar
-    </a>
+    <div class="flex gap-2">
+      <a href="{{ route('udhar-customers.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="users" class="w-4 h-4"></i>Customers
+      </a>
+      <a href="{{ route('udhar.report') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>Report
+      </a>
+      <a href="{{ route('udhar.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="plus" class="w-4 h-4"></i>New Udhar
+      </a>
+    </div>
   </div>
 
   {{-- Stats --}}
@@ -32,7 +40,6 @@
 
   {{-- Filters --}}
   <div class="flex flex-wrap items-center gap-3">
-    {{-- Status pills --}}
     <div class="flex rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
       <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'all'])) }}"
          class="px-4 py-2 text-sm font-medium transition-colors {{ request('status','all')==='all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">All</a>
@@ -42,7 +49,6 @@
          class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='overdue' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Overdue</a>
     </div>
 
-    {{-- Search --}}
     <form method="GET" class="flex gap-2 flex-1 min-w-[200px]">
       @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
       <input type="text" name="search" value="{{ request('search') }}"
@@ -71,13 +77,29 @@
       <tbody class="divide-y divide-slate-100">
         @forelse($records as $record)
         @php
-          $isOverdue = in_array($record->status, ['unpaid','partial']) && $record->due_date->isPast();
-          $isToday   = $record->due_date->isToday();
+          $isOverdue   = in_array($record->status, ['unpaid','partial']) && $record->due_date->isPast();
+          $isToday     = $record->due_date->isToday();
+          $daysOverdue = $isOverdue ? $record->due_date->diffInDays(today()) : 0;
+
+          if ($isOverdue && $daysOverdue >= 60) {
+              $rowClass = 'bg-red-100';
+          } elseif ($isOverdue && $daysOverdue >= 30) {
+              $rowClass = 'bg-red-50';
+          } elseif ($isOverdue && $daysOverdue >= 15) {
+              $rowClass = 'bg-orange-50';
+          } elseif ($isOverdue) {
+              $rowClass = 'bg-yellow-50';
+          } else {
+              $rowClass = '';
+          }
         @endphp
-        <tr class="hover:bg-slate-50 transition-colors {{ $isOverdue ? 'bg-red-50' : '' }}">
+        <tr class="hover:bg-slate-50/80 transition-colors {{ $rowClass }}">
           <td class="px-4 py-3 text-sm font-medium">
             <a href="{{ route('udhar.show', $record) }}" class="text-slate-900 hover:text-green-600">{{ $record->customer_name }}</a>
             @if($record->description)<p class="text-xs text-slate-400 mt-0.5">{{ $record->description }}</p>@endif
+            @if($isOverdue && $daysOverdue >= 60)
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-700 text-white mt-1">High Risk</span>
+            @endif
           </td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $record->phone ?? '-' }}</td>
           <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($record->amount) }}</td>
@@ -85,6 +107,7 @@
           <td class="px-4 py-3 text-sm text-right font-bold {{ $record->amount_due > 0 ? 'text-red-600' : 'text-slate-400' }}">{{ formatCurrency($record->amount_due) }}</td>
           <td class="px-4 py-3 text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : ($isToday ? 'text-amber-600 font-semibold' : 'text-slate-600') }}">
             {{ $record->due_date->format('d M Y') }}
+            @if($isOverdue)<p class="text-[10px] text-red-400 font-normal">{{ $daysOverdue }} din late</p>@endif
           </td>
           <td class="px-4 py-3">
             @if($record->status === 'paid')

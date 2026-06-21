@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CreditSale extends Model
 {
     protected $fillable = [
-        'customer_name', 'phone', 'amount', 'amount_paid', 'amount_due',
+        'udhar_customer_id', 'customer_name', 'phone', 'amount', 'amount_paid', 'amount_due',
         'sale_date', 'due_date', 'description', 'status', 'notes'
     ];
 
@@ -25,5 +25,10 @@ class CreditSale extends Model
     public function payments()
     {
         return $this->hasMany(CreditPayment::class);
+    }
+
+    public function udharCustomer()
+    {
+        return $this->belongsTo(UdharCustomer::class);
     }
 }

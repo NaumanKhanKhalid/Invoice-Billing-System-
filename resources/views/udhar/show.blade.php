@@ -10,7 +10,12 @@
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
       </a>
       <div>
+        @if($creditSale->udharCustomer)
+        <a href="{{ route('udhar-customers.show', $creditSale->udharCustomer) }}"
+           class="text-2xl font-bold text-slate-900 hover:text-green-600">{{ $creditSale->customer_name }}</a>
+        @else
         <h1 class="text-2xl font-bold text-slate-900">{{ $creditSale->customer_name }}</h1>
+        @endif
         <p class="text-sm text-slate-500">Udhar since {{ $creditSale->sale_date->format('d M Y') }}</p>
       </div>
     </div>
@@ -36,6 +41,9 @@
           <div>
             <p class="text-slate-500">Customer</p>
             <p class="font-medium text-slate-900 mt-0.5">{{ $creditSale->customer_name }}</p>
+            @if($creditSale->udharCustomer)
+            <a href="{{ route('udhar-customers.show', $creditSale->udharCustomer) }}" class="text-xs text-green-600 hover:underline">View account →</a>
+            @endif
           </div>
           <div>
             <p class="text-slate-500">Phone</p>
@@ -74,6 +82,7 @@
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Method</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Note</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Proof</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -83,9 +92,19 @@
               <td class="px-4 py-3 text-sm"><span class="badge badge-blue">{{ ucfirst($payment->method) }}</span></td>
               <td class="px-4 py-3 text-sm text-right font-medium text-green-600">{{ formatCurrency($payment->amount) }}</td>
               <td class="px-4 py-3 text-sm text-slate-500">{{ $payment->note ?? '-' }}</td>
+              <td class="px-4 py-3 text-center">
+                @if($payment->proof_photo)
+                <a href="{{ Storage::url($payment->proof_photo) }}" target="_blank" title="View proof">
+                  <img src="{{ Storage::url($payment->proof_photo) }}" alt="Proof"
+                       class="w-10 h-10 object-cover rounded-lg border border-slate-200 inline-block hover:opacity-80 transition-opacity cursor-zoom-in">
+                </a>
+                @else
+                <span class="text-slate-300 text-xs">—</span>
+                @endif
+              </td>
             </tr>
             @empty
-            <tr><td colspan="4" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
+            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -140,9 +159,9 @@
 
       {{-- Record Payment form --}}
       @if($creditSale->status !== 'paid')
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5" x-data="{ method: 'cash' }">
         <h2 class="font-semibold text-slate-900 mb-4">Record Payment</h2>
-        <form method="POST" action="{{ route('udhar.payment', $creditSale) }}" class="space-y-4">
+        <form method="POST" action="{{ route('udhar.payment', $creditSale) }}" enctype="multipart/form-data" class="space-y-4">
           @csrf
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Amount <span class="text-red-500">*</span></label>
@@ -162,7 +181,8 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Method <span class="text-red-500">*</span></label>
-            <select name="method" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
+            <select name="method" x-model="method" required
+                    class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none bg-white">
               <option value="cash">Cash</option>
               <option value="bank">Bank Transfer</option>
               <option value="jazzcash">JazzCash</option>
@@ -170,6 +190,15 @@
             </select>
             @error('method')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
           </div>
+
+          {{-- Proof photo — only for digital payments --}}
+          <div x-show="method !== 'cash'" x-cloak>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Payment Proof <span class="text-slate-400 text-xs font-normal">(screenshot optional)</span></label>
+            <input type="file" name="proof_photo" accept="image/*"
+                   class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+            @error('proof_photo')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+          </div>
+
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Note</label>
             <input type="text" name="note" value="{{ old('note') }}"

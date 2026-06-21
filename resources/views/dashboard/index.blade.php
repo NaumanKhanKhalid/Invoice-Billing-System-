@@ -29,6 +29,27 @@
     </div>
   </div>
 
+  {{-- Udhar / retail credit stats --}}
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl border border-{{ $udharTotalDue > 0 ? 'red' : 'slate' }}-200 shadow-sm p-4">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Udhar Baqi</p>
+      <p class="text-lg font-bold text-{{ $udharTotalDue > 0 ? 'red-600' : 'slate-400' }} mt-1">{{ formatCurrency($udharTotalDue) }}</p>
+      <a href="{{ route('udhar.index') }}" class="text-xs text-green-600 hover:underline">View all →</a>
+    </div>
+    <div class="bg-{{ $udharOverdueCount > 0 ? 'red' : 'white' }}-50 border border-{{ $udharOverdueCount > 0 ? 'red' : 'slate' }}-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-{{ $udharOverdueCount > 0 ? 'red' : 'slate' }}-500 font-medium uppercase tracking-wider">Udhar Overdue</p>
+      <p class="text-lg font-bold text-{{ $udharOverdueCount > 0 ? 'red-600' : 'slate-400' }} mt-1">{{ $udharOverdueCount }} records</p>
+    </div>
+    <div class="bg-{{ $udharDueTodayCount > 0 ? 'amber' : 'white' }}-50 border border-{{ $udharDueTodayCount > 0 ? 'amber' : 'slate' }}-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-{{ $udharDueTodayCount > 0 ? 'amber' : 'slate' }}-500 font-medium uppercase tracking-wider">Due Today</p>
+      <p class="text-lg font-bold text-{{ $udharDueTodayCount > 0 ? 'amber-600' : 'slate-400' }} mt-1">{{ $udharDueTodayCount }} records</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Due This Week</p>
+      <p class="text-lg font-bold text-slate-700 mt-1">{{ $udharDueThisWeek }} records</p>
+    </div>
+  </div>
+
   {{-- Monthly / balance stats --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
