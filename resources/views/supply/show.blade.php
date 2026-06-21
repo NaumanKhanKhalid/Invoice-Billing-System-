@@ -39,10 +39,35 @@
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div><p class="text-slate-500">Customer</p><p class="font-medium text-slate-900 mt-0.5">{{ $supply->customer?->name ?? '—' }}</p></div>
           <div><p class="text-slate-500">Date</p><p class="font-medium text-slate-900 mt-0.5">{{ \Carbon\Carbon::parse($supply->date)->format('d M Y') }}</p></div>
+          @if($supply->delivery_date && $supply->delivery_date->toDateString() !== $supply->date->toDateString())
+          <div><p class="text-slate-500">Delivery Date</p><p class="font-medium text-slate-900 mt-0.5">{{ $supply->delivery_date->format('d M Y') }}</p></div>
+          @endif
           <div><p class="text-slate-500">Due Date</p><p class="font-medium {{ $isOverdue?'text-red-600':'text-slate-900' }} mt-0.5">{{ $supply->due_date ? \Carbon\Carbon::parse($supply->due_date)->format('d M Y') : 'Same day' }}</p></div>
           <div><p class="text-slate-500">Dressed Weight</p><p class="font-medium text-slate-900 mt-0.5">{{ formatKg($supply->dressed_weight_kg) }} kg</p></div>
           <div><p class="text-slate-500">Rate per kg</p><p class="font-medium text-slate-900 mt-0.5">PKR {{ formatKg($supply->rate_per_kg) }}</p></div>
           <div><p class="text-slate-500">Total Amount</p><p class="font-bold text-green-700 mt-0.5 text-base">{{ formatCurrency($supply->total_amount) }}</p></div>
+          <div>
+            <p class="text-slate-500">Delivery Status</p>
+            @if($supply->is_delivered)
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700 mt-0.5">
+                Delivered ✓
+              </span>
+              @if($supply->delivered_at)
+              <p class="text-xs text-slate-400 mt-0.5">{{ $supply->delivered_at->format('d M Y, h:i A') }}</p>
+              @endif
+            @else
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-700">Pending</span>
+                <form method="POST" action="{{ route('supply.deliver', $supply) }}" class="inline">
+                  @csrf @method('PATCH')
+                  <button type="submit" onclick="return confirm('Deliver mark karo?')"
+                          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i> Mark Delivered
+                  </button>
+                </form>
+              </div>
+            @endif
+          </div>
         </div>
         @if($supply->delivery_address)
         <div class="mt-4 p-3 bg-slate-50 rounded-lg">

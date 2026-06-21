@@ -50,9 +50,13 @@
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1.5">Customer <span class="text-red-500">*</span></label>
                 <select name="customer_id" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-                  <option value="">— Select Customer —</option>
-                  @foreach($customers as $c)
-                    <option value="{{ $c->id }}" {{ old('customer_id',$supply->customer_id)==$c->id?'selected':'' }}>{{ $c->name }} ({{ ucfirst($c->type) }})</option>
+                  <option value="">— Customer select karo —</option>
+                  @foreach($customers as $type => $group)
+                  <optgroup label="{{ ucfirst($type) }}">
+                    @foreach($group as $c)
+                    <option value="{{ $c->id }}" {{ old('customer_id',$supply->customer_id)==$c->id?'selected':'' }}>{{ $c->name }}</option>
+                    @endforeach
+                  </optgroup>
                   @endforeach
                 </select>
                 @error('customer_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror

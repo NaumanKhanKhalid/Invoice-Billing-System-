@@ -38,7 +38,7 @@ class SupplyController extends Controller
         $tomorrow = today()->addDay();
         $dayAfter = today()->addDays(2);
 
-        $baseQuery = fn() => SupplyOrder::with('customer')->where('payment_status', '!=', 'paid');
+        $baseQuery = fn() => SupplyOrder::with('customer')->where('is_delivered', false);
 
         $overdue  = (clone $baseQuery())->whereDate('delivery_date', '<', $today)->orderBy('delivery_date')->get();
         $todayOrders    = (clone $baseQuery())->whereDate('delivery_date', $today)->orderBy('delivery_date')->get();
@@ -51,7 +51,9 @@ class SupplyController extends Controller
     public function create()
     {
         $customers  = Customer::where('is_active', true)->where('is_blacklisted', false)
-            ->whereIn('type', ['hotel', 'catering', 'restaurant', 'company', 'reseller'])->orderBy('name')->get();
+            ->whereIn('type', ['hotel', 'catering', 'restaurant', 'company', 'reseller'])
+            ->orderBy('type')->orderBy('name')->get()
+            ->groupBy('type');
         $nextNumber = $this->nextInvoiceNumber();
 
         return view('supply.create', compact('customers', 'nextNumber'));
@@ -111,7 +113,10 @@ class SupplyController extends Controller
     public function edit(SupplyOrder $supply)
     {
         abort_if($supply->payment_status === 'paid', 403, 'Cannot edit a fully paid order.');
-        $customers = Customer::where('is_active', true)->orderBy('name')->get();
+        $customers = Customer::where('is_active', true)->where('is_blacklisted', false)
+            ->whereIn('type', ['hotel', 'catering', 'restaurant', 'company', 'reseller'])
+            ->orderBy('type')->orderBy('name')->get()
+            ->groupBy('type');
         return view('supply.edit', compact('supply', 'customers'));
     }
 
@@ -190,6 +195,15 @@ class SupplyController extends Controller
         }
 
         return redirect()->route('supply.show', $supply)->with('success', 'Payment of PKR ' . number_format($data['amount'], 0) . ' recorded.');
+    }
+
+    public function markDelivered(SupplyOrder $supply)
+    {
+        $supply->update([
+            'is_delivered' => true,
+            'delivered_at' => now(),
+        ]);
+        return back()->with('success', 'Order delivered mark ho gaya.');
     }
 
     private function nextInvoiceNumber(): string

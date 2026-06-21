@@ -63,9 +63,18 @@
           <p class="text-sm font-bold text-red-600">{{ formatCurrency($order->amount_due) }}</p>
           <span class="text-[10px] text-red-400 font-medium">{{ $daysLate }} {{ $daysLate == 1 ? 'din' : 'din' }} late</span>
         </div>
-        <a href="{{ route('supply.show', $order) }}" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors">
-          <i data-lucide="eye" class="w-3.5 h-3.5"></i> View
-        </a>
+        <div class="flex gap-1.5 flex-shrink-0">
+          <form method="POST" action="{{ route('supply.deliver', $order) }}" class="inline">
+            @csrf @method('PATCH')
+            <button type="submit" onclick="return confirm('Deliver mark karo?')"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Delivered
+            </button>
+          </form>
+          <a href="{{ route('supply.show', $order) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> View
+          </a>
+        </div>
       </div>
       @endforeach
     </div>
@@ -110,6 +119,13 @@
             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
           </a>
           @endif
+          <form method="POST" action="{{ route('supply.deliver', $order) }}" class="inline">
+            @csrf @method('PATCH')
+            <button type="submit" onclick="return confirm('Deliver mark karo?')"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Delivered
+            </button>
+          </form>
           <a href="{{ route('supply.show', $order) }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
             <i data-lucide="eye" class="w-3.5 h-3.5"></i>
           </a>
@@ -146,9 +162,18 @@
         <div class="text-right flex-shrink-0">
           <p class="text-sm font-bold text-slate-800">{{ formatCurrency($order->total_amount) }}</p>
         </div>
-        <a href="{{ route('supply.show', $order) }}" class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
-          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-        </a>
+        <div class="flex gap-1.5 flex-shrink-0">
+          <form method="POST" action="{{ route('supply.deliver', $order) }}" class="inline">
+            @csrf @method('PATCH')
+            <button type="submit" onclick="return confirm('Deliver mark karo?')"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Delivered
+            </button>
+          </form>
+          <a href="{{ route('supply.show', $order) }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
       </div>
       @endforeach
     </div>
@@ -182,9 +207,18 @@
           <p class="text-sm font-bold text-slate-700">{{ formatCurrency($order->total_amount) }}</p>
           <p class="text-[10px] text-slate-400">{{ \Carbon\Carbon::parse($order->delivery_date)->format('l') }}</p>
         </div>
-        <a href="{{ route('supply.show', $order) }}" class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
-          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-        </a>
+        <div class="flex gap-1.5 flex-shrink-0">
+          <form method="POST" action="{{ route('supply.deliver', $order) }}" class="inline">
+            @csrf @method('PATCH')
+            <button type="submit" onclick="return confirm('Deliver mark karo?')"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Delivered
+            </button>
+          </form>
+          <a href="{{ route('supply.show', $order) }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
       </div>
       @endforeach
     </div>

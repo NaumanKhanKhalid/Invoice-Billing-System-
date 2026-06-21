@@ -16,6 +16,7 @@ class SupplyOrder extends Model
         'dressed_weight_kg', 'rate_per_kg', 'total_amount',
         'amount_paid', 'amount_due', 'due_date', 'payment_status',
         'delivery_address', 'delivery_notes', 'whatsapp_notified', 'notes',
+        'is_delivered', 'delivered_at',
     ];
 
     protected function casts(): array
@@ -30,6 +31,8 @@ class SupplyOrder extends Model
             'delivery_date'     => 'date',
             'due_date'          => 'date',
             'whatsapp_notified' => 'boolean',
+            'is_delivered'      => 'boolean',
+            'delivered_at'      => 'datetime',
         ];
     }
 

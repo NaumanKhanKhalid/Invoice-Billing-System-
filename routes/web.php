@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/supply/{supply}', [SupplyController::class, 'update'])->name('supply.update');
     Route::delete('/supply/{supply}', [SupplyController::class, 'destroy'])->name('supply.destroy');
     Route::post('/supply/{supply}/payment', [SupplyController::class, 'storePayment'])->name('supply.payment');
+    Route::patch('/supply/{supply}/deliver', [SupplyController::class, 'markDelivered'])->name('supply.deliver');
 
     // Day End Entry (Din Band Karo — CORE)
     Route::get('/day-end', [DayEndController::class, 'index'])->name('day-end.index');
