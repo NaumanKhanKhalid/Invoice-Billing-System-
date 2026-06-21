@@ -8,8 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Drop FK + column from every table that still references chicken_types
+        Schema::table('purchase_orders', function (Blueprint $table) {
+            $table->dropForeign(['chicken_type_id']);
+            $table->dropColumn('chicken_type_id');
+        });
+
+        Schema::table('supply_orders', function (Blueprint $table) {
+            $table->dropForeign(['chicken_type_id']);
+            $table->dropColumn('chicken_type_id');
+        });
+
+        Schema::table('daily_rates', function (Blueprint $table) {
+            $table->dropForeign(['chicken_type_id']);
+            $table->dropColumn('chicken_type_id');
+        });
+
         Schema::table('daily_records', function (Blueprint $table) {
-            // MySQL requires FK dropped before unique index, before column
             $table->dropForeign(['chicken_type_id']);
             $table->dropUnique('daily_records_date_chicken_type_id_unique');
             $table->dropColumn('chicken_type_id');
@@ -29,6 +44,15 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::table('purchase_orders', function (Blueprint $table) {
+            $table->foreignId('chicken_type_id')->nullable()->constrained('chicken_types');
+        });
+        Schema::table('supply_orders', function (Blueprint $table) {
+            $table->foreignId('chicken_type_id')->nullable()->constrained('chicken_types');
+        });
+        Schema::table('daily_rates', function (Blueprint $table) {
+            $table->foreignId('chicken_type_id')->nullable()->constrained('chicken_types');
+        });
         Schema::table('daily_records', function (Blueprint $table) {
             $table->dropUnique(['date']);
             $table->foreignId('chicken_type_id')->nullable()->constrained('chicken_types');
