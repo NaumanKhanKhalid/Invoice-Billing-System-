@@ -117,16 +117,10 @@
 
             <div class="nav-section">Purchases</div>
 
-            <a href="{{ route('purchases.create') }}"
-               class="nav-item {{ request()->routeIs('purchases.create') ? 'active' : '' }}">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                New Purchase
-            </a>
-
             <a href="{{ route('purchases.index') }}"
-               class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit') ? 'active' : '' }}">
-                <i data-lucide="list" class="w-4 h-4"></i>
-                All Purchases
+               class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit','purchases.create') ? 'active' : '' }}">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                Purchases
             </a>
 
             <a href="{{ route('suppliers.index') }}"
@@ -145,14 +139,9 @@
 
             <div class="nav-section">Supply Orders</div>
 
-            <a href="{{ route('supply.create') }}" class="nav-item {{ request()->routeIs('supply.create') ? 'active' : '' }}">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                New Supply Order
-            </a>
-
-            <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit') ? 'active' : '' }}">
+            <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit','supply.create') ? 'active' : '' }}">
                 <i data-lucide="receipt" class="w-4 h-4"></i>
-                All Orders
+                Supply Orders
             </a>
 
             <a href="{{ route('customers.index') }}"
@@ -163,13 +152,8 @@
 
             <div class="nav-section">Din Band Karo</div>
 
-            <a href="{{ route('day-end.create') }}" class="nav-item {{ request()->routeIs('day-end.create') ? 'active' : '' }}">
+            <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i>
-                Day End Entry
-            </a>
-
-            <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.index','day-end.show') ? 'active' : '' }}">
-                <i data-lucide="calendar-days" class="w-4 h-4"></i>
                 Daily Records
             </a>
 
