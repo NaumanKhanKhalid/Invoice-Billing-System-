@@ -86,6 +86,9 @@
             to   { opacity: 0; transform: translateX(60px) scale(0.9); }
         }
 
+        /* Prevent Alpine.js flicker before init */
+        [x-cloak] { display: none !important; }
+
         @media (max-width: 768px) {
             #sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transform: translateX(-100%); }
             #sidebar.open { transform: translateX(0); }
@@ -175,7 +178,7 @@
                 <span class="flex-1 text-left">System</span>
                 <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform duration-200 opacity-50" :class="open ? 'rotate-90' : ''"></i>
               </button>
-              <div x-show="open"
+              <div x-show="open" x-cloak
                    x-transition:enter="transition ease-out duration-150"
                    x-transition:enter-start="opacity-0 scale-y-95"
                    x-transition:enter-end="opacity-100 scale-y-100"
@@ -246,7 +249,8 @@
     <!-- ── Floating Speed Dial ── -->
     <div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {{-- Actions (shown when open) --}}
-      <div x-show="open" x-transition:enter="transition ease-out duration-150"
+      <div x-show="open" x-cloak
+           x-transition:enter="transition ease-out duration-150"
            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
            x-transition:leave="transition ease-in duration-100"
            x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
@@ -357,10 +361,10 @@
     @stack('scripts')
 
     {{-- Global Confirm Modal --}}
-    <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.5);backdrop-filter:blur(2px)"
-         x-data="confirmModal()" x-show="open" x-cloak
-         @confirm-open.window="show($event.detail)"
-         style="display:none">
+    <div id="confirmModal" x-cloak
+         style="position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.5);backdrop-filter:blur(2px)"
+         x-data="confirmModal()" x-show="open"
+         @confirm-open.window="show($event.detail)">
       <div class="flex items-center justify-center min-h-screen p-4">
         <div x-show="open" x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
