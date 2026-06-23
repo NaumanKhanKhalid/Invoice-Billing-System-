@@ -2,7 +2,7 @@
 @section('title', 'Settings')
 
 @section('content')
-<div class="max-w-3xl mx-auto space-y-5">
+<div class="space-y-5">
     <div>
         <h1 class="text-2xl font-bold text-slate-900">Settings</h1>
         <p class="text-sm text-slate-500 mt-1">Company information manage karo</p>

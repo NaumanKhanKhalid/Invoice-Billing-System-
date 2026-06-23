@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Day Record — ' . \Carbon\Carbon::parse($dayEnd->date)->format('d M Y'))
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="space-y-6">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
       <a href="{{ route('day-end.index') }}" class="text-slate-400 hover:text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>

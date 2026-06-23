@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Edit Staff')
 @section('content')
-<div class="max-w-xl mx-auto space-y-5">
+<div class="space-y-5">
   <div class="flex items-center gap-3">
     <a href="{{ route('staff.show',$staff) }}" class="text-slate-400 hover:text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
     <div><h1 class="text-2xl font-bold text-slate-900">Edit Staff</h1><p class="text-sm text-slate-500">{{ $staff->name }}</p></div>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','New Purchase')
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{
+<div class="space-y-6" x-data="{
     liveKg: 0,
     doa: 0,
     ratePerKg: {{ $todayRate?->live_rate_per_kg ?? 0 }},

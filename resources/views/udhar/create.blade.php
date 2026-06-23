@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','New Udhar')
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{
+<div class="space-y-6" x-data="{
     amount: {{ old('amount', 0) }},
     dueDays: {{ old('due_days', 7) }},
     saleDate: '{{ old('sale_date', today()->toDateString()) }}',

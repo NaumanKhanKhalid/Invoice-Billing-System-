@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Edit Purchase')
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{
+<div class="space-y-6" x-data="{
     liveKg: {{ $purchase->live_weight_kg }},
     doa: {{ $purchase->dead_on_arrival_kg }},
     ratePerKg: {{ $purchase->rate_per_kg_live }},

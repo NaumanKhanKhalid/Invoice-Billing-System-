@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Add Customer')
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{
+<div class="space-y-6" x-data="{
     type: '{{ old('type','hotel') }}',
     get creditDays() {
       return { hotel: 30, catering: 30, restaurant: 30, company: 30, reseller: 7 }[this.type] ?? 30;

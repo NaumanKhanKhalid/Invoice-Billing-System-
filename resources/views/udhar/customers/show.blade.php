@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $udharCustomer->name . ' — Udhar Customer')
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="space-y-6">
 
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Edit Supply Order')
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{
+<div class="space-y-6" x-data="{
     dressedKg: {{ $supply->dressed_weight_kg }},
     ratePerKg: {{ $supply->rate_per_kg }},
     get totalAmount() { return (parseFloat(this.dressedKg||0)*parseFloat(this.ratePerKg||0)).toFixed(2); }
