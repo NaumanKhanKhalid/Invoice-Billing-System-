@@ -68,8 +68,15 @@ class GoogleDriveController extends Controller
         $service    = new Drive($client);
         $folderId   = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
 
-        // Create backup file
-        $dbPath     = database_path('database.sqlite');
+        // Get actual DB path from config
+        $dbPath = config('database.connections.sqlite.database');
+        if (!$dbPath || !file_exists($dbPath)) {
+            $dbPath = database_path('database.sqlite');
+        }
+        if (!file_exists($dbPath)) {
+            return redirect()->route('settings.index')->with('error', 'Database file not found at: ' . $dbPath);
+        }
+
         $backupName = 'backup_' . now()->format('Y-m-d_H-i-s') . '.sqlite';
 
         $fileMetadata = new DriveFile([
@@ -136,7 +143,10 @@ class GoogleDriveController extends Controller
         $response = $service->files->get($fileId, ['alt' => 'media']);
         $content  = $response->getBody()->getContents();
 
-        $dbPath = database_path('database.sqlite');
+        $dbPath = config('database.connections.sqlite.database');
+        if (!$dbPath) {
+            $dbPath = database_path('database.sqlite');
+        }
 
         // Keep a safety copy of current DB before restore
         copy($dbPath, $dbPath . '.before_restore');

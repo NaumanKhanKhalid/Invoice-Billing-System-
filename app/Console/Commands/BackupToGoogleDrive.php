@@ -44,7 +44,14 @@ class BackupToGoogleDrive extends Command
 
         $service    = new Drive($client);
         $folderId   = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
-        $dbPath     = database_path('database.sqlite');
+        $dbPath = config('database.connections.sqlite.database');
+        if (!$dbPath || !file_exists($dbPath)) {
+            $dbPath = database_path('database.sqlite');
+        }
+        if (!file_exists($dbPath)) {
+            $this->error('Database file not found at: ' . $dbPath);
+            return 1;
+        }
         $backupName = 'backup_' . now()->format('Y-m-d_H-i-s') . '.sqlite';
 
         $fileMetadata = new DriveFile([
