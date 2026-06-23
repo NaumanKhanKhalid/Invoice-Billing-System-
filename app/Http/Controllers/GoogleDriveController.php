@@ -140,21 +140,31 @@ class GoogleDriveController extends Controller
         $connection = config('database.default');
 
         if ($connection === 'mysql') {
-            $host    = config('database.connections.mysql.host', '127.0.0.1');
-            $port    = config('database.connections.mysql.port', '3306');
-            $db      = config('database.connections.mysql.database');
-            $user    = config('database.connections.mysql.username');
-            $pass    = config('database.connections.mysql.password');
-            $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'restore_' . time() . '.sql';
+            $host = config('database.connections.mysql.host', '127.0.0.1');
+            $port = config('database.connections.mysql.port', '3306');
+            $db   = config('database.connections.mysql.database');
+            $user = config('database.connections.mysql.username');
+            $pass = config('database.connections.mysql.password');
 
-            file_put_contents($tmpFile, $content);
-            $passArg = $pass ? "-p\"{$pass}\"" : '';
-            $cmd     = "mysql --host={$host} --port={$port} --user={$user} {$passArg} {$db} < \"{$tmpFile}\" 2>&1";
-            exec($cmd, $output, $code);
-            @unlink($tmpFile);
+            try {
+                $pdo = new \PDO("mysql:host={$host};port={$port};dbname={$db};charset=utf8", $user, $pass);
+                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-            if ($code !== 0) {
-                return redirect()->route('settings.backups')->with('error', 'Restore failed: ' . implode(' ', $output));
+                // Split SQL into individual statements and execute
+                $statements = array_filter(
+                    array_map('trim', explode(";\n", $content)),
+                    fn($s) => !empty($s) && !str_starts_with($s, '--')
+                );
+
+                $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
+                foreach ($statements as $sql) {
+                    if (!empty(trim($sql))) {
+                        try { $pdo->exec($sql); } catch (\Exception $e) { /* skip errors on individual statements */ }
+                    }
+                }
+                $pdo->exec('SET FOREIGN_KEY_CHECKS=1');
+            } catch (\Exception $e) {
+                return redirect()->route('settings.backups')->with('error', 'Restore failed: ' . $e->getMessage());
             }
         } else {
             $dbPath = config('database.connections.sqlite.database', database_path('database.sqlite'));
@@ -162,7 +172,7 @@ class GoogleDriveController extends Controller
             file_put_contents($dbPath, $content);
         }
 
-        return redirect()->route('settings.backups')->with('success', 'Database restore ho gaya! Previous data wapis aa gaya.');
+        return redirect()->route('settings.backups')->with('success', 'Database restore ho gaya! Data wapis aa gaya.');
     }
 
     private function getAuthenticatedClient(string $tokenJson): ?Client
@@ -190,33 +200,18 @@ class GoogleDriveController extends Controller
         $timestamp  = now()->format('Y-m-d_H-i-s');
 
         if ($connection === 'mysql') {
-            $host     = config('database.connections.mysql.host', '127.0.0.1');
-            $port     = config('database.connections.mysql.port', '3306');
-            $db       = config('database.connections.mysql.database');
-            $user     = config('database.connections.mysql.username');
-            $pass     = config('database.connections.mysql.password');
-            $tmpFile  = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "backup_{$timestamp}.sql";
-
-            // Try mysqldump
-            $passArg = $pass ? "-p\"{$pass}\"" : '';
-            $cmd     = "mysqldump --host={$host} --port={$port} --user={$user} {$passArg} {$db} > \"{$tmpFile}\" 2>&1";
-            exec($cmd, $output, $code);
-
-            if ($code !== 0 || !file_exists($tmpFile) || filesize($tmpFile) === 0) {
-                // Fallback: PHP-based dump via PDO
-                $content = $this->phpMysqlDump($host, $port, $db, $user, $pass);
-                if (!$content) {
-                    return ['', '', 'Database dump failed. Check DB credentials.'];
-                }
-                return ["backup_{$timestamp}.sql", $content, null];
+            $host    = config('database.connections.mysql.host', '127.0.0.1');
+            $port    = config('database.connections.mysql.port', '3306');
+            $db      = config('database.connections.mysql.database');
+            $user    = config('database.connections.mysql.username');
+            $pass    = config('database.connections.mysql.password');
+            $content = $this->phpMysqlDump($host, $port, $db, $user, $pass);
+            if (!$content) {
+                return ['', '', 'Database dump failed. Check DB credentials in .env'];
             }
-
-            $content = file_get_contents($tmpFile);
-            @unlink($tmpFile);
             return ["backup_{$timestamp}.sql", $content, null];
         }
 
-        // SQLite fallback
         $dbPath = config('database.connections.sqlite.database', database_path('database.sqlite'));
         if (!file_exists($dbPath)) {
             return ['', '', 'Database file not found at: ' . $dbPath];

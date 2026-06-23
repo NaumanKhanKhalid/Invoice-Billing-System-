@@ -46,7 +46,7 @@ class BackupToGoogleDrive extends Command
         $folderId  = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
         $timestamp = now()->format('Y-m-d_H-i-s');
 
-        // Build dump based on connection type
+        // Build dump using PHP PDO (no external commands needed)
         $connection = config('database.default');
         if ($connection === 'mysql') {
             $host    = config('database.connections.mysql.host', '127.0.0.1');
@@ -54,15 +54,11 @@ class BackupToGoogleDrive extends Command
             $db      = config('database.connections.mysql.database');
             $user    = config('database.connections.mysql.username');
             $pass    = config('database.connections.mysql.password');
-            $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "backup_{$timestamp}.sql";
-            $passArg = $pass ? "-p\"{$pass}\"" : '';
-            exec("mysqldump --host={$host} --port={$port} --user={$user} {$passArg} {$db} > \"{$tmpFile}\" 2>&1", $out, $code);
-            if ($code !== 0 || !file_exists($tmpFile) || filesize($tmpFile) === 0) {
-                $this->error('mysqldump failed: ' . implode(' ', $out));
+            $content = $this->phpMysqlDump($host, $port, $db, $user, $pass);
+            if (!$content) {
+                $this->error('Database dump failed. Check DB credentials in .env');
                 return 1;
             }
-            $content    = file_get_contents($tmpFile);
-            @unlink($tmpFile);
             $backupName = "backup_{$timestamp}.sql";
         } else {
             $dbPath = config('database.connections.sqlite.database', database_path('database.sqlite'));
@@ -106,5 +102,30 @@ class BackupToGoogleDrive extends Command
         $folder  = new DriveFile(['name' => $name, 'mimeType' => 'application/vnd.google-apps.folder']);
         $created = $service->files->create($folder, ['fields' => 'id']);
         return $created->getId();
+    }
+
+    private function phpMysqlDump(string $host, string $port, string $db, string $user, string $pass): ?string
+    {
+        try {
+            $pdo    = new \PDO("mysql:host={$host};port={$port};dbname={$db};charset=utf8", $user, $pass);
+            $output = "-- Anwar Chicken Center Database Backup\n-- Date: " . now() . "\n\nSET FOREIGN_KEY_CHECKS=0;\n\n";
+            $tables = $pdo->query("SHOW TABLES")->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($tables as $table) {
+                $output .= "DROP TABLE IF EXISTS `{$table}`;\n";
+                $create  = $pdo->query("SHOW CREATE TABLE `{$table}`")->fetch(\PDO::FETCH_ASSOC);
+                $output .= $create['Create Table'] . ";\n\n";
+                $rows    = $pdo->query("SELECT * FROM `{$table}`")->fetchAll(\PDO::FETCH_ASSOC);
+                foreach ($rows as $row) {
+                    $vals    = array_map(fn($v) => $v === null ? 'NULL' : $pdo->quote($v), $row);
+                    $cols    = '`' . implode('`, `', array_keys($row)) . '`';
+                    $output .= "INSERT INTO `{$table}` ({$cols}) VALUES (" . implode(', ', $vals) . ");\n";
+                }
+                $output .= "\n";
+            }
+            $output .= "SET FOREIGN_KEY_CHECKS=1;\n";
+            return $output;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
