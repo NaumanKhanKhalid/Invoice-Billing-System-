@@ -59,8 +59,8 @@
           <i data-lucide="database" class="w-5 h-5 text-blue-500"></i>
         </div>
         <div class="min-w-0">
-          <p class="text-sm font-semibold text-slate-800 truncate" title="{{ $backup['name'] }}">{{ $backup['name'] }}</p>
-          <p class="text-xs text-slate-400 mt-0.5">{{ $backup['size'] }}</p>
+          <p class="text-sm font-semibold text-slate-800">Backup #{{ count($backups) - $i }}</p>
+          <p class="text-xs text-slate-400 mt-0.5">{{ $backup['size'] }} &middot; .{{ pathinfo($backup['name'], PATHINFO_EXTENSION) }}</p>
         </div>
         @if($i === 0)
         <span class="ml-auto shrink-0 text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Latest</span>
