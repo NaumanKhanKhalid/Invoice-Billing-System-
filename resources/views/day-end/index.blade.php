@@ -16,7 +16,6 @@
     <table class="w-full">
       <thead class="bg-slate-50"><tr>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>
-        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Chicken Type</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Supply Revenue</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Counter Cash</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Total Revenue</th>
