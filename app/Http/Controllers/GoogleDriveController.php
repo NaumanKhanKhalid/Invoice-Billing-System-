@@ -106,7 +106,7 @@ class GoogleDriveController extends Controller
         $folderId = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
 
         $results = $service->files->listFiles([
-            'q'       => "'{$folderId}' in parents and trashed=false and mimeType='application/octet-stream'",
+            'q'       => "'{$folderId}' in parents and trashed=false",
             'fields'  => 'files(id,name,size,createdTime)',
             'orderBy' => 'createdTime desc',
         ]);

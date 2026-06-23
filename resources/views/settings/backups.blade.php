@@ -77,7 +77,7 @@
   </div>
 
   <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
-    <strong>Note:</strong> Restore karne se pehle current data ka ek copy automatically save hota hai (<code>database.sqlite.before_restore</code>).
+    <strong>Note:</strong> Restore karne se pehle confirm kar lo — backup se data replace ho jayega.
   </div>
 
 </div>
