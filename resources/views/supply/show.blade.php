@@ -16,10 +16,10 @@
         <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp
       </a>
       @endif
-      <a href="{{ route('supply.invoice',$supply) }}" target="_blank"
-         class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium">
+      <button onclick="printInvoice('{{ route('supply.invoice',$supply) }}')"
+         class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer">
         <i data-lucide="printer" class="w-4 h-4"></i>Print Invoice
-      </a>
+      </button>
       @if($supply->payment_status!=='paid')
       <a href="{{ route('supply.edit',$supply) }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium">
         <i data-lucide="pencil" class="w-4 h-4"></i>Edit

@@ -241,6 +241,6 @@
     </div>
   </div>
 
-  <script>window.addEventListener('load', () => setTimeout(() => window.print(), 400));</script>
+  <script></script>
 </body>
 </html>

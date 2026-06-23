@@ -437,5 +437,18 @@
         });
     });
     </script>
+
+    {{-- Hidden iframe for in-page printing --}}
+    <iframe id="print-frame" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;" tabindex="-1"></iframe>
+    <script>
+    function printInvoice(url) {
+        const frame = document.getElementById('print-frame');
+        frame.onload = function () {
+            frame.contentWindow.focus();
+            frame.contentWindow.print();
+        };
+        frame.src = url;
+    }
+    </script>
 </body>
 </html>
