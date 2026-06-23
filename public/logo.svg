@@ -1,44 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none">
-  <!-- Background pill -->
-  <rect x="0" y="0" width="320" height="80" rx="16" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 68" fill="none">
 
-  <!-- Chicken icon group (left) -->
-  <g transform="translate(14, 10)">
-    <!-- Body -->
-    <ellipse cx="30" cy="38" rx="18" ry="16" fill="#16a34a"/>
-    <!-- Head -->
-    <circle cx="46" cy="24" r="11" fill="#16a34a"/>
-    <!-- Beak -->
-    <polygon points="57,22 63,25 57,28" fill="#fbbf24"/>
-    <!-- Comb -->
-    <path d="M42,13 Q44,8 46,13 Q48,7 50,13 Q52,9 54,13" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <!-- Eye -->
-    <circle cx="49" cy="23" r="2.5" fill="#0f172a"/>
-    <circle cx="50" cy="22" r="0.8" fill="#fff"/>
-    <!-- Wing -->
-    <path d="M18,32 Q12,28 14,40 Q20,44 30,40" fill="#15803d"/>
+  <!-- Chicken icon -->
+  <g transform="translate(8, 6)">
     <!-- Tail feathers -->
-    <path d="M12,30 Q4,22 8,36" stroke="#15803d" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M12,34 Q2,28 6,42" stroke="#16a34a" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M13,38 Q4,36 8,48" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M8,28 Q0,18 5,32" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M9,33 Q0,26 5,40" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M10,38 Q2,34 7,46" stroke="#4ade80" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Body -->
+    <ellipse cx="26" cy="36" rx="17" ry="14" fill="#16a34a"/>
+    <!-- Wing highlight -->
+    <path d="M16,30 Q10,26 13,38 Q19,42 27,38" fill="#15803d"/>
+    <ellipse cx="30" cy="28" rx="4" ry="2.5" fill="#22c55e" opacity="0.45" transform="rotate(-15,30,28)"/>
+    <!-- Head -->
+    <circle cx="41" cy="22" r="10" fill="#16a34a"/>
+    <!-- Comb -->
+    <path d="M37,12 Q39,7 41,12 Q43,6 45,12 Q47,8 49,12" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Wattle -->
+    <ellipse cx="44" cy="28" rx="2.5" ry="3.5" fill="#ef4444" opacity="0.85"/>
+    <!-- Beak -->
+    <polygon points="51,20 57,23 51,26" fill="#fbbf24"/>
+    <!-- Eye -->
+    <circle cx="45" cy="21" r="2.5" fill="#0f172a"/>
+    <circle cx="46" cy="20" r="0.9" fill="#fff"/>
     <!-- Legs -->
-    <line x1="26" y1="52" x2="23" y2="62" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="34" y1="52" x2="37" y2="62" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Feet -->
-    <path d="M23,62 L19,65 M23,62 L23,66 M23,62 L27,64" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
-    <path d="M37,62 L33,64 M37,62 L37,66 M37,62 L41,65" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
-    <!-- Shine on body -->
-    <ellipse cx="34" cy="30" rx="5" ry="3" fill="#22c55e" opacity="0.5" transform="rotate(-20,34,30)"/>
+    <line x1="22" y1="49" x2="19" y2="57" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="30" y1="49" x2="33" y2="57" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M19,57 L15,60 M19,57 L19,62 M19,57 L23,60" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M33,57 L29,60 M33,57 L33,62 M33,57 L37,60" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
   </g>
 
-  <!-- Divider line -->
-  <line x1="86" y1="16" x2="86" y2="64" stroke="#1e3a2f" stroke-width="1.5"/>
+  <!-- Vertical divider -->
+  <line x1="80" y1="12" x2="80" y2="56" stroke="#22c55e" stroke-width="1.5" opacity="0.4"/>
 
-  <!-- Text: Anwar -->
-  <text x="100" y="36" font-family="'Segoe UI', Arial, sans-serif" font-size="22" font-weight="800" fill="#22c55e" letter-spacing="-0.5">Anwar</text>
-  <!-- Text: Chicken Center -->
-  <text x="100" y="57" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#94a3b8" letter-spacing="0.5">Chicken Center</text>
+  <!-- ANWAR - big bold -->
+  <text x="92" y="34" font-family="'Segoe UI', Arial Black, sans-serif" font-size="26" font-weight="900" fill="#22c55e" letter-spacing="-1">ANWAR</text>
 
-  <!-- Tagline -->
-  <text x="100" y="70" font-family="'Segoe UI', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#475569" letter-spacing="1.2">FRESH · DRESSED · KARACHI</text>
+  <!-- Thin green line under ANWAR -->
+  <line x1="92" y1="39" x2="248" y2="39" stroke="#22c55e" stroke-width="1" opacity="0.3"/>
+
+  <!-- Chicken Center -->
+  <text x="93" y="52" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#94a3b8" letter-spacing="3.5">CHICKEN CENTER</text>
+
 </svg>
