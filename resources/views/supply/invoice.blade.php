@@ -80,6 +80,7 @@
     <a href="{{ route('supply.show', $supply) }}" class="back-btn">← Back</a>
     <span>{{ $supply->invoice_number }} — {{ $supply->customer?->name }}</span>
     <button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+  <script>window.addEventListener('load', () => setTimeout(() => window.print(), 400));</script>
   </div>
 
   <div class="page" style="margin-top: 50px;">
