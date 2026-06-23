@@ -9,7 +9,7 @@
     </a>
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Google Drive Backups</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Kisi bhi backup ko restore ya delete kar sakte ho</p>
+      <p class="text-sm text-slate-500 mt-0.5">Manage and restore your backups</p>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
     <form method="POST" action="{{ route('backup.google') }}">
       @csrf
       <button type="submit" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="upload-cloud" class="w-4 h-4"></i>New Backup Lo
+        <i data-lucide="upload-cloud" class="w-4 h-4"></i>New Backup
       </button>
     </form>
   </div>
@@ -46,8 +46,8 @@
   @if(count($backups) === 0)
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-6 py-16 text-center">
     <i data-lucide="cloud-off" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
-    <p class="text-slate-500 font-medium">Abhi koi backup nahi hai</p>
-    <p class="text-slate-400 text-sm mt-1">Upar "New Backup Lo" button se pehla backup banao</p>
+    <p class="text-slate-500 font-medium">No backups yet</p>
+    <p class="text-slate-400 text-sm mt-1">Click "New Backup" above to create your first backup</p>
   </div>
   @else
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -76,9 +76,9 @@
       {{-- Actions --}}
       <div class="flex gap-2 pt-1 border-t border-slate-100">
         <form method="POST" action="{{ route('backup.restore', $backup['id']) }}" class="flex-1"
-              data-confirm-title="Restore Karna Chahte Ho?"
-              data-confirm-message="Is backup se restore karne par current data replace ho jaye ga."
-              data-confirm-text="Haan, Restore Karo"
+              data-confirm-title="Confirm Restore?"
+              data-confirm-message="Restoring this backup will replace your current data."
+              data-confirm-text="Yes, Restore"
               data-confirm-danger="true">
           @csrf
           <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors">
@@ -86,9 +86,9 @@
           </button>
         </form>
         <form method="POST" action="{{ route('backup.delete', $backup['id']) }}" class="flex-1"
-              data-confirm-title="Backup Delete Karo?"
-              data-confirm-message="Ye backup Google Drive se hamesha ke liye delete ho jaye ga."
-              data-confirm-text="Haan, Delete Karo"
+              data-confirm-title="Delete Backup?"
+              data-confirm-message="This backup will be permanently deleted from Google Drive."
+              data-confirm-text="Yes, Delete"
               data-confirm-danger="true">
           @csrf @method('DELETE')
           <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition-colors">
@@ -102,7 +102,7 @@
   @endif
 
   <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
-    <strong>Note:</strong> Restore karne se pehle confirm kar lo — backup se current data replace ho jayega.
+    <strong>Note:</strong> Restoring a backup will replace all current data.
   </div>
 
 </div>
