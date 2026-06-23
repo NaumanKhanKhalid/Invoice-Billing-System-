@@ -62,10 +62,10 @@
             @else
               <div class="flex items-center gap-2 mt-0.5">
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-700">Pending</span>
-                <form method="POST" action="{{ route('supply.deliver', $supply) }}" class="inline">
+                <form method="POST" action="{{ route('supply.deliver', $supply) }}" class="inline"
+                      data-confirm-title="Mark Delivered?" data-confirm-message="Ye order deliver ho gaya hai?" data-confirm-text="Haan, Delivered" data-confirm-danger="false">
                   @csrf @method('PATCH')
-                  <button type="submit" onclick="return confirm('Deliver mark karo?')"
-                          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
+                  <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition-colors">
                     <i data-lucide="check" class="w-3.5 h-3.5"></i> Mark Delivered
                   </button>
                 </form>

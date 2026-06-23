@@ -356,5 +356,86 @@
     </script>
 
     @stack('scripts')
+
+    {{-- Global Confirm Modal --}}
+    <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.5);backdrop-filter:blur(2px)"
+         x-data="confirmModal()" x-show="open" x-cloak
+         @confirm-open.window="show($event.detail)"
+         style="display:none">
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div x-show="open" x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+             class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+          <div class="flex items-start gap-4 mb-5">
+            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-slate-900 text-base" x-text="title"></h3>
+              <p class="text-sm text-slate-500 mt-1" x-text="message"></p>
+            </div>
+          </div>
+          <div class="flex gap-3 justify-end">
+            <button @click="cancel()" class="px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium transition-colors">Cancel</button>
+            <button @click="confirm()" class="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors"
+                    :class="danger ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+                    x-text="confirmText"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    function confirmModal() {
+        return {
+            open: false,
+            title: '',
+            message: '',
+            confirmText: 'Yes, Delete',
+            danger: true,
+            _resolve: null,
+            show(detail) {
+                this.title = detail.title || 'Are you sure?';
+                this.message = detail.message || '';
+                this.confirmText = detail.confirmText || 'Yes, Delete';
+                this.danger = detail.danger !== false;
+                this.open = true;
+                this._resolve = detail.resolve;
+            },
+            confirm() {
+                this.open = false;
+                if (this._resolve) this._resolve(true);
+            },
+            cancel() {
+                this.open = false;
+                if (this._resolve) this._resolve(false);
+            }
+        }
+    }
+
+    function askConfirm(detail) {
+        return new Promise(resolve => {
+            window.dispatchEvent(new CustomEvent('confirm-open', { detail: { ...detail, resolve } }));
+        });
+    }
+
+    // Replace all onsubmit confirm forms
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('form[data-confirm-title]').forEach(form => {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const ok = await askConfirm({
+                    title: form.dataset.confirmTitle,
+                    message: form.dataset.confirmMessage || '',
+                    confirmText: form.dataset.confirmText || 'Yes, Delete',
+                    danger: form.dataset.confirmDanger !== 'false',
+                });
+                if (ok) form.submit();
+            });
+        });
+    });
+    </script>
 </body>
 </html>

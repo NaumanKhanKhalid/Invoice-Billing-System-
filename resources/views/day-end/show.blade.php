@@ -10,10 +10,10 @@
       </div>
     </div>
     @if(!$dayEnd->is_closed)
-    <form method="POST" action="{{ route('day-end.close',$dayEnd) }}">
+    <form method="POST" action="{{ route('day-end.close',$dayEnd) }}"
+          data-confirm-title="Din Band Karo?" data-confirm-message="Ye action undo nahi ho sakti." data-confirm-text="Haan, Band Karo" data-confirm-danger="true">
       @csrf
-      <button type="submit" onclick="return confirm('Close this day? This cannot be undone.')"
-        class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+      <button type="submit" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
         <i data-lucide="lock" class="w-4 h-4"></i>Close Day
       </button>
     </form>
