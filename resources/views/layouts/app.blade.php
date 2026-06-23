@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title', 'Anwar Chicken') — Anwar Chicken</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -100,11 +102,8 @@
     <!-- Sidebar -->
     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto">
         <!-- Logo -->
-        <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-700/50">
-            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i data-lucide="zap" class="w-4 h-4 text-white"></i>
-            </div>
-            <span class="text-white font-bold text-lg">Anwar Chicken</span>
+        <div class="px-4 py-4 border-b border-slate-700/50">
+            <img src="/logo.svg" alt="Anwar Chicken Center" class="w-full h-auto" style="max-height:52px;object-fit:contain;">
         </div>
 
         <!-- Navigation -->

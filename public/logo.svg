@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none">
+  <!-- Background pill -->
+  <rect x="0" y="0" width="320" height="80" rx="16" fill="#0f172a"/>
+
+  <!-- Chicken icon group (left) -->
+  <g transform="translate(14, 10)">
+    <!-- Body -->
+    <ellipse cx="30" cy="38" rx="18" ry="16" fill="#16a34a"/>
+    <!-- Head -->
+    <circle cx="46" cy="24" r="11" fill="#16a34a"/>
+    <!-- Beak -->
+    <polygon points="57,22 63,25 57,28" fill="#fbbf24"/>
+    <!-- Comb -->
+    <path d="M42,13 Q44,8 46,13 Q48,7 50,13 Q52,9 54,13" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Eye -->
+    <circle cx="49" cy="23" r="2.5" fill="#0f172a"/>
+    <circle cx="50" cy="22" r="0.8" fill="#fff"/>
+    <!-- Wing -->
+    <path d="M18,32 Q12,28 14,40 Q20,44 30,40" fill="#15803d"/>
+    <!-- Tail feathers -->
+    <path d="M12,30 Q4,22 8,36" stroke="#15803d" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M12,34 Q2,28 6,42" stroke="#16a34a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M13,38 Q4,36 8,48" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Legs -->
+    <line x1="26" y1="52" x2="23" y2="62" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="34" y1="52" x2="37" y2="62" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Feet -->
+    <path d="M23,62 L19,65 M23,62 L23,66 M23,62 L27,64" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37,62 L33,64 M37,62 L37,66 M37,62 L41,65" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Shine on body -->
+    <ellipse cx="34" cy="30" rx="5" ry="3" fill="#22c55e" opacity="0.5" transform="rotate(-20,34,30)"/>
+  </g>
+
+  <!-- Divider line -->
+  <line x1="86" y1="16" x2="86" y2="64" stroke="#1e3a2f" stroke-width="1.5"/>
+
+  <!-- Text: Anwar -->
+  <text x="100" y="36" font-family="'Segoe UI', Arial, sans-serif" font-size="22" font-weight="800" fill="#22c55e" letter-spacing="-0.5">Anwar</text>
+  <!-- Text: Chicken Center -->
+  <text x="100" y="57" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#94a3b8" letter-spacing="0.5">Chicken Center</text>
+
+  <!-- Tagline -->
+  <text x="100" y="70" font-family="'Segoe UI', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#475569" letter-spacing="1.2">FRESH · DRESSED · KARACHI</text>
+</svg>

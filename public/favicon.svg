@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="#0f172a"/>
+  <!-- Body -->
+  <ellipse cx="30" cy="40" rx="16" ry="14" fill="#16a34a"/>
+  <!-- Head -->
+  <circle cx="44" cy="26" r="10" fill="#16a34a"/>
+  <!-- Beak -->
+  <polygon points="54,24 60,27 54,30" fill="#fbbf24"/>
+  <!-- Comb -->
+  <path d="M40,16 Q42,11 44,16 Q46,10 48,16 Q50,12 52,16" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Eye -->
+  <circle cx="47" cy="25" r="2.5" fill="#0f172a"/>
+  <circle cx="48" cy="24" r="0.9" fill="#fff"/>
+  <!-- Wing -->
+  <path d="M18,34 Q11,30 13,42 Q20,46 30,42" fill="#15803d"/>
+  <!-- Tail -->
+  <path d="M14,32 Q5,24 10,38" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M14,37 Q4,32 8,46" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Legs -->
+  <line x1="26" y1="53" x2="23" y2="61" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="34" y1="53" x2="37" y2="61" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Letter A subtle -->
+  <text x="22" y="45" font-family="Arial" font-size="12" font-weight="900" fill="#0f172a" opacity="0.35">A</text>
+</svg>
