@@ -110,6 +110,13 @@ class SupplyController extends Controller
         return view('supply.show', compact('supply', 'whatsappLink'));
     }
 
+    public function invoice(SupplyOrder $supply)
+    {
+        $supply->load(['customer', 'payments']);
+        $setting = \App\Models\Setting::first();
+        return view('supply.invoice', compact('supply', 'setting'));
+    }
+
     public function edit(SupplyOrder $supply)
     {
         abort_if($supply->payment_status === 'paid', 403, 'Cannot edit a fully paid order.');

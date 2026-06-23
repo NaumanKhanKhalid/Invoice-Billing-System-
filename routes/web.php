@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.create');
     Route::post('/supply', [SupplyController::class, 'store'])->name('supply.store');
     Route::get('/supply/{supply}', [SupplyController::class, 'show'])->name('supply.show');
+    Route::get('/supply/{supply}/invoice', [SupplyController::class, 'invoice'])->name('supply.invoice');
     Route::get('/supply/{supply}/edit', [SupplyController::class, 'edit'])->name('supply.edit');
     Route::put('/supply/{supply}', [SupplyController::class, 'update'])->name('supply.update');
     Route::delete('/supply/{supply}', [SupplyController::class, 'destroy'])->name('supply.destroy');
