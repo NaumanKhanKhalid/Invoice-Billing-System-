@@ -96,7 +96,7 @@
             @else
               <form method="POST" action="{{ route('supply.deliver',$order) }}" class="inline">
                 @csrf @method('PATCH')
-                <button type="submit" onclick="return confirm('Mark as delivered?')"
+                <button type="submit"
                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 transition-colors cursor-pointer">
                   <i data-lucide="truck" class="w-3 h-3"></i>Pending
                 </button>
