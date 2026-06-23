@@ -127,9 +127,19 @@
           <span class="font-bold text-xl {{ $supply->amount_due>0?'text-red-600':'text-green-600' }}">{{ formatCurrency($supply->amount_due) }}</span>
         </div>
         <div>
-          @if($supply->payment_status==='paid')<span class="inline-flex w-full justify-center items-center px-3 py-2 rounded text-sm font-medium bg-green-100 text-green-700">Fully Paid</span>
-          @elseif($supply->payment_status==='partial')<span class="inline-flex w-full justify-center items-center px-3 py-2 rounded text-sm font-medium bg-yellow-100 text-yellow-700">Partially Paid</span>
-          @else<span class="inline-flex w-full justify-center items-center px-3 py-2 rounded text-sm font-medium bg-red-100 text-red-700">Unpaid</span>@endif
+          @if($supply->payment_status==='paid')
+            <span class="inline-flex w-full justify-center items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-green-100 text-green-700">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>Fully Paid
+            </span>
+          @elseif($supply->payment_status==='partial')
+            <span class="inline-flex w-full justify-center items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700">
+              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>Partially Paid
+            </span>
+          @else
+            <span class="inline-flex w-full justify-center items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-red-100 text-red-700">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>Unpaid
+            </span>
+          @endif
         </div>
       </div>
 
