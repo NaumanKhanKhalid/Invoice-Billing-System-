@@ -68,16 +68,10 @@ class GoogleDriveController extends Controller
         $service    = new Drive($client);
         $folderId   = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
 
-        // Get actual DB path from config
-        $dbPath = config('database.connections.sqlite.database');
-        if (!$dbPath || !file_exists($dbPath)) {
-            $dbPath = database_path('database.sqlite');
+        [$backupName, $content, $error] = $this->createDatabaseDump();
+        if ($error) {
+            return redirect()->route('settings.index')->with('error', $error);
         }
-        if (!file_exists($dbPath)) {
-            return redirect()->route('settings.index')->with('error', 'Database file not found at: ' . $dbPath);
-        }
-
-        $backupName = 'backup_' . now()->format('Y-m-d_H-i-s') . '.sqlite';
 
         $fileMetadata = new DriveFile([
             'name'    => $backupName,
@@ -85,7 +79,7 @@ class GoogleDriveController extends Controller
         ]);
 
         $service->files->create($fileMetadata, [
-            'data'       => file_get_contents($dbPath),
+            'data'       => $content,
             'mimeType'   => 'application/octet-stream',
             'uploadType' => 'multipart',
             'fields'     => 'id,name',
@@ -143,15 +137,30 @@ class GoogleDriveController extends Controller
         $response = $service->files->get($fileId, ['alt' => 'media']);
         $content  = $response->getBody()->getContents();
 
-        $dbPath = config('database.connections.sqlite.database');
-        if (!$dbPath) {
-            $dbPath = database_path('database.sqlite');
+        $connection = config('database.default');
+
+        if ($connection === 'mysql') {
+            $host    = config('database.connections.mysql.host', '127.0.0.1');
+            $port    = config('database.connections.mysql.port', '3306');
+            $db      = config('database.connections.mysql.database');
+            $user    = config('database.connections.mysql.username');
+            $pass    = config('database.connections.mysql.password');
+            $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'restore_' . time() . '.sql';
+
+            file_put_contents($tmpFile, $content);
+            $passArg = $pass ? "-p\"{$pass}\"" : '';
+            $cmd     = "mysql --host={$host} --port={$port} --user={$user} {$passArg} {$db} < \"{$tmpFile}\" 2>&1";
+            exec($cmd, $output, $code);
+            @unlink($tmpFile);
+
+            if ($code !== 0) {
+                return redirect()->route('settings.backups')->with('error', 'Restore failed: ' . implode(' ', $output));
+            }
+        } else {
+            $dbPath = config('database.connections.sqlite.database', database_path('database.sqlite'));
+            copy($dbPath, $dbPath . '.before_restore');
+            file_put_contents($dbPath, $content);
         }
-
-        // Keep a safety copy of current DB before restore
-        copy($dbPath, $dbPath . '.before_restore');
-
-        file_put_contents($dbPath, $content);
 
         return redirect()->route('settings.backups')->with('success', 'Database restore ho gaya! Previous data wapis aa gaya.');
     }
@@ -173,6 +182,73 @@ class GoogleDriveController extends Controller
         }
 
         return $client;
+    }
+
+    private function createDatabaseDump(): array
+    {
+        $connection = config('database.default');
+        $timestamp  = now()->format('Y-m-d_H-i-s');
+
+        if ($connection === 'mysql') {
+            $host     = config('database.connections.mysql.host', '127.0.0.1');
+            $port     = config('database.connections.mysql.port', '3306');
+            $db       = config('database.connections.mysql.database');
+            $user     = config('database.connections.mysql.username');
+            $pass     = config('database.connections.mysql.password');
+            $tmpFile  = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "backup_{$timestamp}.sql";
+
+            // Try mysqldump
+            $passArg = $pass ? "-p\"{$pass}\"" : '';
+            $cmd     = "mysqldump --host={$host} --port={$port} --user={$user} {$passArg} {$db} > \"{$tmpFile}\" 2>&1";
+            exec($cmd, $output, $code);
+
+            if ($code !== 0 || !file_exists($tmpFile) || filesize($tmpFile) === 0) {
+                // Fallback: PHP-based dump via PDO
+                $content = $this->phpMysqlDump($host, $port, $db, $user, $pass);
+                if (!$content) {
+                    return ['', '', 'Database dump failed. Check DB credentials.'];
+                }
+                return ["backup_{$timestamp}.sql", $content, null];
+            }
+
+            $content = file_get_contents($tmpFile);
+            @unlink($tmpFile);
+            return ["backup_{$timestamp}.sql", $content, null];
+        }
+
+        // SQLite fallback
+        $dbPath = config('database.connections.sqlite.database', database_path('database.sqlite'));
+        if (!file_exists($dbPath)) {
+            return ['', '', 'Database file not found at: ' . $dbPath];
+        }
+        return ["backup_{$timestamp}.sqlite", file_get_contents($dbPath), null];
+    }
+
+    private function phpMysqlDump(string $host, string $port, string $db, string $user, string $pass): ?string
+    {
+        try {
+            $pdo    = new \PDO("mysql:host={$host};port={$port};dbname={$db};charset=utf8", $user, $pass);
+            $output = "-- Anwar Chicken Center Database Backup\n-- Date: " . now() . "\n\nSET FOREIGN_KEY_CHECKS=0;\n\n";
+
+            $tables = $pdo->query("SHOW TABLES")->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($tables as $table) {
+                $output .= "DROP TABLE IF EXISTS `{$table}`;\n";
+                $create  = $pdo->query("SHOW CREATE TABLE `{$table}`")->fetch(\PDO::FETCH_ASSOC);
+                $output .= $create['Create Table'] . ";\n\n";
+
+                $rows = $pdo->query("SELECT * FROM `{$table}`")->fetchAll(\PDO::FETCH_ASSOC);
+                foreach ($rows as $row) {
+                    $vals    = array_map(fn($v) => $v === null ? 'NULL' : $pdo->quote($v), $row);
+                    $cols    = '`' . implode('`, `', array_keys($row)) . '`';
+                    $output .= "INSERT INTO `{$table}` ({$cols}) VALUES (" . implode(', ', $vals) . ");\n";
+                }
+                $output .= "\n";
+            }
+            $output .= "SET FOREIGN_KEY_CHECKS=1;\n";
+            return $output;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function getOrCreateFolder(Drive $service, string $name): string

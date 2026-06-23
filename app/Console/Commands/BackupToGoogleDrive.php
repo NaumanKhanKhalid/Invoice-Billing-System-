@@ -42,17 +42,37 @@ class BackupToGoogleDrive extends Command
             $client->setAccessToken($newToken);
         }
 
-        $service    = new Drive($client);
-        $folderId   = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
-        $dbPath = config('database.connections.sqlite.database');
-        if (!$dbPath || !file_exists($dbPath)) {
-            $dbPath = database_path('database.sqlite');
+        $service   = new Drive($client);
+        $folderId  = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
+        $timestamp = now()->format('Y-m-d_H-i-s');
+
+        // Build dump based on connection type
+        $connection = config('database.default');
+        if ($connection === 'mysql') {
+            $host    = config('database.connections.mysql.host', '127.0.0.1');
+            $port    = config('database.connections.mysql.port', '3306');
+            $db      = config('database.connections.mysql.database');
+            $user    = config('database.connections.mysql.username');
+            $pass    = config('database.connections.mysql.password');
+            $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "backup_{$timestamp}.sql";
+            $passArg = $pass ? "-p\"{$pass}\"" : '';
+            exec("mysqldump --host={$host} --port={$port} --user={$user} {$passArg} {$db} > \"{$tmpFile}\" 2>&1", $out, $code);
+            if ($code !== 0 || !file_exists($tmpFile) || filesize($tmpFile) === 0) {
+                $this->error('mysqldump failed: ' . implode(' ', $out));
+                return 1;
+            }
+            $content    = file_get_contents($tmpFile);
+            @unlink($tmpFile);
+            $backupName = "backup_{$timestamp}.sql";
+        } else {
+            $dbPath = config('database.connections.sqlite.database', database_path('database.sqlite'));
+            if (!file_exists($dbPath)) {
+                $this->error('Database file not found at: ' . $dbPath);
+                return 1;
+            }
+            $content    = file_get_contents($dbPath);
+            $backupName = "backup_{$timestamp}.sqlite";
         }
-        if (!file_exists($dbPath)) {
-            $this->error('Database file not found at: ' . $dbPath);
-            return 1;
-        }
-        $backupName = 'backup_' . now()->format('Y-m-d_H-i-s') . '.sqlite';
 
         $fileMetadata = new DriveFile([
             'name'    => $backupName,
@@ -60,7 +80,7 @@ class BackupToGoogleDrive extends Command
         ]);
 
         $service->files->create($fileMetadata, [
-            'data'       => file_get_contents($dbPath),
+            'data'       => $content,
             'mimeType'   => 'application/octet-stream',
             'uploadType' => 'multipart',
             'fields'     => 'id,name',
