@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/backup/google', [GoogleDriveController::class, 'backup'])->name('backup.google');
     Route::get('/backup/list', [GoogleDriveController::class, 'listBackups'])->name('settings.backups');
     Route::post('/backup/restore/{fileId}', [GoogleDriveController::class, 'restore'])->name('backup.restore');
+    Route::delete('/backup/delete/{fileId}', [GoogleDriveController::class, 'deleteBackup'])->name('backup.delete');
 
     // Suppliers
     Route::resource('suppliers', SupplierController::class);

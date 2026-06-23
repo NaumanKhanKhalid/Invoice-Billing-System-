@@ -175,6 +175,24 @@ class GoogleDriveController extends Controller
         return redirect()->route('settings.backups')->with('success', 'Database restore ho gaya! Data wapis aa gaya.');
     }
 
+    public function deleteBackup(string $fileId)
+    {
+        $tokenJson = Setting::getValue('google_drive_token');
+        if (!$tokenJson) {
+            return redirect()->route('settings.backups')->with('error', 'Google Drive not connected.');
+        }
+
+        $client = $this->getAuthenticatedClient($tokenJson);
+        if (!$client) {
+            return redirect()->route('settings.backups')->with('error', 'Session expired. Please reconnect.');
+        }
+
+        $service = new Drive($client);
+        $service->files->delete($fileId);
+
+        return redirect()->route('settings.backups')->with('success', 'Backup delete ho gaya.');
+    }
+
     private function getAuthenticatedClient(string $tokenJson): ?Client
     {
         $client = $this->getClient();
