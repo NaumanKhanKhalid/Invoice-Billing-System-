@@ -46,7 +46,7 @@
             <div>
               <label class="block text-xs font-medium text-slate-500 mb-1.5">Customer <span class="text-red-500">*</span></label>
               <select name="customer_id" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-                <option value="">— Customer select karo —</option>
+                <option value="">— Select Customer —</option>
                 @foreach($customers as $type => $group)
                 <optgroup label="{{ ucfirst($type) }}">
                   @foreach($group as $c)
@@ -63,10 +63,10 @@
                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-500 mb-1.5">Delivery Date <span class="text-slate-400 font-normal">(agar alag ho)</span></label>
+              <label class="block text-xs font-medium text-slate-500 mb-1.5">Delivery Date <span class="text-slate-400 font-normal">(if different from order date)</span></label>
               <input type="date" name="delivery_date" value="{{ old('delivery_date') }}"
                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
-              <p class="text-[11px] text-slate-400 mt-1">Khali chhoro agar aaj hi deliver karna hai</p>
+              <p class="text-[11px] text-slate-400 mt-1">Leave blank if delivering today</p>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@
             <p class="text-sm font-semibold text-slate-800">Notes</p>
           </div>
           <div class="p-4">
-            <textarea name="notes" rows="4" placeholder="Koi khas baat..."
+            <textarea name="notes" rows="4" placeholder="Any special notes..."
                       class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none">{{ old('notes') }}</textarea>
           </div>
         </div>

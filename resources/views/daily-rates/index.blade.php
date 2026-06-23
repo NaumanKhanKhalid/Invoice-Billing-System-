@@ -5,7 +5,7 @@
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Daily Rates</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Aaj ka live, retail aur supply rate set karo</p>
+      <p class="text-sm text-slate-500 mt-0.5">Set today's live, retail, and supply rates</p>
     </div>
     <span class="text-sm text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">{{ now()->format('d M Y') }}</span>
   </div>
@@ -13,19 +13,19 @@
   @if(!$todayComplete)
   <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
     <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 flex-shrink-0"></i>
-    <p class="text-sm text-amber-800 font-medium">Aaj ka rate abhi set nahi hua. Neeche enter karo.</p>
+    <p class="text-sm text-amber-800 font-medium">Today's rate has not been set yet. Please enter it below.</p>
   </div>
   @else
   <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
     <i data-lucide="check-circle-2" class="w-5 h-5 text-green-600 flex-shrink-0"></i>
-    <p class="text-sm text-green-800 font-medium">Aaj ka rate set ho gaya hai.</p>
+    <p class="text-sm text-green-800 font-medium">Today's rate has been set.</p>
   </div>
   @endif
 
   {{-- Set Today's Rates Form --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-    <h2 class="font-semibold text-slate-900 mb-1">Aaj Ka Rate Set Karo</h2>
-    <p class="text-xs text-slate-400 mb-5">Live rate (supplier se) · Retail rate (counter pe) · Supply rate (hotels/companies ko)</p>
+    <h2 class="font-semibold text-slate-900 mb-1">Set Today's Rates</h2>
+    <p class="text-xs text-slate-400 mb-5">Live rate (from supplier) · Retail rate (counter) · Supply rate (hotels/companies)</p>
     <form method="POST" action="{{ route('daily-rates.store') }}" class="space-y-4">
       @csrf
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -89,7 +89,7 @@
           <td class="px-4 py-3 text-sm text-slate-500">{{ $rate->notes ?? '-' }}</td>
         </tr>
         @empty
-        <tr><td colspan="5" class="px-4 py-8 text-center text-slate-400 text-sm">Abhi koi rate history nahi hai.</td></tr>
+        <tr><td colspan="5" class="px-4 py-8 text-center text-slate-400 text-sm">No rate history yet.</td></tr>
         @endforelse
       </tbody>
     </table>

@@ -71,8 +71,8 @@
           <td class="px-4 py-3 text-sm {{ $deliveryOverdue ? 'text-red-600 font-semibold' : ($deliveryToday ? 'text-amber-600 font-semibold' : 'text-slate-500') }}">
             @if($deliveryDate)
               {{ $deliveryDate->format('d M Y') }}
-              @if($deliveryToday)<p class="text-[10px] text-amber-500">Aaj</p>@endif
-              @if($deliveryOverdue)<p class="text-[10px] text-red-400">{{ $deliveryDate->diffInDays(today()) }} din late</p>@endif
+              @if($deliveryToday)<p class="text-[10px] text-amber-500">Today</p>@endif
+              @if($deliveryOverdue)<p class="text-[10px] text-red-400">{{ $deliveryDate->diffInDays(today()) }} days late</p>@endif
             @else
               <span class="text-slate-300">—</span>
             @endif
@@ -95,7 +95,7 @@
               </span>
             @else
               <form method="POST" action="{{ route('supply.deliver',$order) }}" class="inline"
-                    data-confirm-title="Mark Delivered?" data-confirm-message="Ye order deliver ho gaya hai?" data-confirm-text="Haan, Delivered" data-confirm-danger="false">
+                    data-confirm-title="Mark Delivered?" data-confirm-message="Confirm this order has been delivered?" data-confirm-text="Yes, Delivered" data-confirm-danger="false">
                 @csrf @method('PATCH')
                 <button type="submit"
                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 transition-colors cursor-pointer">
@@ -109,7 +109,7 @@
               <a href="{{ route('supply.show',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
               <button onclick="printInvoice('{{ route('supply.invoice',$order) }}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-indigo-100 text-slate-500 hover:text-indigo-700 text-xs font-medium transition-colors cursor-pointer"><i data-lucide="printer" class="w-3.5 h-3.5"></i>Print</button>
               @if($order->payment_status!=='paid')<a href="{{ route('supply.edit',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>@endif
-              @if($order->payment_status==='unpaid')<form method="POST" action="{{ route('supply.destroy',$order) }}" class="inline" data-confirm-title="Delete Order?" data-confirm-message="Is order ko delete karna chahte hain?" data-confirm-text="Haan, Delete Karo" >@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button></form>@endif
+              @if($order->payment_status==='unpaid')<form method="POST" action="{{ route('supply.destroy',$order) }}" class="inline" data-confirm-title="Delete Order?" data-confirm-message="Are you sure you want to delete this order?" data-confirm-text="Yes, Delete" >@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button></form>@endif
             </div>
           </td>
         </tr>

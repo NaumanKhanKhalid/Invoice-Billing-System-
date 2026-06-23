@@ -11,7 +11,7 @@
     </div>
     @if(!$dayEnd->is_closed)
     <form method="POST" action="{{ route('day-end.close',$dayEnd) }}"
-          data-confirm-title="Din Band Karo?" data-confirm-message="Ye action undo nahi ho sakti." data-confirm-text="Haan, Band Karo" data-confirm-danger="true">
+          data-confirm-title="Close Day?" data-confirm-message="This action cannot be undone." data-confirm-text="Yes, Close" data-confirm-danger="true">
       @csrf
       <button type="submit" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
         <i data-lucide="lock" class="w-4 h-4"></i>Close Day

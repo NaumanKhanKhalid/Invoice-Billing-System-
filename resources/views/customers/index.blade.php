@@ -111,7 +111,7 @@ $typeBadge = [
                   <i data-lucide="{{ $customer->is_active?'toggle-right':'toggle-left' }}" class="w-3.5 h-3.5"></i>{{ $customer->is_active?'Active':'Inactive' }}
                 </button>
               </form>
-              <form method="POST" action="{{ route('customers.destroy',$customer) }}" class="inline" data-confirm-title="Delete Customer?" data-confirm-message="Is customer ko delete karna chahte hain?" data-confirm-text="Haan, Delete Karo">
+              <form method="POST" action="{{ route('customers.destroy',$customer) }}" class="inline" data-confirm-title="Delete Customer?" data-confirm-message="Are you sure you want to delete this customer?" data-confirm-text="Yes, Delete">
                 @csrf @method('DELETE')
                 <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete

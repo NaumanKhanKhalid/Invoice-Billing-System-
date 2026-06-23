@@ -5,10 +5,10 @@
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Daily Records</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Din Band Karo — Day End Entries</p>
+      <p class="text-sm text-slate-500 mt-0.5">Close the day — Day End Entries</p>
     </div>
     <a href="{{ route('day-end.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-      <i data-lucide="moon" class="w-4 h-4"></i>Din Band Karo
+      <i data-lucide="moon" class="w-4 h-4"></i>Close Day
     </a>
   </div>
 

@@ -107,7 +107,7 @@
           <td class="px-4 py-3 text-sm text-right font-bold {{ $record->amount_due > 0 ? 'text-red-600' : 'text-slate-400' }}">{{ formatCurrency($record->amount_due) }}</td>
           <td class="px-4 py-3 text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : ($isToday ? 'text-amber-600 font-semibold' : 'text-slate-600') }}">
             {{ $record->due_date->format('d M Y') }}
-            @if($isOverdue)<p class="text-[10px] text-red-400 font-normal">{{ $daysOverdue }} din late</p>@endif
+            @if($isOverdue)<p class="text-[10px] text-red-400 font-normal">{{ $daysOverdue }} days overdue</p>@endif
           </td>
           <td class="px-4 py-3">
             @if($record->status === 'paid')
@@ -126,7 +126,7 @@
               </a>
               @if($record->status === 'unpaid')
               <form method="POST" action="{{ route('udhar.destroy', $record) }}" class="inline"
-                    data-confirm-title="Delete Udhar Record?" data-confirm-message="Is record ko delete karna chahte hain?" data-confirm-text="Haan, Delete Karo">
+                    data-confirm-title="Delete Udhar Record?" data-confirm-message="Are you sure you want to delete this record?" data-confirm-text="Yes, Delete">
                 @csrf @method('DELETE')
                 <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete

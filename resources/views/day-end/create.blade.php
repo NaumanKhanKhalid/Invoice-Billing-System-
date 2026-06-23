@@ -10,7 +10,7 @@
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
       </a>
       <div>
-        <h1 class="text-xl font-bold text-slate-900">Din Band Karo</h1>
+        <h1 class="text-xl font-bold text-slate-900">Close Day</h1>
         <p class="text-xs text-slate-500">{{ \Carbon\Carbon::parse($date)->format('l, d M Y') }}</p>
       </div>
     </div>
@@ -43,7 +43,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-slate-800">Opening Stock</p>
-            <p class="text-xs text-slate-400">Kal ka closing</p>
+            <p class="text-xs text-slate-400">Yesterday's closing</p>
           </div>
         </div>
         <div class="p-4 space-y-3">
@@ -71,8 +71,8 @@
             <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-blue-700"></i>
           </div>
           <div>
-            <p class="text-sm font-semibold text-blue-900">Aaj ki Purchases</p>
-            <p class="text-xs text-blue-500">Purchase orders se</p>
+            <p class="text-sm font-semibold text-blue-900">Today's Purchases</p>
+            <p class="text-xs text-blue-500">From purchase orders</p>
           </div>
         </div>
         <div class="p-4 space-y-3">
@@ -101,7 +101,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-green-900">Hotel / Company Supply</p>
-            <p class="text-xs text-green-500">Supply orders se</p>
+            <p class="text-xs text-green-500">From supply orders</p>
           </div>
         </div>
         <div class="p-4 space-y-3">
@@ -134,7 +134,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-yellow-900">Counter Cash (Retail)</p>
-            <p class="text-xs text-yellow-600">Aaj counter par jo cash aya</p>
+            <p class="text-xs text-yellow-600">Cash collected at counter today</p>
           </div>
         </div>
         <div class="p-4">
@@ -157,7 +157,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-slate-800">Closing Stock</p>
-            <p class="text-xs text-slate-400">Din ke aakhir mein bacha hua</p>
+            <p class="text-xs text-slate-400">Remaining stock at end of day</p>
           </div>
         </div>
         <div class="p-4 grid grid-cols-3 gap-3">
@@ -193,7 +193,7 @@
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
         <div class="flex items-center gap-2 mb-4">
           <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i>
-          <p class="text-sm font-semibold text-slate-800">Nuqsan / Waste</p>
+          <p class="text-sm font-semibold text-slate-800">Loss / Waste</p>
         </div>
         <div class="space-y-3">
           <div>
@@ -213,7 +213,7 @@
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
         <div class="flex items-center gap-2 mb-4">
           <i data-lucide="receipt" class="w-4 h-4 text-orange-400"></i>
-          <p class="text-sm font-semibold text-slate-800">Aaj ke Kharche</p>
+          <p class="text-sm font-semibold text-slate-800">Today's Expenses</p>
         </div>
         <label class="block text-xs font-medium text-slate-500 mb-1.5">Total Expenses (PKR) <span class="text-red-500">*</span></label>
         <div class="relative">
@@ -232,7 +232,7 @@
           <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
           <p class="text-sm font-semibold text-slate-800">Notes</p>
         </div>
-        <textarea name="notes" rows="4" placeholder="Koi khas baat ya note..."
+        <textarea name="notes" rows="4" placeholder="Any special notes..."
                   class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none">{{ old('notes') }}</textarea>
       </div>
     </div>
@@ -243,7 +243,7 @@
       <button type="submit"
               class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm">
         <i data-lucide="check-circle" class="w-4 h-4"></i>
-        Din Band Karo
+        Close Day
       </button>
     </div>
   </form>

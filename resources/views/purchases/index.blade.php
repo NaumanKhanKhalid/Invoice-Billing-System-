@@ -60,7 +60,7 @@
               <a href="{{ route('purchases.show',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
               @if($order->payment_status!=='paid')<a href="{{ route('purchases.edit',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>@endif
               @if($order->payment_status==='unpaid')
-              <form method="POST" action="{{ route('purchases.destroy',$order) }}" class="inline" data-confirm-title="Delete Purchase?" data-confirm-message="Is purchase ko delete karna chahte hain?" data-confirm-text="Haan, Delete Karo">@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button></form>
+              <form method="POST" action="{{ route('purchases.destroy',$order) }}" class="inline" data-confirm-title="Delete Purchase?" data-confirm-message="Are you sure you want to delete this purchase?" data-confirm-text="Yes, Delete">@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button></form>
               @endif
             </div>
           </td>
