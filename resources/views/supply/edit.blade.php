@@ -66,6 +66,11 @@
                 <input type="date" name="date" value="{{ old('date', $supply->date->format('Y-m-d')) }}" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                 @error('date')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
               </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">Delivery Date</label>
+                <input type="date" name="delivery_date" value="{{ old('delivery_date', $supply->delivery_date?->format('Y-m-d')) }}" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+                @error('delivery_date')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+              </div>
             </div>
           </div>
         </div>
