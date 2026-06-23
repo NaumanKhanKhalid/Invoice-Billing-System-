@@ -14,36 +14,59 @@
 
   {{-- Stats --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Suppliers</p>
-      <p class="text-2xl font-bold text-slate-900 mt-1">{{ $stats['total'] }}</p>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Suppliers</p>
+        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+          <i data-lucide="truck" class="w-4 h-4 text-slate-500"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-slate-900">{{ $stats['total'] }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Active</p>
-      <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['active'] }}</p>
+    <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active</p>
+        <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+          <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-green-600">{{ $stats['active'] }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Purchased</p>
-      <p class="text-2xl font-bold text-slate-900 mt-1">{{ formatCurrency($stats['purchased']) }}</p>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Purchased</p>
+        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+          <i data-lucide="shopping-cart" class="w-4 h-4 text-blue-500"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-slate-900">{{ formatCurrency($stats['purchased']) }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Outstanding</p>
-      <p class="text-2xl font-bold text-red-600 mt-1">{{ formatCurrency($stats['outstanding']) }}</p>
+    <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Outstanding</p>
+        <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+          <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-red-600">{{ formatCurrency($stats['outstanding']) }}</p>
     </div>
   </div>
 
   {{-- Filters --}}
   <form method="GET" class="flex flex-wrap gap-3">
-    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or phone..."
-      class="flex-1 min-w-48 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+    <div class="relative flex-1 min-w-48">
+      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+      <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or phone..."
+        class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
+    </div>
     <select name="status" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
       <option value="">All Status</option>
       <option value="active" {{ request('status')=='active'?'selected':'' }}>Active</option>
       <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Inactive</option>
     </select>
-    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
+    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Filter</button>
     @if(request()->hasAny(['search','status']))
-      <a href="{{ route('suppliers.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>
+      <a href="{{ route('suppliers.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Clear</a>
     @endif
   </form>
 

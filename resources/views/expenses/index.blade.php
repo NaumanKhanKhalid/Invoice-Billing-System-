@@ -8,17 +8,32 @@
   </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Today</p>
-      <p class="text-xl font-bold text-slate-900 mt-1">{{ formatCurrency($stats['today']) }}</p>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Today</p>
+        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+          <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i>
+        </div>
+      </div>
+      <p class="text-xl font-bold text-slate-900">{{ formatCurrency($stats['today']) }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">This Month</p>
-      <p class="text-xl font-bold text-orange-600 mt-1">{{ formatCurrency($stats['this_month']) }}</p>
+    <div class="bg-white rounded-xl border border-orange-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">This Month</p>
+        <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+          <i data-lucide="trending-up" class="w-4 h-4 text-orange-500"></i>
+        </div>
+      </div>
+      <p class="text-xl font-bold text-orange-600">{{ formatCurrency($stats['this_month']) }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">All Time</p>
-      <p class="text-xl font-bold text-slate-700 mt-1">{{ formatCurrency($stats['total']) }}</p>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">All Time</p>
+        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+          <i data-lucide="wallet" class="w-4 h-4 text-slate-500"></i>
+        </div>
+      </div>
+      <p class="text-xl font-bold text-slate-700">{{ formatCurrency($stats['total']) }}</p>
     </div>
   </div>
 

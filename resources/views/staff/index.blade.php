@@ -7,8 +7,15 @@
     <a href="{{ route('staff.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Add Staff</a>
   </div>
 
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex items-center gap-4">
-    <div><p class="text-xs text-slate-500 uppercase tracking-wider">Monthly Salary Bill</p><p class="text-2xl font-bold text-green-700 mt-0.5">{{ formatCurrency($totalSalary) }}</p></div>
+  <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Monthly Salary Bill</p>
+      <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+        <i data-lucide="banknote" class="w-4 h-4 text-green-600"></i>
+      </div>
+    </div>
+    <p class="text-2xl font-bold text-green-700">{{ formatCurrency($totalSalary) }}</p>
+    <p class="text-xs text-slate-400 mt-1">Total monthly payroll</p>
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -39,8 +46,8 @@
               <a href="{{ route('staff.show',$s) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
               <a href="{{ route('staff.edit',$s) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>
               <form method="POST" action="{{ route('staff.toggle-status',$s) }}" class="inline">@csrf
-                <button type="submit" class="text-slate-400 hover:text-{{ $s->is_active?'red':'green' }}-600" title="{{ $s->is_active?'Deactivate':'Activate' }}">
-                  <i data-lucide="{{ $s->is_active?'user-x':'user-check' }}" class="w-4 h-4"></i>
+                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-{{ $s->is_active?'red':'green' }}-100 text-slate-500 hover:text-{{ $s->is_active?'red':'green' }}-700 text-xs font-medium transition-colors" title="{{ $s->is_active?'Deactivate':'Activate' }}">
+                  <i data-lucide="{{ $s->is_active?'user-x':'user-check' }}" class="w-3.5 h-3.5"></i>{{ $s->is_active?'Deactivate':'Activate' }}
                 </button>
               </form>
             </div>

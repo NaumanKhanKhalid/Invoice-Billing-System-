@@ -14,14 +14,14 @@
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full">
-      <thead class="bg-slate-50"><tr>
-        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>
-        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Supply Revenue</th>
-        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Counter Cash</th>
-        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Total Revenue</th>
-        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Net Profit</th>
-        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
+      <thead class="bg-slate-50 border-b border-slate-200"><tr>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Supply Revenue</th>
+        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Counter Cash</th>
+        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Revenue</th>
+        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Net Profit</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
       </tr></thead>
       <tbody class="divide-y divide-slate-100">
         @forelse($records as $record)
@@ -35,9 +35,13 @@
           </td>
           <td class="px-4 py-3">
             @if($record->is_closed)
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">Closed</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Closed
+            </span>
             @else
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">Open</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>Open
+            </span>
             @endif
           </td>
           <td class="px-4 py-3 text-right">

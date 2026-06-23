@@ -84,9 +84,19 @@
         <div class="flex justify-between text-sm"><span class="text-slate-500">Amount Paid</span><span class="font-medium text-green-600">{{ formatCurrency($purchase->amount_paid) }}</span></div>
         <div class="border-t border-slate-100 pt-3 flex justify-between"><span class="font-semibold text-slate-700">Amount Due</span><span class="font-bold text-xl {{ $purchase->amount_due>0?'text-red-600':'text-green-600' }}">{{ formatCurrency($purchase->amount_due) }}</span></div>
         <div class="pt-1">
-          @if($purchase->payment_status==='paid')<span class="badge badge-green w-full justify-center py-2">Fully Paid</span>
-          @elseif($purchase->payment_status==='partial')<span class="badge badge-yellow w-full justify-center py-2">Partially Paid</span>
-          @else<span class="badge badge-red w-full justify-center py-2">Unpaid</span>@endif
+          @if($purchase->payment_status==='paid')
+            <span class="inline-flex w-full justify-center items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-green-100 text-green-700">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>Fully Paid
+            </span>
+          @elseif($purchase->payment_status==='partial')
+            <span class="inline-flex w-full justify-center items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700">
+              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>Partially Paid
+            </span>
+          @else
+            <span class="inline-flex w-full justify-center items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-red-100 text-red-700">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>Unpaid
+            </span>
+          @endif
         </div>
       </div>
 

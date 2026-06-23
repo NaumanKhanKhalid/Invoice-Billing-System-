@@ -24,17 +24,35 @@
 
   {{-- Stats --}}
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div class="bg-white rounded-xl border border-red-200 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Due</p>
-      <p class="text-2xl font-bold text-red-600 mt-1">{{ formatCurrency($stats['total_due']) }}</p>
+    <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Due</p>
+        <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+          <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-red-600">{{ formatCurrency($stats['total_due']) }}</p>
+      <p class="text-xs text-slate-400 mt-1">Total outstanding balance</p>
     </div>
-    <div class="bg-white rounded-xl border border-red-300 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Overdue Records</p>
-      <p class="text-2xl font-bold text-red-700 mt-1">{{ $stats['overdue_count'] }}</p>
+    <div class="bg-white rounded-xl border border-red-300 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Overdue Records</p>
+        <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+          <i data-lucide="clock" class="w-4 h-4 text-red-600"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-red-700">{{ $stats['overdue_count'] }}</p>
+      <p class="text-xs text-slate-400 mt-1">Past due date</p>
     </div>
-    <div class="bg-white rounded-xl border border-amber-200 shadow-sm p-4">
-      <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Due Today</p>
-      <p class="text-2xl font-bold text-amber-600 mt-1">{{ $stats['today_due'] }}</p>
+    <div class="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Due Today</p>
+        <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+          <i data-lucide="calendar-clock" class="w-4 h-4 text-amber-500"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-amber-600">{{ $stats['today_due'] }}</p>
+      <p class="text-xs text-slate-400 mt-1">Due today</p>
     </div>
   </div>
 

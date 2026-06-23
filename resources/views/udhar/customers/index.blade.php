@@ -84,7 +84,7 @@
       </thead>
       <tbody class="divide-y divide-slate-100">
         @foreach($customers as $customer)
-        <tr class="hover:bg-slate-50 transition-colors group">
+        <tr class="hover:bg-slate-50 transition-colors">
           <td class="px-5 py-3.5">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-bold text-sm">
@@ -121,7 +121,7 @@
             @endif
           </td>
           <td class="px-5 py-3.5">
-            <div class="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="flex items-center justify-end gap-1.5">
               <a href="{{ route('udhar-customers.show', $customer) }}"
                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 text-xs font-medium transition-colors">
                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>View
