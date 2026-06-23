@@ -42,6 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/google/connect', [GoogleDriveController::class, 'connect'])->name('google.connect');
     Route::post('/google/disconnect', [GoogleDriveController::class, 'disconnect'])->name('google.disconnect');
     Route::post('/backup/google', [GoogleDriveController::class, 'backup'])->name('backup.google');
+    Route::get('/backup/list', [GoogleDriveController::class, 'listBackups'])->name('settings.backups');
+    Route::post('/backup/restore/{fileId}', [GoogleDriveController::class, 'restore'])->name('backup.restore');
 
     // Suppliers
     Route::resource('suppliers', SupplierController::class);

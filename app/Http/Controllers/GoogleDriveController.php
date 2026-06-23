@@ -59,19 +59,9 @@ class GoogleDriveController extends Controller
             return redirect()->route('settings.index')->with('error', 'Google Drive not connected. Please connect first.');
         }
 
-        $client = $this->getClient();
-        $token  = json_decode($tokenJson, true);
-        $client->setAccessToken($token);
-
-        // Refresh token if expired
-        if ($client->isAccessTokenExpired()) {
-            if (!$client->getRefreshToken()) {
-                Setting::setValue('google_drive_token', null);
-                return redirect()->route('settings.index')->with('error', 'Google Drive session expired. Please reconnect.');
-            }
-            $newToken = $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-            Setting::setValue('google_drive_token', json_encode($newToken));
-            $client->setAccessToken($newToken);
+        $client = $this->getAuthenticatedClient($tokenJson);
+        if (!$client) {
+            return redirect()->route('settings.index')->with('error', 'Google Drive session expired. Please reconnect.');
         }
 
         // Find or create backup folder
@@ -97,6 +87,82 @@ class GoogleDriveController extends Controller
         Setting::setValue('last_backup_at', now()->toDateTimeString());
 
         return redirect()->route('settings.index')->with('success', 'Backup "' . $backupName . '" Google Drive mein save ho gaya!');
+    }
+
+    public function listBackups()
+    {
+        $tokenJson = Setting::getValue('google_drive_token');
+        if (!$tokenJson) {
+            return redirect()->route('settings.index')->with('error', 'Google Drive not connected.');
+        }
+
+        $client = $this->getAuthenticatedClient($tokenJson);
+        if (!$client) {
+            return redirect()->route('settings.index')->with('error', 'Google Drive session expired. Please reconnect.');
+        }
+
+        $service  = new Drive($client);
+        $folderId = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
+
+        $results = $service->files->listFiles([
+            'q'       => "'{$folderId}' in parents and trashed=false and mimeType='application/octet-stream'",
+            'fields'  => 'files(id,name,size,createdTime)',
+            'orderBy' => 'createdTime desc',
+        ]);
+
+        $backups = collect($results->getFiles())->map(fn($f) => [
+            'id'      => $f->getId(),
+            'name'    => $f->getName(),
+            'size'    => round($f->getSize() / 1024, 1) . ' KB',
+            'created' => \Carbon\Carbon::parse($f->getCreatedTime())->format('d M Y, h:i A'),
+        ]);
+
+        return view('settings.backups', compact('backups'));
+    }
+
+    public function restore(string $fileId)
+    {
+        $tokenJson = Setting::getValue('google_drive_token');
+        if (!$tokenJson) {
+            return redirect()->route('settings.index')->with('error', 'Google Drive not connected.');
+        }
+
+        $client = $this->getAuthenticatedClient($tokenJson);
+        if (!$client) {
+            return redirect()->route('settings.index')->with('error', 'Google Drive session expired. Please reconnect.');
+        }
+
+        $service  = new Drive($client);
+        $response = $service->files->get($fileId, ['alt' => 'media']);
+        $content  = $response->getBody()->getContents();
+
+        $dbPath = database_path('database.sqlite');
+
+        // Keep a safety copy of current DB before restore
+        copy($dbPath, $dbPath . '.before_restore');
+
+        file_put_contents($dbPath, $content);
+
+        return redirect()->route('settings.backups')->with('success', 'Database restore ho gaya! Previous data wapis aa gaya.');
+    }
+
+    private function getAuthenticatedClient(string $tokenJson): ?Client
+    {
+        $client = $this->getClient();
+        $token  = json_decode($tokenJson, true);
+        $client->setAccessToken($token);
+
+        if ($client->isAccessTokenExpired()) {
+            if (!$client->getRefreshToken()) {
+                Setting::setValue('google_drive_token', null);
+                return null;
+            }
+            $newToken = $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+            Setting::setValue('google_drive_token', json_encode($newToken));
+            $client->setAccessToken($newToken);
+        }
+
+        return $client;
     }
 
     private function getOrCreateFolder(Drive $service, string $name): string

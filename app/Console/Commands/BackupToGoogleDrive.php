@@ -45,16 +45,7 @@ class BackupToGoogleDrive extends Command
         $service    = new Drive($client);
         $folderId   = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
         $dbPath     = database_path('database.sqlite');
-        $backupName = 'auto_backup_' . now()->format('Y-m-d') . '.sqlite';
-
-        // Delete old backup with same date name (avoid duplicates)
-        $existing = $service->files->listFiles([
-            'q'      => "name='{$backupName}' and '{$folderId}' in parents and trashed=false",
-            'fields' => 'files(id)',
-        ]);
-        foreach ($existing->getFiles() as $old) {
-            $service->files->delete($old->getId());
-        }
+        $backupName = 'backup_' . now()->format('Y-m-d_H-i-s') . '.sqlite';
 
         $fileMetadata = new DriveFile([
             'name'    => $backupName,

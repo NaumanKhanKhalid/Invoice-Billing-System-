@@ -48,6 +48,9 @@
                         <i data-lucide="upload-cloud" class="w-4 h-4"></i>Backup Now
                     </button>
                 </form>
+                <a href="{{ route('settings.backups') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <i data-lucide="list" class="w-4 h-4"></i>View Backups
+                </a>
                 <form method="POST" action="{{ route('google.disconnect') }}">
                     @csrf
                     <button type="submit" class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
