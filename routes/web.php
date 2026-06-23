@@ -14,11 +14,15 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\UdharCustomerController;
+use App\Http\Controllers\GoogleDriveController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+
+// Google OAuth callback (outside auth middleware — Google redirects here)
+Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard
@@ -35,6 +39,9 @@ Route::middleware(['auth'])->group(function () {
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/google/connect', [GoogleDriveController::class, 'connect'])->name('google.connect');
+    Route::post('/google/disconnect', [GoogleDriveController::class, 'disconnect'])->name('google.disconnect');
+    Route::post('/backup/google', [GoogleDriveController::class, 'backup'])->name('backup.google');
 
     // Suppliers
     Route::resource('suppliers', SupplierController::class);
