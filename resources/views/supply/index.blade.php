@@ -94,7 +94,8 @@
                 <i data-lucide="check" class="w-3 h-3"></i>Delivered
               </span>
             @else
-              <form method="POST" action="{{ route('supply.deliver',$order) }}" class="inline">
+              <form method="POST" action="{{ route('supply.deliver',$order) }}" class="inline"
+                    data-confirm-title="Mark Delivered?" data-confirm-message="Ye order deliver ho gaya hai?" data-confirm-text="Haan, Delivered" data-confirm-danger="false">
                 @csrf @method('PATCH')
                 <button type="submit"
                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 transition-colors cursor-pointer">
@@ -106,6 +107,7 @@
           <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">
               <a href="{{ route('supply.show',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
+              <a href="{{ route('supply.invoice',$order) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-indigo-100 text-slate-500 hover:text-indigo-700 text-xs font-medium transition-colors"><i data-lucide="printer" class="w-3.5 h-3.5"></i>Print</a>
               @if($order->payment_status!=='paid')<a href="{{ route('supply.edit',$order) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</a>@endif
               @if($order->payment_status==='unpaid')<form method="POST" action="{{ route('supply.destroy',$order) }}" class="inline" data-confirm-title="Delete Order?" data-confirm-message="Is order ko delete karna chahte hain?" data-confirm-text="Haan, Delete Karo" >@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button></form>@endif
             </div>
