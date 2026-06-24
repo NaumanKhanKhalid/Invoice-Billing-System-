@@ -24,6 +24,13 @@
          class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <i data-lucide="pencil" class="w-4 h-4"></i>Edit
       </a>
+      <form method="POST" action="{{ route('udhar-customers.destroy', $udharCustomer) }}"
+            data-confirm-title="Delete Customer?" data-confirm-message="This will permanently delete {{ $udharCustomer->name }}. Only customers with no outstanding balance can be deleted." data-confirm-text="Yes, Delete" data-confirm-danger="true">
+        @csrf @method('DELETE')
+        <button type="submit" class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>Delete
+        </button>
+      </form>
     </div>
   </div>
 

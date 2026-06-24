@@ -82,6 +82,51 @@ class DayEndController extends Controller
         return view('day-end.show', compact('dayEnd'));
     }
 
+    public function edit(DailyRecord $dayEnd)
+    {
+        abort_if($dayEnd->is_closed, 403, 'Cannot edit a closed day record.');
+        return view('day-end.edit', compact('dayEnd'));
+    }
+
+    public function update(Request $request, DailyRecord $dayEnd)
+    {
+        abort_if($dayEnd->is_closed, 403, 'Cannot edit a closed day record.');
+
+        $data = $request->validate([
+            'opening_stock_live_kg'    => 'required|numeric|min:0',
+            'opening_stock_dressed_kg' => 'required|numeric|min:0',
+            'total_purchased_live_kg'  => 'required|numeric|min:0',
+            'purchase_cost'            => 'required|numeric|min:0',
+            'total_supply_dressed_kg'  => 'required|numeric|min:0',
+            'total_supply_revenue'     => 'required|numeric|min:0',
+            'counter_cash'             => 'required|numeric|min:0',
+            'closing_stock_live_kg'    => 'required|numeric|min:0',
+            'closing_stock_dressed_kg' => 'required|numeric|min:0',
+            'closing_stock_value'      => 'required|numeric|min:0',
+            'dead_kg'                  => 'nullable|numeric|min:0',
+            'spoilage_kg'              => 'nullable|numeric|min:0',
+            'waste_notes'              => 'nullable|string',
+            'notes'                    => 'nullable|string',
+            'total_expenses'           => 'required|numeric|min:0',
+        ]);
+
+        $totalRevenue = $data['total_supply_revenue'] + $data['counter_cash'];
+        $totalCost    = $data['purchase_cost'] - $data['closing_stock_value'];
+        $grossProfit  = $totalRevenue - $totalCost;
+        $netProfit    = $grossProfit - $data['total_expenses'];
+
+        $dayEnd->update(array_merge($data, [
+            'total_revenue' => $totalRevenue,
+            'total_cost'    => $totalCost,
+            'gross_profit'  => $grossProfit,
+            'net_profit'    => $netProfit,
+            'dead_kg'       => $data['dead_kg'] ?? 0,
+            'spoilage_kg'   => $data['spoilage_kg'] ?? 0,
+        ]));
+
+        return redirect()->route('day-end.show', $dayEnd)->with('success', 'Day record updated.');
+    }
+
     public function close(Request $request, DailyRecord $dayEnd)
     {
         abort_if($dayEnd->is_closed, 403, 'Day already closed.');

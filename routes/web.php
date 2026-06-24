@@ -66,8 +66,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Supply Orders (Hotels / Companies)
     Route::get('/supply', [SupplyController::class, 'index'])->name('supply.index');
-    Route::get('/supply/schedule', [SupplyController::class, 'schedule'])->name('supply.schedule');
-    Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.create');
+Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.create');
     Route::post('/supply', [SupplyController::class, 'store'])->name('supply.store');
     Route::get('/supply/{supply}', [SupplyController::class, 'show'])->name('supply.show');
     Route::get('/supply/{supply}/invoice', [SupplyController::class, 'invoice'])->name('supply.invoice');
@@ -82,6 +81,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/day-end/create', [DayEndController::class, 'create'])->name('day-end.create');
     Route::post('/day-end', [DayEndController::class, 'store'])->name('day-end.store');
     Route::get('/day-end/{dayEnd}', [DayEndController::class, 'show'])->name('day-end.show');
+    Route::get('/day-end/{dayEnd}/edit', [DayEndController::class, 'edit'])->name('day-end.edit');
+    Route::put('/day-end/{dayEnd}', [DayEndController::class, 'update'])->name('day-end.update');
     Route::post('/day-end/{dayEnd}/close', [DayEndController::class, 'close'])->name('day-end.close');
 
     // Expenses
@@ -104,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->name('udhar.destroy');
 
     // Udhar Customers
-    Route::resource('udhar-customers', UdharCustomerController::class)->except(['destroy']);
+    Route::resource('udhar-customers', UdharCustomerController::class);
 });
 
 require __DIR__.'/auth.php';
