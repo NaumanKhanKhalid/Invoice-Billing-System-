@@ -12,6 +12,16 @@
     </a>
   </div>
 
+  <form method="GET" class="flex flex-wrap items-center gap-3">
+    <input type="date" name="from_date" value="{{ request('from_date') }}"
+           class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+    <span class="text-slate-400 text-sm">to</span>
+    <input type="date" name="to_date" value="{{ request('to_date') }}"
+           class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
+    @if(request()->hasAny(['from_date','to_date']))<a href="{{ route('day-end.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
+  </form>
+
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full">
       <thead class="bg-slate-50 border-b border-slate-200"><tr>

@@ -37,6 +37,12 @@ class DailyRateController extends Controller
         return back()->with('success', 'Rates saved successfully.');
     }
 
+    public function destroy(DailyRate $dailyRate)
+    {
+        $dailyRate->delete();
+        return redirect()->route('daily-rates.index')->with('success', 'Rate entry deleted.');
+    }
+
     public function today()
     {
         $rate = DailyRate::where('date', today()->toDateString())->first()

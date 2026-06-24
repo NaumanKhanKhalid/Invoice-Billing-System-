@@ -25,6 +25,15 @@
         <i data-lucide="pencil" class="w-4 h-4"></i>Edit
       </a>
       @endif
+      @if($supply->payment_status==='unpaid')
+      <form method="POST" action="{{ route('supply.destroy',$supply) }}"
+            data-confirm-title="Delete Supply Order?" data-confirm-message="Delete {{ $supply->invoice_number }}? This cannot be undone." data-confirm-text="Yes, Delete" data-confirm-danger="true">
+        @csrf @method('DELETE')
+        <button type="submit" class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>Delete
+        </button>
+      </form>
+      @endif
     </div>
   </div>
 

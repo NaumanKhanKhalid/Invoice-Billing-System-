@@ -74,6 +74,7 @@
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Retail (PKR/kg)</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Supply (PKR/kg)</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Notes</th>
+          <th class="px-4 py-3"></th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -87,9 +88,18 @@
           <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $rate->retail_rate_per_kg ? formatCurrency($rate->retail_rate_per_kg) : '-' }}</td>
           <td class="px-4 py-3 text-sm text-right text-slate-600">{{ $rate->supply_rate_per_kg ? formatCurrency($rate->supply_rate_per_kg) : '-' }}</td>
           <td class="px-4 py-3 text-sm text-slate-500">{{ $rate->notes ?? '-' }}</td>
+          <td class="px-4 py-3 text-right">
+            <form method="POST" action="{{ route('daily-rates.destroy', $rate) }}"
+                  data-confirm-title="Delete Rate?" data-confirm-message="Delete rate for {{ \Carbon\Carbon::parse($rate->date)->format('d M Y') }}?" data-confirm-text="Yes, Delete" data-confirm-danger="true">
+              @csrf @method('DELETE')
+              <button type="submit" class="text-slate-300 hover:text-red-500 transition-colors" title="Delete">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </form>
+          </td>
         </tr>
         @empty
-        <tr><td colspan="5" class="px-4 py-8 text-center text-slate-400 text-sm">No rate history yet.</td></tr>
+        <tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-sm">No rate history yet.</td></tr>
         @endforelse
       </tbody>
     </table>

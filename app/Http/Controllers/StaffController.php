@@ -64,6 +64,13 @@ class StaffController extends Controller
         return redirect()->route('staff.show', $staff)->with('success', 'Staff updated.');
     }
 
+    public function destroy(Staff $staff)
+    {
+        $staff->salaryPayments()->delete();
+        $staff->delete();
+        return redirect()->route('staff.index')->with('success', $staff->name . ' deleted.');
+    }
+
     public function toggleStatus(Staff $staff)
     {
         $staff->update(['is_active' => !$staff->is_active]);
