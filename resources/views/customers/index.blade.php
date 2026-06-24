@@ -62,28 +62,48 @@ $typeBadge = [
   </div>
 
   {{-- Filters --}}
-  <form method="GET" class="flex flex-wrap gap-3">
-    <div class="relative flex-1 min-w-48">
-      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-      <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or phone..."
-        class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none">
-    </div>
-    <select name="type" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-      <option value="">All Types</option>
-      @foreach(['retail','hotel','restaurant','company','reseller'] as $t)
-        <option value="{{ $t }}" {{ request('type')===$t?'selected':'' }}>{{ ucfirst($t) }}</option>
-      @endforeach
-    </select>
-    <select name="status" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-      <option value="">All Status</option>
-      <option value="active" {{ request('status')=='active'?'selected':'' }}>Active</option>
-      <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Inactive</option>
-    </select>
-    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
-    @if(request()->hasAny(['search','type','status']))
-      <a href="{{ route('customers.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>
-    @endif
-  </form>
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3">
+    <form method="GET" class="flex flex-wrap gap-3 items-center">
+      <div class="relative flex-1 min-w-48">
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or phone..."
+          class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+      </div>
+      <div class="relative">
+        <i data-lucide="layers" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+        <select name="type" class="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white text-slate-700 appearance-none cursor-pointer">
+          <option value="">All Types</option>
+          @foreach(['retail','hotel','restaurant','company','reseller'] as $t)
+            <option value="{{ $t }}" {{ request('type')===$t?'selected':'' }}>{{ ucfirst($t) }}</option>
+          @endforeach
+        </select>
+        <i data-lucide="chevron-down" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+      </div>
+      <div class="relative">
+        <i data-lucide="circle-dot" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+        <select name="status" class="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white text-slate-700 appearance-none cursor-pointer">
+          <option value="">All Status</option>
+          <option value="active"   {{ request('status')=='active'  ?'selected':'' }}>Active</option>
+          <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Inactive</option>
+        </select>
+        <i data-lucide="chevron-down" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+      </div>
+      <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="search" class="w-4 h-4"></i> Filter
+      </button>
+      @if(request()->hasAny(['search','type','status']))
+      <a href="{{ route('customers.index') }}" class="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm transition-colors">
+        <i data-lucide="x" class="w-4 h-4"></i> Clear
+      </a>
+      @endif
+      <div class="ml-auto flex items-center gap-4 text-sm text-slate-500">
+        <span class="flex items-center gap-1.5">
+          <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+          <span class="font-semibold text-slate-700">{{ $customers->total() }}</span> customers
+        </span>
+      </div>
+    </form>
+  </div>
 
   {{-- Table --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

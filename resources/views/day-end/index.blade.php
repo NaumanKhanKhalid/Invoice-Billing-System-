@@ -12,15 +12,35 @@
     </a>
   </div>
 
-  <form method="GET" class="flex flex-wrap items-center gap-2">
-    <input type="date" name="from_date" value="{{ request('from_date') }}"
-           class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
-    <span class="text-slate-400 text-sm">to</span>
-    <input type="date" name="to_date" value="{{ request('to_date') }}"
-           class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
-    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
-    @if(request()->hasAny(['from_date','to_date']))<a href="{{ route('day-end.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
-  </form>
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3">
+    <form method="GET" class="flex flex-wrap items-center gap-3">
+      <div class="relative">
+        <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+        <input type="date" name="from_date" value="{{ request('from_date') }}"
+               class="pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none text-slate-700">
+      </div>
+      <span class="text-slate-400 text-sm">to</span>
+      <div class="relative">
+        <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+        <input type="date" name="to_date" value="{{ request('to_date') }}"
+               class="pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none text-slate-700">
+      </div>
+      <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="search" class="w-4 h-4"></i> Filter
+      </button>
+      @if(request()->hasAny(['from_date','to_date']))
+      <a href="{{ route('day-end.index') }}" class="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm transition-colors">
+        <i data-lucide="x" class="w-4 h-4"></i> Clear
+      </a>
+      @endif
+      <div class="ml-auto flex items-center gap-4 text-sm text-slate-500">
+        <span class="flex items-center gap-1.5">
+          <i data-lucide="moon" class="w-4 h-4 text-slate-400"></i>
+          <span class="font-semibold text-slate-700">{{ $records->total() }}</span> records
+        </span>
+      </div>
+    </form>
+  </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <table class="w-full">

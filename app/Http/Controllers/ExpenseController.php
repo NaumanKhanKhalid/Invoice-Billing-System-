@@ -15,6 +15,7 @@ class ExpenseController extends Controller
         if ($request->from_date) $query->whereDate('date', '>=', $request->from_date);
         if ($request->to_date)   $query->whereDate('date', '<=', $request->to_date);
 
+        $filteredTotal = (clone $query)->sum('amount');
         $expenses = $query->paginate(25)->withQueryString();
 
         $stats = [
@@ -25,7 +26,7 @@ class ExpenseController extends Controller
 
         $categories = Expense::distinct()->pluck('category')->filter()->values();
 
-        return view('expenses.index', compact('expenses', 'stats', 'categories'));
+        return view('expenses.index', compact('expenses', 'stats', 'categories', 'filteredTotal'));
     }
 
     public function create()

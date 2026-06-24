@@ -57,24 +57,42 @@
   </div>
 
   {{-- Filters --}}
-  <div class="flex flex-wrap items-center gap-2">
-    <div class="flex rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
-      <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'all'])) }}"
-         class="px-4 py-2 text-sm font-medium transition-colors {{ request('status','all')==='all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">All</a>
-      <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'unpaid'])) }}"
-         class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='unpaid' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Unpaid</a>
-      <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'overdue'])) }}"
-         class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='overdue' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Overdue</a>
-    </div>
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3">
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="flex rounded-lg border border-slate-200 overflow-hidden">
+        <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'all'])) }}"
+           class="px-4 py-2 text-sm font-medium transition-colors {{ request('status','all')==='all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">All</a>
+        <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'unpaid'])) }}"
+           class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='unpaid' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Unpaid</a>
+        <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'overdue'])) }}"
+           class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='overdue' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Overdue</a>
+      </div>
 
-    <form method="GET" class="flex gap-2 flex-1 min-w-[200px]">
-      @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
-      <input type="text" name="search" value="{{ request('search') }}"
-             placeholder="Search customer or phone..."
-             class="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-      <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Search</button>
-      @if(request('search'))<a href="{{ route('udhar.index', request()->except('search','page')) }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
-    </form>
+      <form method="GET" class="flex gap-2 flex-1 min-w-[200px]">
+        @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
+        <div class="relative flex-1">
+          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+          <input type="text" name="search" value="{{ request('search') }}"
+                 placeholder="Search customer or phone..."
+                 class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
+        </div>
+        <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="search" class="w-4 h-4"></i> Search
+        </button>
+        @if(request('search'))
+        <a href="{{ route('udhar.index', request()->except('search','page')) }}" class="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i> Clear
+        </a>
+        @endif
+      </form>
+
+      <div class="ml-auto flex items-center gap-4 text-sm text-slate-500">
+        <span class="flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+          <span class="font-semibold text-slate-700">{{ $records->total() }}</span> records
+        </span>
+      </div>
+    </div>
   </div>
 
   {{-- Bulk WhatsApp reminder when viewing overdue --}}

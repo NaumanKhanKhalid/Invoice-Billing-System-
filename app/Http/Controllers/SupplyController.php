@@ -19,6 +19,7 @@ class SupplyController extends Controller
         if ($request->to_date)     $query->whereDate('date', '<=', $request->to_date);
         if ($request->filled('search')) $query->where('invoice_number', 'like', '%' . $request->search . '%');
 
+        $filteredTotal = (clone $query)->sum('total_amount');
         $orders = $query->paginate(20)->withQueryString();
 
         $stats = [
@@ -30,7 +31,7 @@ class SupplyController extends Controller
 
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
 
-        return view('supply.index', compact('orders', 'stats', 'customers'));
+        return view('supply.index', compact('orders', 'stats', 'customers', 'filteredTotal'));
     }
 
     public function schedule()
