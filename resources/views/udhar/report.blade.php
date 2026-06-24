@@ -16,27 +16,33 @@
   </div>
 
   {{-- Month/Year filter --}}
-  <form method="GET" class="flex flex-wrap gap-3 items-end">
-    <div>
-      <label class="block text-xs font-medium text-slate-500 mb-1">Month</label>
-      <select name="month" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-        @foreach($months as $num => $name)
-        <option value="{{ $num }}" {{ $num == $month ? 'selected' : '' }}>{{ $name }}</option>
-        @endforeach
-      </select>
-    </div>
-    <div>
-      <label class="block text-xs font-medium text-slate-500 mb-1">Year</label>
-      <select name="year" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-        @foreach($years as $y)
-        <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>{{ $y }}</option>
-        @endforeach
-      </select>
-    </div>
-    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg text-sm font-medium">
-      Show Report
-    </button>
-  </form>
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3">
+    <form method="GET" class="flex flex-wrap gap-4 items-center">
+      <div class="flex items-center gap-2">
+        <i data-lucide="calendar" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+        <div class="flex rounded-lg border border-slate-200 overflow-hidden">
+          @foreach($months as $num => $name)
+          <button type="submit" name="month" value="{{ $num }}"
+                  onclick="document.querySelector('[name=year_hidden]').value=document.querySelector('select[name=year]').value"
+                  class="px-3 py-1.5 text-xs font-medium border-r border-slate-200 last:border-r-0 transition-colors
+                         {{ $num == $month ? 'bg-green-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+            {{ substr($name, 0, 3) }}
+          </button>
+          @endforeach
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 ml-auto">
+        <select name="year" onchange="this.form.submit()"
+                class="px-3 py-1.5 text-sm font-semibold border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white text-slate-700">
+          @foreach($years as $y)
+          <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>{{ $y }}</option>
+          @endforeach
+        </select>
+        <input type="hidden" name="month" value="{{ $month }}">
+      </div>
+    </form>
+  </div>
 
   {{-- Summary cards --}}
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
