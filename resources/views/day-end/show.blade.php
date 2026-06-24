@@ -10,13 +10,19 @@
       </div>
     </div>
     @if(!$dayEnd->is_closed)
-    <form method="POST" action="{{ route('day-end.close',$dayEnd) }}"
-          data-confirm-title="Close Day?" data-confirm-message="This action cannot be undone." data-confirm-text="Yes, Close" data-confirm-danger="true">
-      @csrf
-      <button type="submit" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
-        <i data-lucide="lock" class="w-4 h-4"></i>Close Day
-      </button>
-    </form>
+    <div class="flex items-center gap-2">
+      <a href="{{ route('day-end.edit', $dayEnd) }}"
+         class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="pencil" class="w-4 h-4"></i>Edit
+      </a>
+      <form method="POST" action="{{ route('day-end.close',$dayEnd) }}"
+            data-confirm-title="Close Day?" data-confirm-message="This action cannot be undone." data-confirm-text="Yes, Close" data-confirm-danger="true">
+        @csrf
+        <button type="submit" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          <i data-lucide="lock" class="w-4 h-4"></i>Close Day
+        </button>
+      </form>
+    </div>
     @else
     <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-sm">
       <i data-lucide="lock" class="w-4 h-4"></i>Closed {{ \Carbon\Carbon::parse($dayEnd->closed_at)->format('d M Y H:i') }}

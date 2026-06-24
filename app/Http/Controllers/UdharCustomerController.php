@@ -78,4 +78,16 @@ class UdharCustomerController extends Controller
 
         return redirect()->route('udhar-customers.show', $udharCustomer)->with('success', 'Customer updated.');
     }
+
+    public function destroy(UdharCustomer $udharCustomer)
+    {
+        if ($udharCustomer->creditSales()->whereIn('status', ['unpaid', 'partial'])->exists()) {
+            return redirect()->route('udhar-customers.show', $udharCustomer)
+                ->with('error', 'Cannot delete customer with outstanding balances. Clear all dues first.');
+        }
+
+        $udharCustomer->delete();
+
+        return redirect()->route('udhar-customers.index')->with('success', 'Customer deleted.');
+    }
 }
