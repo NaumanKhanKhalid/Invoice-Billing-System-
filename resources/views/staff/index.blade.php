@@ -27,6 +27,7 @@
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Salary</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Joined</th>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Last Paid</th>
         <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
       </tr></thead>
       <tbody class="divide-y divide-slate-100">
@@ -40,6 +41,15 @@
           <td class="px-4 py-3">
             @if($s->is_active)<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Active</span>
             @else<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500">Inactive</span>@endif
+          </td>
+          <td class="px-4 py-3">
+            @php $lastPay = $s->salaryPayments->first(); @endphp
+            @if($lastPay)
+              <p class="text-xs font-semibold text-slate-700">{{ formatCurrency($lastPay->amount) }}</p>
+              <p class="text-xs text-slate-400">{{ $lastPay->payment_date->format('d M Y') }}</p>
+            @else
+              <span class="text-xs text-slate-300">Not paid yet</span>
+            @endif
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">

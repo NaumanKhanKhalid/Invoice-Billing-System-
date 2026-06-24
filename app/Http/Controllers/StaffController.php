@@ -10,7 +10,9 @@ class StaffController extends Controller
 {
     public function index()
     {
-        $staff = Staff::withCount('salaryPayments')->orderBy('name')->get();
+        $staff = Staff::withCount('salaryPayments')
+            ->with(['salaryPayments' => fn($q) => $q->latest('payment_date')->limit(1)])
+            ->orderBy('name')->get();
         $totalSalary = Staff::where('is_active', true)->sum('salary');
         return view('staff.index', compact('staff', 'totalSalary'));
     }

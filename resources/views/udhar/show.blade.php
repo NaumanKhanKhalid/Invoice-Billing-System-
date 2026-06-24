@@ -164,7 +164,14 @@
         <form method="POST" action="{{ route('udhar.payment', $creditSale) }}" enctype="multipart/form-data" class="space-y-4">
           @csrf
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Amount <span class="text-red-500">*</span></label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700">Amount <span class="text-red-500">*</span></label>
+              <button type="button"
+                      onclick="document.querySelector('input[name=amount]').value='{{ $creditSale->amount_due }}'"
+                      class="text-xs text-green-600 hover:text-green-700 font-semibold hover:underline">
+                Pay Full ({{ formatCurrency($creditSale->amount_due) }})
+              </button>
+            </div>
             <div class="relative">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">PKR</span>
               <input type="number" name="amount" value="{{ old('amount', $creditSale->amount_due) }}"

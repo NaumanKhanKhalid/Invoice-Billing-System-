@@ -44,7 +44,10 @@
           </div>
           <div class="p-5 grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-slate-500 mb-1.5">Customer <span class="text-red-500">*</span></label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-medium text-slate-500">Customer <span class="text-red-500">*</span></label>
+                <a href="{{ route('customers.create') }}" target="_blank" class="text-xs text-green-600 hover:underline font-medium">+ Add New</a>
+              </div>
               <select name="customer_id" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
                 <option value="">— Select Customer —</option>
                 @foreach($customers as $type => $group)

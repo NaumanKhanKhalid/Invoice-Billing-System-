@@ -237,6 +237,29 @@
       </div>
     </div>
 
+    {{-- Live Profit Preview --}}
+    <div class="bg-slate-900 rounded-xl p-5 text-white" id="profit-preview">
+      <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Projected P&L Summary</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div>
+          <p class="text-xs text-slate-400">Total Revenue</p>
+          <p class="text-lg font-bold text-green-400" id="prev-revenue">PKR 0</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Total Cost</p>
+          <p class="text-lg font-bold text-red-400" id="prev-cost">PKR 0</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Expenses</p>
+          <p class="text-lg font-bold text-orange-400" id="prev-expenses">PKR 0</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Net Profit</p>
+          <p class="text-xl font-bold" id="prev-profit">PKR 0</p>
+        </div>
+      </div>
+    </div>
+
     {{-- Submit --}}
     <div class="flex items-center justify-between pt-1 pb-6">
       <a href="{{ route('day-end.index') }}" class="text-sm text-slate-500 hover:text-slate-700">Cancel</a>
@@ -247,5 +270,25 @@
       </button>
     </div>
   </form>
+
+  <script>
+  function updatePreview() {
+    const supplyRev  = parseFloat(document.querySelector('[name=total_supply_revenue]')?.value) || 0;
+    const counterCash= parseFloat(document.querySelector('[name=counter_cash]')?.value) || 0;
+    const purchCost  = parseFloat(document.querySelector('[name=purchase_cost]')?.value) || 0;
+    const expenses   = parseFloat(document.querySelector('[name=total_expenses]')?.value) || 0;
+    const revenue    = supplyRev + counterCash;
+    const profit     = revenue - purchCost - expenses;
+    const fmt = v => 'PKR ' + Math.abs(v).toLocaleString('en-PK', {minimumFractionDigits:0, maximumFractionDigits:0});
+    document.getElementById('prev-revenue').textContent  = fmt(revenue);
+    document.getElementById('prev-cost').textContent     = fmt(purchCost);
+    document.getElementById('prev-expenses').textContent = fmt(expenses);
+    const profitEl = document.getElementById('prev-profit');
+    profitEl.textContent = (profit < 0 ? '- ' : '') + fmt(profit);
+    profitEl.className = 'text-xl font-bold ' + (profit >= 0 ? 'text-green-400' : 'text-red-400');
+  }
+  document.querySelectorAll('input[type=number]').forEach(el => el.addEventListener('input', updatePreview));
+  updatePreview();
+  </script>
 </div>
 @endsection
