@@ -17,6 +17,7 @@ class SupplyController extends Controller
         if ($request->status)      $query->where('payment_status', $request->status);
         if ($request->from_date)   $query->whereDate('date', '>=', $request->from_date);
         if ($request->to_date)     $query->whereDate('date', '<=', $request->to_date);
+        if ($request->filled('search')) $query->where('invoice_number', 'like', '%' . $request->search . '%');
 
         $orders = $query->paginate(20)->withQueryString();
 

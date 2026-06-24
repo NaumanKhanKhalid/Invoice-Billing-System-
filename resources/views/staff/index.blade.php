@@ -72,6 +72,9 @@
         @endforelse
       </tbody>
     </table>
+    @if($staff->hasPages())
+    <div class="px-4 py-3 border-t border-slate-100">{{ $staff->links() }}</div>
+    @endif
   </div>
 </div>
 @endsection

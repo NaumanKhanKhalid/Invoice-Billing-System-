@@ -98,6 +98,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/udhar/create', [CreditSaleController::class, 'create'])->name('udhar.create');
     Route::post('/udhar', [CreditSaleController::class, 'store'])->name('udhar.store');
     Route::get('/udhar/{creditSale}', [CreditSaleController::class, 'show'])->name('udhar.show');
+    Route::get('/udhar/{creditSale}/edit', [CreditSaleController::class, 'edit'])->name('udhar.edit');
+    Route::put('/udhar/{creditSale}', [CreditSaleController::class, 'update'])->name('udhar.update');
     Route::post('/udhar/{creditSale}/payment', [CreditSaleController::class, 'storePayment'])->name('udhar.payment');
     Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->name('udhar.destroy');
 

@@ -4,7 +4,7 @@
 <div class="space-y-6">
 
   {{-- Header --}}
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between flex-wrap gap-3">
     <div class="flex items-center gap-3">
       <a href="{{ route('udhar.index') }}" class="text-slate-400 hover:text-slate-600">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -19,6 +19,10 @@
         <p class="text-sm text-slate-500">Udhar since {{ $creditSale->sale_date->format('d M Y') }}</p>
       </div>
     </div>
+    <a href="{{ route('udhar.edit', $creditSale) }}"
+       class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+      <i data-lucide="pencil" class="w-4 h-4"></i>Edit Record
+    </a>
   </div>
 
   {{-- Overdue banner --}}
@@ -143,7 +147,7 @@
         {{-- WhatsApp button --}}
         @if($creditSale->phone && $creditSale->status !== 'paid')
         @php
-          $waMsg = urlencode("Assalam o Alaikum " . $creditSale->customer_name . ", aap ka " . formatCurrency($creditSale->amount_due) . " udhar " . $creditSale->due_date->format('d M Y') . " tak dena hai. - Anwar Chicken Center");
+          $waMsg = urlencode("Dear " . $creditSale->customer_name . ", you have an outstanding balance of " . formatCurrency($creditSale->amount_due) . " due by " . $creditSale->due_date->format('d M Y') . ". Please arrange payment. — Anwar Chicken Center");
           $waPhone = preg_replace('/[^0-9]/', '', $creditSale->phone);
           if (str_starts_with($waPhone, '0')) $waPhone = '92' . substr($waPhone, 1);
         @endphp

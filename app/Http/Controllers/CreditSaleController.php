@@ -97,6 +97,27 @@ class CreditSaleController extends Controller
         return view('udhar.show', compact('creditSale'));
     }
 
+    public function edit(CreditSale $creditSale)
+    {
+        $udharCustomers = UdharCustomer::orderBy('name')->get();
+        return view('udhar.edit', compact('creditSale', 'udharCustomers'));
+    }
+
+    public function update(Request $request, CreditSale $creditSale)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'phone'         => 'nullable|string|max:20',
+            'description'   => 'nullable|string|max:255',
+            'due_date'      => 'required|date',
+            'notes'         => 'nullable|string',
+        ]);
+
+        $creditSale->update($validated);
+
+        return redirect()->route('udhar.show', $creditSale)->with('success', 'Udhar record updated.');
+    }
+
     public function storePayment(Request $request, CreditSale $creditSale)
     {
         $validated = $request->validate([
