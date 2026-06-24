@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     // Purchases
     Route::resource('purchases', PurchaseController::class);
     Route::post('/purchases/{purchase}/payment', [PurchaseController::class, 'storePayment'])->name('purchases.payment');
+    Route::delete('/purchases/{purchase}/payment/{payment}', [PurchaseController::class, 'destroyPayment'])->name('purchases.payment.destroy');
 
     // Supply Orders (Hotels / Companies)
     Route::get('/supply', [SupplyController::class, 'index'])->name('supply.index');
