@@ -10,7 +10,14 @@
         <p class="text-sm text-slate-500">{{ ucfirst($staff->role) }}</p>
       </div>
     </div>
-    <a href="{{ route('staff.edit',$staff) }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="pencil" class="w-4 h-4"></i>Edit</a>
+    <div class="flex gap-2">
+      <a href="{{ route('staff.edit',$staff) }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="pencil" class="w-4 h-4"></i>Edit</a>
+      <form method="POST" action="{{ route('staff.destroy',$staff) }}"
+            data-confirm-title="Delete Staff Member?" data-confirm-message="Delete {{ $staff->name }}? All salary records will also be deleted." data-confirm-text="Yes, Delete" data-confirm-danger="true">
+        @csrf @method('DELETE')
+        <button type="submit" class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i>Delete</button>
+      </form>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -59,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/daily-rates', [DailyRateController::class, 'index'])->name('daily-rates.index');
     Route::post('/daily-rates', [DailyRateController::class, 'store'])->name('daily-rates.store');
     Route::get('/daily-rates/today', [DailyRateController::class, 'today'])->name('daily-rates.today');
+    Route::delete('/daily-rates/{dailyRate}', [DailyRateController::class, 'destroy'])->name('daily-rates.destroy');
 
     // Purchases
     Route::resource('purchases', PurchaseController::class);

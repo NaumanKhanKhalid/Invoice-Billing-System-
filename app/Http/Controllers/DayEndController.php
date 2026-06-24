@@ -13,7 +13,16 @@ class DayEndController extends Controller
 {
     public function index(Request $request)
     {
-        $records = DailyRecord::orderByDesc('date')->paginate(30);
+        $query = DailyRecord::orderByDesc('date');
+
+        if ($request->filled('from_date')) {
+            $query->whereDate('date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->whereDate('date', '<=', $request->to_date);
+        }
+
+        $records = $query->paginate(30)->withQueryString();
         return view('day-end.index', compact('records'));
     }
 
