@@ -15,6 +15,7 @@ class PurchaseController extends Controller
         if ($request->filled('status'))      { $query->where('payment_status', $request->status); }
         if ($request->filled('from_date'))   { $query->where('date', '>=', $request->from_date); }
         if ($request->filled('to_date'))     { $query->where('date', '<=', $request->to_date); }
+        $filteredTotal = (clone $query)->sum('total_amount');
         $orders = $query->paginate(15)->withQueryString();
         $suppliers = Supplier::where('is_active',true)->orderBy('name')->get();
         $stats = [
@@ -24,7 +25,7 @@ class PurchaseController extends Controller
             'total_due'     => PurchaseOrder::where('payment_status','!=','paid')->sum('amount_due'),
             'overdue_count' => PurchaseOrder::where('payment_status','!=','paid')->where('due_date','<',today())->count(),
         ];
-        return view('purchases.index', compact('orders','suppliers','stats'));
+        return view('purchases.index', compact('orders','suppliers','stats','filteredTotal'));
     }
 
     public function create()

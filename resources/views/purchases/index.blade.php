@@ -101,6 +101,18 @@
         <i data-lucide="x" class="w-4 h-4"></i> Clear
       </a>
       @endif
+
+      <div class="ml-auto flex items-center gap-4 text-sm text-slate-500">
+        <span class="flex items-center gap-1.5">
+          <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
+          <span class="font-semibold text-slate-700">{{ $orders->total() }}</span> orders
+        </span>
+        <span class="w-px h-5 bg-slate-200"></span>
+        <span class="flex items-center gap-1.5">
+          <i data-lucide="banknote" class="w-4 h-4 text-slate-400"></i>
+          <span class="font-semibold text-slate-700">{{ formatCurrency($filteredTotal) }}</span>
+        </span>
+      </div>
     </form>
   </div>
 
