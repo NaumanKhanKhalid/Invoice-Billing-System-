@@ -11,7 +11,14 @@
       </div>
     </div>
     <div class="flex gap-2">
-      @if($purchase->payment_status !== 'paid')<a href="{{ route('purchases.edit',$purchase) }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="pencil" class="w-4 h-4"></i>Edit</a>@endif
+      @if($purchase->payment_status !== 'paid')
+      <a href="{{ route('purchases.edit',$purchase) }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="pencil" class="w-4 h-4"></i>Edit</a>
+      <form method="POST" action="{{ route('purchases.destroy',$purchase) }}"
+            data-confirm-title="Delete Purchase?" data-confirm-message="Delete {{ $purchase->invoice_number }}? Only unpaid orders can be deleted." data-confirm-text="Yes, Delete" data-confirm-danger="true">
+        @csrf @method('DELETE')
+        <button type="submit" class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="trash-2" class="w-4 h-4"></i>Delete</button>
+      </form>
+      @endif
     </div>
   </div>
 

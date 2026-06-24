@@ -170,6 +170,46 @@ class CreditSaleController extends Controller
         return redirect()->route('udhar.show', $creditSale)->with('success', 'Payment recorded successfully.');
     }
 
+    public function destroyPayment(CreditSale $creditSale, CreditPayment $payment)
+    {
+        if ($payment->credit_sale_id !== $creditSale->id) {
+            abort(404);
+        }
+
+        // Reverse the payment from the credit sale
+        $newAmountPaid = max(0, $creditSale->amount_paid - $payment->amount);
+        $newAmountDue  = $creditSale->amount - $newAmountPaid;
+
+        if ($newAmountPaid <= 0) {
+            $status = 'unpaid';
+        } elseif ($newAmountDue <= 0) {
+            $status = 'paid';
+        } else {
+            $status = 'partial';
+        }
+
+        $creditSale->update([
+            'amount_paid' => $newAmountPaid,
+            'amount_due'  => $newAmountDue,
+            'status'      => $status,
+        ]);
+
+        // Reverse customer balance
+        if ($creditSale->udhar_customer_id) {
+            $customer = UdharCustomer::find($creditSale->udhar_customer_id);
+            $customer->decrement('total_received', $payment->amount);
+            $customer->increment('current_balance', $payment->amount);
+        }
+
+        if ($payment->proof_photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($payment->proof_photo);
+        }
+
+        $payment->delete();
+
+        return redirect()->route('udhar.show', $creditSale)->with('success', 'Payment deleted and balance reversed.');
+    }
+
     public function destroy(CreditSale $creditSale)
     {
         if ($creditSale->status !== 'unpaid') {

@@ -127,6 +127,13 @@ class DayEndController extends Controller
         return redirect()->route('day-end.show', $dayEnd)->with('success', 'Day record updated.');
     }
 
+    public function destroy(DailyRecord $dayEnd)
+    {
+        abort_if($dayEnd->is_closed, 403, 'Cannot delete a closed day record.');
+        $dayEnd->delete();
+        return redirect()->route('day-end.index')->with('success', 'Day record deleted.');
+    }
+
     public function close(Request $request, DailyRecord $dayEnd)
     {
         abort_if($dayEnd->is_closed, 403, 'Day already closed.');
