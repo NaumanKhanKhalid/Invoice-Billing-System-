@@ -45,7 +45,16 @@
             @endif
           </td>
           <td class="px-4 py-3 text-right">
-            <a href="{{ route('day-end.show',$record) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
+            <div class="flex items-center justify-end gap-2">
+              <a href="{{ route('day-end.show',$record) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors"><i data-lucide="eye" class="w-3.5 h-3.5"></i>View</a>
+              @if(!$record->is_closed)
+              <form method="POST" action="{{ route('day-end.destroy',$record) }}"
+                    data-confirm-title="Delete Day Record?" data-confirm-message="Delete record for {{ \Carbon\Carbon::parse($record->date)->format('d M Y') }}? This cannot be undone." data-confirm-text="Yes, Delete" data-confirm-danger="true">
+                @csrf @method('DELETE')
+                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button>
+              </form>
+              @endif
+            </div>
           </td>
         </tr>
         @empty

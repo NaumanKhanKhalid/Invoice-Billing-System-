@@ -83,6 +83,7 @@ Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.
     Route::get('/day-end/{dayEnd}', [DayEndController::class, 'show'])->name('day-end.show');
     Route::get('/day-end/{dayEnd}/edit', [DayEndController::class, 'edit'])->name('day-end.edit');
     Route::put('/day-end/{dayEnd}', [DayEndController::class, 'update'])->name('day-end.update');
+    Route::delete('/day-end/{dayEnd}', [DayEndController::class, 'destroy'])->name('day-end.destroy');
     Route::post('/day-end/{dayEnd}/close', [DayEndController::class, 'close'])->name('day-end.close');
 
     // Expenses
@@ -102,6 +103,7 @@ Route::get('/supply/create', [SupplyController::class, 'create'])->name('supply.
     Route::get('/udhar/{creditSale}/edit', [CreditSaleController::class, 'edit'])->name('udhar.edit');
     Route::put('/udhar/{creditSale}', [CreditSaleController::class, 'update'])->name('udhar.update');
     Route::post('/udhar/{creditSale}/payment', [CreditSaleController::class, 'storePayment'])->name('udhar.payment');
+    Route::delete('/udhar/{creditSale}/payment/{payment}', [CreditSaleController::class, 'destroyPayment'])->name('udhar.payment.destroy');
     Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->name('udhar.destroy');
 
     // Udhar Customers
