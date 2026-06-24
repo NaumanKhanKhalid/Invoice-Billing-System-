@@ -3,7 +3,7 @@
 @section('content')
 <div class="space-y-6">
 
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between flex-wrap gap-2">
     <div class="flex items-center gap-3">
       <a href="{{ route('udhar-customers.index') }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shadow-sm">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -72,7 +72,7 @@
   </div>
 
   {{-- Udhar Entries --}}
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
       <h2 class="font-semibold text-slate-900">Udhar Entries</h2>
       <span class="text-xs text-slate-500">{{ $sales->total() }} records</span>

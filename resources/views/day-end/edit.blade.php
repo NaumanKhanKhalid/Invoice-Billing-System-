@@ -27,7 +27,7 @@
     @csrf @method('PUT')
 
     {{-- Top row: Opening Stock | Today's Purchases | Supply --}}
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
       {{-- Opening Stock --}}
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -118,7 +118,7 @@
     </div>
 
     {{-- Middle row: Counter Cash | Closing Stock --}}
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
       {{-- Counter Cash --}}
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -154,7 +154,7 @@
             <p class="text-xs text-slate-400">Remaining stock at end of day</p>
           </div>
         </div>
-        <div class="p-4 grid grid-cols-3 gap-3">
+        <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-medium text-slate-500 mb-1.5">Live (kg)</label>
             <input type="number" name="closing_stock_live_kg"
@@ -181,7 +181,7 @@
     </div>
 
     {{-- Bottom row: Waste | Expenses | Notes --}}
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
       {{-- Waste --}}
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">

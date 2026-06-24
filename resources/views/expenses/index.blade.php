@@ -48,7 +48,7 @@
     @if(request()->hasAny(['category','from_date','to_date']))<a href="{{ route('expenses.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm">Clear</a>@endif
   </form>
 
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <table class="w-full">
       <thead class="bg-slate-50"><tr>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>

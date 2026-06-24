@@ -41,7 +41,7 @@
 
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 class="font-semibold text-slate-900 mb-4">Udhar Details</h2>
-        <div class="grid grid-cols-2 gap-4 text-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div>
             <p class="text-slate-500">Customer</p>
             <p class="font-medium text-slate-900 mt-0.5">{{ $creditSale->customer_name }}</p>
@@ -75,7 +75,7 @@
       </div>
 
       {{-- Payment History --}}
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
         <div class="px-5 py-4 border-b border-slate-100">
           <h2 class="font-semibold text-slate-900">Payment History</h2>
         </div>

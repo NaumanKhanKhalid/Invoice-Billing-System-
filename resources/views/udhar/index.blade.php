@@ -4,7 +4,7 @@
 <div class="space-y-6">
 
   {{-- Header --}}
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between flex-wrap gap-2">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Udhar Book</h1>
       <p class="text-sm text-slate-500 mt-0.5">Credit sales and payment tracking</p>
@@ -57,7 +57,7 @@
   </div>
 
   {{-- Filters --}}
-  <div class="flex flex-wrap items-center gap-3">
+  <div class="flex flex-wrap items-center gap-2">
     <div class="flex rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
       <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'all'])) }}"
          class="px-4 py-2 text-sm font-medium transition-colors {{ request('status','all')==='all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">All</a>
@@ -104,7 +104,7 @@
   @endif
 
   {{-- Table --}}
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
