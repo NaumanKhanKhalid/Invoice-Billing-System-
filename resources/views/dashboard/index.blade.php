@@ -66,40 +66,6 @@
     </div>
   </div>
 
-  {{-- Today's Activity Strip --}}
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-5 py-4">
-    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Today's Activity</p>
-    <div class="grid grid-cols-3 gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
-          <i data-lucide="receipt" class="w-4 h-4 text-green-600"></i>
-        </div>
-        <div>
-          <p class="text-lg font-bold text-slate-900">{{ $todaySupplyCount }}</p>
-          <p class="text-xs text-slate-400">Supply Orders</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-          <i data-lucide="shopping-cart" class="w-4 h-4 text-blue-600"></i>
-        </div>
-        <div>
-          <p class="text-lg font-bold text-slate-900">{{ $todayPurchaseCount }}</p>
-          <p class="text-xs text-slate-400">Purchases</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-          <i data-lucide="wallet" class="w-4 h-4 text-orange-500"></i>
-        </div>
-        <div>
-          <p class="text-lg font-bold text-slate-900">{{ formatCurrency($todayExpenses) }}</p>
-          <p class="text-xs text-slate-400">{{ $todayExpenseCount }} Expense{{ $todayExpenseCount != 1 ? 's' : '' }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   {{-- Monthly + Dues --}}
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
