@@ -18,6 +18,10 @@ class DashboardController extends Controller
         $todayPurchases = PurchaseOrder::whereDate('date', today())->sum('total_amount');
         $todayExpenses  = Expense::whereDate('date', today())->sum('amount');
 
+        $todaySupplyCount    = SupplyOrder::whereDate('date', today())->count();
+        $todayPurchaseCount  = PurchaseOrder::whereDate('date', today())->count();
+        $todayExpenseCount   = Expense::whereDate('date', today())->count();
+
         $todayRecord  = DailyRecord::whereDate('date', today())->first();
         $todayCounter = $todayRecord?->counter_cash ?? 0;
         $todayProfit  = $todayRecord?->net_profit ?? ($todaySupply + $todayCounter - $todayPurchases - $todayExpenses);
@@ -61,6 +65,7 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'todaySupply', 'todayPurchases', 'todayExpenses', 'todayCounter', 'todayProfit',
+            'todaySupplyCount', 'todayPurchaseCount', 'todayExpenseCount',
             'supplierDue', 'customerDue', 'overdueCount',
             'monthSupply', 'monthPurchases', 'monthExpenses', 'monthProfit',
             'recentOrders', 'overdueOrders',

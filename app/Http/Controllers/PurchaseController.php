@@ -161,6 +161,32 @@ class PurchaseController extends Controller
         return back()->with('success', 'Payment recorded.');
     }
 
+    public function destroyPayment(PurchaseOrder $purchase, PurchasePayment $payment)
+    {
+        if ($payment->purchase_order_id !== $purchase->id) {
+            abort(404);
+        }
+
+        $newPaid = max(0, $purchase->amount_paid - $payment->amount);
+        $newDue  = $purchase->total_amount - $newPaid;
+
+        $purchase->update([
+            'amount_paid'    => $newPaid,
+            'amount_due'     => $newDue,
+            'payment_status' => $newPaid <= 0 ? 'unpaid' : ($newDue <= 0 ? 'paid' : 'partial'),
+        ]);
+
+        $purchase->supplier->increment('balance', $payment->amount);
+
+        if ($payment->proof_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($payment->proof_path);
+        }
+
+        $payment->delete();
+
+        return redirect()->route('purchases.show', $purchase)->with('success', 'Payment deleted and balance reversed.');
+    }
+
     private function generateInvoiceNumber(): string
     {
         $year  = date('Y');

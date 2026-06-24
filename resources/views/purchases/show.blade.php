@@ -58,6 +58,7 @@
             <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Note</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Proof</th>
+            <th class="px-4 py-3"></th>
           </tr></thead>
           <tbody class="divide-y divide-slate-100">
             @forelse($purchase->purchasePayments as $payment)
@@ -73,9 +74,18 @@
                   <span class="text-slate-300">—</span>
                 @endif
               </td>
+              <td class="px-4 py-3 text-center">
+                <form method="POST" action="{{ route('purchases.payment.destroy', [$purchase, $payment]) }}"
+                      data-confirm-title="Delete Payment?" data-confirm-message="Delete {{ formatCurrency($payment->amount) }} payment? Balance will be reversed." data-confirm-text="Yes, Delete" data-confirm-danger="true">
+                  @csrf @method('DELETE')
+                  <button type="submit" class="text-slate-300 hover:text-red-500 transition-colors" title="Delete payment">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </form>
+              </td>
             </tr>
             @empty
-            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
+            <tr><td colspan="6" class="px-4 py-6 text-center text-slate-400 text-sm">No payments yet.</td></tr>
             @endforelse
           </tbody>
         </table>
