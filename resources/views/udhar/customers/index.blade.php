@@ -70,7 +70,7 @@
     <a href="{{ route('udhar-customers.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Add first customer →</a>
   </div>
   @else
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <table class="w-full">
       <thead class="bg-slate-50 border-b border-slate-200">
         <tr>

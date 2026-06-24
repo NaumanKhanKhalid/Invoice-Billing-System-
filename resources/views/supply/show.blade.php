@@ -2,7 +2,7 @@
 @section('title', $supply->invoice_number)
 @section('content')
 <div class="space-y-6">
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between flex-wrap gap-2">
     <div class="flex items-center gap-3">
       <a href="{{ route('supply.index') }}" class="text-slate-400 hover:text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
       <div>
@@ -92,7 +92,7 @@
         @if($supply->notes)<div class="mt-3 p-3 bg-slate-50 rounded-lg"><p class="text-xs text-slate-500 mb-1">Notes</p><p class="text-sm text-slate-700">{{ $supply->notes }}</p></div>@endif
       </div>
 
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
         <div class="px-5 py-4 border-b border-slate-100"><h2 class="font-semibold text-slate-900">Payment History</h2></div>
         <table class="w-full">
           <thead class="bg-slate-50"><tr>

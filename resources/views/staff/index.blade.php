@@ -18,7 +18,7 @@
     <p class="text-xs text-slate-400 mt-1">Total monthly payroll</p>
   </div>
 
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <table class="w-full">
       <thead class="bg-slate-50"><tr>
         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>

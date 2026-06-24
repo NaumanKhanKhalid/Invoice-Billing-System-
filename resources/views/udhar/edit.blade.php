@@ -36,7 +36,7 @@
           </div>
           <div class="p-5 space-y-4">
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1.5">Customer Name <span class="text-red-500">*</span></label>
                 <input type="text" name="customer_name" value="{{ old('customer_name', $creditSale->customer_name) }}" required

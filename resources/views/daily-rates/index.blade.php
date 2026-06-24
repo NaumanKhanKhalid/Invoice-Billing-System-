@@ -62,7 +62,7 @@
   </div>
 
   {{-- Rate History --}}
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden table-responsive">
     <div class="px-5 py-4 border-b border-slate-100">
       <h2 class="font-semibold text-slate-900">Rate History</h2>
     </div>

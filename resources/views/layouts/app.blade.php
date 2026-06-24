@@ -95,6 +95,12 @@
             #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; }
             #overlay.show { display: block; }
         }
+
+        /* Mobile table scroll */
+        @media (max-width: 640px) {
+            .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .table-responsive table { min-width: 520px; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex">
@@ -238,7 +244,7 @@
         </header>
 
         <!-- Page content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-3 sm:p-6">
             @yield('content')
         </main>
     </div>
