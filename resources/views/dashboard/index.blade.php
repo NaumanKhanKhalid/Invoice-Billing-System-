@@ -145,9 +145,17 @@
   {{-- Chart + Overdue table --}}
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-      <h2 class="font-semibold text-slate-900 mb-1">6-Month Sales Trend</h2>
-      <p class="text-xs text-slate-400 mb-4">Supply revenue per month</p>
-      <canvas id="salesChart" height="120"></canvas>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="font-semibold text-slate-900">6-Month Sales Trend</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Supply revenue per month</p>
+        </div>
+        <div class="text-right">
+          <p class="text-lg font-bold text-green-600">{{ formatCurrency(array_sum($monthlySales)) }}</p>
+          <p class="text-xs text-slate-400">6-month total</p>
+        </div>
+      </div>
+      <canvas id="salesChart" height="140"></canvas>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -238,27 +246,60 @@
 @push('scripts')
 <script>
 new Chart(document.getElementById('salesChart').getContext('2d'), {
-    type: 'line',
+    type: 'bar',
     data: {
         labels: @json($monthlyLabels),
         datasets: [{
             label: 'Sales (PKR)',
             data: @json($monthlySales),
+            backgroundColor: function(ctx) {
+                const chart = ctx.chart;
+                const {ctx: c, chartArea} = chart;
+                if (!chartArea) return '#16a34a';
+                const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                gradient.addColorStop(0, 'rgba(22,163,74,0.85)');
+                gradient.addColorStop(1, 'rgba(22,163,74,0.3)');
+                return gradient;
+            },
             borderColor: '#16a34a',
-            backgroundColor: 'rgba(22,163,74,0.08)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#16a34a',
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false,
         }]
     },
     options: {
         responsive: true,
-        plugins: { legend: { display: false } },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        return ' PKR ' + ctx.raw.toLocaleString('en-PK');
+                    }
+                },
+                backgroundColor: '#0f172a',
+                titleColor: '#94a3b8',
+                bodyColor: '#f1f5f9',
+                padding: 10,
+                cornerRadius: 8,
+            }
+        },
         scales: {
-            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 11 } } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } }
+            y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9', drawBorder: false },
+                border: { display: false },
+                ticks: {
+                    color: '#94a3b8',
+                    font: { size: 11 },
+                    callback: v => v >= 1000 ? 'PKR ' + (v/1000).toFixed(0) + 'k' : 'PKR ' + v
+                }
+            },
+            x: {
+                grid: { display: false },
+                border: { display: false },
+                ticks: { color: '#94a3b8', font: { size: 11 } }
+            }
         }
     }
 });
