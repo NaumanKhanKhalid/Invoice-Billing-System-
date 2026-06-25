@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\CreditSaleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyRateController;
@@ -23,6 +24,13 @@ Route::get('/', function () {
 
 // Google OAuth callback (outside auth middleware — Google redirects here)
 Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');
+
+// ─── Central Admin Panel ──────────────────────────────────────────────────────
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::get('/', fn() => redirect()->route('admin.tenants.index'));
+    Route::resource('tenants', TenantController::class);
+    Route::post('/tenants/{tenant}/renew', [TenantController::class, 'renewPlan'])->name('tenants.renew');
+});
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard

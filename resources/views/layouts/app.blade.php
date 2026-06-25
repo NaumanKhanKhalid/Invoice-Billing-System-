@@ -211,6 +211,13 @@
                 </a>
               </div>
             </div>
+            {{-- Admin Panel Link --}}
+            <div class="mt-2 border-t border-slate-700/50 pt-2">
+              <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+                Admin Panel
+              </a>
+            </div>
         </nav>
 
         <!-- User section -->
