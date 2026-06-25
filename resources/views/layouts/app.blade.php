@@ -188,7 +188,7 @@
                 Reports
             </a>
 
-            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*','staff.*'); @endphp
+            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*','staff.*','products.*','tenant.users.*'); @endphp
             <div x-data="{ open: {{ $systemOpen ? 'true' : 'false' }} }">
               <button @click="open = !open"
                       class="nav-item w-full"
