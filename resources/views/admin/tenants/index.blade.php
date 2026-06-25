@@ -33,6 +33,35 @@
     </div>
   </div>
 
+  {{-- Expiring soon alert --}}
+  @php $expiringSoon = $tenants->filter(fn($t) => $t->plan_expires_at && $t->plan_expires_at > now() && $t->plan_expires_at <= now()->addDays(7)) @endphp
+  @if($expiringSoon->count())
+  <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+    <p class="text-sm font-semibold text-amber-800 mb-3">⚠️ {{ $expiringSoon->count() }} tenant(s) expiring within 7 days</p>
+    <div class="space-y-2">
+      @foreach($expiringSoon as $t)
+      <div class="flex items-center justify-between bg-white rounded-lg border border-amber-100 px-3 py-2">
+        <div>
+          <span class="text-sm font-medium text-slate-900">{{ $t->shop_name }}</span>
+          <span class="text-xs text-slate-400 ml-2">{{ $t->owner_name }}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-amber-700 font-semibold">{{ $t->plan_expires_at->format('d M Y') }}</span>
+          @if($t->owner_phone)
+          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $t->owner_phone) }}?text={{ urlencode('Assalam o Alaikum ' . $t->owner_name . ' bhai! Aapka ShopSaas plan ' . $t->plan_expires_at->format('d M Y') . ' ko expire ho raha hai. Renew karne ke liye rabta karen.') }}"
+             target="_blank"
+             class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded text-xs font-medium">
+            WhatsApp
+          </a>
+          @endif
+          <a href="{{ route('admin.tenants.show', $t) }}" class="text-xs text-slate-500 hover:text-green-600">Renew →</a>
+        </div>
+      </div>
+      @endforeach
+    </div>
+  </div>
+  @endif
+
   {{-- Table --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full">
