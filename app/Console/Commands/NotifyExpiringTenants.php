@@ -44,7 +44,8 @@ class NotifyExpiringTenants extends Command
             $msg = "Assalam o Alaikum {$t->owner_name} bhai! "
                 . "Aapka ShopSaas {$t->plan} plan {$t->plan_expires_at->format('d M Y')} ko expire ho raha hai. "
                 . "Renew karne ke liye rabta karen. Shukriya!";
-            $this->line("📱 {$t->owner_phone ?? 'no phone'} ({$t->shop_name}): {$msg}");
+            $phone = $t->owner_phone ?? 'no phone';
+            $this->line("📱 {$phone} ({$t->shop_name}): {$msg}");
             $this->newLine();
         }
 
