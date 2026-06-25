@@ -8,12 +8,7 @@
     @endif
 
     @php
-        $centralDomains = config('tenancy.central_domains', []);
-        $h = request()->getHost();
-        $isAdminDomain = false;
-        foreach ($centralDomains as $cd) {
-            if ($h === $cd || str_ends_with($h, '.' . $cd)) { $isAdminDomain = true; break; }
-        }
+        $isAdminDomain = in_array(request()->getHost(), config('tenancy.central_domains', []));
     @endphp
     @if($isAdminDomain)
     <p class="text-center text-sm font-semibold text-slate-500 mb-5">Admin Login</p>

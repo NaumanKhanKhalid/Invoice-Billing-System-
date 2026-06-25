@@ -43,11 +43,6 @@ class AuthenticatedSessionController extends Controller
     public static function isTenantDomain(): bool
     {
         $host = request()->getHost();
-        foreach (config('tenancy.central_domains', []) as $central) {
-            if ($host === $central || str_ends_with($host, '.' . $central)) {
-                return false;
-            }
-        }
-        return true;
+        return !in_array($host, config('tenancy.central_domains', []));
     }
 }
