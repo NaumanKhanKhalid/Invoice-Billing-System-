@@ -12,7 +12,21 @@
     </div>
   </div>
 
-  <form method="POST" action="{{ route('admin.tenants.store') }}" class="space-y-5">
+  <form method="POST" action="{{ route('admin.tenants.store') }}" class="space-y-5" x-data="{
+    shopName: '{{ old('shop_name') }}',
+    subdomain: '{{ old('subdomain') }}',
+    userEditedSub: {{ old('subdomain') ? 'true' : 'false' }},
+    autoSlug() {
+      if (!this.userEditedSub) {
+        this.subdomain = this.shopName
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-')
+          .substring(0, 50);
+      }
+    }
+  }">
     @csrf
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
       <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">Shop Details</h2>
@@ -20,7 +34,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Shop Name *</label>
-          <input type="text" name="shop_name" value="{{ old('shop_name') }}" required
+          <input type="text" name="shop_name" x-model="shopName" @input="autoSlug()" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           @error('shop_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
@@ -41,7 +55,7 @@
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">Subdomain *</label>
         <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-green-300">
-          <input type="text" name="subdomain" value="{{ old('subdomain') }}" required placeholder="ahmed-bikes"
+          <input type="text" name="subdomain" x-model="subdomain" @input="userEditedSub=true" required placeholder="ahmed-bikes"
                  class="flex-1 px-3 py-2 text-sm outline-none">
           <span class="px-3 py-2 bg-slate-50 text-slate-400 text-sm border-l border-slate-200">.{{ config('app.central_domain','yourapp.com') }}</span>
         </div>
