@@ -10,10 +10,15 @@ if (!function_exists('formatKg')) {
 }
 
 if (!function_exists('formatCurrency')) {
-    function formatCurrency(float|int|null $amount, string $prefix = 'PKR '): string
+    function formatCurrency(float|int|null $amount, string $prefix = null): string
     {
+        if ($prefix === null) {
+            $currency = app()->bound('tenant')
+                ? (\App\Models\Setting::getValue('currency', 'PKR'))
+                : 'PKR';
+            $prefix = $currency . ' ';
+        }
         if ($amount === null) return $prefix . '0';
-        // Remove trailing zeros: 400.00 → 400, 380.50 → 380.5
         $formatted = rtrim(rtrim(number_format($amount, 2), '0'), '.');
         return $prefix . $formatted;
     }
