@@ -14,10 +14,11 @@ class TenantController extends Controller
     {
         $tenants = Tenant::latest()->get();
         $stats = [
-            'total'    => $tenants->count(),
-            'active'   => $tenants->where('is_active', true)->count(),
-            'expired'  => $tenants->filter(fn($t) => $t->plan_expires_at && $t->plan_expires_at < now())->count(),
-            'revenue'  => 0, // future billing integration
+            'total'          => $tenants->count(),
+            'active'         => $tenants->where('is_active', true)->count(),
+            'expired'        => $tenants->filter(fn($t) => $t->plan_expires_at && $t->plan_expires_at < now())->count(),
+            'revenue_month'  => SubscriptionPayment::whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount'),
+            'revenue_total'  => SubscriptionPayment::sum('amount'),
         ];
         return view('admin.tenants.index', compact('tenants', 'stats'));
     }

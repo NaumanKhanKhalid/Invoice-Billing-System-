@@ -27,8 +27,9 @@
       <p class="text-3xl font-bold text-red-600">{{ $stats['expired'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-5 text-center">
-      <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider mb-1">This Month Revenue</p>
-      <p class="text-3xl font-bold text-blue-600">—</p>
+      <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider mb-1">This Month</p>
+      <p class="text-2xl font-bold text-blue-600">{{ number_format($stats['revenue_month']) }}</p>
+      <p class="text-xs text-slate-400 mt-0.5">Total: PKR {{ number_format($stats['revenue_total']) }}</p>
     </div>
   </div>
 
