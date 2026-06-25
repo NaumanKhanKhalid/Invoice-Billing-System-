@@ -130,6 +130,8 @@
 
         <!-- Navigation -->
         <nav class="flex-1 px-3 py-4 space-y-0.5">
+            @if(app()->bound('tenant'))
+            {{-- ── Tenant sidebar ── --}}
             <a href="{{ route('dashboard') }}"
                class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
@@ -149,13 +151,11 @@
                 Udhar Customers
             </a>
 
-
             <a href="{{ route('purchases.index') }}"
                class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit','purchases.create') ? 'active' : '' }}">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                 Purchases
             </a>
-
 
             <a href="{{ route('daily-rates.index') }}"
                class="nav-item {{ request()->routeIs('daily-rates.*') ? 'active' : '' }}">
@@ -163,25 +163,20 @@
                 Daily Rates
             </a>
 
-
-
             <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit','supply.create') ? 'active' : '' }}">
                 <i data-lucide="receipt" class="w-4 h-4"></i>
                 Supply Orders
             </a>
-
 
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i>
                 Daily Records
             </a>
 
-
             <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i>
                 Daily Expenses
             </a>
-
 
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
@@ -244,16 +239,14 @@
                 </a>
               </div>
             </div>
-            {{-- Admin Panel Link (super admin only) --}}
-            @if(!app()->bound('tenant') && auth()->user()?->email === config('app.super_admin_email'))
-            <div class="mt-2 border-t border-slate-700/50 pt-2 space-y-0.5">
-              <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.tenants.*') ? 'active' : '' }}">
+            @else
+            {{-- ── Admin / Central domain sidebar ── --}}
+            <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.tenants.*') ? 'active' : '' }}">
                 <i data-lucide="store" class="w-4 h-4"></i> Tenants
-              </a>
-              <a href="{{ route('admin.plans') }}" class="nav-item {{ request()->routeIs('admin.plans') ? 'active' : '' }}">
+            </a>
+            <a href="{{ route('admin.plans') }}" class="nav-item {{ request()->routeIs('admin.plans') ? 'active' : '' }}">
                 <i data-lucide="credit-card" class="w-4 h-4"></i> Plans & Revenue
-              </a>
-            </div>
+            </a>
             @endif
         </nav>
 
@@ -318,7 +311,8 @@
     <!-- ── Global Toast Container ── -->
     <div id="toast-container"></div>
 
-    <!-- ── Floating Speed Dial ── -->
+    @if(app()->bound('tenant'))
+    <!-- ── Floating Speed Dial (tenant only) ── -->
     <div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {{-- Actions (shown when open) --}}
       <div x-show="open" x-cloak
@@ -348,6 +342,7 @@
         <i data-lucide="plus" class="w-6 h-6"></i>
       </button>
     </div>
+    @endif
 
     {{-- Backdrop --}}
     <div x-data x-show="false" class="fixed inset-0 z-40" style="display:none"></div>
