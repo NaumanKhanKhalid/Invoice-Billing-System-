@@ -4,7 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    @php $appShopName = app()->bound('tenant') ? (\App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop')) : config('app.name', 'Admin'); @endphp
+    @php
+        $centralDomains = config('tenancy.central_domains', []);
+        $reqHost = request()->getHost();
+        $isTenantCtx = true;
+        foreach ($centralDomains as $_cd) {
+            if ($reqHost === $_cd || str_ends_with($reqHost, '.' . $_cd)) { $isTenantCtx = false; break; }
+        }
+        $appShopName = ($isTenantCtx && app()->bound('tenant'))
+            ? \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop')
+            : config('app.name', 'Admin');
+    @endphp
     <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" href="/favicon.ico">
@@ -113,7 +123,7 @@
     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto">
         <!-- Logo -->
         <div class="px-4 py-4 border-b border-slate-700/50">
-            @if(app()->bound('tenant'))
+            @if($isTenantCtx && app()->bound('tenant'))
             <div class="flex items-center gap-2.5">
               <div class="w-9 h-9 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {{ strtoupper(substr($appShopName, 0, 1)) }}
@@ -130,7 +140,7 @@
 
         <!-- Navigation -->
         <nav class="flex-1 px-3 py-4 space-y-0.5">
-            @if(app()->bound('tenant'))
+            @if($isTenantCtx)
             {{-- ── Tenant sidebar ── --}}
             <a href="{{ route('dashboard') }}"
                class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -283,7 +293,7 @@
         <!-- Subscription expiry warning banner -->
         @php
           $tenantExpiry = null;
-          if (app()->bound('tenant')) {
+          if ($isTenantCtx && app()->bound('tenant')) {
               $t = tenant();
               if ($t->plan_expires_at) {
                   $daysLeft = now()->diffInDays($t->plan_expires_at, false);
@@ -311,7 +321,7 @@
     <!-- ── Global Toast Container ── -->
     <div id="toast-container"></div>
 
-    @if(app()->bound('tenant'))
+    @if($isTenantCtx)
     <!-- ── Floating Speed Dial (tenant only) ── -->
     <div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {{-- Actions (shown when open) --}}

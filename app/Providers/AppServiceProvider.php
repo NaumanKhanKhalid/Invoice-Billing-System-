@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\ServiceProvider;
 
@@ -11,9 +12,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Central domain → admin panel, tenant → dashboard
         RedirectIfAuthenticated::redirectUsing(function ($request) {
-            if (app()->bound('tenant')) {
+            if (AuthenticatedSessionController::isTenantDomain()) {
                 return route('dashboard');
             }
             return route('admin.tenants.index');

@@ -7,7 +7,15 @@
     </div>
     @endif
 
-    @if(!app()->bound('tenant'))
+    @php
+        $centralDomains = config('tenancy.central_domains', []);
+        $h = request()->getHost();
+        $isAdminDomain = false;
+        foreach ($centralDomains as $cd) {
+            if ($h === $cd || str_ends_with($h, '.' . $cd)) { $isAdminDomain = true; break; }
+        }
+    @endphp
+    @if($isAdminDomain)
     <p class="text-center text-sm font-semibold text-slate-500 mb-5">Admin Login</p>
     @endif
 
@@ -41,7 +49,7 @@
         </button>
     </form>
 
-    @if(app()->bound('tenant') && Route::has('register'))
+    @if(!$isAdminDomain && Route::has('register'))
     <p class="text-center text-xs text-slate-400 mt-5">
         New staff member?
         <a href="{{ route('register') }}" class="text-green-600 font-medium hover:underline">Create account</a>

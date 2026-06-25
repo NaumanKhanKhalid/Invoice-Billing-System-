@@ -11,34 +11,24 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        // Central domain → admin panel, tenant subdomain → dashboard
-        if (app()->bound('tenant')) {
+        if (self::isTenantDomain()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
         return redirect()->intended(route('admin.tenants.index', absolute: false));
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
@@ -48,5 +38,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public static function isTenantDomain(): bool
+    {
+        $host = request()->getHost();
+        foreach (config('tenancy.central_domains', []) as $central) {
+            if ($host === $central || str_ends_with($host, '.' . $central)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
