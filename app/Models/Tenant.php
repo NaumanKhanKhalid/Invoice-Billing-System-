@@ -16,6 +16,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->hasMany(SubscriptionPayment::class);
     }
 
+    protected $casts = [
+        'plan_expires_at' => 'datetime',
+        'is_active'       => 'boolean',
+    ];
+
     public static function getCustomColumns(): array
     {
         return ['id', 'shop_name', 'shop_type', 'owner_name', 'owner_email', 'owner_phone',
