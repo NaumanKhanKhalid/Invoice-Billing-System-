@@ -211,13 +211,15 @@
                 </a>
               </div>
             </div>
-            {{-- Admin Panel Link --}}
+            {{-- Admin Panel Link (super admin only) --}}
+            @if(!app()->bound('tenant') && auth()->user()?->email === config('app.super_admin_email'))
             <div class="mt-2 border-t border-slate-700/50 pt-2">
               <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.*') ? 'active' : '' }}">
                 <i data-lucide="shield" class="w-4 h-4"></i>
                 Admin Panel
               </a>
             </div>
+            @endif
         </nav>
 
         <!-- User section -->
@@ -249,6 +251,28 @@
             </button>
             <span class="font-semibold text-slate-800">Anwar Chicken</span>
         </header>
+
+        <!-- Subscription expiry warning banner -->
+        @php
+          $tenantExpiry = null;
+          if (app()->bound('tenant')) {
+              $t = tenant();
+              if ($t->plan_expires_at) {
+                  $daysLeft = now()->diffInDays($t->plan_expires_at, false);
+                  if ($daysLeft <= 7 && $daysLeft >= 0) $tenantExpiry = $daysLeft;
+              }
+          }
+        @endphp
+        @if($tenantExpiry !== null)
+        <div class="bg-amber-500 text-white text-sm font-medium px-4 py-2 flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          @if($tenantExpiry == 0)
+            Your subscription expires <strong>today</strong>! Contact support to renew.
+          @else
+            Your subscription expires in <strong>{{ $tenantExpiry }} day{{ $tenantExpiry > 1 ? 's' : '' }}</strong>. Contact support to renew.
+          @endif
+        </div>
+        @endif
 
         <!-- Page content -->
         <main class="flex-1 p-3 sm:p-6">

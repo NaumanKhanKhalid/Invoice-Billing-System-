@@ -34,7 +34,7 @@ Route::middleware([
     // Google OAuth callback
     Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');
 
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth', 'tenant.subscription'])->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

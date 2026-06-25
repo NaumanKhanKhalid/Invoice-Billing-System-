@@ -54,6 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'central_domain'    => env('CENTRAL_DOMAIN', 'localhost'),
+    'super_admin_email' => env('SUPER_ADMIN_EMAIL', 'admin@yourapp.com'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

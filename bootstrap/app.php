@@ -13,7 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'admin'               => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'super.admin'         => \App\Http\Middleware\SuperAdminOnly::class,
+            'tenant.subscription' => \App\Http\Middleware\CheckTenantSubscription::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

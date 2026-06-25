@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn() => redirect()->route('admin.tenants.index'));
 
 // ─── Central Admin Panel ──────────────────────────────────────────────────────
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->group(function () {
     Route::get('/', fn() => redirect()->route('admin.tenants.index'));
     Route::resource('tenants', TenantController::class);
     Route::post('/tenants/{tenant}/renew', [TenantController::class, 'renewPlan'])->name('tenants.renew');
