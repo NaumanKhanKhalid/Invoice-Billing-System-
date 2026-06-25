@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'               => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'super.admin'         => \App\Http\Middleware\SuperAdminOnly::class,
             'tenant.subscription' => \App\Http\Middleware\CheckTenantSubscription::class,
+            'tenant.onboarding'   => \App\Http\Middleware\TenantOnboarding::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

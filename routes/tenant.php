@@ -17,6 +17,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\UdharCustomerController;
 use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -35,7 +36,13 @@ Route::middleware([
     // Google OAuth callback
     Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');
 
-    Route::middleware(['auth', 'tenant.subscription'])->group(function () {
+    // Onboarding setup (auth required but no subscription check)
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/setup', [SetupController::class, 'index'])->name('setup.index');
+        Route::post('/setup', [SetupController::class, 'store'])->name('setup.store');
+    });
+
+    Route::middleware(['auth', 'tenant.subscription', 'tenant.onboarding'])->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
