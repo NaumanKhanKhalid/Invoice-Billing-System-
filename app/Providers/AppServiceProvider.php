@@ -2,23 +2,21 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        // Central domain → admin panel, tenant → dashboard
+        RedirectIfAuthenticated::redirectUsing(function ($request) {
+            if (app()->bound('tenant')) {
+                return route('dashboard');
+            }
+            return route('admin.tenants.index');
+        });
     }
 }
