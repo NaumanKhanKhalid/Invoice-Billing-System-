@@ -1,54 +1,89 @@
-# InvoicePro — Laravel 11 Invoice & Billing System
+# ShopSaas — Multi-Tenant Shop Billing Platform
 
-A complete, production-ready invoice and billing management system built with Laravel 11, featuring a beautiful dark sidebar design, real-time invoice calculations with Alpine.js, PDF generation, and comprehensive reporting.
+A complete SaaS billing system for selling to multiple shop clients on subscription. Each tenant gets their own isolated database. Built with Laravel + `stancl/tenancy`.
+
+## Supported Shop Types
+- 🍗 Chicken Shop
+- 🔧 Hardware Shop
+- 📱 Mobile / Accessories Shop
+- 🏍️ Bike Spare Parts Shop
+- 🏪 General Shop
 
 ## Features
 
-- **Dashboard** — Stats cards, revenue chart (Chart.js), overdue alerts, recent invoices
-- **Client Management** — Full CRUD, soft deletes, active/inactive toggle, search and filter
-- **Products and Services** — Manage billable items with tax rates, live toggle status
-- **Invoice Management** — Create/edit invoices with dynamic line items, auto-generated numbers
-- **Smart Line Items** — Alpine.js powered: product auto-fill, live totals, discount support
-- **Payment Tracking** — Record multiple payments per invoice, modal UI, payment history
-- **Status Workflow** — Draft to Sent to Paid/Overdue to Cancelled with auto-status on full payment
-- **PDF Generation** — Professional PDF invoices via barryvdh/laravel-dompdf
-- **Reports** — Revenue by month, top clients, invoice status summaries with Chart.js
-- **Settings** — Company details, invoice prefix, default tax rate, logo upload
-- **Artisan Command** — invoices:mark-overdue scheduled to run daily
-- **Role-based Access** — Admin and Staff roles
+### Central Admin Panel (`/admin`)
+- Tenant management (create, edit, delete)
+- Subscription plan management (Basic / Pro / Business)
+- Payment recording & history per tenant
+- Revenue dashboard (monthly/total actual payments)
+- Expiring tenant alerts: `php artisan tenants:notify-expiring --days=7`
+
+### Per-Tenant Shop System
+- **Dashboard** — Revenue, purchases, expense charts
+- **Purchases** — Supplier purchases with payment tracking
+- **Supply Orders** — Customer orders + PDF invoice generation
+- **Udhar Book** — Credit sales with payment tracking
+- **Expenses** — Category-wise expense tracking
+- **Staff & Salaries** — Employee management
+- **Day End** — Daily closing records
+- **Team Members** — Multi-user with plan-based limits
+- **Settings** — Company info, Google Drive backup
+- **First-Login Wizard** — Guided setup on new tenant login
+
+### Subscription Plans
+| Plan     | Price/mo | Users     | Staff | Backup |
+|----------|----------|-----------|-------|--------|
+| Basic    | PKR 1500 | 1         | ✗     | ✗      |
+| Pro      | PKR 3000 | 3         | ✓     | ✓      |
+| Business | PKR 5000 | Unlimited | ✓     | ✓      |
 
 ## Tech Stack
-
-- Laravel 11, PHP 8.2+
-- SQLite (easily switchable to MySQL)
-- Blade Templates, Tailwind CSS v3, Alpine.js 3.x
-- Lucide Icons (CDN), Chart.js 4
+- Laravel 13, PHP 8.4
+- `stancl/tenancy` v3.8 — separate DB per tenant
+- SQLite (central) + SQLite per tenant (switchable to MySQL)
+- Blade, Tailwind CSS, Alpine.js, Lucide Icons, Chart.js
 - barryvdh/laravel-dompdf
-- Laravel Breeze
 
 ## Installation
 
 ```bash
+git clone <repo>
+cd Invoice-Billing-System-
 composer install
-npm install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate --seed
-php artisan storage:link
-npm run build
-php artisan serve
+
+# Configure .env:
+# CENTRAL_DOMAIN=yourdomain.com
+# SUPER_ADMIN_EMAIL=admin@yourdomain.com
+# SUPER_ADMIN_PASSWORD=yourpassword
+
+php artisan migrate                    # central DB
+php artisan db:seed --class=SuperAdminSeeder
+
+# Create first tenant:
+php artisan tenant:create
+
+# Or via admin panel: http://yourdomain.com/admin
 ```
 
-## Demo Credentials
-
-| Role  | Email           | Password |
-|-------|-----------------|----------|
-| Admin | admin@demo.com  | password |
-| Staff | staff@demo.com  | password |
+## Subdomain Routing
+Each tenant is served at `{subdomain}.yourdomain.com`. Configure wildcard DNS:
+```
+*.yourdomain.com → your server IP
+```
 
 ## Artisan Commands
-
 ```bash
-php artisan invoices:mark-overdue
-php artisan schedule:work
+php artisan admin:create               # create super admin
+php artisan tenant:create              # create tenant interactively
+php artisan tenants:notify-expiring    # show expiring clients (for WhatsApp follow-up)
+php artisan tenants:run "migrate"      # run migration on all tenant DBs
 ```
+
+## Scheduled Tasks (add to crontab)
+```
+* * * * * php artisan schedule:run
+```
+- Daily: mark overdue invoices, Google Drive backup
+- Weekly (Mon 9am): expiring tenant report
