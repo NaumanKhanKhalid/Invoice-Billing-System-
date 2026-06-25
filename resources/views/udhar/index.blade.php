@@ -108,7 +108,7 @@
     <div class="flex flex-wrap gap-2">
       @foreach($records->filter(fn($r) => $r->phone) as $r)
       @php
-        $waMsg = urlencode("Dear " . $r->customer_name . ", you have an outstanding balance of " . formatCurrency($r->amount_due) . " due by " . $r->due_date->format('d M Y') . ". Please arrange payment. — Anwar Chicken Center");
+        $waMsg = urlencode("Dear " . $r->customer_name . ", you have an outstanding balance of " . formatCurrency($r->amount_due) . " due by " . $r->due_date->format('d M Y') . ". Please arrange payment. — " . \App\Models\Setting::getValue('company_name', app()->bound('tenant') ? tenant()->shop_name : config('app.name')));
         $waPhone = preg_replace('/[^0-9]/', '', $r->phone);
         if (str_starts_with($waPhone, '0')) $waPhone = '92' . substr($waPhone, 1);
       @endphp

@@ -32,7 +32,7 @@
       </div>
       <div>
         <p class="font-semibold text-slate-900">{{ count($backups) }} Backup{{ count($backups) !== 1 ? 's' : '' }}</p>
-        <p class="text-xs text-slate-400">Google Drive · Anwar Chicken Backups</p>
+        <p class="text-xs text-slate-400">Google Drive · {{ \App\Models\Setting::getValue('company_name', app()->bound('tenant') ? tenant()->shop_name : 'App') }} Backups</p>
       </div>
     </div>
     <form method="POST" action="{{ route('backup.google') }}">
