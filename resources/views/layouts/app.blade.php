@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @php
-        $isTenantCtx = !in_array(request()->getHost(), config('tenancy.central_domains', []));
+        $isTenantCtx = app()->bound('tenant');
         $appShopName = ($isTenantCtx && app()->bound('tenant'))
             ? \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop')
             : config('app.name', 'Admin');

@@ -7,9 +7,7 @@
     </div>
     @endif
 
-    @php
-        $isAdminDomain = in_array(request()->getHost(), config('tenancy.central_domains', []));
-    @endphp
+    @php $isAdminDomain = !app()->bound('tenant'); @endphp
     @if($isAdminDomain)
     <p class="text-center text-sm font-semibold text-slate-500 mb-5">Admin Login</p>
     @endif

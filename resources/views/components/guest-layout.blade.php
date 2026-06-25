@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
-        $isTenant = !in_array(request()->getHost(), config('tenancy.central_domains', []));
-        $shopName  = ($isTenant && app()->bound('tenant')) ? (tenant()->shop_name ?? config('app.name')) : config('app.name', 'ShopSaas');
+        $isTenant = app()->bound('tenant');
+        $shopName  = $isTenant ? (tenant()->shop_name ?? config('app.name')) : config('app.name', 'ShopSaas');
         $shopType  = $isTenant ? (tenant()->shop_type ?? '') : '';
         $typeIcons = ['chicken'=>'🍗','bike'=>'🏍️','hardware'=>'🔧','mobile'=>'📱','general'=>'🏪'];
         $shopIcon  = $typeIcons[$shopType] ?? '🏪';

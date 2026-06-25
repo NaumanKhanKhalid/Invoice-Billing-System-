@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (self::isTenantDomain()) {
+        if (app()->bound('tenant')) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
@@ -38,11 +38,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
-    }
-
-    public static function isTenantDomain(): bool
-    {
-        $host = request()->getHost();
-        return !in_array($host, config('tenancy.central_domains', []));
     }
 }
