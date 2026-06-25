@@ -113,6 +113,22 @@
     </div>
   </div>
 
+  {{-- Low stock alert --}}
+  @if($lowStockProducts > 0)
+  <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+    <div class="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+      <i data-lucide="package" class="w-4 h-4 text-amber-600"></i>
+    </div>
+    <div class="flex-1">
+      <p class="text-sm font-semibold text-amber-800">{{ $lowStockProducts }} product{{ $lowStockProducts > 1 ? 's' : '' }} running low on stock</p>
+      <p class="text-xs text-amber-600">Restock karna zaroor hai before running out</p>
+    </div>
+    <a href="{{ route('products.index') }}?stock=low" class="text-xs font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">
+      View →
+    </a>
+  </div>
+  @endif
+
   {{-- Udhar / Credit stats --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
     <div class="flex items-center justify-between mb-4">

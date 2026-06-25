@@ -6,6 +6,7 @@ use App\Models\CreditSale;
 use App\Models\Customer;
 use App\Models\DailyRecord;
 use App\Models\Expense;
+use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\SupplyOrder;
 use App\Models\Supplier;
@@ -57,6 +58,8 @@ class DashboardController extends Controller
             $monthlySales[]  = (float) SupplyOrder::whereYear('date', $m->year)->whereMonth('date', $m->month)->sum('total_amount');
         }
 
+        $lowStockProducts   = Product::whereColumn('stock_qty', '<=', 'low_stock_alert')->where('is_active', true)->count();
+
         $udharTotalDue      = CreditSale::whereIn('status', ['unpaid', 'partial'])->sum('amount_due');
         $udharOverdueCount  = CreditSale::whereIn('status', ['unpaid', 'partial'])->whereDate('due_date', '<', today())->count();
         $udharDueTodayCount = CreditSale::whereIn('status', ['unpaid', 'partial'])->whereDate('due_date', today())->count();
@@ -70,7 +73,8 @@ class DashboardController extends Controller
             'monthSupply', 'monthPurchases', 'monthExpenses', 'monthProfit',
             'recentOrders', 'overdueOrders',
             'monthlyLabels', 'monthlySales',
-            'udharTotalDue', 'udharOverdueCount', 'udharDueTodayCount', 'udharDueThisWeek'
+            'udharTotalDue', 'udharOverdueCount', 'udharDueTodayCount', 'udharDueThisWeek',
+            'lowStockProducts'
         ));
     }
 }
