@@ -17,6 +17,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\UdharCustomerController;
 use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
@@ -128,6 +129,10 @@ Route::middleware([
 
         // Udhar Customers
         Route::resource('udhar-customers', UdharCustomerController::class);
+
+        // Products & Inventory
+        Route::resource('products', ProductController::class);
+        Route::post('/products/{product}/stock', [ProductController::class, 'adjustStock'])->name('products.stock');
 
         // Team / Users
         Route::get('/users', [TenantUserController::class, 'index'])->name('tenant.users.index');
