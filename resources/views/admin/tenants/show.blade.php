@@ -36,7 +36,7 @@
       <p class="text-sm {{ $expired ? 'text-red-600' : 'text-slate-500' }} mt-1">
         @if($tenant->plan_expires_at)
           {{ $expired ? 'Expired' : 'Expires' }} {{ $tenant->plan_expires_at->format('d M Y') }}
-          @if(!$expired)<span class="text-xs">({{ $daysLeft }} days left)</span>@endif
+          @if(!$expired)<span class="text-xs">({{ (int) $daysLeft }} days left)</span>@endif
         @else Never @endif
       </p>
     </div>
