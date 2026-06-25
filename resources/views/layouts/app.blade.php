@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Anwar Chicken') — Anwar Chicken</title>
+    @php $appShopName = app()->bound('tenant') ? (\App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop')) : config('app.name', 'Admin'); @endphp
+    <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" href="/favicon.ico">
 
@@ -112,7 +113,19 @@
     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto">
         <!-- Logo -->
         <div class="px-4 py-4 border-b border-slate-700/50">
-            <img src="/logo.svg" alt="Anwar Chicken Center" class="w-full h-auto" style="max-height:52px;object-fit:contain;">
+            @if(app()->bound('tenant'))
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {{ strtoupper(substr($appShopName, 0, 1)) }}
+              </div>
+              <div class="overflow-hidden">
+                <p class="text-sm font-bold text-white truncate">{{ $appShopName }}</p>
+                <p class="text-xs text-slate-400 capitalize">{{ tenant()->shop_type ?? '' }} · {{ tenant()->plan ?? 'basic' }}</p>
+              </div>
+            </div>
+            @else
+            <p class="text-sm font-bold text-white">⚡ Admin Panel</p>
+            @endif
         </div>
 
         <!-- Navigation -->
@@ -213,10 +226,12 @@
             </div>
             {{-- Admin Panel Link (super admin only) --}}
             @if(!app()->bound('tenant') && auth()->user()?->email === config('app.super_admin_email'))
-            <div class="mt-2 border-t border-slate-700/50 pt-2">
-              <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.*') ? 'active' : '' }}">
-                <i data-lucide="shield" class="w-4 h-4"></i>
-                Admin Panel
+            <div class="mt-2 border-t border-slate-700/50 pt-2 space-y-0.5">
+              <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.tenants.*') ? 'active' : '' }}">
+                <i data-lucide="store" class="w-4 h-4"></i> Tenants
+              </a>
+              <a href="{{ route('admin.plans') }}" class="nav-item {{ request()->routeIs('admin.plans') ? 'active' : '' }}">
+                <i data-lucide="credit-card" class="w-4 h-4"></i> Plans & Revenue
               </a>
             </div>
             @endif
@@ -249,7 +264,7 @@
             <button onclick="openSidebar()" class="text-slate-600">
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
-            <span class="font-semibold text-slate-800">Anwar Chicken</span>
+            <span class="font-semibold text-slate-800">{{ $appShopName }}</span>
         </header>
 
         <!-- Subscription expiry warning banner -->
