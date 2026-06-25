@@ -28,7 +28,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Central domain → admin panel, tenant subdomain → dashboard
+        if (app()->bound('tenant')) {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        return redirect()->intended(route('admin.tenants.index', absolute: false));
     }
 
     /**
