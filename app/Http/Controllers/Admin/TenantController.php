@@ -57,7 +57,9 @@ class TenantController extends Controller
             'notes'           => $data['notes'] ?? null,
         ]);
 
-        $subdomain = $data['subdomain'] . '.' . config('app.central_domain', 'localhost');
+        // Strip port from central domain — domain table stores hostname only
+        $baseDomain = strtok(config('app.central_domain', 'localhost'), ':');
+        $subdomain = $data['subdomain'] . '.' . $baseDomain;
         $tenant->domains()->create(['domain' => $subdomain]);
 
         // Create the owner user inside the tenant's database
