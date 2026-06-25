@@ -22,6 +22,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // tenant.php routes run with InitializeTenancyByDomain middleware
+        // so app()->bound('tenant') is reliably true only on tenant subdomains.
+        // Admin uses /admin/login (web.php) — no tenancy middleware — so false.
         if (app()->bound('tenant')) {
             return redirect()->intended(route('dashboard', absolute: false));
         }

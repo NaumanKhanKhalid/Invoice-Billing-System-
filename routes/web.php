@@ -4,8 +4,17 @@ use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
-// ─── Central Domain: landing page ────────────────────────────────────────────
+// ─── Landing page ─────────────────────────────────────────────────────────────
 Route::get('/', fn() => view('landing'))->name('home');
+
+// ─── Admin Login (separate URL — no conflict with tenant /login) ───────────────
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/admin/login', [AuthenticatedSessionController::class, 'store']);
+});
+Route::middleware('auth')->group(function () {
+    Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+});
 
 // ─── Central Admin Panel ──────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->group(function () {
@@ -15,18 +24,3 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->gro
     Route::get('/tenants/{tenant}/payments', [TenantController::class, 'payments'])->name('tenants.payments');
     Route::get('/plans', fn() => view('admin.plans'))->name('plans');
 });
-
-// ─── Central domain login/logout (only when NOT a tenant subdomain) ───────────
-// web.php loads for ALL domains, so guard with a host check so tenant subdomains
-// use the login route registered inside routes/tenant.php (with tenancy middleware).
-$centralDomains = config('tenancy.central_domains', ['127.0.0.1', 'localhost']);
-
-if (in_array(request()->getHost(), $centralDomains)) {
-    Route::middleware('guest')->group(function () use (&$centralDomains) {
-        Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
-        Route::post('login', [AuthenticatedSessionController::class, 'store']);
-    });
-    Route::middleware('auth')->group(function () {
-        Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    });
-}

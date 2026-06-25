@@ -7,8 +7,7 @@
     </div>
     @endif
 
-    @php $isAdminDomain = !app()->bound('tenant'); @endphp
-    @if($isAdminDomain)
+    @if(!app()->bound('tenant'))
     <p class="text-center text-sm font-semibold text-slate-500 mb-5">Admin Login</p>
     @endif
 
@@ -32,9 +31,6 @@
                 <input type="checkbox" name="remember" id="remember_me" class="rounded border-slate-300 text-green-600 focus:ring-green-500">
                 Remember me
             </label>
-            @if (Route::has('password.request'))
-            <a href="{{ route('password.request') }}" class="text-xs text-green-600 hover:underline">Forgot password?</a>
-            @endif
         </div>
 
         <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
@@ -42,9 +38,9 @@
         </button>
     </form>
 
-    @if(!$isAdminDomain && Route::has('register'))
+    @if(app()->bound('tenant') && Route::has('register'))
     <p class="text-center text-xs text-slate-400 mt-5">
-        New staff member?
+        New user?
         <a href="{{ route('register') }}" class="text-green-600 font-medium hover:underline">Create account</a>
     </p>
     @endif
