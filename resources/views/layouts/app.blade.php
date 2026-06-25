@@ -217,6 +217,11 @@
                           {{ request()->routeIs('staff.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="user-check" class="w-3.5 h-3.5 flex-shrink-0"></i> Staff & Salaries
                 </a>
+                <a href="{{ route('tenant.users.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('tenant.users.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> Team Members
+                </a>
                 <a href="{{ route('settings.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
                           {{ request()->routeIs('settings.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">

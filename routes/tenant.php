@@ -17,6 +17,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\UdharCustomerController;
 use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -120,6 +121,13 @@ Route::middleware([
 
         // Udhar Customers
         Route::resource('udhar-customers', UdharCustomerController::class);
+
+        // Team / Users
+        Route::get('/users', [TenantUserController::class, 'index'])->name('tenant.users.index');
+        Route::get('/users/create', [TenantUserController::class, 'create'])->name('tenant.users.create');
+        Route::post('/users', [TenantUserController::class, 'store'])->name('tenant.users.store');
+        Route::delete('/users/{user}', [TenantUserController::class, 'destroy'])->name('tenant.users.destroy');
+        Route::post('/users/{user}/reset-password', [TenantUserController::class, 'resetPassword'])->name('tenant.users.reset-password');
     });
 
     require __DIR__.'/auth.php';

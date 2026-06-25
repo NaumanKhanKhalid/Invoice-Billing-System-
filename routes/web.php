@@ -11,6 +11,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->gro
     Route::get('/', fn() => redirect()->route('admin.tenants.index'));
     Route::resource('tenants', TenantController::class);
     Route::post('/tenants/{tenant}/renew', [TenantController::class, 'renewPlan'])->name('tenants.renew');
+    Route::get('/tenants/{tenant}/payments', [TenantController::class, 'payments'])->name('tenants.payments');
     Route::get('/plans', fn() => view('admin.plans'))->name('plans');
 });
 

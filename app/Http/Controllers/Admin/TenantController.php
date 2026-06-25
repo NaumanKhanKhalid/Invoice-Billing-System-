@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SubscriptionPayment;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -108,14 +109,41 @@ class TenantController extends Controller
 
     public function renewPlan(Request $request, Tenant $tenant)
     {
-        $data = $request->validate(['months' => 'required|integer|min:1|max:24']);
+        $data = $request->validate([
+            'months'    => 'required|integer|min:1|max:24',
+            'amount'    => 'required|numeric|min:0',
+            'method'    => 'required|in:cash,bank,jazzcash,easypaisa,other',
+            'paid_at'   => 'required|date',
+            'reference' => 'nullable|string|max:100',
+            'notes'     => 'nullable|string',
+        ]);
 
         $from = $tenant->plan_expires_at && $tenant->plan_expires_at > now()
             ? $tenant->plan_expires_at
             : now();
+        $to = (clone $from)->addMonths((int)$data['months']);
 
-        $tenant->update(['plan_expires_at' => $from->addMonths($data['months']), 'is_active' => true]);
+        $tenant->update(['plan_expires_at' => $to, 'is_active' => true]);
 
-        return back()->with('success', "Plan renewed by {$data['months']} month(s).");
+        SubscriptionPayment::create([
+            'tenant_id'   => $tenant->id,
+            'amount'      => $data['amount'],
+            'plan'        => $tenant->plan,
+            'months'      => $data['months'],
+            'method'      => $data['method'],
+            'paid_at'     => $data['paid_at'],
+            'period_from' => $from->toDateString(),
+            'period_to'   => $to->toDateString(),
+            'reference'   => $data['reference'] ?? null,
+            'notes'       => $data['notes'] ?? null,
+        ]);
+
+        return back()->with('success', "Plan renewed by {$data['months']} month(s). Payment of PKR " . number_format($data['amount']) . " recorded.");
+    }
+
+    public function payments(Tenant $tenant)
+    {
+        $payments = $tenant->subscriptionPayments()->latest('paid_at')->get();
+        return view('admin.tenants.payments', compact('tenant', 'payments'));
     }
 }

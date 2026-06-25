@@ -60,21 +60,56 @@
 
   {{-- Renew Plan --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-    <h2 class="font-semibold text-slate-900 mb-3">Renew / Extend Plan</h2>
-    <form method="POST" action="{{ route('admin.tenants.renew', $tenant) }}" class="flex items-center gap-3">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold text-slate-900">Record Payment & Renew Plan</h2>
+      <a href="{{ route('admin.tenants.payments', $tenant) }}" class="text-sm text-green-600 hover:underline flex items-center gap-1">
+        <i data-lucide="history" class="w-4 h-4"></i> Payment History
+      </a>
+    </div>
+    @if($expired)<div class="mb-3 text-sm text-red-600 font-medium bg-red-50 border border-red-200 rounded-lg px-3 py-2">⚠️ Plan expired — recording a payment will reactivate access</div>@endif
+    <form method="POST" action="{{ route('admin.tenants.renew', $tenant) }}">
       @csrf
-      <select name="months" class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-        <option value="1">+1 month</option>
-        <option value="3">+3 months</option>
-        <option value="6">+6 months</option>
-        <option value="12">+12 months</option>
-      </select>
-      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-medium">
-        Renew Plan
-      </button>
-      @if($expired)
-      <span class="text-sm text-red-600 font-medium">⚠️ Plan expired — renewing will reactivate access</span>
-      @endif
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Amount (PKR) *</label>
+          <input type="number" name="amount" required placeholder="{{ config('plans.'.$tenant->plan.'.price', 0) }}"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Months *</label>
+          <select name="months" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
+            <option value="1">1 month</option>
+            <option value="3">3 months</option>
+            <option value="6">6 months</option>
+            <option value="12" selected>12 months</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Payment Method *</label>
+          <select name="method" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
+            <option value="cash">Cash</option>
+            <option value="bank">Bank Transfer</option>
+            <option value="jazzcash">JazzCash</option>
+            <option value="easypaisa">EasyPaisa</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Paid On *</label>
+          <input type="date" name="paid_at" value="{{ date('Y-m-d') }}" required
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Reference #</label>
+          <input type="text" name="reference" placeholder="Transaction ID..."
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            Record & Renew
+          </button>
+        </div>
+      </div>
     </form>
   </div>
 
