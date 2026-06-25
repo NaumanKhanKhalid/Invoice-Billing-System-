@@ -54,9 +54,9 @@
     <h2 class="font-semibold text-slate-900 mb-3">Revenue Overview</h2>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
       @php
-        $totalMonthly = collect(config('plans'))->sum(fn($p, $k) =>
-          \App\Models\Tenant::where('plan', $k)->where('is_active', true)->count() * $p['price']
-        );
+        $totalMonthly = collect(config('plans'))->reduce(function ($carry, $p, $k) {
+          return $carry + \App\Models\Tenant::where('plan', $k)->where('is_active', true)->count() * $p['price'];
+        }, 0);
       @endphp
       <div>
         <p class="text-xs text-slate-400 mb-1">Active Tenants</p>
