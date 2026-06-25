@@ -7,6 +7,10 @@
     </div>
     @endif
 
+    @if(!app()->bound('tenant'))
+    <p class="text-center text-sm font-semibold text-slate-500 mb-5">Admin Login</p>
+    @endif
+
     <form method="POST" action="{{ route('login') }}" class="space-y-4">
         @csrf
 
@@ -36,4 +40,11 @@
             Sign In
         </button>
     </form>
+
+    @if(app()->bound('tenant') && Route::has('register'))
+    <p class="text-center text-xs text-slate-400 mt-5">
+        New staff member?
+        <a href="{{ route('register') }}" class="text-green-600 font-medium hover:underline">Create account</a>
+    </p>
+    @endif
 </x-guest-layout>

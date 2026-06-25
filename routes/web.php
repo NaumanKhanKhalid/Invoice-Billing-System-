@@ -15,4 +15,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->gro
     Route::get('/plans', fn() => view('admin.plans'))->name('plans');
 });
 
-require __DIR__.'/auth.php';
+// Only login/logout on central domain — no public registration
+Route::middleware('guest')->group(function () {
+    Route::get('login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+});
+Route::middleware('auth')->group(function () {
+    Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+});
+

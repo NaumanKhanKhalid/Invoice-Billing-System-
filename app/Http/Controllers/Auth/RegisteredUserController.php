@@ -46,6 +46,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        if (app()->bound('tenant')) {
+            return redirect(route('dashboard', absolute: false));
+        }
+
+        return redirect(route('admin.tenants.index', absolute: false));
     }
 }
