@@ -25,12 +25,15 @@ class SettingController extends Controller
             'invoice_prefix' => 'nullable|string|max:20',
             'default_tax_rate' => 'nullable|numeric|min:0|max:100',
             'default_terms' => 'nullable|string',
+            'currency'      => 'nullable|in:PKR,USD,EUR',
+            'timezone'      => 'nullable|string',
             'logo' => 'nullable|image|max:2048',
         ]);
 
         $fields = [
             'company_name', 'company_address', 'company_phone',
             'company_email', 'invoice_prefix', 'default_tax_rate', 'default_terms',
+            'currency', 'timezone',
         ];
 
         foreach ($fields as $field) {

@@ -115,6 +115,28 @@
                               class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none"
                               placeholder="Company address...">{{ $settings['company_address'] ?? '' }}</textarea>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Currency</label>
+                    <div class="relative">
+                      <select name="currency" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
+                        @foreach(['PKR'=>'PKR — Pakistani Rupee','USD'=>'USD — US Dollar','EUR'=>'EUR — Euro'] as $val=>$label)
+                        <option value="{{ $val }}" @selected(($settings['currency'] ?? 'PKR')===$val)>{{ $label }}</option>
+                        @endforeach
+                      </select>
+                      <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Timezone</label>
+                    <div class="relative">
+                      <select name="timezone" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
+                        <option value="Asia/Karachi" @selected(($settings['timezone'] ?? 'Asia/Karachi')==='Asia/Karachi')>Asia/Karachi (PKT)</option>
+                        <option value="UTC" @selected(($settings['timezone'] ?? '')==='UTC')>UTC</option>
+                        <option value="Asia/Dubai" @selected(($settings['timezone'] ?? '')==='Asia/Dubai')>Asia/Dubai</option>
+                      </select>
+                      <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
