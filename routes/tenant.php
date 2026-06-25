@@ -17,7 +17,9 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\UdharCustomerController;
 use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductPurchaseController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
@@ -133,6 +135,21 @@ Route::middleware([
         // Products & Inventory
         Route::resource('products', ProductController::class);
         Route::post('/products/{product}/stock', [ProductController::class, 'adjustStock'])->name('products.stock');
+
+        // Product Purchases (bike/hardware/mobile shops)
+        Route::get('/product-purchases', [ProductPurchaseController::class, 'index'])->name('product-purchases.index');
+        Route::get('/product-purchases/create', [ProductPurchaseController::class, 'create'])->name('product-purchases.create');
+        Route::post('/product-purchases', [ProductPurchaseController::class, 'store'])->name('product-purchases.store');
+        Route::get('/product-purchases/{productPurchase}', [ProductPurchaseController::class, 'show'])->name('product-purchases.show');
+        Route::delete('/product-purchases/{productPurchase}', [ProductPurchaseController::class, 'destroy'])->name('product-purchases.destroy');
+        Route::post('/product-purchases/{productPurchase}/payment', [ProductPurchaseController::class, 'storePayment'])->name('product-purchases.payment');
+
+        // POS
+        Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+        Route::get('/pos/sale', [PosController::class, 'create'])->name('pos.create');
+        Route::post('/pos/sale', [PosController::class, 'store'])->name('pos.store');
+        Route::get('/pos/sale/{posSale}/receipt', [PosController::class, 'receipt'])->name('pos.receipt');
+        Route::get('/pos/sale/{posSale}', [PosController::class, 'show'])->name('pos.show');
 
         // Team / Users
         Route::get('/users', [TenantUserController::class, 'index'])->name('tenant.users.index');

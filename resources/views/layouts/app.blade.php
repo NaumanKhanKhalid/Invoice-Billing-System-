@@ -188,7 +188,7 @@
                 Reports
             </a>
 
-            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*','staff.*','products.*','tenant.users.*'); @endphp
+            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*','staff.*','products.*','tenant.users.*','product-purchases.*','pos.*'); @endphp
             <div x-data="{ open: {{ $systemOpen ? 'true' : 'false' }} }">
               <button @click="open = !open"
                       class="nav-item w-full"
@@ -221,6 +221,16 @@
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
                           {{ request()->routeIs('products.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="package" class="w-3.5 h-3.5 flex-shrink-0"></i> Products & Stock
+                </a>
+                <a href="{{ route('product-purchases.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('product-purchases.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="shopping-cart" class="w-3.5 h-3.5 flex-shrink-0"></i> Product Purchases
+                </a>
+                <a href="{{ route('pos.create') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
+                          {{ request()->routeIs('pos.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="scan-line" class="w-3.5 h-3.5 flex-shrink-0"></i> POS Counter
                 </a>
                 <a href="{{ route('tenant.users.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
