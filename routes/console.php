@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('invoices:mark-overdue')->daily();
 Schedule::command('backup:google')->dailyAt('00:00');
+Schedule::command('tenants:notify-expiring --days=7')->weeklyOn(1, '09:00');

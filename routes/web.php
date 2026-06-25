@@ -3,8 +3,8 @@
 use App\Http\Controllers\Admin\TenantController;
 use Illuminate\Support\Facades\Route;
 
-// ─── Central Domain: redirect to admin ───────────────────────────────────────
-Route::get('/', fn() => redirect()->route('admin.tenants.index'));
+// ─── Central Domain: landing page ────────────────────────────────────────────
+Route::get('/', fn() => view('landing'))->name('home');
 
 // ─── Central Admin Panel ──────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->group(function () {
