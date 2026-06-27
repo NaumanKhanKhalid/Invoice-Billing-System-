@@ -20,6 +20,7 @@ use App\Http\Controllers\GoogleDriveController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductPurchaseController;
+use App\Http\Controllers\DummyDataController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
@@ -150,6 +151,10 @@ Route::middleware([
         Route::post('/pos/sale', [PosController::class, 'store'])->name('pos.store');
         Route::get('/pos/sale/{posSale}/receipt', [PosController::class, 'receipt'])->name('pos.receipt');
         Route::get('/pos/sale/{posSale}', [PosController::class, 'show'])->name('pos.show');
+
+        // Demo Data
+        Route::post('/settings/seed-demo', [DummyDataController::class, 'seed'])->name('demo.seed');
+        Route::post('/settings/delete-demo', [DummyDataController::class, 'delete'])->name('demo.delete');
 
         // Team / Users
         Route::get('/users', [TenantUserController::class, 'index'])->name('tenant.users.index');

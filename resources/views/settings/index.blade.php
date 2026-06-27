@@ -73,6 +73,43 @@
         @endif
     </div>
 
+    {{-- Demo / Test Data --}}
+    @php $demoSeeded = \App\Services\DummyDataService::isSeeded(); @endphp
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <h2 class="font-semibold text-slate-900 mb-1 flex items-center gap-2">
+            <i data-lucide="database" class="w-4 h-4 text-green-600"></i>
+            Demo / Test Data
+        </h2>
+        <p class="text-sm text-slate-500 mb-4">Load sample data to explore the system, or delete it when you're ready to go live.</p>
+        <div class="flex items-center gap-3 flex-wrap">
+            @if(!$demoSeeded)
+            <form method="POST" action="{{ route('demo.seed') }}">
+                @csrf
+                <button type="submit"
+                        onclick="return confirm('Load sample data for your shop type? This will add customers, suppliers, invoices, and more.')"
+                        class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <i data-lucide="play-circle" class="w-4 h-4"></i>
+                    Load Demo Data
+                </button>
+            </form>
+            <span class="text-xs text-slate-400">No demo data loaded yet.</span>
+            @else
+            <span class="inline-flex items-center gap-1.5 text-sm text-green-700 font-medium bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>Demo data loaded
+            </span>
+            <form method="POST" action="{{ route('demo.delete') }}">
+                @csrf
+                <button type="submit"
+                        onclick="return confirm('Delete all demo data? This cannot be undone.')"
+                        class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    Delete Demo Data
+                </button>
+            </form>
+            @endif
+        </div>
+    </div>
+
     <form method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data" class="space-y-5">
         @csrf
 
