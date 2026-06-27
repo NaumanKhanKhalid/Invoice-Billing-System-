@@ -60,7 +60,7 @@
     </div>
 
     {{-- Product grid --}}
-    <div class="flex-1 overflow-y-auto p-4">
+    <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
         <template x-for="p in filtered" :key="p.id">
           <button type="button" @click="addToCart(p)"
@@ -95,6 +95,37 @@
             <p class="text-slate-400 text-sm font-medium">Koi product nahi mila</p>
           </div>
         </template>
+      </div>
+
+      {{-- Today at a Glance --}}
+      <div class="grid grid-cols-3 gap-3 mt-auto pt-2">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 font-medium">Today's Sales</p>
+            <p class="text-xl font-extrabold text-slate-900">{{ $todaySales }}</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 font-medium">Today's Revenue</p>
+            <p class="text-xl font-extrabold text-slate-900">{{ number_format($todayRevenue) }}</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-{{ $lowStock > 0 ? 'amber' : 'slate' }}-200 p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-{{ $lowStock > 0 ? 'amber' : 'slate' }}-50 flex items-center justify-center shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-{{ $lowStock > 0 ? 'amber-600' : 'slate-400' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 font-medium">Low Stock</p>
+            <p class="text-xl font-extrabold text-{{ $lowStock > 0 ? 'amber-600' : 'slate-900' }}">{{ $lowStock }}</p>
+          </div>
+        </div>
       </div>
     </div>
 

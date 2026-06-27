@@ -19,8 +19,11 @@ class PosController extends Controller
 
     public function create()
     {
-        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','stock_qty','unit']);
-        return view('pos.create', compact('products'));
+        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','stock_qty','unit','category']);
+        $todaySales = PosSale::whereDate('date', today())->count();
+        $todayRevenue = PosSale::whereDate('date', today())->sum('total');
+        $lowStock = Product::where('is_active', true)->whereColumn('stock_qty', '<=', 'low_stock_alert')->count();
+        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock'));
     }
 
     public function store(Request $request)
