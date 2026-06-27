@@ -9,6 +9,9 @@
         $appShopName = ($isTenantCtx && tenancy()->initialized)
             ? \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop')
             : config('app.name', 'Admin');
+        $shopType = $isTenantCtx ? (tenant()->shop_type ?? 'general') : null;
+        $isChicken = $shopType === 'chicken';
+        $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general']);
     @endphp
     <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -133,62 +136,83 @@
         <nav class="flex-1 px-3 py-4 space-y-0.5">
             @if($isTenantCtx)
             {{-- ── Tenant sidebar ── --}}
-            <a href="{{ route('dashboard') }}"
-               class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                Dashboard
+
+            {{-- Dashboard (all) --}}
+            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
             </a>
 
-            <a href="{{ route('udhar.index') }}" class="nav-item {{ request()->routeIs('udhar.index','udhar.create','udhar.show','udhar.payment','udhar.destroy','udhar.report') ? 'active' : '' }}">
-                <i data-lucide="book-open" class="w-4 h-4"></i>
-                Udhar Book
-                @php $overdueUdhar = \App\Models\CreditSale::where('status','!=','paid')->whereDate('due_date','<=',today())->count(); @endphp
+            {{-- ── CHICKEN SHOP ── --}}
+            @if($isChicken)
+
+            <a href="{{ route('daily-rates.index') }}" class="nav-item {{ request()->routeIs('daily-rates.*') ? 'active' : '' }}">
+                <i data-lucide="trending-up" class="w-4 h-4"></i> Daily Rates
+            </a>
+
+            <a href="{{ route('purchases.index') }}" class="nav-item {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
+                <i data-lucide="package-search" class="w-4 h-4"></i> Purchases
+            </a>
+
+            <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.*') ? 'active' : '' }}">
+                <i data-lucide="receipt" class="w-4 h-4"></i> Supply Orders
+            </a>
+
+            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                <i data-lucide="building-2" class="w-4 h-4"></i> Hotels / Companies
+            </a>
+
+            @endif
+
+            {{-- ── PRODUCT SHOPS (hardware / mobile / bike / general) ── --}}
+            @if($isProduct)
+
+            <a href="{{ route('pos.create') }}" class="nav-item {{ request()->routeIs('pos.create','pos.store','pos.show','pos.receipt') ? 'active' : '' }}">
+                <i data-lucide="scan-line" class="w-4 h-4"></i> POS Counter
+            </a>
+
+            <a href="{{ route('pos.index') }}" class="nav-item {{ request()->routeIs('pos.index') ? 'active' : '' }}">
+                <i data-lucide="receipt" class="w-4 h-4"></i> Sales History
+            </a>
+
+            <a href="{{ route('products.index') }}" class="nav-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
+                <i data-lucide="package" class="w-4 h-4"></i> Products & Stock
+            </a>
+
+            <a href="{{ route('product-purchases.index') }}" class="nav-item {{ request()->routeIs('product-purchases.*') ? 'active' : '' }}">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Purchases
+            </a>
+
+            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                <i data-lucide="users" class="w-4 h-4"></i> Customers
+            </a>
+
+            @endif
+
+            {{-- ── COMMON (all shop types) ── --}}
+            @php $overdueUdhar = \App\Models\CreditSale::where('status','!=','paid')->whereDate('due_date','<=',today())->count(); @endphp
+            <a href="{{ route('udhar.index') }}" class="nav-item {{ request()->routeIs('udhar.*') ? 'active' : '' }}">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Udhar Book
                 @if($overdueUdhar > 0)
                 <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $overdueUdhar }}</span>
                 @endif
             </a>
-            <a href="{{ route('udhar-customers.index') }}" class="nav-item {{ request()->routeIs('udhar-customers.*') ? 'active' : '' }}">
-                <i data-lucide="users" class="w-4 h-4"></i>
-                Udhar Customers
-            </a>
 
-            <a href="{{ route('purchases.index') }}"
-               class="nav-item {{ request()->routeIs('purchases.index','purchases.show','purchases.edit','purchases.create') ? 'active' : '' }}">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                Purchases
-            </a>
-
-            <a href="{{ route('daily-rates.index') }}"
-               class="nav-item {{ request()->routeIs('daily-rates.*') ? 'active' : '' }}">
-                <i data-lucide="trending-up" class="w-4 h-4"></i>
-                Daily Rates
-            </a>
-
-            <a href="{{ route('supply.index') }}" class="nav-item {{ request()->routeIs('supply.index','supply.show','supply.edit','supply.create') ? 'active' : '' }}">
-                <i data-lucide="receipt" class="w-4 h-4"></i>
-                Supply Orders
+            <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
+                <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
             </a>
 
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
-                <i data-lucide="moon" class="w-4 h-4"></i>
-                Daily Records
-            </a>
-
-            <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
-                <i data-lucide="wallet" class="w-4 h-4"></i>
-                Daily Expenses
+                <i data-lucide="moon" class="w-4 h-4"></i> Daily Records
             </a>
 
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                Reports
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports
             </a>
 
-            @php $systemOpen = request()->routeIs('suppliers.*','customers.*','settings.*','staff.*','products.*','tenant.users.*','product-purchases.*','pos.*'); @endphp
+            {{-- System dropdown (all) --}}
+            @php $systemOpen = request()->routeIs('suppliers.*','staff.*','tenant.users.*','udhar-customers.*','settings.*'); @endphp
             <div x-data="{ open: {{ $systemOpen ? 'true' : 'false' }} }">
-              <button @click="open = !open"
-                      class="nav-item w-full"
-                      :class="open ? 'bg-white/10 text-slate-100' : ''">
+              <button @click="open = !open" class="nav-item w-full" :class="open ? 'bg-white/10 text-slate-100' : ''">
                 <i data-lucide="settings-2" class="w-4 h-4"></i>
                 <span class="flex-1 text-left">System</span>
                 <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform duration-200 opacity-50" :class="open ? 'rotate-90' : ''"></i>
@@ -199,43 +223,23 @@
                    x-transition:enter-end="opacity-100 scale-y-100"
                    class="mx-2 mt-1 mb-1 rounded-lg overflow-hidden bg-slate-900/60">
                 <a href="{{ route('suppliers.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('suppliers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="truck" class="w-3.5 h-3.5 flex-shrink-0"></i> Suppliers
                 </a>
-                <a href="{{ route('customers.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('customers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
-                  <i data-lucide="building-2" class="w-3.5 h-3.5 flex-shrink-0"></i> Hotels / Companies
+                <a href="{{ route('udhar-customers.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('udhar-customers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="user-check" class="w-3.5 h-3.5 flex-shrink-0"></i> Udhar Customers
                 </a>
                 <a href="{{ route('staff.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('staff.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
-                  <i data-lucide="user-check" class="w-3.5 h-3.5 flex-shrink-0"></i> Staff & Salaries
-                </a>
-                <a href="{{ route('products.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('products.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
-                  <i data-lucide="package" class="w-3.5 h-3.5 flex-shrink-0"></i> Products & Stock
-                </a>
-                <a href="{{ route('product-purchases.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('product-purchases.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
-                  <i data-lucide="shopping-cart" class="w-3.5 h-3.5 flex-shrink-0"></i> Product Purchases
-                </a>
-                <a href="{{ route('pos.create') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('pos.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
-                  <i data-lucide="scan-line" class="w-3.5 h-3.5 flex-shrink-0"></i> POS Counter
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('staff.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="hard-hat" class="w-3.5 h-3.5 flex-shrink-0"></i> Staff & Salaries
                 </a>
                 <a href="{{ route('tenant.users.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('tenant.users.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('tenant.users.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> Team Members
                 </a>
                 <a href="{{ route('settings.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors
-                          {{ request()->routeIs('settings.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('settings.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="settings" class="w-3.5 h-3.5 flex-shrink-0"></i> Settings
                 </a>
               </div>
@@ -315,28 +319,46 @@
     @if($isTenantCtx)
     <!-- ── Floating Speed Dial (tenant only) ── -->
     <div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-      {{-- Actions (shown when open) --}}
       <div x-show="open" x-cloak
            x-transition:enter="transition ease-out duration-150"
            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
            x-transition:leave="transition ease-in duration-100"
            x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
            class="flex flex-col items-end gap-2 mb-1">
+
         <a href="{{ route('day-end.create') }}" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-900 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
           Close Day
         </a>
+
+        @if($isChicken)
         <a href="{{ route('purchases.create') }}" class="flex items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
-          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i></div>
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="package-search" class="w-3.5 h-3.5"></i></div>
           New Purchase
         </a>
         <a href="{{ route('supply.create') }}" class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="plus" class="w-3.5 h-3.5"></i></div>
           New Supply Order
         </a>
+        @endif
+
+        @if($isProduct)
+        <a href="{{ route('pos.create') }}" class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="scan-line" class="w-3.5 h-3.5"></i></div>
+          New Sale (POS)
+        </a>
+        <a href="{{ route('product-purchases.create') }}" class="flex items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i></div>
+          New Purchase
+        </a>
+        @endif
+
+        <a href="{{ route('expenses.create') }}" class="flex items-center gap-2.5 bg-amber-600 hover:bg-amber-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="wallet" class="w-3.5 h-3.5"></i></div>
+          Add Expense
+        </a>
       </div>
 
-      {{-- Main FAB button --}}
       <button @click="open = !open"
               class="w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all duration-200"
               :class="open ? 'rotate-45 bg-slate-700 hover:bg-slate-800' : ''">
