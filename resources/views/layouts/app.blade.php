@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @php
-        $isTenantCtx = app()->bound('tenant');
-        $appShopName = ($isTenantCtx && app()->bound('tenant'))
+        $isTenantCtx = tenancy()->initialized;
+        $appShopName = ($isTenantCtx && tenancy()->initialized)
             ? \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop')
             : config('app.name', 'Admin');
     @endphp
@@ -118,7 +118,7 @@
     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto">
         <!-- Logo -->
         <div class="px-4 py-4 border-b border-slate-700/50">
-            @if($isTenantCtx && app()->bound('tenant'))
+            @if($isTenantCtx && tenancy()->initialized)
             <div class="flex items-center gap-2.5">
               <div class="w-9 h-9 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {{ strtoupper(substr($appShopName, 0, 1)) }}
@@ -265,7 +265,7 @@
                     <p class="text-slate-200 text-sm font-medium truncate">{{ auth()->user()->name }}</p>
                     <p class="text-slate-400 text-xs truncate capitalize">{{ auth()->user()->role }}</p>
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ $isTenantCtx ? route('logout') : route('admin.logout') }}">
                     @csrf
                     <button type="submit" class="text-slate-400 hover:text-red-400 transition-colors" title="Logout">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
@@ -288,7 +288,7 @@
         <!-- Subscription expiry warning banner -->
         @php
           $tenantExpiry = null;
-          if ($isTenantCtx && app()->bound('tenant')) {
+          if ($isTenantCtx && tenancy()->initialized) {
               $t = tenant();
               if ($t->plan_expires_at) {
                   $daysLeft = now()->diffInDays($t->plan_expires_at, false);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
-        $isTenant = app()->bound('tenant');
+        $isTenant = tenancy()->initialized;
         $shopName  = $isTenant ? (tenant()->shop_name ?? config('app.name')) : config('app.name', 'ShopSaas');
         $shopType  = $isTenant ? (tenant()->shop_type ?? '') : '';
         $shopInitial = strtoupper(substr($shopName, 0, 1));

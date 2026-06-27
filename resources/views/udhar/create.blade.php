@@ -90,7 +90,7 @@
                 <input type="text" name="phone" id="customer_phone"
                        value="{{ old('phone', $selectedCustomer?->phone) }}"
                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
-                       placeholder="03001234567">
+                       placeholder="0313551819">
                 @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
               </div>
             </div>

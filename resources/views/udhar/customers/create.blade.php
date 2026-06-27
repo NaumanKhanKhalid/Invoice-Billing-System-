@@ -39,7 +39,7 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
           <input type="text" name="phone" value="{{ old('phone') }}"
                  class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
-                 placeholder="03001234567">
+                 placeholder="0313551819">
           @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
 

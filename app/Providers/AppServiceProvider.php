@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RedirectIfAuthenticated::redirectUsing(function ($request) {
-            if (app()->bound('tenant')) {
+            if (tenancy()->initialized) {
                 return route('dashboard');
             }
             return route('admin.tenants.index');

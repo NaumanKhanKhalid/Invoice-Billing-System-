@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             CustomerSeeder::class,
             StaffSeeder::class,
             SampleDataSeeder::class,
+            SuperAdminSeeder::class,
         ]);
     }
 }

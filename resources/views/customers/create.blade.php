@@ -63,9 +63,9 @@
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-500 mb-1.5">WhatsApp Number</label>
-              <input type="text" name="whatsapp_number" value="{{ old('whatsapp_number') }}" placeholder="923001234567"
+              <input type="text" name="whatsapp_number" value="{{ old('whatsapp_number') }}" placeholder="92313551819"
                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
-              <p class="text-xs text-slate-400 mt-1">With country code, e.g. 923001234567</p>
+              <p class="text-xs text-slate-400 mt-1">With country code, e.g. 92313551819</p>
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-500 mb-1.5">Address</label>

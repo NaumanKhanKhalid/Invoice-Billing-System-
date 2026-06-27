@@ -9,11 +9,11 @@ Route::get('/', fn() => view('landing'))->name('home');
 
 // ─── Admin Login (separate URL — no conflict with tenant /login) ───────────────
 Route::middleware('guest')->group(function () {
-    Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/admin/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
+    Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->name('admin.login.post');
 });
 Route::middleware('auth')->group(function () {
-    Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
 });
 
 // ─── Central Admin Panel ──────────────────────────────────────────────────────

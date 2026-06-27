@@ -10,7 +10,7 @@ class SupplierSeeder extends Seeder
     public function run(): void
     {
         $suppliers = [
-            ['name' => 'Ali Poultry Farm',       'phone' => '03001234567', 'address' => 'Korangi, Karachi',       'credit_days' => 15],
+            ['name' => 'Ali Poultry Farm',       'phone' => '0313551819', 'address' => 'Korangi, Karachi',       'credit_days' => 15],
             ['name' => 'Hassan Chicken Supply',   'phone' => '03012345678', 'address' => 'Landhi, Karachi',        'credit_days' => 15],
             ['name' => 'Karachi Broiler Center',  'phone' => '03023456789', 'address' => 'Orangi Town, Karachi',   'credit_days' => 7],
         ];

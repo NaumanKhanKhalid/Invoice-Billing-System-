@@ -127,7 +127,7 @@
         {{-- Header --}}
         <div class="inv-header">
           <div class="brand">
-            @php $companyName = \App\Models\Setting::getValue('company_name', app()->bound('tenant') ? tenant()->shop_name : 'My Shop'); $phone = \App\Models\Setting::getValue('company_phone',''); $address = \App\Models\Setting::getValue('company_address',''); @endphp
+            @php $companyName = \App\Models\Setting::getValue('company_name', tenancy()->initialized ? tenant()->shop_name : 'My Shop'); $phone = \App\Models\Setting::getValue('company_phone',''); $address = \App\Models\Setting::getValue('company_address',''); @endphp
             <div class="brand-name">{{ $companyName }}</div>
             <div class="brand-tagline">Fresh Dressed Chicken Supplier</div>
             <div class="brand-contact">{{ $address }}@if($phone) · {{ $phone }}@endif</div>

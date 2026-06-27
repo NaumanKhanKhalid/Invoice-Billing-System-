@@ -13,7 +13,7 @@ if (!function_exists('formatCurrency')) {
     function formatCurrency(float|int|null $amount, string $prefix = null): string
     {
         if ($prefix === null) {
-            $currency = app()->bound('tenant')
+            $currency = tenancy()->initialized
                 ? (\App\Models\Setting::getValue('currency', 'PKR'))
                 : 'PKR';
             $prefix = $currency . ' ';

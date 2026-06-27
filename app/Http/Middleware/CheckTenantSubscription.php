@@ -15,7 +15,7 @@ class CheckTenantSubscription
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!app()->bound('tenant')) {
+        if (!tenancy()->initialized) {
             return $next($request);
         }
 
