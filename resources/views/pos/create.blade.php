@@ -4,12 +4,10 @@
 <script>window.__POS_PRODUCTS__ = @json($products);</script>
 
 <style>
-  #main-content { padding: 0 !important; overflow: hidden; }
-  .pos-wrap { height: calc(100vh - 3.5rem); }
-  @media (max-width: 767px) { .pos-wrap { height: calc(100vh - 7rem); } }
+  #main-content { padding: 0 !important; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
 </style>
 
-<div class="pos-wrap flex bg-slate-100" x-data="posApp()" x-init="init()">
+<div class="flex flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
 
   {{-- ══ LEFT: Products ══ --}}
   <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
