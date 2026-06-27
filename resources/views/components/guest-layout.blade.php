@@ -14,7 +14,6 @@
     <title>{{ $isTenant ? $shopName : 'Admin' }} — ShopSaas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
