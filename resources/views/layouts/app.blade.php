@@ -349,7 +349,9 @@
     <div x-data x-show="false" class="fixed inset-0 z-40" style="display:none"></div>
 
     <script>
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide) lucide.createIcons();
+        });
 
         function openSidebar() {
             document.getElementById('sidebar').classList.add('open');
