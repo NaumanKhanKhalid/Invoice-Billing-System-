@@ -26,6 +26,8 @@ class DummyDataService
 
     public static function seed(string $shopType): void
     {
+        static::delete();
+
         match ($shopType) {
             'chicken'  => static::seedChicken(),
             'hardware' => static::seedHardware(),
