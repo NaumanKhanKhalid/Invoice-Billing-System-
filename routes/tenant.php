@@ -21,6 +21,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductPurchaseController;
 use App\Http\Controllers\DummyDataController;
+use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
@@ -145,6 +146,12 @@ Route::middleware([
         Route::get('/product-purchases/{productPurchase}', [ProductPurchaseController::class, 'show'])->name('product-purchases.show');
         Route::delete('/product-purchases/{productPurchase}', [ProductPurchaseController::class, 'destroy'])->name('product-purchases.destroy');
         Route::post('/product-purchases/{productPurchase}/payment', [ProductPurchaseController::class, 'storePayment'])->name('product-purchases.payment');
+
+        // Purchase Returns
+        Route::get('/purchase-returns', [PurchaseReturnController::class, 'index'])->name('purchase-returns.index');
+        Route::get('/purchase-returns/{purchaseReturn}', [PurchaseReturnController::class, 'show'])->name('purchase-returns.show');
+        Route::get('/product-purchases/{purchase}/return', [PurchaseReturnController::class, 'create'])->name('purchase-returns.create');
+        Route::post('/product-purchases/{purchase}/return', [PurchaseReturnController::class, 'store'])->name('purchase-returns.store');
 
         // POS
         Route::get('/pos', [PosController::class, 'index'])->name('pos.index');

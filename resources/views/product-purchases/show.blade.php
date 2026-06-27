@@ -14,6 +14,10 @@
       {{ $productPurchase->payment_status === 'paid' ? 'bg-green-100 text-green-700' : ($productPurchase->payment_status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700') }}">
       {{ ucfirst($productPurchase->payment_status) }}
     </span>
+    <a href="{{ route('purchase-returns.create', $productPurchase) }}"
+       class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
+      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Return to Supplier
+    </a>
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
