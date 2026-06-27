@@ -312,7 +312,7 @@
         @endif
 
         <!-- Page content -->
-        <main class="flex-1 p-3 sm:p-6">
+        <main id="main-content" class="flex-1 p-3 sm:p-6">
             @yield('content')
         </main>
     </div>
