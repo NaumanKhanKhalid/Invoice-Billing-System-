@@ -16,6 +16,10 @@
       </div>
     </div>
     <div class="flex gap-2">
+      <a href="{{ route('ledger.udhar-customer', $udharCustomer) }}"
+         class="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="book-open" class="w-4 h-4"></i>Ledger
+      </a>
       <a href="{{ route('udhar.create', ['customer_id' => $udharCustomer->id]) }}"
          class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
         <i data-lucide="plus" class="w-4 h-4"></i>New Udhar

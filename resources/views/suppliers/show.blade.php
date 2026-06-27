@@ -12,6 +12,9 @@
         <p class="text-sm text-slate-500">{{ $supplier->phone }}@if($supplier->address) · {{ $supplier->address }}@endif</p>
       </div>
     </div>
+    <a href="{{ route('ledger.supplier', $supplier) }}" class="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+      <i data-lucide="book-open" class="w-4 h-4"></i>Ledger
+    </a>
     <a href="{{ route('suppliers.edit',$supplier) }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">
       <i data-lucide="pencil" class="w-4 h-4"></i>Edit
     </a>
