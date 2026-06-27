@@ -24,6 +24,7 @@ use App\Http\Controllers\DummyDataController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\LedgerController;
+use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
@@ -147,6 +148,14 @@ Route::middleware([
         Route::get('/product-purchases/{productPurchase}', [ProductPurchaseController::class, 'show'])->name('product-purchases.show');
         Route::delete('/product-purchases/{productPurchase}', [ProductPurchaseController::class, 'destroy'])->name('product-purchases.destroy');
         Route::post('/product-purchases/{productPurchase}/payment', [ProductPurchaseController::class, 'storePayment'])->name('product-purchases.payment');
+
+        // Quotations
+        Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
+        Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
+        Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
+        Route::get('/quotations/{quotation}', [QuotationController::class, 'show'])->name('quotations.show');
+        Route::patch('/quotations/{quotation}/status', [QuotationController::class, 'updateStatus'])->name('quotations.status');
+        Route::delete('/quotations/{quotation}', [QuotationController::class, 'destroy'])->name('quotations.destroy');
 
         // Ledger
         Route::get('/ledger/supplier/{supplier}', [LedgerController::class, 'supplier'])->name('ledger.supplier');

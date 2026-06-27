@@ -186,6 +186,10 @@
                 <i data-lucide="users" class="w-4 h-4"></i> Customers
             </a>
 
+            <a href="{{ route('quotations.index') }}" class="nav-item {{ request()->routeIs('quotations.*') ? 'active' : '' }}">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Quotations
+            </a>
+
             @endif
 
             {{-- ── COMMON (all shop types) ── --}}
