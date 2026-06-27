@@ -1,11 +1,12 @@
 @extends('layouts.app')
 @section('title','Point of Sale')
 @section('content')
+<script>window.__POS_PRODUCTS__ = @json($products);</script>
 <div class="h-[calc(100vh-8rem)] flex flex-col"
      x-data="{
        cart: [],
        searchQ: '',
-       products: @json($products),
+       products: window.__POS_PRODUCTS__ || [],
        get filtered() {
          if (!this.searchQ) return this.products.slice(0,24);
          const q = this.searchQ.toLowerCase();
