@@ -21,6 +21,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductPurchaseController;
 use App\Http\Controllers\DummyDataController;
+use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
@@ -151,6 +152,12 @@ Route::middleware([
         Route::post('/pos/sale', [PosController::class, 'store'])->name('pos.store');
         Route::get('/pos/sale/{posSale}/receipt', [PosController::class, 'receipt'])->name('pos.receipt');
         Route::get('/pos/sale/{posSale}', [PosController::class, 'show'])->name('pos.show');
+
+        // Sale Returns
+        Route::get('/sale-returns', [SaleReturnController::class, 'index'])->name('sale-returns.index');
+        Route::get('/sale-returns/{saleReturn}', [SaleReturnController::class, 'show'])->name('sale-returns.show');
+        Route::get('/pos/sale/{sale}/return', [SaleReturnController::class, 'create'])->name('sale-returns.create');
+        Route::post('/pos/sale/{sale}/return', [SaleReturnController::class, 'store'])->name('sale-returns.store');
 
         // Demo Data
         Route::post('/settings/seed-demo', [DummyDataController::class, 'seed'])->name('demo.seed');

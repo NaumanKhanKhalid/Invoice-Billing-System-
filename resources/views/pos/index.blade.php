@@ -46,7 +46,10 @@
           <td class="px-4 py-3 text-sm text-slate-500 capitalize">{{ $sale->payment_method }}</td>
           <td class="px-4 py-3 text-sm text-right font-bold text-slate-900">PKR {{ number_format($sale->total) }}</td>
           <td class="px-4 py-3 text-right">
-            <a href="{{ route('pos.receipt', $sale) }}" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium">Receipt</a>
+            <div class="flex items-center justify-end gap-2">
+              <a href="{{ route('pos.receipt', $sale) }}" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium">Receipt</a>
+              <a href="{{ route('sale-returns.create', $sale) }}" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 text-xs font-medium">Return</a>
+            </div>
           </td>
         </tr>
         @endforeach

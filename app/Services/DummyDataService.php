@@ -46,6 +46,8 @@ class DummyDataService
 
     public static function delete(): void
     {
+        \App\Models\PosSaleReturnItem::query()->delete();
+        \App\Models\PosSaleReturn::query()->delete();
         PosSaleItem::query()->delete();
         PosSale::query()->delete();
         ProductPurchaseItem::query()->delete();
