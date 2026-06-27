@@ -265,9 +265,9 @@ class DummyDataService
     private static function seedCommon(): void
     {
         // Staff
-        Staff::create(['name' => 'Ahmed Ali',    'phone' => '0311-1234567', 'role' => 'Manager',  'salary' => 35000, 'joining_date' => now()->subMonths(6)->toDateString(), 'is_active' => true]);
-        Staff::create(['name' => 'Bilal Hassan', 'phone' => '0322-2345678', 'role' => 'Salesman', 'salary' => 22000, 'joining_date' => now()->subMonths(3)->toDateString(), 'is_active' => true]);
-        Staff::create(['name' => 'Usman Khan',   'phone' => '0333-3456789', 'role' => 'Helper',   'salary' => 16000, 'joining_date' => now()->subMonths(1)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Ahmed Ali',    'phone' => '0311-1234567', 'role' => 'manager',  'salary' => 35000, 'joining_date' => now()->subMonths(6)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Bilal Hassan', 'phone' => '0322-2345678', 'role' => 'cashier', 'salary' => 22000, 'joining_date' => now()->subMonths(3)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Usman Khan',   'phone' => '0333-3456789', 'role' => 'delivery_boy',   'salary' => 16000, 'joining_date' => now()->subMonths(1)->toDateString(), 'is_active' => true]);
 
         // Expenses (last 10 days)
         $expenseData = [
