@@ -19,7 +19,7 @@ class PosController extends Controller
 
     public function create()
     {
-        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get();
+        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','stock_qty','unit']);
         return view('pos.create', compact('products'));
     }
 

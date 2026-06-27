@@ -46,6 +46,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'name'             => 'required|string|max:150',
             'sku'              => 'nullable|string|max:50|unique:products,sku',
+            'barcode'          => 'nullable|string|max:50|unique:products,barcode',
             'category'         => 'nullable|string|max:80',
             'description'      => 'nullable|string',
             'unit'             => 'required|in:pcs,kg,liter,meter,box,dozen,pair',
@@ -78,6 +79,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'name'             => 'required|string|max:150',
             'sku'              => 'nullable|string|max:50|unique:products,sku,'.$product->id,
+            'barcode'          => 'nullable|string|max:50|unique:products,barcode,'.$product->id,
             'category'         => 'nullable|string|max:80',
             'description'      => 'nullable|string',
             'unit'             => 'required|in:pcs,kg,liter,meter,box,dozen,pair',

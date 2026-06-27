@@ -28,6 +28,13 @@
         </div>
 
         <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Barcode (EAN/UPC)</label>
+          <input type="text" name="barcode" value="{{ old('barcode', $product->barcode) }}"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none font-mono"
+                 placeholder="e.g. 6901234567890">
+        </div>
+
+        <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Category</label>
           <input type="text" name="category" value="{{ old('category', $product->category) }}" list="cat-list"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
