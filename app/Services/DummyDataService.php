@@ -366,7 +366,7 @@ class DummyDataService
 
             $discount  = rand(0, 1) ? rand(50, 200) : 0;
             $total     = $subtotal - $discount;
-            $methods   = ['cash', 'card', 'jazzcash', 'easypaisa'];
+            $methods   = ['cash', 'jazzcash', 'easypaisa', 'bank', 'credit'];
 
             $sale = PosSale::create([
                 'sale_number'    => 'POS-DEMO-' . str_pad($i, 4, '0', STR_PAD_LEFT),
