@@ -25,6 +25,7 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\TenantImpersonateController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,10 @@ Route::middleware([
     Route::get('/', function () {
         return redirect()->route('dashboard');
     });
+
+    // Impersonation — no auth required (token IS the auth)
+    Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'start'])->name('impersonate.start');
+    Route::post('/impersonate/stop', [TenantImpersonateController::class, 'stop'])->name('impersonate.stop');
 
     // Google OAuth callback
     Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');

@@ -15,7 +15,7 @@ class TenantOnboarding
         }
 
         // Skip if already on setup or settings route
-        if ($request->routeIs('setup.*') || $request->routeIs('settings.*')) {
+        if ($request->routeIs('setup.*') || $request->routeIs('settings.*') || $request->routeIs('impersonate.*')) {
             return $next($request);
         }
 
