@@ -16,7 +16,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php $m = json_decode(file_get_contents(public_path('build/manifest.json')), true); @endphp
+    <link rel="stylesheet" href="/build/{{ $m['resources/css/app.css']['file'] }}">
+    <script type="module" src="/build/{{ $m['resources/js/app.js']['file'] }}" defer></script>
     <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
 <body class="min-h-screen bg-slate-50 flex items-center justify-center p-4">

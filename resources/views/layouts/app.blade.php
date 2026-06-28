@@ -21,7 +21,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php
+        // Use root-relative paths so assets load correctly on both central domain and tenant subdomains
+        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $cssFile  = '/build/' . $manifest['resources/css/app.css']['file'];
+        $jsFile   = '/build/' . $manifest['resources/js/app.js']['file'];
+    @endphp
+    <link rel="stylesheet" href="{{ $cssFile }}">
+    <script type="module" src="{{ $jsFile }}" defer></script>
 
     <style>
         *, *::before, *::after { box-sizing: border-box; }
