@@ -25,6 +25,7 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\DaySummaryController;
 use App\Http\Controllers\TenantImpersonateController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
@@ -110,6 +111,14 @@ Route::middleware([
         Route::patch('/supply/{supply}/deliver', [SupplyController::class, 'markDelivered'])->name('supply.deliver');
 
         // Day End
+        // General shop day-end summary
+        Route::get('/day-summary', [DaySummaryController::class, 'index'])->name('day-summary.index');
+        Route::get('/day-summary/create', [DaySummaryController::class, 'create'])->name('day-summary.create');
+        Route::post('/day-summary', [DaySummaryController::class, 'store'])->name('day-summary.store');
+        Route::get('/day-summary/{daySummary}', [DaySummaryController::class, 'show'])->name('day-summary.show');
+        Route::post('/day-summary/{daySummary}/close', [DaySummaryController::class, 'close'])->name('day-summary.close');
+        Route::delete('/day-summary/{daySummary}', [DaySummaryController::class, 'destroy'])->name('day-summary.destroy');
+
         Route::get('/day-end', [DayEndController::class, 'index'])->name('day-end.index');
         Route::get('/day-end/create', [DayEndController::class, 'create'])->name('day-end.create');
         Route::post('/day-end', [DayEndController::class, 'store'])->name('day-end.store');

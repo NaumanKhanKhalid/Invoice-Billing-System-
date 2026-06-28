@@ -214,9 +214,15 @@
                 <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
             </a>
 
+            @if($isChicken)
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i> Daily Records
             </a>
+            @else
+            <a href="{{ route('day-summary.index') }}" class="nav-item {{ request()->routeIs('day-summary.*') ? 'active' : '' }}">
+                <i data-lucide="moon" class="w-4 h-4"></i> Day Closing
+            </a>
+            @endif
 
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports
@@ -356,10 +362,17 @@
            x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
            class="flex flex-col items-end gap-2 mb-1">
 
+        @if($isChicken)
         <a href="{{ route('day-end.create') }}" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-900 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
           Close Day
         </a>
+        @else
+        <a href="{{ route('day-summary.create') }}" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-900 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
+          Close Day
+        </a>
+        @endif
 
         @if($isChicken)
         <a href="{{ route('purchases.create') }}" class="flex items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
