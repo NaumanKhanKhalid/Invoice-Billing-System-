@@ -26,6 +26,7 @@ use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\DaySummaryController;
+use App\Http\Controllers\OpenTabController;
 use App\Http\Controllers\TenantImpersonateController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
@@ -111,6 +112,17 @@ Route::middleware([
         Route::patch('/supply/{supply}/deliver', [SupplyController::class, 'markDelivered'])->name('supply.deliver');
 
         // Day End
+        // Open Tabs (running bills for mechanics/workshop customers)
+        Route::get('/open-tabs/search-products', [OpenTabController::class, 'searchProducts'])->name('open-tabs.search');
+        Route::get('/open-tabs', [OpenTabController::class, 'index'])->name('open-tabs.index');
+        Route::post('/open-tabs', [OpenTabController::class, 'store'])->name('open-tabs.store');
+        Route::get('/open-tabs/{openTab}', [OpenTabController::class, 'show'])->name('open-tabs.show');
+        Route::post('/open-tabs/{openTab}/items', [OpenTabController::class, 'addItem'])->name('open-tabs.add-item');
+        Route::delete('/open-tabs/{openTab}/items/{item}', [OpenTabController::class, 'removeItem'])->name('open-tabs.remove-item');
+        Route::post('/open-tabs/{openTab}/close', [OpenTabController::class, 'close'])->name('open-tabs.close');
+        Route::get('/open-tabs/{openTab}/receipt', [OpenTabController::class, 'receipt'])->name('open-tabs.receipt');
+        Route::delete('/open-tabs/{openTab}', [OpenTabController::class, 'destroy'])->name('open-tabs.destroy');
+
         // General shop day-end summary
         Route::get('/day-summary', [DaySummaryController::class, 'index'])->name('day-summary.index');
         Route::get('/day-summary/create', [DaySummaryController::class, 'create'])->name('day-summary.create');

@@ -199,6 +199,10 @@
                 <i data-lucide="file-text" class="w-4 h-4"></i> Quotations
             </a>
 
+            <a href="{{ route('open-tabs.index') }}" class="nav-item {{ request()->routeIs('open-tabs.*') ? 'active' : '' }}">
+                <i data-lucide="receipt" class="w-4 h-4"></i> Open Tabs
+            </a>
+
             @endif
 
             {{-- ── COMMON (all shop types) ── --}}
