@@ -34,7 +34,7 @@ class OpenTab extends Model
 
     public static function nextNumber(): string
     {
-        $last = static::withTrashed()->orderByDesc('id')->value('tab_number');
+        $last = static::orderByDesc('id')->value('tab_number');
         $num  = $last ? ((int) substr($last, 4)) + 1 : 1;
         return 'TAB-' . str_pad($num, 4, '0', STR_PAD_LEFT);
     }
