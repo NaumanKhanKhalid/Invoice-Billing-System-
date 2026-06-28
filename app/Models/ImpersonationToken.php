@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ImpersonationToken extends Model
 {
+    public function getConnectionName()
+    {
+        return config('tenancy.database.central_connection', config('database.default'));
+    }
+
     protected $primaryKey = 'token';
     public $incrementing  = false;
     protected $keyType    = 'string';
