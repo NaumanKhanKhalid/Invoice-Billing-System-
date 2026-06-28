@@ -120,7 +120,7 @@
           </td>
           <td class="px-4 py-3 text-right">
             <div class="flex items-center justify-end gap-1.5">
-              <form method="POST" action="{{ route('admin.tenants.impersonate', $tenant) }}">
+              <form method="POST" action="{{ route('admin.tenants.impersonate', $tenant) }}" target="_blank">
                 @csrf
                 <button type="submit"
                         class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-600 hover:text-purple-700 text-xs font-semibold transition-colors"

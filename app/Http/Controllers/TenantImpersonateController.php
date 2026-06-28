@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ImpersonationToken;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class TenantImpersonateController extends Controller
 {
     public function start(string $token)
     {
-        $data = Cache::pull('impersonate:' . $token);
+        $record = ImpersonationToken::where('token', $token)->first();
 
-        if (!$data) {
+        if (!$record || $record->isExpired()) {
             abort(403, 'Invalid or expired impersonation token.');
         }
+
+        $data = $record->toArray();
+        $record->delete();
 
         // Find the owner user in this tenant's DB
         $user = User::where('role', 'owner')->first()
