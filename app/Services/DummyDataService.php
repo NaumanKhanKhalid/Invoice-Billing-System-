@@ -38,6 +38,7 @@ class DummyDataService
             'mobile'   => static::seedMobile(),
             'bike'     => static::seedBike(),
             'general'  => static::seedGeneral(),
+            'medical'  => static::seedMedical(),
             default    => static::seedGeneral(),
         };
 
@@ -259,6 +260,150 @@ class DummyDataService
         static::seedProductPurchases($suppliers, $productModels);
         static::seedPosSales($productModels);
         static::seedCommon();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // MEDICAL STORE — Karachi
+    // ─────────────────────────────────────────────────────────────
+    private static function seedMedical(): void
+    {
+        $suppliers = collect([
+            ['name' => 'Sami Pharma Distributors',  'phone' => '0300-2121212', 'address' => 'M.A. Jinnah Road, Karachi',  'credit_days' => 30, 'balance' => 35000],
+            ['name' => 'Al-Shifa Medical Wholesale', 'phone' => '0333-3232323', 'address' => 'Saddar, Karachi',             'credit_days' => 15, 'balance' => 18000],
+            ['name' => 'Karachi Pharma Agency',      'phone' => '0321-4343434', 'address' => 'Liaquatabad, Karachi',        'credit_days' => 21, 'balance' => 0],
+            ['name' => 'Hamdard Distributors',       'phone' => '0311-5454545', 'address' => 'North Nazimabad, Karachi',    'credit_days' => 14, 'balance' => 9500],
+        ])->map(fn($s) => Supplier::create($s + ['is_active' => true]));
+
+        $products = [
+            // Tablets & Capsules
+            ['name' => 'Panadol Tablet 500mg (10s)',    'sku' => 'MED-001', 'category' => 'Tablets',    'unit' => 'Pcs', 'cost_price' => 18,   'sale_price' => 25,   'stock_qty' => 300, 'low_stock_alert' => 50],
+            ['name' => 'Brufen 400mg (10s)',             'sku' => 'MED-002', 'category' => 'Tablets',    'unit' => 'Pcs', 'cost_price' => 22,   'sale_price' => 32,   'stock_qty' => 250, 'low_stock_alert' => 40],
+            ['name' => 'Amoxil 500mg Capsule (10s)',    'sku' => 'MED-003', 'category' => 'Antibiotics', 'unit' => 'Pcs', 'cost_price' => 55,   'sale_price' => 80,   'stock_qty' => 150, 'low_stock_alert' => 30],
+            ['name' => 'Flagyl 400mg Tablet (10s)',     'sku' => 'MED-004', 'category' => 'Antibiotics', 'unit' => 'Pcs', 'cost_price' => 38,   'sale_price' => 55,   'stock_qty' => 120, 'low_stock_alert' => 25],
+            ['name' => 'Omeprazole 20mg (14s)',         'sku' => 'MED-005', 'category' => 'Tablets',    'unit' => 'Pcs', 'cost_price' => 48,   'sale_price' => 70,   'stock_qty' => 180, 'low_stock_alert' => 30],
+            ['name' => 'Disprin 300mg (10s)',            'sku' => 'MED-006', 'category' => 'Tablets',    'unit' => 'Pcs', 'cost_price' => 12,   'sale_price' => 18,   'stock_qty' => 200, 'low_stock_alert' => 40],
+            ['name' => 'Augmentin 625mg (6s)',           'sku' => 'MED-007', 'category' => 'Antibiotics', 'unit' => 'Pcs', 'cost_price' => 185,  'sale_price' => 260,  'stock_qty' => 80,  'low_stock_alert' => 15],
+            // Syrups
+            ['name' => 'Calpol Syrup 120mg/5ml 90ml',  'sku' => 'MED-008', 'category' => 'Syrups',     'unit' => 'Btl', 'cost_price' => 85,   'sale_price' => 120,  'stock_qty' => 100, 'low_stock_alert' => 20],
+            ['name' => 'Benylin Cough Syrup 100ml',    'sku' => 'MED-009', 'category' => 'Syrups',     'unit' => 'Btl', 'cost_price' => 120,  'sale_price' => 165,  'stock_qty' => 70,  'low_stock_alert' => 15],
+            ['name' => 'ORS Sachet Oral Rehydration',  'sku' => 'MED-010', 'category' => 'Syrups',     'unit' => 'Pcs', 'cost_price' => 8,    'sale_price' => 15,   'stock_qty' => 500, 'low_stock_alert' => 100],
+            // Injections / Drips
+            ['name' => 'Normal Saline 1000ml Drip',    'sku' => 'MED-011', 'category' => 'Drips',      'unit' => 'Btl', 'cost_price' => 180,  'sale_price' => 250,  'stock_qty' => 40,  'low_stock_alert' => 10],
+            ['name' => 'Vitamin C Injection 500mg',    'sku' => 'MED-012', 'category' => 'Injections',  'unit' => 'Pcs', 'cost_price' => 35,   'sale_price' => 55,   'stock_qty' => 60,  'low_stock_alert' => 15],
+            // Bandages & Surgical
+            ['name' => 'Crepe Bandage 4 inch',         'sku' => 'MED-013', 'category' => 'Surgical',   'unit' => 'Pcs', 'cost_price' => 45,   'sale_price' => 70,   'stock_qty' => 80,  'low_stock_alert' => 15],
+            ['name' => 'Surgical Gloves Medium (100s)','sku' => 'MED-014', 'category' => 'Surgical',   'unit' => 'Box', 'cost_price' => 550,  'sale_price' => 800,  'stock_qty' => 20,  'low_stock_alert' => 5],
+            ['name' => 'Cotton Roll 200g',              'sku' => 'MED-015', 'category' => 'Surgical',   'unit' => 'Pcs', 'cost_price' => 65,   'sale_price' => 100,  'stock_qty' => 60,  'low_stock_alert' => 10],
+            // BP & Sugar
+            ['name' => 'Glucometer Strip (25s)',        'sku' => 'MED-016', 'category' => 'Diagnostics','unit' => 'Box', 'cost_price' => 380,  'sale_price' => 550,  'stock_qty' => 25,  'low_stock_alert' => 5],
+            ['name' => 'BP Machine Digital Omron',      'sku' => 'MED-017', 'category' => 'Diagnostics','unit' => 'Pcs', 'cost_price' => 3200, 'sale_price' => 4500, 'stock_qty' => 5,   'low_stock_alert' => 2],
+            // Vitamins & Supplements
+            ['name' => 'Vitamin D3 1000IU (30s)',       'sku' => 'MED-018', 'category' => 'Vitamins',   'unit' => 'Pcs', 'cost_price' => 180,  'sale_price' => 280,  'stock_qty' => 90,  'low_stock_alert' => 20],
+            ['name' => 'Calcium + D3 Tablet (30s)',     'sku' => 'MED-019', 'category' => 'Vitamins',   'unit' => 'Pcs', 'cost_price' => 220,  'sale_price' => 320,  'stock_qty' => 70,  'low_stock_alert' => 15],
+            ['name' => 'Hamdard Safi 500ml',            'sku' => 'MED-020', 'category' => 'Herbal',     'unit' => 'Btl', 'cost_price' => 320,  'sale_price' => 450,  'stock_qty' => 30,  'low_stock_alert' => 8],
+        ];
+
+        $productModels = collect($products)->map(fn($p) => Product::create($p + ['is_active' => true, 'description' => '']));
+        static::seedProductPurchases($suppliers, $productModels);
+        static::seedPosSalesMedical($productModels);
+        static::seedCommonMedical();
+    }
+
+    private static function seedPosSalesMedical($products): void
+    {
+        $methods   = ['cash', 'cash', 'cash', 'cash', 'jazzcash', 'easypaisa'];
+        $customers = ['Walk-in', 'Haji Sahab', 'Baji Tahira', 'Uncle Rasheed', 'Asif bhai', 'Sana Baji'];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $selectedProducts = $products->random(min(rand(1, 4), $products->count()));
+            $subtotal = 0;
+            $items    = [];
+
+            foreach ($selectedProducts as $product) {
+                $qty      = rand(1, 5);
+                $price    = $product->sale_price;
+                $items[]  = ['product' => $product, 'qty' => $qty, 'price' => $price, 'total' => $qty * $price];
+                $subtotal += $qty * $price;
+            }
+
+            $discount = rand(0, 1) ? rand(10, 100) : 0;
+            $total    = $subtotal - $discount;
+
+            $sale = PosSale::create([
+                'sale_number'    => 'POS-DEMO-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'date'           => now()->subDays(rand(0, 14)),
+                'customer_name'  => collect($customers)->random(),
+                'customer_phone' => '',
+                'subtotal'       => $subtotal,
+                'discount'       => $discount,
+                'total'          => $total,
+                'amount_paid'    => $total,
+                'change_due'     => 0,
+                'payment_method' => collect($methods)->random(),
+            ]);
+
+            foreach ($items as $item) {
+                PosSaleItem::create([
+                    'pos_sale_id'  => $sale->id,
+                    'product_id'   => $item['product']->id,
+                    'product_name' => $item['product']->name,
+                    'qty'          => $item['qty'],
+                    'unit_price'   => $item['price'],
+                    'total'        => $item['total'],
+                ]);
+            }
+        }
+    }
+
+    private static function seedCommonMedical(): void
+    {
+        // Staff
+        Staff::create(['name' => 'Dr. Asif Pharmacist', 'phone' => '0312-1234567', 'role' => 'manager',  'salary' => 45000, 'joining_date' => now()->subMonths(8)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Kamran Helper',        'phone' => '0323-2345678', 'role' => 'cashier',  'salary' => 20000, 'joining_date' => now()->subMonths(4)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Wasim Delivery',       'phone' => '0334-3456789', 'role' => 'delivery_boy', 'salary' => 15000, 'joining_date' => now()->subMonths(2)->toDateString(), 'is_active' => true]);
+
+        // Expenses
+        $expenseData = [
+            ['category' => 'shop_rent',    'description' => 'Shop rent — Saddar Karachi',      'amount' => 25000, 'paid_to' => 'Landlord Haji Amjad'],
+            ['category' => 'electricity',  'description' => 'KESC electricity bill',            'amount' => 4200,  'paid_to' => 'K-Electric Office'],
+            ['category' => 'staff_salary', 'description' => 'Dr. Asif monthly salary',          'amount' => 45000, 'paid_to' => 'Dr. Asif'],
+            ['category' => 'staff_salary', 'description' => 'Kamran salary',                    'amount' => 20000, 'paid_to' => 'Kamran Helper'],
+            ['category' => 'delivery',     'description' => 'Home delivery OPD medicines',      'amount' => 600,   'paid_to' => 'Wasim Driver'],
+            ['category' => 'maintenance',  'description' => 'AC service & fridge repair',       'amount' => 3000,  'paid_to' => 'Technician Imran'],
+            ['category' => 'other',        'description' => 'Paper bags & medicine envelopes',  'amount' => 800,   'paid_to' => 'Saddar Market'],
+        ];
+
+        foreach ($expenseData as $i => $exp) {
+            Expense::create($exp + [
+                'date'           => now()->subDays(rand(0, 15))->toDateString(),
+                'receipt_number' => 'EXP-DEMO-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
+            ]);
+        }
+
+        // Udhar Customers (credit patients)
+        $udharCustomers = collect([
+            ['name' => 'Haji Abdul Rehman', 'phone' => '0312-1110001', 'whatsapp_number' => '0312-1110001', 'address' => 'Block 5, Gulshan-e-Iqbal, Karachi'],
+            ['name' => 'Sakina Bibi',       'phone' => '0323-2220002', 'whatsapp_number' => null,           'address' => 'Liaquatabad No. 7, Karachi'],
+            ['name' => 'Dr. Tariq Clinic',  'phone' => '0334-3330003', 'whatsapp_number' => '0334-3330003', 'address' => 'North Karachi, Sector 11-C'],
+        ])->map(fn($u) => UdharCustomer::create($u + ['total_given' => 0, 'total_received' => 0, 'current_balance' => 0, 'notes' => '']));
+
+        foreach ($udharCustomers as $uc) {
+            $amount = rand(1500, 8000);
+            $paid   = rand(0, $amount);
+            CreditSale::create([
+                'udhar_customer_id' => $uc->id,
+                'customer_name'     => $uc->name,
+                'phone'             => $uc->phone,
+                'amount'            => $amount,
+                'amount_paid'       => $paid,
+                'amount_due'        => $amount - $paid,
+                'sale_date'         => now()->subDays(rand(1, 20))->toDateString(),
+                'due_date'          => now()->addDays(rand(7, 30))->toDateString(),
+                'description'       => 'Medicine credit',
+                'status'            => $paid >= $amount ? 'paid' : ($paid > 0 ? 'partial' : 'pending'),
+                'notes'             => '',
+            ]);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────
