@@ -29,6 +29,8 @@
     @endphp
     <link rel="stylesheet" href="{{ $cssFile }}">
     <script type="module" src="{{ $jsFile }}" defer></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -400,7 +402,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            if (window.lucide) lucide.createIcons();
+            if (window.lucide) lucide.createIcons({ icons: lucide.icons });
         });
 
         function openSidebar() {
