@@ -11,7 +11,7 @@
             : config('app.name', 'Admin');
         $shopType = $isTenantCtx ? (tenant()->shop_type ?? 'general') : null;
         $isChicken = $shopType === 'chicken';
-        $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general']);
+        $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general', 'medical']);
     @endphp
     <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">

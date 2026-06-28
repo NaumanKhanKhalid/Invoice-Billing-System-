@@ -9,7 +9,7 @@
         $shopName  = $isTenant ? (tenant()->shop_name ?? config('app.name')) : config('app.name', 'ShopSaas');
         $shopType  = $isTenant ? (tenant()->shop_type ?? '') : '';
         $shopInitial = strtoupper(substr($shopName, 0, 1));
-        $typeIcons = ['chicken'=>'🍗','bike'=>'🏍️','hardware'=>'🔧','mobile'=>'📱','general'=>'🏪'];
+        $typeIcons = ['chicken'=>'🍗','bike'=>'🏍️','hardware'=>'🔧','mobile'=>'📱','general'=>'🏪','medical'=>'💊'];
         $shopIcon  = $typeIcons[$shopType] ?? '🏪';
     @endphp
     <title>Login — {{ $shopName }}</title>

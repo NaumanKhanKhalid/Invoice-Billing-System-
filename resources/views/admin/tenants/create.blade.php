@@ -47,6 +47,7 @@
             <option value="hardware"{{ old('shop_type')=='hardware'?'selected':'' }}>🔧 Hardware Shop</option>
             <option value="mobile"  {{ old('shop_type')=='mobile' ?'selected':'' }}>📱 Mobile Shop</option>
             <option value="general" {{ old('shop_type')=='general'?'selected':'' }}>🏪 General</option>
+            <option value="medical" {{ old('shop_type')=='medical'?'selected':'' }}>💊 Medical Store</option>
           </select>
           @error('shop_type')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
