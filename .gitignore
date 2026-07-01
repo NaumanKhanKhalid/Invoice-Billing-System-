@@ -26,3 +26,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 .claude/
+
+# Local sqlite tenant databases (dev/testing)
+/database/tenant-*
