@@ -252,9 +252,11 @@
             </a>
             @endif
 
+            @if(!$isCoaching)
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports
             </a>
+            @endif
 
             {{-- System dropdown (all) --}}
             @php $systemOpen = request()->routeIs('suppliers.*','staff.*','tenant.users.*','udhar-customers.*','settings.*'); @endphp
@@ -269,6 +271,7 @@
                    x-transition:enter-start="opacity-0 scale-y-95"
                    x-transition:enter-end="opacity-100 scale-y-100"
                    class="mx-2 mt-1 mb-1 rounded-lg overflow-hidden bg-slate-900/60">
+                @if(!$isCoaching)
                 <a href="{{ route('suppliers.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="truck" class="w-3.5 h-3.5 flex-shrink-0"></i> Suppliers
@@ -277,6 +280,7 @@
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('udhar-customers.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="user-check" class="w-3.5 h-3.5 flex-shrink-0"></i> Udhar Customers
                 </a>
+                @endif
                 <a href="{{ route('staff.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('staff.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="hard-hat" class="w-3.5 h-3.5 flex-shrink-0"></i> Staff & Salaries

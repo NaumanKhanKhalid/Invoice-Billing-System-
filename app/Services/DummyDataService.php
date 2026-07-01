@@ -70,6 +70,10 @@ class DummyDataService
         Expense::query()->delete();
         Staff::query()->delete();
         DailyRate::query()->delete();
+        CoachingFeeCollection::query()->delete();
+        CoachingStudent::query()->delete();
+        CoachingBatch::query()->delete();
+        CoachingCourse::query()->delete();
 
         \App\Models\Setting::setValue(static::MARKER_KEY, '0');
     }
