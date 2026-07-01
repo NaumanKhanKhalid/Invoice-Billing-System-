@@ -8,10 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('daily_inventory', function (Blueprint $table) {
+        $sqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+        Schema::create('daily_inventory', function (Blueprint $table) use ($sqlite) {
             $table->id();
             $table->date('date');
-            $table->foreignId('chicken_type_id')->constrained('chicken_types');
+            if (!$sqlite) $table->foreignId('chicken_type_id')->constrained('chicken_types');
             $table->decimal('opening_stock_kg', 8, 3)->default(0);
             $table->decimal('total_purchased_kg', 8, 3)->default(0);
             $table->decimal('total_sold_retail_kg', 8, 3)->default(0);
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->decimal('closing_stock_kg', 8, 3)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
-            $table->unique(['date', 'chicken_type_id']);
+            $sqlite ? $table->unique(['date']) : $table->unique(['date', 'chicken_type_id']);
         });
     }
 

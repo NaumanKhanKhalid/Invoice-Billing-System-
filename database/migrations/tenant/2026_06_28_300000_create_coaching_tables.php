@@ -54,7 +54,7 @@ return new class extends Migration
             $table->decimal('amount_paid', 10, 2)->default(0);
             $table->decimal('balance_due', 10, 2)->default(0);
             $table->date('payment_date')->nullable();
-            $table->string('payment_method', 30)->default('cash');
+            $table->string('payment_method', 30)->nullable();
             $table->string('receipt_number', 30)->nullable();
             $table->enum('status', ['pending', 'partial', 'paid'])->default('pending');
             $table->text('notes')->nullable();

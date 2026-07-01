@@ -25,10 +25,11 @@ return new class extends Migration
         Schema::dropIfExists('daily_inventory');
 
         // Create daily_records (Day End Entry — CORE feature)
-        Schema::create('daily_records', function (Blueprint $table) {
+        $sqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+        Schema::create('daily_records', function (Blueprint $table) use ($sqlite) {
             $table->id();
             $table->date('date');
-            $table->foreignId('chicken_type_id')->constrained('chicken_types');
+            if (!$sqlite) $table->foreignId('chicken_type_id')->constrained('chicken_types');
 
             // Opening stock (from previous day's closing)
             $table->decimal('opening_stock_live_kg', 8, 3)->default(0);
@@ -67,7 +68,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->unique(['date', 'chicken_type_id']);
+            $sqlite ? $table->unique(['date']) : $table->unique(['date', 'chicken_type_id']);
         });
     }
 

@@ -8,13 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('sales_orders', function (Blueprint $table) {
+        $sqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+        Schema::create('sales_orders', function (Blueprint $table) use ($sqlite) {
             $table->id();
             $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
             $table->date('date');
             $table->string('invoice_number')->unique();
             $table->enum('order_type', ['retail', 'supply'])->default('retail');
-            $table->foreignId('chicken_type_id')->constrained('chicken_types');
+            if (!$sqlite) $table->foreignId('chicken_type_id')->constrained('chicken_types');
             $table->decimal('dressed_weight_kg', 8, 3);
             $table->decimal('rate_per_kg', 8, 2);
             $table->decimal('total_amount', 10, 2);

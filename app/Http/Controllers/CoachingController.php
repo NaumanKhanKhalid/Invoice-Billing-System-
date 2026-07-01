@@ -18,12 +18,12 @@ class CoachingController extends Controller
         $thisMonth      = Carbon::now()->startOfMonth()->toDateString();
         $monthLabel     = Carbon::now()->format('F Y');
 
-        $monthFees      = CoachingFeeCollection::where('month', $thisMonth);
+        $monthFees      = CoachingFeeCollection::whereDate('month', $thisMonth);
         $collected      = (clone $monthFees)->sum('amount_paid');
         $expected       = (clone $monthFees)->sum('amount_due');
         $pending        = (clone $monthFees)->where('status', '!=', 'paid')->sum('balance_due');
         $defaulters     = CoachingStudent::where('status', 'active')
-            ->whereDoesntHave('fees', fn($q) => $q->where('month', $thisMonth)->where('status', 'paid'))
+            ->whereDoesntHave('fees', fn($q) => $q->whereDate('month', $thisMonth)->where('status', 'paid'))
             ->with('batch.course')
             ->limit(10)
             ->get();

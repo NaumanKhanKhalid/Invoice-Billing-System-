@@ -147,10 +147,12 @@
             @if($isTenantCtx)
             {{-- ── Tenant sidebar ── --}}
 
-            {{-- Dashboard (all) --}}
+            {{-- Dashboard (all except coaching — coaching has its own below) --}}
+            @if(!$isCoaching)
             <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
             </a>
+            @endif
 
             {{-- ── CHICKEN SHOP ── --}}
             @if($isChicken)

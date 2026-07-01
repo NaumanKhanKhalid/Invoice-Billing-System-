@@ -15,24 +15,27 @@ class CoachingFeeController extends Controller
         $monthDate  = Carbon::parse($month . '-01');
         $monthKey   = $monthDate->toDateString(); // YYYY-MM-01
 
-        // Auto-generate fee records for all active students if not yet generated
+        // Auto-generate fee records for all active students if not yet generated.
+        // Lookup uses whereDate so the match works regardless of how the DB
+        // driver stored the month (date vs datetime string).
         $activeStudents = CoachingStudent::where('status', 'active')->with('batch.course')->get();
 
         foreach ($activeStudents as $student) {
-            CoachingFeeCollection::firstOrCreate(
-                ['student_id' => $student->id, 'month' => $monthKey],
-                [
-                    'amount_due'    => $student->effectiveFee(),
+            CoachingFeeCollection::whereDate('month', $monthKey)
+                ->where('student_id', $student->id)
+                ->firstOr(fn() => CoachingFeeCollection::create([
+                    'student_id'      => $student->id,
+                    'month'           => $monthKey,
+                    'amount_due'      => $student->effectiveFee(),
                     'discount_amount' => 0,
-                    'amount_paid'   => 0,
-                    'balance_due'   => $student->effectiveFee(),
-                    'status'        => 'pending',
-                ]
-            );
+                    'amount_paid'     => 0,
+                    'balance_due'     => $student->effectiveFee(),
+                    'status'          => 'pending',
+                ]));
         }
 
         $fees = CoachingFeeCollection::with('student.batch.course')
-            ->where('month', $monthKey)
+            ->whereDate('month', $monthKey)
             ->orderBy('status')
             ->get();
 

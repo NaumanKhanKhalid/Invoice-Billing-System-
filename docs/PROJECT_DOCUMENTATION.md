@@ -284,7 +284,19 @@ FAB: "Enroll Student" + "Collect Fees".
 - **WhatsApp deep links**: `wa.me/{number}?text=...` — fee reminders, Roman Urdu messages.
 - **Print views**: receipts with `@media print` CSS (nav hide).
 
-### 10.4 UI improvement candidates (design better karne ke liye)
+### 10.4 Screenshots 📸
+Har major screen ka screenshot `docs/screenshots/` mein hai (demo data ke sath live app se liye gaye):
+
+| # | Screen |
+|---|---|
+| 01 | Admin login (central) |
+| 02 | Tenant login page |
+| 03–13 | Hardware shop: Dashboard, POS Counter, Sales History, Products, Open Tabs, Quotations, Udhar Book, Day Closing, Purchases, Expenses, Reports |
+| 14–17 | Chicken shop: Dashboard, Daily Rates, Supply Orders, Day End |
+| 18–22 | Coaching: Dashboard, Students, Enroll form, Fee Collection, Courses & Batches |
+| 23 | Admin tenants list |
+
+### 10.4b UI improvement candidates (design better karne ke liye)
 1. **Mobile responsiveness** — sidebar mobile par kaisi behave karti hai, tables horizontal scroll — audit needed.
 2. **Dark mode** nahi hai.
 3. **Consistent toasts** — abhi success messages simple green divs hain; toast/auto-dismiss system better hoga.
@@ -292,6 +304,7 @@ FAB: "Enroll Student" + "Collect Fees".
 5. **Confirmation dialogs** — native `confirm()` use hota hai; styled modal better hoga.
 6. **Form validation UX** — errors page-top par hain; inline field errors better honge.
 7. Modals JS `classList` aur Alpine dono se ban rahe hain — **ek pattern standardize** karein.
+8. **Dashboard profit card bug**: jab loss ho to number positive dikhta hai lekin label "Net loss today" — minus sign ya sirf color se clear karna chahiye (screenshot 03 aur 14 mein visible).
 
 ---
 

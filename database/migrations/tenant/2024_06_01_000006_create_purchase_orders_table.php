@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('purchase_orders', function (Blueprint $table) {
+        $sqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+        Schema::create('purchase_orders', function (Blueprint $table) use ($sqlite) {
             $table->id();
             $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();
             $table->date('date');
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->decimal('waste_weight_kg', 8, 3)->default(0);
             $table->decimal('yield_percentage', 5, 2)->default(0);
             $table->decimal('dead_on_arrival_kg', 8, 3)->default(0);
-            $table->foreignId('chicken_type_id')->constrained('chicken_types');
+            if (!$sqlite) $table->foreignId('chicken_type_id')->constrained('chicken_types');
             $table->decimal('rate_per_kg_live', 8, 2);
             $table->decimal('total_amount', 10, 2);
             $table->decimal('amount_paid', 10, 2)->default(0);

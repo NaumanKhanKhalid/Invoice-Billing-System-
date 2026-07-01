@@ -8,9 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('daily_rates', function (Blueprint $table) {
+        $sqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+        Schema::create('daily_rates', function (Blueprint $table) use ($sqlite) {
             $table->id();
-            $table->foreignId('chicken_type_id')->constrained('chicken_types')->cascadeOnDelete();
+            if (!$sqlite) $table->foreignId('chicken_type_id')->constrained('chicken_types')->cascadeOnDelete();
             $table->decimal('rate_per_kg', 8, 2);
             $table->decimal('rate_per_kg_dressed', 8, 2);
             $table->date('date');
