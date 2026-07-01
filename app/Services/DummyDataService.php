@@ -557,23 +557,22 @@ class DummyDataService
     // ─────────────────────────────────────────────────────────────
     private static function seedCoaching(): void
     {
-        // Expenses
-        $categories = ['Rent', 'Electricity', 'Internet', 'Stationary', 'Maintenance'];
+        // Expenses — valid categories: staff_salary, delivery, shop_rent, electricity, fuel, maintenance, other
         $expenseData = [
-            ['description' => 'Monthly Rent',       'amount' => 15000, 'category' => 'Rent'],
-            ['description' => 'KESC Bijli Bill',    'amount' => 3200,  'category' => 'Electricity'],
-            ['description' => 'Internet (PTCL)',    'amount' => 1500,  'category' => 'Internet'],
-            ['description' => 'Marker & Chalk',     'amount' => 800,   'category' => 'Stationary'],
-            ['description' => 'Whiteboard Repair',  'amount' => 1200,  'category' => 'Maintenance'],
+            ['description' => 'Monthly Rent (Academy)', 'amount' => 15000, 'category' => 'shop_rent',   'paid_to' => 'Malik Sahab (Landlord)'],
+            ['description' => 'KESC Bijli Bill',        'amount' => 3200,  'category' => 'electricity', 'paid_to' => 'K-Electric'],
+            ['description' => 'Internet (PTCL)',        'amount' => 1500,  'category' => 'other',       'paid_to' => 'PTCL'],
+            ['description' => 'Marker & Chalk',         'amount' => 800,   'category' => 'other',       'paid_to' => 'Stationary Shop'],
+            ['description' => 'Whiteboard Repair',      'amount' => 1200,  'category' => 'maintenance', 'paid_to' => 'Carpenter'],
         ];
         foreach ($expenseData as $e) {
-            Expense::create($e + ['date' => now()->startOfMonth()->toDateString(), 'payment_method' => 'cash']);
+            Expense::create($e + ['date' => now()->startOfMonth()->toDateString()]);
         }
 
-        // Staff
-        Staff::create(['name' => 'Ustad Muhammad Arif', 'role' => 'Teacher', 'phone' => '0300-7171717', 'salary' => 18000, 'joining_date' => now()->subMonths(8)->toDateString(), 'status' => 'active']);
-        Staff::create(['name' => 'Asma Baji',           'role' => 'Teacher', 'phone' => '0321-8282828', 'salary' => 15000, 'joining_date' => now()->subMonths(5)->toDateString(), 'status' => 'active']);
-        Staff::create(['name' => 'Bilal Bhai',          'role' => 'Helper',  'phone' => '0333-9393939', 'salary' => 8000,  'joining_date' => now()->subMonths(2)->toDateString(), 'status' => 'active']);
+        // Staff — valid roles: manager, butcher, delivery_boy, cashier
+        Staff::create(['name' => 'Ustad Muhammad Arif', 'role' => 'manager', 'phone' => '0300-7171717', 'salary' => 18000, 'joining_date' => now()->subMonths(8)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Asma Baji',           'role' => 'manager', 'phone' => '0321-8282828', 'salary' => 15000, 'joining_date' => now()->subMonths(5)->toDateString(), 'is_active' => true]);
+        Staff::create(['name' => 'Bilal Bhai',          'role' => 'cashier', 'phone' => '0333-9393939', 'salary' => 8000,  'joining_date' => now()->subMonths(2)->toDateString(), 'is_active' => true]);
 
         // Courses
         $matric = CoachingCourse::create(['name' => 'Matriculation (Science)',  'monthly_fee' => 2500, 'description' => 'Physics, Chemistry, Biology, Maths', 'is_active' => true]);
