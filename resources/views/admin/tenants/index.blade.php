@@ -88,7 +88,7 @@
             <p class="text-xs text-slate-400">{{ $tenant->id }}</p>
           </td>
           <td class="px-4 py-3">
-            @php $typeColors = ['chicken'=>'green','bike'=>'blue','hardware'=>'orange','mobile'=>'purple','general'=>'gray','medical'=>'teal'] @endphp
+            @php $typeColors = ['chicken'=>'green','bike'=>'blue','hardware'=>'orange','mobile'=>'purple','general'=>'gray','medical'=>'teal','coaching'=>'indigo'] @endphp
             <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-{{ $typeColors[$tenant->shop_type] ?? 'gray' }}-100 text-{{ $typeColors[$tenant->shop_type] ?? 'gray' }}-700">
               {{ ucfirst($tenant->shop_type) }}
             </span>

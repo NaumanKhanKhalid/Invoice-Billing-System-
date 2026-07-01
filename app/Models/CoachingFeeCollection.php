@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class CoachingFeeCollection extends Model
+{
+    protected $fillable = [
+        'student_id', 'month', 'amount_due', 'discount_amount',
+        'amount_paid', 'balance_due', 'payment_date', 'payment_method',
+        'receipt_number', 'status', 'notes',
+    ];
+
+    protected $casts = [
+        'month'        => 'date',
+        'payment_date' => 'date',
+        'amount_due'   => 'float',
+        'amount_paid'  => 'float',
+        'balance_due'  => 'float',
+    ];
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(CoachingStudent::class, 'student_id');
+    }
+
+    public static function nextReceiptNumber(): string
+    {
+        $last = static::orderByDesc('id')->value('receipt_number');
+        $num  = $last ? ((int) substr($last, 4)) + 1 : 1;
+        return 'RCP-' . str_pad($num, 4, '0', STR_PAD_LEFT);
+    }
+}

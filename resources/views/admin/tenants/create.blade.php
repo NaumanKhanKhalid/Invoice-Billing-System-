@@ -48,6 +48,7 @@
             <option value="mobile"  {{ old('shop_type')=='mobile' ?'selected':'' }}>📱 Mobile Shop</option>
             <option value="general" {{ old('shop_type')=='general'?'selected':'' }}>🏪 General</option>
             <option value="medical" {{ old('shop_type')=='medical'?'selected':'' }}>💊 Medical Store</option>
+            <option value="coaching" {{ old('shop_type')=='coaching'?'selected':'' }}>🎓 Coaching Center</option>
           </select>
           @error('shop_type')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>

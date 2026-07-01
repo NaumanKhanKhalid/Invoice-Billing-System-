@@ -32,7 +32,7 @@ class TenantController extends Controller
     {
         $data = $request->validate([
             'shop_name'    => 'required|string|max:100',
-            'shop_type'    => 'required|in:chicken,bike,hardware,mobile,general,medical',
+            'shop_type'    => 'required|in:chicken,bike,hardware,mobile,general,medical,coaching',
             'owner_name'   => 'required|string|max:100',
             'owner_email'  => 'required|email|unique:tenants,owner_email',
             'owner_phone'  => 'nullable|string|max:20',
@@ -90,7 +90,7 @@ class TenantController extends Controller
     {
         $data = $request->validate([
             'shop_name'      => 'required|string|max:100',
-            'shop_type'      => 'required|in:chicken,bike,hardware,mobile,general',
+            'shop_type'      => 'required|in:chicken,bike,hardware,mobile,general,medical,coaching',
             'owner_name'     => 'required|string|max:100',
             'owner_phone'    => 'nullable|string|max:20',
             'plan'           => 'required|in:basic,pro,business',

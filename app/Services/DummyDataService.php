@@ -16,6 +16,10 @@ use App\Models\Staff;
 use App\Models\Supplier;
 use App\Models\SupplyOrder;
 use App\Models\UdharCustomer;
+use App\Models\CoachingCourse;
+use App\Models\CoachingBatch;
+use App\Models\CoachingStudent;
+use App\Models\CoachingFeeCollection;
 
 class DummyDataService
 {
@@ -39,6 +43,7 @@ class DummyDataService
             'bike'     => static::seedBike(),
             'general'  => static::seedGeneral(),
             'medical'  => static::seedMedical(),
+            'coaching' => static::seedCoaching(),
             default    => static::seedGeneral(),
         };
 
@@ -542,6 +547,109 @@ class DummyDataService
                     'total'        => $item['total'],
                 ]);
             }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    private static function seedCoaching(): void
+    {
+        // Expenses
+        $categories = ['Rent', 'Electricity', 'Internet', 'Stationary', 'Maintenance'];
+        $expenseData = [
+            ['description' => 'Monthly Rent',       'amount' => 15000, 'category' => 'Rent'],
+            ['description' => 'KESC Bijli Bill',    'amount' => 3200,  'category' => 'Electricity'],
+            ['description' => 'Internet (PTCL)',    'amount' => 1500,  'category' => 'Internet'],
+            ['description' => 'Marker & Chalk',     'amount' => 800,   'category' => 'Stationary'],
+            ['description' => 'Whiteboard Repair',  'amount' => 1200,  'category' => 'Maintenance'],
+        ];
+        foreach ($expenseData as $e) {
+            Expense::create($e + ['date' => now()->startOfMonth()->toDateString(), 'payment_method' => 'cash']);
+        }
+
+        // Staff
+        Staff::create(['name' => 'Ustad Muhammad Arif', 'role' => 'Teacher', 'phone' => '0300-7171717', 'salary' => 18000, 'joining_date' => now()->subMonths(8)->toDateString(), 'status' => 'active']);
+        Staff::create(['name' => 'Asma Baji',           'role' => 'Teacher', 'phone' => '0321-8282828', 'salary' => 15000, 'joining_date' => now()->subMonths(5)->toDateString(), 'status' => 'active']);
+        Staff::create(['name' => 'Bilal Bhai',          'role' => 'Helper',  'phone' => '0333-9393939', 'salary' => 8000,  'joining_date' => now()->subMonths(2)->toDateString(), 'status' => 'active']);
+
+        // Courses
+        $matric = CoachingCourse::create(['name' => 'Matriculation (Science)',  'monthly_fee' => 2500, 'description' => 'Physics, Chemistry, Biology, Maths', 'is_active' => true]);
+        $fa     = CoachingCourse::create(['name' => 'F.A / F.Sc Preparation',  'monthly_fee' => 3000, 'description' => 'Intermediate prep for Arts & Science', 'is_active' => true]);
+        $eng    = CoachingCourse::create(['name' => 'English Speaking Course',  'monthly_fee' => 1800, 'description' => 'Spoken English & Grammar', 'is_active' => true]);
+        $comp   = CoachingCourse::create(['name' => 'Computer Basics',          'monthly_fee' => 2000, 'description' => 'MS Office, Internet, Basics', 'is_active' => true]);
+
+        // Batches
+        $b1 = CoachingBatch::create(['course_id' => $matric->id, 'name' => 'Morning A',   'timing' => '7:00 AM – 9:00 AM', 'days' => 'Mon-Sat', 'teacher_name' => 'Ustad Muhammad Arif', 'capacity' => 25, 'is_active' => true]);
+        $b2 = CoachingBatch::create(['course_id' => $matric->id, 'name' => 'Evening B',   'timing' => '5:00 PM – 7:00 PM', 'days' => 'Mon-Sat', 'teacher_name' => 'Ustad Muhammad Arif', 'capacity' => 25, 'is_active' => true]);
+        $b3 = CoachingBatch::create(['course_id' => $fa->id,     'name' => 'Morning',     'timing' => '8:00 AM – 10:00 AM','days' => 'Mon-Fri', 'teacher_name' => 'Asma Baji',           'capacity' => 20, 'is_active' => true]);
+        $b4 = CoachingBatch::create(['course_id' => $eng->id,    'name' => 'Spoken Eng',  'timing' => '4:00 PM – 5:30 PM', 'days' => 'Tue,Thu', 'teacher_name' => 'Asma Baji',           'capacity' => 15, 'is_active' => true]);
+        $b5 = CoachingBatch::create(['course_id' => $comp->id,   'name' => 'Afternoon',   'timing' => '2:00 PM – 4:00 PM', 'days' => 'Mon,Wed,Fri', 'teacher_name' => 'Bilal Bhai',      'capacity' => 15, 'is_active' => true]);
+
+        // Students
+        $students = [
+            // Matric Morning A
+            ['batch_id' => $b1->id, 'name' => 'Ahmed Raza',       'phone' => '0300-1112222', 'guardian_name' => 'Raza Ahmed',      'guardian_phone' => '0300-1110000', 'enrollment_date' => now()->subMonths(3)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b1->id, 'name' => 'Fatima Noor',      'phone' => '0321-2223333', 'guardian_name' => 'Noor ul Hassan',  'guardian_phone' => '0321-2220000', 'enrollment_date' => now()->subMonths(3)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b1->id, 'name' => 'Usman Tariq',      'phone' => null,           'guardian_name' => 'Tariq Mehmood',   'guardian_phone' => '0333-3334444', 'enrollment_date' => now()->subMonths(2)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b1->id, 'name' => 'Sana Irfan',       'phone' => '0311-4445555', 'guardian_name' => 'Irfan ul Haq',   'guardian_phone' => '0311-4440000', 'enrollment_date' => now()->subMonths(2)->toDateString(), 'status' => 'active', 'discount_percent' => 10],
+            ['batch_id' => $b1->id, 'name' => 'Bilal Hassan',     'phone' => '0345-5556666', 'guardian_name' => 'Hassan Ali',      'guardian_phone' => '0345-5550000', 'enrollment_date' => now()->subMonths(4)->toDateString(), 'status' => 'active'],
+            // Matric Evening B
+            ['batch_id' => $b2->id, 'name' => 'Zainab Khalid',    'phone' => '0312-6667777', 'guardian_name' => 'Khalid Hussain',  'guardian_phone' => '0312-6660000', 'enrollment_date' => now()->subMonths(1)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b2->id, 'name' => 'Hamza Sheikh',     'phone' => null,           'guardian_name' => 'Imran Sheikh',    'guardian_phone' => '0321-7778888', 'enrollment_date' => now()->subMonths(2)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b2->id, 'name' => 'Ayesha Siddiqui',  'phone' => '0300-8889999', 'guardian_name' => 'Siddiqui Sb',    'guardian_phone' => '0300-8880000', 'enrollment_date' => now()->subMonths(3)->toDateString(), 'status' => 'active', 'custom_fee' => 2000],
+            ['batch_id' => $b2->id, 'name' => 'Danish Iqbal',     'phone' => '0333-9990000', 'guardian_name' => 'Iqbal Ahmed',    'guardian_phone' => '0333-9990001', 'enrollment_date' => now()->subMonths(1)->toDateString(), 'status' => 'active'],
+            // FA
+            ['batch_id' => $b3->id, 'name' => 'Hira Baig',        'phone' => '0321-1212121', 'guardian_name' => 'Baig Sahib',     'guardian_phone' => '0321-1210000', 'enrollment_date' => now()->subMonths(2)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b3->id, 'name' => 'Anas Rehman',      'phone' => '0345-2323232', 'guardian_name' => 'Abdul Rehman',   'guardian_phone' => '0345-2320000', 'enrollment_date' => now()->subMonths(3)->toDateString(), 'status' => 'active'],
+            // English
+            ['batch_id' => $b4->id, 'name' => 'Rabia Malik',      'phone' => '0311-3434343', 'guardian_name' => 'Malik Sb',       'guardian_phone' => '0311-3430000', 'enrollment_date' => now()->subMonths(1)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b4->id, 'name' => 'Tariq Butt',       'phone' => '0300-4545454', 'guardian_name' => 'Butt Sahib',     'guardian_phone' => '0300-4540000', 'enrollment_date' => now()->subMonths(2)->toDateString(), 'status' => 'active'],
+            // Computer
+            ['batch_id' => $b5->id, 'name' => 'Sara Qureshi',     'phone' => '0333-5656565', 'guardian_name' => 'Qureshi Sb',     'guardian_phone' => '0333-5650000', 'enrollment_date' => now()->subMonths(1)->toDateString(), 'status' => 'active'],
+            ['batch_id' => $b5->id, 'name' => 'Mohsin Ansari',    'phone' => '0321-6767676', 'guardian_name' => 'Ansari Sb',      'guardian_phone' => '0321-6760000', 'enrollment_date' => now()->subMonths(2)->toDateString(), 'status' => 'active'],
+        ];
+
+        $thisMonth = now()->startOfMonth()->toDateString();
+        $lastMonth = now()->subMonth()->startOfMonth()->toDateString();
+
+        foreach ($students as $sd) {
+            $student = CoachingStudent::create(array_merge([
+                'discount_percent' => 0,
+                'custom_fee'       => null,
+                'address'          => null,
+                'notes'            => null,
+            ], $sd));
+
+            $fee = $student->effectiveFee();
+
+            // Last month — all paid
+            CoachingFeeCollection::create([
+                'student_id'      => $student->id,
+                'month'           => $lastMonth,
+                'amount_due'      => $fee,
+                'discount_amount' => 0,
+                'amount_paid'     => $fee,
+                'balance_due'     => 0,
+                'status'          => 'paid',
+                'payment_date'    => now()->subMonth()->endOfMonth()->toDateString(),
+                'payment_method'  => 'cash',
+                'receipt_number'  => CoachingFeeCollection::nextReceiptNumber(),
+            ]);
+
+            // This month — 60% paid, 40% pending
+            $paid   = $student->id % 3 === 0 ? $fee : ($student->id % 3 === 1 ? 0 : $fee);
+            $status = $paid >= $fee ? 'paid' : ($paid > 0 ? 'partial' : 'pending');
+            CoachingFeeCollection::create([
+                'student_id'      => $student->id,
+                'month'           => $thisMonth,
+                'amount_due'      => $fee,
+                'discount_amount' => 0,
+                'amount_paid'     => $paid,
+                'balance_due'     => max(0, $fee - $paid),
+                'status'          => $status,
+                'payment_date'    => $paid > 0 ? now()->toDateString() : null,
+                'payment_method'  => $paid > 0 ? 'cash' : null,
+                'receipt_number'  => $paid > 0 ? CoachingFeeCollection::nextReceiptNumber() : null,
+            ]);
         }
     }
 }

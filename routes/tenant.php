@@ -30,6 +30,10 @@ use App\Http\Controllers\OpenTabController;
 use App\Http\Controllers\TenantImpersonateController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TenantUserController;
+use App\Http\Controllers\CoachingController;
+use App\Http\Controllers\CoachingCourseController;
+use App\Http\Controllers\CoachingStudentController;
+use App\Http\Controllers\CoachingFeeController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -206,6 +210,26 @@ Route::middleware([
         Route::get('/sale-returns/{saleReturn}', [SaleReturnController::class, 'show'])->name('sale-returns.show');
         Route::get('/pos/sale/{sale}/return', [SaleReturnController::class, 'create'])->name('sale-returns.create');
         Route::post('/pos/sale/{sale}/return', [SaleReturnController::class, 'store'])->name('sale-returns.store');
+
+        // Coaching Center
+        Route::get('/coaching', [CoachingController::class, 'dashboard'])->name('coaching.dashboard');
+        Route::get('/coaching/courses', [CoachingCourseController::class, 'index'])->name('coaching.courses.index');
+        Route::post('/coaching/courses', [CoachingCourseController::class, 'storeCourse'])->name('coaching.courses.store');
+        Route::patch('/coaching/courses/{course}', [CoachingCourseController::class, 'updateCourse'])->name('coaching.courses.update');
+        Route::delete('/coaching/courses/{course}', [CoachingCourseController::class, 'destroyCourse'])->name('coaching.courses.destroy');
+        Route::post('/coaching/batches', [CoachingCourseController::class, 'storeBatch'])->name('coaching.batches.store');
+        Route::patch('/coaching/batches/{batch}', [CoachingCourseController::class, 'updateBatch'])->name('coaching.batches.update');
+        Route::delete('/coaching/batches/{batch}', [CoachingCourseController::class, 'destroyBatch'])->name('coaching.batches.destroy');
+        Route::get('/coaching/students', [CoachingStudentController::class, 'index'])->name('coaching.students.index');
+        Route::get('/coaching/students/create', [CoachingStudentController::class, 'create'])->name('coaching.students.create');
+        Route::post('/coaching/students', [CoachingStudentController::class, 'store'])->name('coaching.students.store');
+        Route::get('/coaching/students/{student}', [CoachingStudentController::class, 'show'])->name('coaching.students.show');
+        Route::get('/coaching/students/{student}/edit', [CoachingStudentController::class, 'edit'])->name('coaching.students.edit');
+        Route::patch('/coaching/students/{student}', [CoachingStudentController::class, 'update'])->name('coaching.students.update');
+        Route::delete('/coaching/students/{student}', [CoachingStudentController::class, 'destroy'])->name('coaching.students.destroy');
+        Route::get('/coaching/fees', [CoachingFeeController::class, 'index'])->name('coaching.fees.index');
+        Route::post('/coaching/fees/{fee}/collect', [CoachingFeeController::class, 'collect'])->name('coaching.fees.collect');
+        Route::get('/coaching/fees/{fee}/receipt', [CoachingFeeController::class, 'receipt'])->name('coaching.fees.receipt');
 
         // Demo Data
         Route::post('/settings/seed-demo', [DummyDataController::class, 'seed'])->name('demo.seed');

@@ -18,8 +18,13 @@ class DashboardController extends Controller
     public function index()
     {
         $shopType  = tenant()->shop_type ?? 'general';
+
+        if ($shopType === 'coaching') {
+            return redirect()->route('coaching.dashboard');
+        }
+
         $isChicken = $shopType === 'chicken';
-        $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general']);
+        $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general', 'medical']);
 
         // ── Common (all shop types) ──────────────────────────────
         $todayExpenses = Expense::whereDate('date', today())->sum('amount');

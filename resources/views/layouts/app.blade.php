@@ -12,6 +12,7 @@
         $shopType = $isTenantCtx ? (tenant()->shop_type ?? 'general') : null;
         $isChicken = $shopType === 'chicken';
         $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general', 'medical']);
+        $isCoaching = $shopType === 'coaching';
     @endphp
     <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -205,7 +206,8 @@
 
             @endif
 
-            {{-- ── COMMON (all shop types) ── --}}
+            {{-- ── COMMON (all shop types except coaching) ── --}}
+            @if(!$isCoaching)
             @php $overdueUdhar = \App\Models\CreditSale::where('status','!=','paid')->whereDate('due_date','<=',today())->count(); @endphp
             <a href="{{ route('udhar.index') }}" class="nav-item {{ request()->routeIs('udhar.*') ? 'active' : '' }}">
                 <i data-lucide="book-open" class="w-4 h-4"></i> Udhar Book
@@ -213,16 +215,38 @@
                 <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $overdueUdhar }}</span>
                 @endif
             </a>
+            @endif
 
+            @if(!$isCoaching)
             <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
             </a>
+            @endif
+
+            {{-- ── COACHING CENTER ── --}}
+            @if($isCoaching)
+            <a href="{{ route('coaching.dashboard') }}" class="nav-item {{ request()->routeIs('coaching.dashboard') ? 'active' : '' }}">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+            </a>
+            <a href="{{ route('coaching.students.index') }}" class="nav-item {{ request()->routeIs('coaching.students.*') ? 'active' : '' }}">
+                <i data-lucide="users" class="w-4 h-4"></i> Students
+            </a>
+            <a href="{{ route('coaching.fees.index') }}" class="nav-item {{ request()->routeIs('coaching.fees.*') ? 'active' : '' }}">
+                <i data-lucide="banknote" class="w-4 h-4"></i> Fee Collection
+            </a>
+            <a href="{{ route('coaching.courses.index') }}" class="nav-item {{ request()->routeIs('coaching.courses.*') ? 'active' : '' }}">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Courses & Batches
+            </a>
+            <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
+                <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
+            </a>
+            @endif
 
             @if($isChicken)
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i> Daily Records
             </a>
-            @else
+            @elseif(!$isCoaching)
             <a href="{{ route('day-summary.index') }}" class="nav-item {{ request()->routeIs('day-summary.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i> Day Closing
             </a>
@@ -371,10 +395,21 @@
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
           Close Day
         </a>
-        @else
+        @elseif(!$isCoaching)
         <a href="{{ route('day-summary.create') }}" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-900 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
           <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="moon" class="w-3.5 h-3.5"></i></div>
           Close Day
+        </a>
+        @endif
+
+        @if($isCoaching)
+        <a href="{{ route('coaching.students.create') }}" class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i></div>
+          Enroll Student
+        </a>
+        <a href="{{ route('coaching.fees.index') }}" class="flex items-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors">
+          <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="banknote" class="w-3.5 h-3.5"></i></div>
+          Collect Fees
         </a>
         @endif
 

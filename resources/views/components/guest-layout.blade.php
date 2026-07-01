@@ -8,7 +8,7 @@
         $isTenant = tenancy()->initialized;
         $shopName  = $isTenant ? (tenant()->shop_name ?? config('app.name')) : config('app.name', 'ShopSaas');
         $shopType  = $isTenant ? (tenant()->shop_type ?? '') : '';
-        $typeIcons = ['chicken'=>'🍗','bike'=>'🏍️','hardware'=>'🔧','mobile'=>'📱','general'=>'🏪','medical'=>'💊'];
+        $typeIcons = ['chicken'=>'🍗','bike'=>'🏍️','hardware'=>'🔧','mobile'=>'📱','general'=>'🏪','medical'=>'💊','coaching'=>'🎓'];
         $shopIcon  = $typeIcons[$shopType] ?? '🏪';
     @endphp
     <title>{{ $isTenant ? $shopName : 'Admin' }} — ShopSaas</title>
