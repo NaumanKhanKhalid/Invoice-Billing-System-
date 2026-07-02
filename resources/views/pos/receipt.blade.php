@@ -7,6 +7,22 @@
     <button onclick="window.print()" class="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
       <i data-lucide="printer" class="w-4 h-4"></i>Print Receipt
     </button>
+    @php
+      $waShop  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop');
+      $waLines = ["*{$waShop}* — Receipt {$posSale->sale_number}", $posSale->date->format('d M Y'), ''];
+      foreach ($posSale->items as $ri) {
+          $waLines[] = "{$ri->product_name} — {$ri->qty} x " . number_format($ri->unit_price) . " = " . number_format($ri->total);
+      }
+      if ($posSale->discount > 0) $waLines[] = 'Discount: PKR ' . number_format($posSale->discount);
+      $waLines[] = '*Total: PKR ' . number_format($posSale->total) . '*';
+      $waLines[] = 'Shukriya! 🙏';
+      $waText  = urlencode(implode("\n", $waLines));
+      $waPhone = preg_replace('/[^0-9]/', '', $posSale->customer_phone ?? '');
+    @endphp
+    <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
+       class="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
+      <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp
+    </a>
     <a href="{{ route('pos.create') }}" class="flex-1 inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
       <i data-lucide="plus" class="w-4 h-4"></i>New Sale
     </a>

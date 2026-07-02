@@ -28,7 +28,11 @@ class CoachingFeeCollection extends Model
 
     public static function nextReceiptNumber(): string
     {
-        $last = static::orderByDesc('id')->value('receipt_number');
+        // Pending rows have NULL receipt_number, so look at the highest issued
+        // receipt (not just the latest row) to avoid duplicate numbers
+        $last = static::whereNotNull('receipt_number')
+            ->orderByDesc('receipt_number')
+            ->value('receipt_number');
         $num  = $last ? ((int) substr($last, 4)) + 1 : 1;
         return 'RCP-' . str_pad($num, 4, '0', STR_PAD_LEFT);
     }

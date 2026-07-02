@@ -25,9 +25,26 @@ $statusClass = [
       </div>
       <p class="text-sm text-slate-500">{{ $quotation->date->format('d M Y') }}@if($quotation->valid_until) · Valid until {{ $quotation->valid_until->format('d M Y') }}@endif</p>
     </div>
-    <button onclick="window.print()" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
-      <i data-lucide="printer" class="w-4 h-4"></i> Print
-    </button>
+    <div class="flex items-center gap-2">
+      @php
+        $waLines = ["*Quotation {$quotation->quote_number}*", \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? ''), ''];
+        foreach ($quotation->items as $qi) {
+            $waLines[] = "{$qi->product_name} — {$qi->qty} x " . number_format($qi->unit_price) . " = PKR " . number_format($qi->total);
+        }
+        if ($quotation->discount > 0) $waLines[] = 'Discount: PKR ' . number_format($quotation->discount);
+        $waLines[] = '*Total: PKR ' . number_format($quotation->total) . '*';
+        if ($quotation->valid_until) $waLines[] = 'Valid until: ' . $quotation->valid_until->format('d M Y');
+        $waText  = urlencode(implode("\n", $waLines));
+        $waPhone = preg_replace('/[^0-9]/', '', $quotation->customer_phone ?? '');
+      @endphp
+      <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
+         class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
+      </a>
+      <button onclick="window.print()" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="printer" class="w-4 h-4"></i> Print
+      </button>
+    </div>
   </div>
 
   @if(session('success'))

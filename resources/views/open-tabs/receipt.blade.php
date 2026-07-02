@@ -8,10 +8,28 @@
        class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm transition-colors">
       <i data-lucide="arrow-left" class="w-4 h-4"></i>Back to Tabs
     </a>
-    <button onclick="window.print()"
-            class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-      <i data-lucide="printer" class="w-4 h-4"></i>Print
-    </button>
+    <div class="flex items-center gap-2">
+      @php
+        $waShop  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop');
+        $waLines = ["*{$waShop}* — Bill {$openTab->tab_number}", ''];
+        foreach ($openTab->items as $ti) {
+            $waLines[] = "{$ti->product_name} — {$ti->qty} x " . number_format($ti->price) . " = " . number_format($ti->total);
+        }
+        if ($openTab->discount > 0) $waLines[] = 'Discount: PKR ' . number_format($openTab->discount);
+        $waLines[] = '*Total: PKR ' . number_format($openTab->total) . '*';
+        $waLines[] = 'Shukriya! 🙏';
+        $waText  = urlencode(implode("\n", $waLines));
+        $waPhone = preg_replace('/[^0-9]/', '', $openTab->customer_phone ?? '');
+      @endphp
+      <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
+         class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp
+      </a>
+      <button onclick="window.print()"
+              class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="printer" class="w-4 h-4"></i>Print
+      </button>
+    </div>
   </div>
 
   {{-- Receipt --}}

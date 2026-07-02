@@ -14,7 +14,14 @@ class StaffController extends Controller
             ->with(['salaryPayments' => fn($q) => $q->latest('payment_date')->limit(1)])
             ->orderBy('name')->paginate(20);
         $totalSalary = Staff::where('is_active', true)->sum('salary');
-        return view('staff.index', compact('staff', 'totalSalary'));
+
+        // Staff IDs whose current-month salary is already recorded
+        $paidThisMonth = SalaryPayment::where('month', now()->month)
+            ->where('year', now()->year)
+            ->pluck('staff_id')
+            ->unique();
+
+        return view('staff.index', compact('staff', 'totalSalary', 'paidThisMonth'));
     }
 
     public function create()

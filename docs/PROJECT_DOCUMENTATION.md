@@ -295,6 +295,8 @@ Har major screen ka screenshot `docs/screenshots/` mein hai (demo data ke sath l
 | 14–17 | Chicken shop: Dashboard, Daily Rates, Supply Orders, Day End |
 | 18–22 | Coaching: Dashboard, Students, Enroll form, Fee Collection, Courses & Batches |
 | 23 | Admin tenants list |
+| 24 | Staff & Salaries (This Month Paid/Due badges) |
+| 25 | Quotation with WhatsApp share button |
 
 ### 10.4b UI improvement candidates (design better karne ke liye)
 1. **Mobile responsiveness** — sidebar mobile par kaisi behave karti hai, tables horizontal scroll — audit needed.
@@ -304,21 +306,21 @@ Har major screen ka screenshot `docs/screenshots/` mein hai (demo data ke sath l
 5. **Confirmation dialogs** — native `confirm()` use hota hai; styled modal better hoga.
 6. **Form validation UX** — errors page-top par hain; inline field errors better honge.
 7. Modals JS `classList` aur Alpine dono se ban rahe hain — **ek pattern standardize** karein.
-8. **Dashboard profit card bug**: jab loss ho to number positive dikhta hai lekin label "Net loss today" — minus sign ya sirf color se clear karna chahiye (screenshot 03 aur 14 mein visible).
+8. ~~**Dashboard profit card bug**~~ ✅ FIXED — loss par ab "− PKR ..." minus sign ke sath dikhta hai (teeno dashboards + product report).
 
 ---
 
 ## 11. Known Gaps / Pending Work (Claude ko dene ke liye TODO list)
 
 ### Functional
-1. **Reports Module** — abhi basic hai; sales/profit/stock/party-wise detailed reports with date range + export (user ne defer kiya tha).
-2. **Staff Salary UI** — payment history, month-wise due tracking, salary slips.
-3. **WhatsApp Share** — quotations/invoices/receipts WhatsApp par bhejna (abhi sirf coaching fee reminders mein hai).
+1. ~~**Reports Module**~~ ✅ DONE — product shops ke liye dedicated report (`reports/product.blade.php`): P&L cards, stock valuation (cost/sale/margin), 6-month trend chart, top 10 products, payment-method breakdown, expense categories, low-stock table. Chicken report pehle jaisi. **Baqi**: CSV/PDF export.
+2. ~~**Staff Salary UI**~~ ✅ DONE — staff list par "This Month" column (Paid/Due badge, current month ki salary record ke hisaab se). Show page par pay form + history pehle se thi. **Baqi**: salary slips print.
+3. ~~**WhatsApp Share**~~ ✅ DONE — Quotation show, POS receipt aur Open Tab receipt par WhatsApp button (poora itemized bill Roman Urdu greeting ke sath pre-filled).
 4. **School System** — coaching module ko extend karke: classes/sections, teachers ki salary link, attendance, (baad mein exams).
 5. **Coaching**: student attendance, fee months ka carry-forward/arrears view, admission fee (one-time) ka concept nahi hai.
 6. **Open Tabs**: sidebar link sirf product shops mein — tab history/reporting nahi hai.
-7. **Stock**: stock movement history ka UI, stock valuation report.
-8. **Subscription enforcement** — plan expire hone par tenant block hota hai ya nahi, verify/enforce karna.
+7. **Stock**: stock movement history ka UI. (Stock valuation ab Reports mein hai ✅)
+8. ~~**Subscription enforcement**~~ ✅ VERIFIED — `CheckTenantSubscription` middleware pehle se maujood hai: inactive tenant → suspended page (403), expired plan → expired page (402).
 9. **Google Drive backup** — functional status verify karna.
 10. **Notifications** — low stock, plan expiry, fee due ka koi alert system nahi (email/WhatsApp).
 
@@ -327,7 +329,7 @@ Har major screen ka screenshot `docs/screenshots/` mein hai (demo data ke sath l
 2. **Authorization** — role-based permissions (owner vs staff) granular nahi hain.
 3. **Validation** — kuch controllers mein `numeric` amounts par max limits nahi.
 4. **N+1 queries** — kuch dashboards par eager loading audit.
-5. **Receipt numbers** — `nextNumber()` race condition (2 sath requests par duplicate ho sakta hai; DB transaction/lock better).
+5. **Receipt numbers** — `nextNumber()` race condition (2 sath requests par duplicate ho sakta hai; DB transaction/lock better). *(Coaching ka NULL-receipt duplicate bug fix ho gaya ✅ — ab highest issued receipt se next number banta hai.)*
 6. **Soft deletes** — records hard-delete hote hain; audit trail ke liye soft deletes consider karein.
 
 ---

@@ -61,7 +61,7 @@
           <i data-lucide="{{ $todayProfit >= 0 ? 'circle-dollar-sign' : 'trending-down' }}" class="w-4 h-4 text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-600"></i>
         </div>
       </div>
-      <p class="text-2xl font-bold text-{{ $todayProfit >= 0 ? 'green-700' : 'red-700' }}">{{ formatCurrency(abs($todayProfit)) }}</p>
+      <p class="text-2xl font-bold text-{{ $todayProfit >= 0 ? 'green-700' : 'red-700' }}">{{ ($todayProfit < 0 ? '− ' : '') . formatCurrency(abs($todayProfit)) }}</p>
       <p class="text-xs text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-500 mt-1">{{ $todayProfit >= 0 ? 'Net profit' : 'Net loss' }} today</p>
     </div>
   </div>
