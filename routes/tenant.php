@@ -35,6 +35,8 @@ use App\Http\Controllers\CoachingCourseController;
 use App\Http\Controllers\CoachingStudentController;
 use App\Http\Controllers\CoachingFeeController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\DataExportController;
+use App\Http\Controllers\StockMovementController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -164,6 +166,7 @@ Route::middleware([
             Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->middleware('owner')->name('staff.destroy');
             Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
             Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
+            Route::get('/staff/{staff}/salary-slip/{payment}', [StaffController::class, 'salarySlip'])->name('staff.salary-slip');
         });
 
         // Udhar Book
@@ -248,6 +251,13 @@ Route::middleware([
         Route::get('/coaching/fees', [CoachingFeeController::class, 'index'])->name('coaching.fees.index');
         Route::post('/coaching/fees/{fee}/collect', [CoachingFeeController::class, 'collect'])->name('coaching.fees.collect');
         Route::get('/coaching/fees/{fee}/receipt', [CoachingFeeController::class, 'receipt'])->name('coaching.fees.receipt');
+
+        // Data Export (owner only)
+        Route::get('/settings/export-data', [DataExportController::class, 'download'])
+            ->middleware('owner')->name('data.export');
+
+        // Stock movement history
+        Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
 
         // Activity Log (audit trail — owner only)
         Route::get('/activity-log', [ActivityLogController::class, 'index'])

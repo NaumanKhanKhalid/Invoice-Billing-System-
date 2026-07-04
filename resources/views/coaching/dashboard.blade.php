@@ -24,7 +24,7 @@
     </div>
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5 text-center">
       <p class="text-xs text-red-500 font-semibold uppercase tracking-wider mb-1">Fee Pending</p>
-      <p class="text-2xl font-bold text-red-600">PKR {{ number_format($pending) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-red-600">PKR {{ number_format($pending) }}</p>
     </div>
   </div>
 
@@ -33,18 +33,18 @@
     <h2 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
       <i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i>{{ $monthLabel }} Fee Collection
     </h2>
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-3 grid-stack-sm gap-4">
       <div class="text-center p-4 bg-green-50 rounded-xl">
         <p class="text-xs text-green-600 font-semibold uppercase mb-1">Collected</p>
-        <p class="text-2xl font-bold text-green-700">PKR {{ number_format($collected) }}</p>
+        <p class="kpi-value money text-2xl font-bold text-green-700">PKR {{ number_format($collected) }}</p>
       </div>
       <div class="text-center p-4 bg-slate-50 rounded-xl">
         <p class="text-xs text-slate-500 font-semibold uppercase mb-1">Expected</p>
-        <p class="text-2xl font-bold text-slate-700">PKR {{ number_format($expected) }}</p>
+        <p class="kpi-value money text-2xl font-bold text-slate-700">PKR {{ number_format($expected) }}</p>
       </div>
       <div class="text-center p-4 bg-red-50 rounded-xl">
         <p class="text-xs text-red-500 font-semibold uppercase mb-1">Remaining</p>
-        <p class="text-2xl font-bold text-red-600">PKR {{ number_format($pending) }}</p>
+        <p class="kpi-value money text-2xl font-bold text-red-600">PKR {{ number_format($pending) }}</p>
       </div>
     </div>
     @if($expected > 0)

@@ -5,9 +5,27 @@
 
 <style>
   #main-content { padding: 0 !important; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
+  /* Mobile cart slide-up (compiled Tailwind lacks translate-y responsive variants) */
+  @media (max-width: 767px) {
+    .pos-cart { transform: translateY(100%); }
+    .pos-cart.open { transform: translateY(0); }
+  }
 </style>
 
-<div class="flex flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
+<div class="flex flex-col flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
+
+  {{-- ══ Offline queue banner ══ --}}
+  <div x-show="offlineQueue.length > 0" x-cloak
+       class="bg-amber-100 border-b border-amber-300 px-4 py-2 flex items-center gap-3 shrink-0">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.29 3.86-8.47 14.14A2 2 0 0 0 3.53 21h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+    <p class="text-xs sm:text-sm font-semibold text-amber-800 flex-1"
+       x-text="offlineQueue.length + ' sales offline saved hain — net aane par khud sync ho jayengi'"></p>
+    <button type="button" @click="syncQueue()" :disabled="syncing"
+            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition shrink-0"
+            x-text="syncing ? 'Syncing...' : 'Sync Now'"></button>
+  </div>
+
+  <div class="flex flex-1 min-h-0 overflow-hidden">
 
   {{-- ══ LEFT: Products ══ --}}
   <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
@@ -60,7 +78,7 @@
     </div>
 
     {{-- Product grid --}}
-    <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+    <div class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4 flex flex-col gap-4">
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
         <template x-for="p in filtered" :key="p.id">
           <button type="button" @click="addToCart(p)"
@@ -98,7 +116,7 @@
       </div>
 
       {{-- Today at a Glance --}}
-      <div class="grid grid-cols-3 gap-3 mt-auto pt-2">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-auto pt-2">
         <div class="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -139,7 +157,10 @@
   </div>
 
   {{-- ══ RIGHT: Cart + Checkout ══ --}}
-  <div class="w-80 xl:w-96 flex flex-col bg-slate-900 shrink-0 border-l border-slate-800 overflow-hidden">
+  {{-- Mobile: full-screen slide-up panel; Desktop (md+): static sidebar --}}
+  {{-- Compiled Tailwind lacks translate-y-full/md:translate-y-0 variants, so slide is driven by custom .pos-cart CSS below --}}
+  <div class="pos-cart fixed inset-0 z-40 md:static md:z-auto w-full md:w-80 xl:w-96 flex flex-col bg-slate-900 shrink-0 md:border-l border-slate-800 overflow-hidden transition-transform duration-200 md:transition-none"
+       :class="mobileCartOpen ? 'open' : ''">
 
     {{-- Cart header --}}
     <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between shrink-0">
@@ -150,11 +171,15 @@
               class="bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
               x-text="cart.length"></span>
       </div>
-      <button @click="cart = []" x-show="cart.length > 0"
-              class="text-slate-500 hover:text-red-400 transition text-xs font-medium flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-        Clear
-      </button>
+      <div class="flex items-center gap-3">
+        <button @click="cart = []" x-show="cart.length > 0"
+                class="text-slate-500 hover:text-red-400 transition text-xs font-medium flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          Clear
+        </button>
+        <button type="button" @click="mobileCartOpen = false"
+                class="md:hidden w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center transition">✕</button>
+      </div>
     </div>
 
     {{-- Cart items (scrollable) --}}
@@ -192,15 +217,9 @@
 
     {{-- Checkout (fixed bottom) --}}
     <div class="shrink-0 border-t border-slate-800">
-      <form method="POST" action="{{ route('pos.store') }}">
+      {{-- Submitted via fetch (submitSale) so failed sales can be queued offline --}}
+      <form method="POST" action="{{ route('pos.store') }}" @submit.prevent="submitSale()">
         @csrf
-        <template x-for="(item, idx) in cart">
-          <div>
-            <input type="hidden" :name="'items['+idx+'][product_id]'" :value="item.id">
-            <input type="hidden" :name="'items['+idx+'][qty]'" :value="item.qty">
-            <input type="hidden" :name="'items['+idx+'][unit_price]'" :value="item.price">
-          </div>
-        </template>
 
         {{-- Totals --}}
         <div class="px-5 pt-3 pb-2 space-y-1.5">
@@ -242,7 +261,7 @@
 
         {{-- Customer + Cash --}}
         <div class="px-5 pb-2 space-y-2">
-          <input type="text" name="customer_name" placeholder="Customer name (optional)"
+          <input type="text" name="customer_name" x-model="customerName" placeholder="Customer name (optional)"
                  class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-500 outline-none focus:border-green-500 transition">
 
           <div class="flex gap-2">
@@ -261,15 +280,30 @@
 
         {{-- Submit --}}
         <div class="px-4 pb-4">
-          <button type="submit" :disabled="cart.length === 0"
+          <button type="submit" :disabled="cart.length === 0 || submitting"
                   class="w-full bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-500 text-white py-3 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span x-text="cart.length === 0 ? 'Add items to cart' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
+            <span x-text="submitting ? 'Processing...' : (cart.length === 0 ? 'Add items to cart' : 'Complete Sale — PKR ' + total.toLocaleString())"></span>
           </button>
         </div>
       </form>
     </div>
   </div>
+
+  </div>{{-- /flex row --}}
+
+  {{-- ══ Mobile cart bottom bar (<md) ══ --}}
+  <button type="button" @click="mobileCartOpen = true"
+          class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-slate-900 border-t border-slate-800 px-4 py-3 flex items-center justify-between text-left">
+    <span class="flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      <span class="text-white font-bold text-sm" x-text="cart.length + ' item(s)'"></span>
+    </span>
+    <span class="flex items-center gap-2">
+      <span class="text-white font-extrabold text-sm tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
+      <span class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl">View Cart</span>
+    </span>
+  </button>
 
   @if(feature_enabled('barcode_scanner'))
   {{-- Camera Modal --}}
@@ -316,12 +350,122 @@ function posApp() {
       { value: 'bank',      label: 'Bank',      icon: '🏦' },
       { value: 'credit',    label: 'Udhar',     icon: '📋' },
     ],
+    customerName: '',
+    submitting: false,
+    mobileCartOpen: false,
+    offlineQueue: [],
+    syncing: false,
+    QUEUE_KEY: 'pos_offline_queue',
     scanMsg: '', scanOk: true, scanTimer: null,
     scannerEnabled: {{ feature_enabled('barcode_scanner') ? 'true' : 'false' }},
     cameraOpen: false, cameraStatus: '', cameraError: '', lastCameraResult: '',
     html5Qr: null,
 
-    init() {},
+    init() {
+      this.loadQueue();
+      window.addEventListener('online', () => this.syncQueue());
+      // Try syncing anything left over from a previous session
+      this.syncQueue();
+    },
+
+    // ── Offline sale queue ──────────────────────────────────────
+    loadQueue() {
+      try { this.offlineQueue = JSON.parse(localStorage.getItem(this.QUEUE_KEY)) || []; }
+      catch (e) { this.offlineQueue = []; }
+    },
+
+    saveQueue() {
+      localStorage.setItem(this.QUEUE_KEY, JSON.stringify(this.offlineQueue));
+    },
+
+    makeUuid() {
+      return (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+    },
+
+    buildPayload() {
+      return {
+        client_uuid:    this.makeUuid(),
+        customer_name:  this.customerName || null,
+        payment_method: this.payMethod,
+        discount:       Number(this.discount || 0),
+        amount_paid:    Number(this.amountPaid || 0),
+        items:          this.cart.map(i => ({ product_id: i.id, qty: i.qty, unit_price: i.price })),
+      };
+    },
+
+    resetSale() {
+      this.cart = []; this.discount = 0; this.amountPaid = 0;
+      this.customerName = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
+    },
+
+    postSale(payload) {
+      return fetch('{{ route('pos.store') }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        },
+        body: JSON.stringify(payload),
+      });
+    },
+
+    queueSale(payload) {
+      this.offlineQueue.push(payload);
+      this.saveQueue();
+      this.resetSale();
+      this.flash('Net nahi hai — sale offline save ho gayi, baad mein sync hogi', true);
+    },
+
+    async submitSale() {
+      if (this.cart.length === 0 || this.submitting) return;
+      const payload = this.buildPayload();
+
+      if (!navigator.onLine) { this.queueSale(payload); return; }
+
+      this.submitting = true;
+      try {
+        const res = await this.postSale(payload);
+        if (res.ok) {
+          const json = await res.json();
+          window.location = json.receipt_url || '{{ route('pos.index') }}';
+          return;
+        }
+        // Server reached but rejected (e.g. validation / stock) — don't queue, show error
+        let msg = 'Sale save nahi hui (HTTP ' + res.status + ')';
+        try { const j = await res.json(); if (j.message) msg = j.message; } catch (e) {}
+        this.flash(msg, false);
+      } catch (e) {
+        // Network failure — queue for later sync
+        this.queueSale(payload);
+      } finally {
+        this.submitting = false;
+      }
+    },
+
+    async syncQueue() {
+      if (this.syncing || this.offlineQueue.length === 0 || !navigator.onLine) return;
+      this.syncing = true;
+      try {
+        for (const payload of [...this.offlineQueue]) {
+          try {
+            const res = await this.postSale(payload);
+            if (res.ok) {
+              this.offlineQueue = this.offlineQueue.filter(q => q.client_uuid !== payload.client_uuid);
+              this.saveQueue();
+            }
+            // Non-2xx: keep it queued, try again next time
+          } catch (e) {
+            break; // still offline — stop trying
+          }
+        }
+        if (this.offlineQueue.length === 0) this.flash('Sab offline sales sync ho gayin ✓', true);
+      } finally {
+        this.syncing = false;
+      }
+    },
 
     get categories() {
       return [...new Set(this.products.map(p => p.category).filter(Boolean))].sort();

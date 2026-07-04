@@ -2,14 +2,14 @@
 @section('title', $openTab->tab_number . ' — ' . $openTab->customer_name)
 @section('content')
 
-<div class="flex gap-4 min-h-0" style="height:calc(100vh - 4rem)"
+<div class="flex gap-4 min-h-0 mobile-h-auto" style="height:calc(100vh - 4rem)"
      x-data="tabManager({{ $openTab->id }}, {{ $openTab->status === 'closed' ? 'true' : 'false' }})">
 
   {{-- LEFT: Item Entry --}}
   <div class="flex flex-col flex-1 min-w-0 gap-4">
 
     {{-- Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between flex-wrap gap-3">
       <div class="flex items-center gap-3">
         <a href="{{ route('open-tabs.index') }}"
            class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-700 transition-colors">
@@ -135,7 +135,7 @@
         </p>
         <p class="text-xs text-slate-400">{{ $openTab->created_at->format('d M Y, h:i A') }}</p>
       </div>
-      <div class="overflow-y-auto flex-1">
+      <div class="overflow-y-auto flex-1 table-responsive">
         <table class="w-full">
           <thead class="bg-slate-50 border-b border-slate-100 sticky top-0">
             <tr>

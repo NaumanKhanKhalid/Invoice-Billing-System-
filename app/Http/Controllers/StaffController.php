@@ -99,4 +99,11 @@ class StaffController extends Controller
 
         return redirect()->route('staff.show', $staff)->with('success', 'Salary of PKR ' . number_format($data['amount'], 0) . ' recorded.');
     }
+
+    public function salarySlip(Staff $staff, SalaryPayment $payment)
+    {
+        abort_unless($payment->staff_id === $staff->id, 404);
+
+        return view('staff.salary-slip', compact('staff', 'payment'));
+    }
 }

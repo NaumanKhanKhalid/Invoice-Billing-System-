@@ -80,8 +80,9 @@
 
   {{-- Stock movement history --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="px-5 py-4 border-b border-slate-100">
-      <h2 class="font-semibold text-slate-900">Stock Movement History</h2>
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="font-semibold text-slate-900">Stock History</h2>
+      <a href="{{ route('stock-movements.index', ['product_id' => $product->id]) }}" class="text-sm text-green-600 hover:underline">View All &rarr;</a>
     </div>
     @if($movements->count())
     <table class="w-full">
@@ -113,7 +114,6 @@
         @endforeach
       </tbody>
     </table>
-    <div class="px-4 py-3 border-t border-slate-100">{{ $movements->links() }}</div>
     @else
     <div class="px-4 py-8 text-center text-slate-400 text-sm">No stock movements yet</div>
     @endif

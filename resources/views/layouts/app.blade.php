@@ -116,6 +116,26 @@
             .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
             .table-responsive table { min-width: 520px; }
         }
+
+        /* ── Mobile responsiveness helpers ── */
+        .money { overflow-wrap: anywhere; word-break: break-word; }
+        @media (max-width: 640px) {
+            /* Shrink large PKR figures so they don't overflow KPI cards */
+            .kpi-value { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+            /* Collapse multi-column stat/input grids to a single column */
+            .grid-stack-sm { grid-template-columns: minmax(0, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+            /* FAB speed dial: smaller, tucked in, clear of iOS safe area */
+            .fab-dial {
+                bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+                right: 1rem !important;
+            }
+            .fab-dial .fab-main { width: 3rem; height: 3rem; }
+            .fab-dial .fab-main svg { width: 1.25rem; height: 1.25rem; }
+            /* Full-height desktop screens flow naturally on mobile */
+            .mobile-h-auto { height: auto !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex">
@@ -404,7 +424,7 @@
 
     @if($isTenantCtx)
     <!-- ── Floating Speed Dial (tenant only) ── -->
-    <div x-data="{ open: false }" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+    <div x-data="{ open: false }" class="fab-dial fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       <div x-show="open" x-cloak
            x-transition:enter="transition ease-out duration-150"
            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
@@ -464,7 +484,7 @@
       </div>
 
       <button @click="open = !open"
-              class="w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all duration-200"
+              class="fab-main w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all duration-200"
               :class="open ? 'rotate-45 bg-slate-700 hover:bg-slate-800' : ''">
         <i data-lucide="plus" class="w-6 h-6"></i>
       </button>

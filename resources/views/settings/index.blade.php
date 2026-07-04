@@ -110,6 +110,19 @@
         </div>
     </div>
 
+    {{-- Data Export --}}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <h2 class="font-semibold text-slate-900 mb-1 flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4 text-green-600"></i>
+            Export My Data
+        </h2>
+        <p class="text-sm text-slate-500 mb-4">Apna poora shop data (sales, udhar, products, expenses — sab kuch) CSV files ki ZIP mein download karein.</p>
+        <a href="{{ route('data.export') }}"
+           class="inline-flex items-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            <i data-lucide="archive" class="w-4 h-4"></i>Download ZIP
+        </a>
+    </div>
+
     <!-- Feature Toggles -->
     <form method="POST" action="{{ route('settings.update') }}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         @csrf
@@ -126,6 +139,19 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             @foreach(config('features') as $fKey => $f)
                 @continue($f['shop_types'] !== null && !in_array($shopTypeForFeatures, $f['shop_types']))
+                @php $planLocked = !plan_allows($fKey); @endphp
+                @if($planLocked)
+                <div class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 opacity-70">
+                    <i data-lucide="lock" class="mt-0.5 w-4 h-4 text-slate-400 flex-shrink-0"></i>
+                    <span class="flex-1 min-w-0">
+                        <span class="flex items-center gap-2 text-sm font-medium text-slate-500">
+                            <i data-lucide="{{ $f['icon'] }}" class="w-3.5 h-3.5 text-slate-400"></i>{{ $f['label'] }}
+                            <span class="text-[10px] font-bold uppercase bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">{{ ucfirst($f['min_plan'] ?? 'pro') }} plan</span>
+                        </span>
+                        <span class="block text-xs text-slate-400 mt-0.5">Ye feature {{ ucfirst($f['min_plan'] ?? 'pro') }} plan mein milta hai — upgrade ke liye admin se raabta karein.</span>
+                    </span>
+                </div>
+                @else
                 <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 hover:border-green-300 hover:bg-green-50/40 cursor-pointer transition-colors">
                     <input type="checkbox" name="features[]" value="{{ $fKey }}"
                            @checked(feature_enabled($fKey))
@@ -137,12 +163,14 @@
                         <span class="block text-xs text-slate-400 mt-0.5">{{ $f['description'] }}</span>
                     </span>
                 </label>
+                @endif
             @endforeach
         </div>
     </form>
 
     <form method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data" class="space-y-5">
         @csrf
+        <input type="hidden" name="company_form" value="1">
 
         <!-- Company Info -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
@@ -193,6 +221,31 @@
                       </select>
                       <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                     </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">NTN Number (optional)</label>
+                    <input type="text" name="ntn_number" value="{{ $settings['ntn_number'] ?? '' }}"
+                           class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
+                           placeholder="1234567-8">
+                    <p class="text-xs text-slate-400 mt-1">FBR registered shops ke liye — receipt par show hoga</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Sales Tax % (optional)</label>
+                    <input type="number" name="sales_tax_percent" value="{{ $settings['sales_tax_percent'] ?? '' }}" min="0" max="100" step="0.01"
+                           class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
+                           placeholder="18">
+                    <p class="text-xs text-slate-400 mt-1">FBR registered shops ke liye — receipt par show hoga</p>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 hover:border-green-300 hover:bg-green-50/40 cursor-pointer transition-colors">
+                        <input type="checkbox" name="hide_branding" value="1"
+                               @checked(($settings['hide_branding'] ?? '0') === '1')
+                               class="mt-0.5 w-4 h-4 rounded border-slate-300 text-green-600 focus:ring-green-500">
+                        <span class="flex-1 min-w-0">
+                            <span class="text-sm font-medium text-slate-800">Apni branding (receipt se 'Powered by ShopSaas' hatao)</span>
+                            <span class="block text-xs text-slate-400 mt-0.5">On karne par receipts sirf aapki shop ki branding dikhayengi.</span>
+                        </span>
+                    </label>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Timezone</label>

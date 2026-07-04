@@ -25,6 +25,10 @@
               class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <i data-lucide="filter" class="w-4 h-4"></i>Apply
       </button>
+      <a href="{{ route('reports.index', ['from_date' => $from, 'to_date' => $to, 'export' => 'csv']) }}"
+         class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="download" class="w-4 h-4"></i>Export CSV
+      </a>
     </form>
   </div>
 

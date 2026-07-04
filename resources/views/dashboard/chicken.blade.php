@@ -28,7 +28,7 @@
           <i data-lucide="trending-up" class="w-4 h-4 text-green-600"></i>
         </div>
       </div>
-      <p class="text-2xl font-bold text-slate-900">{{ formatCurrency($todaySales) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-slate-900">{{ formatCurrency($todaySales) }}</p>
       <p class="text-xs text-slate-400 mt-1">Supply orders today</p>
     </div>
 
@@ -39,7 +39,7 @@
           <i data-lucide="package-search" class="w-4 h-4 text-orange-600"></i>
         </div>
       </div>
-      <p class="text-2xl font-bold text-orange-600">{{ formatCurrency($todayPurchases) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-orange-600">{{ formatCurrency($todayPurchases) }}</p>
       <p class="text-xs text-slate-400 mt-1">Murgi purchased today</p>
     </div>
 
@@ -50,7 +50,7 @@
           <i data-lucide="wallet" class="w-4 h-4 text-red-500"></i>
         </div>
       </div>
-      <p class="text-2xl font-bold text-red-500">{{ formatCurrency($todayExpenses) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-red-500">{{ formatCurrency($todayExpenses) }}</p>
       <p class="text-xs text-slate-400 mt-1">Daily expenses</p>
     </div>
 
@@ -61,7 +61,7 @@
           <i data-lucide="{{ $todayProfit >= 0 ? 'circle-dollar-sign' : 'trending-down' }}" class="w-4 h-4 text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-600"></i>
         </div>
       </div>
-      <p class="text-2xl font-bold text-{{ $todayProfit >= 0 ? 'green-700' : 'red-700' }}">{{ ($todayProfit < 0 ? '− ' : '') . formatCurrency(abs($todayProfit)) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-{{ $todayProfit >= 0 ? 'green-700' : 'red-700' }}">{{ ($todayProfit < 0 ? '− ' : '') . formatCurrency(abs($todayProfit)) }}</p>
       <p class="text-xs text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-500 mt-1">{{ $todayProfit >= 0 ? 'Net profit' : 'Net loss' }} today</p>
     </div>
   </div>
@@ -75,7 +75,7 @@
           <i data-lucide="calendar" class="w-4 h-4 text-green-600"></i>
         </div>
       </div>
-      <p class="text-xl font-bold text-green-600">{{ formatCurrency($monthSales) }}</p>
+      <p class="money text-xl font-bold text-green-600">{{ formatCurrency($monthSales) }}</p>
       <p class="text-xs text-slate-400 mt-1">{{ now()->format('M Y') }} supply revenue</p>
     </div>
 
@@ -86,7 +86,7 @@
           <i data-lucide="bar-chart-2" class="w-4 h-4 text-{{ $monthProfit >= 0 ? 'green' : 'red' }}-600"></i>
         </div>
       </div>
-      <p class="text-xl font-bold text-{{ $monthProfit >= 0 ? 'green-700' : 'red-700' }}">{{ ($monthProfit < 0 ? '− ' : '') . formatCurrency(abs($monthProfit)) }}</p>
+      <p class="money text-xl font-bold text-{{ $monthProfit >= 0 ? 'green-700' : 'red-700' }}">{{ ($monthProfit < 0 ? '− ' : '') . formatCurrency(abs($monthProfit)) }}</p>
       <p class="text-xs text-slate-400 mt-1">{{ $monthProfit >= 0 ? 'Profit' : 'Loss' }} this month</p>
     </div>
 
@@ -97,7 +97,7 @@
           <i data-lucide="truck" class="w-4 h-4 text-purple-600"></i>
         </div>
       </div>
-      <p class="text-xl font-bold text-slate-900">{{ formatCurrency($supplierDue) }}</p>
+      <p class="money text-xl font-bold text-slate-900">{{ formatCurrency($supplierDue) }}</p>
       <p class="text-xs text-slate-400 mt-1">Payable to suppliers</p>
     </div>
 
@@ -123,7 +123,7 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <div class="text-center p-3 rounded-lg bg-{{ $udharTotalDue > 0 ? 'red' : 'slate' }}-50 border border-{{ $udharTotalDue > 0 ? 'red' : 'slate' }}-100">
-        <p class="text-lg font-bold text-{{ $udharTotalDue > 0 ? 'red-600' : 'slate-400' }}">{{ formatCurrency($udharTotalDue) }}</p>
+        <p class="money text-lg font-bold text-{{ $udharTotalDue > 0 ? 'red-600' : 'slate-400' }}">{{ formatCurrency($udharTotalDue) }}</p>
         <p class="text-xs text-slate-500 mt-0.5">Total Pending</p>
       </div>
       <div class="text-center p-3 rounded-lg bg-{{ $udharOverdueCount > 0 ? 'red' : 'slate' }}-50 border border-{{ $udharOverdueCount > 0 ? 'red' : 'slate' }}-100">

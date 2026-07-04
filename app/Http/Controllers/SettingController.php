@@ -28,12 +28,14 @@ class SettingController extends Controller
             'currency'      => 'nullable|in:PKR,USD,EUR',
             'timezone'      => 'nullable|string',
             'logo' => 'nullable|image|max:2048',
+            'ntn_number' => 'nullable|string|max:20',
+            'sales_tax_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $fields = [
             'company_name', 'company_address', 'company_phone',
             'company_email', 'invoice_prefix', 'default_tax_rate', 'default_terms',
-            'currency', 'timezone',
+            'currency', 'timezone', 'ntn_number', 'sales_tax_percent',
         ];
 
         foreach ($fields as $field) {
@@ -45,6 +47,12 @@ class SettingController extends Controller
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('logos', 'public');
             $this->settingService->set('logo_path', $path);
+        }
+
+        // White-labeling — checkbox absent means off, but only process when
+        // the Company Information form was submitted (mirrors features_form)
+        if ($request->has('company_form')) {
+            $this->settingService->set('hide_branding', $request->has('hide_branding') ? '1' : '0');
         }
 
         // Feature toggles — checkboxes post enabled keys under features[];

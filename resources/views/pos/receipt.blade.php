@@ -36,7 +36,13 @@
   <div id="receipt" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 font-mono text-sm">
     @php $shopName = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop'); @endphp
     <div class="text-center mb-4">
+      @if($logoPath = \App\Models\Setting::getValue('logo_path'))
+      <img src="{{ asset('storage/'.$logoPath) }}" alt="{{ $shopName }}" class="max-h-16 mx-auto mb-2">
+      @endif
       <h1 class="text-lg font-bold">{{ $shopName }}</h1>
+      @if($ntn = \App\Models\Setting::getValue('ntn_number'))
+      <p class="text-xs text-slate-500">NTN: {{ $ntn }}</p>
+      @endif
       @if($phone = \App\Models\Setting::getValue('company_phone'))
       <p class="text-xs text-slate-500">{{ $phone }}</p>
       @endif
@@ -95,11 +101,16 @@
         <span>Change</span><span>{{ number_format($posSale->change_due) }}</span>
       </div>
       @endif
+      @if(($taxPercent = \App\Models\Setting::getValue('sales_tax_percent')) && $taxPercent > 0)
+      <p class="text-slate-400 text-center">Prices inclusive of {{ $taxPercent + 0 }}% sales tax</p>
+      @endif
     </div>
 
     <div class="border-t border-dashed border-slate-300 mt-3 pt-3 text-center text-xs text-slate-400">
       <p>Shukriya! Dobara tashreef layen.</p>
+      @if(!\App\Models\Setting::getValue('hide_branding'))
       <p class="mt-1">Powered by ShopSaas</p>
+      @endif
     </div>
   </div>
 </div>
@@ -127,6 +138,7 @@
   }
   #receipt h1 { font-size: 13px !important; font-weight: bold !important; }
   #receipt .border-dashed { border-color: #000 !important; }
+  #receipt img { max-height: 15mm !important; width: auto !important; margin: 0 auto 1mm !important; }
 }
 </style>
 @endsection

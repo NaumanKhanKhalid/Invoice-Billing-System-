@@ -42,6 +42,9 @@
     <div class="bg-slate-900 text-white text-center px-6 py-6">
       @php $shopName = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'My Shop'); @endphp
       <h1 class="text-xl font-bold tracking-wide">{{ $shopName }}</h1>
+      @if($ntn = \App\Models\Setting::getValue('ntn_number'))
+      <p class="text-slate-400 text-xs mt-1">NTN: {{ $ntn }}</p>
+      @endif
       @php $phone = \App\Models\Setting::getValue('phone'); $address = \App\Models\Setting::getValue('address'); @endphp
       @if($phone)<p class="text-slate-400 text-xs mt-1">{{ $phone }}</p>@endif
       @if($address)<p class="text-slate-400 text-xs">{{ $address }}</p>@endif
@@ -129,6 +132,9 @@
           PKR {{ number_format(abs($change)) }}
         </span>
       </div>
+      @endif
+      @if(($taxPercent = \App\Models\Setting::getValue('sales_tax_percent')) && $taxPercent > 0)
+      <p class="text-xs text-slate-400 text-center pt-1">Prices inclusive of {{ $taxPercent + 0 }}% sales tax</p>
       @endif
     </div>
 

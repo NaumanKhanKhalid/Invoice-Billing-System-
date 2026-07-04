@@ -42,6 +42,7 @@
             <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date Paid</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Note</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Slip</th>
           </tr></thead>
           <tbody class="divide-y divide-slate-100">
             @forelse($staff->salaryPayments->sortByDesc('payment_date') as $p)
@@ -50,9 +51,14 @@
               <td class="px-4 py-3 text-sm text-right font-medium text-green-600">{{ formatCurrency($p->amount) }}</td>
               <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($p->payment_date)->format('d M Y') }}</td>
               <td class="px-4 py-3 text-sm text-slate-500">{{ $p->note ?? '-' }}</td>
+              <td class="px-4 py-3 text-sm text-right">
+                <a href="{{ route('staff.salary-slip', [$staff, $p]) }}" class="inline-flex items-center gap-1 text-slate-500 hover:text-slate-700 font-medium">
+                  <i data-lucide="receipt" class="w-4 h-4"></i>Slip
+                </a>
+              </td>
             </tr>
             @empty
-            <tr><td colspan="4" class="px-4 py-6 text-center text-slate-400 text-sm">No salary payments yet.</td></tr>
+            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">No salary payments yet.</td></tr>
             @endforelse
           </tbody>
         </table>

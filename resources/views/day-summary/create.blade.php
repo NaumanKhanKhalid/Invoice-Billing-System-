@@ -13,7 +13,7 @@
 }">
 
   {{-- Header --}}
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between flex-wrap gap-3">
     <div class="flex items-center gap-3">
       <a href="{{ route('day-summary.index') }}"
          class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-700 transition-colors">
@@ -48,17 +48,17 @@
     </div>
     <div class="bg-white rounded-xl border border-green-200 shadow-sm p-4">
       <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">POS Revenue</p>
-      <p class="text-2xl font-bold text-green-700">PKR {{ number_format($posRevenue) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-green-700">PKR {{ number_format($posRevenue) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">Auto from POS</p>
     </div>
     <div class="bg-white rounded-xl border border-orange-200 shadow-sm p-4">
       <p class="text-xs text-orange-500 font-semibold uppercase tracking-wider mb-1">Expenses</p>
-      <p class="text-2xl font-bold text-orange-600">PKR {{ number_format($totalExpenses) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-orange-600">PKR {{ number_format($totalExpenses) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">Auto from expenses</p>
     </div>
     <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-4">
       <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider mb-1">Purchases</p>
-      <p class="text-2xl font-bold text-blue-600">PKR {{ number_format($purchaseCost) }}</p>
+      <p class="kpi-value money text-2xl font-bold text-blue-600">PKR {{ number_format($purchaseCost) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">Stock purchased</p>
     </div>
   </div>
@@ -98,7 +98,7 @@
 
         {{-- Live Calculation --}}
         <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
-          <div class="grid grid-cols-3 gap-4 text-center">
+          <div class="grid grid-cols-3 grid-stack-sm gap-4 text-center">
             <div>
               <p class="text-xs text-slate-500 mb-1">Expected Cash</p>
               <p class="text-lg font-bold text-slate-800" x-text="'PKR ' + Math.round(expectedCash).toLocaleString()"></p>

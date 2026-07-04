@@ -36,13 +36,34 @@ class PosController extends Controller
             'discount'           => 'nullable|numeric|min:0',
             'amount_paid'        => 'required|numeric|min:0',
             'notes'              => 'nullable|string',
+            'client_uuid'        => 'nullable|string|max:64',
             'items'              => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.qty'        => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        DB::transaction(function () use ($data) {
+        // Offline-queue dedupe: the POS page retries queued sales when the
+        // connection comes back, so the same sale may be POSTed twice. We tag
+        // each sale with its client_uuid inside the existing `notes` column
+        // (no schema change) and skip creating a duplicate if already stored.
+        $clientUuid = $data['client_uuid'] ?? null;
+        if ($clientUuid) {
+            $existing = PosSale::where('notes', 'like', '%[client_uuid:' . $clientUuid . ']%')->first();
+            if ($existing) {
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'ok'          => true,
+                        'sale_number' => $existing->sale_number,
+                        'receipt_url' => route('pos.receipt', $existing),
+                        'duplicate'   => true,
+                    ]);
+                }
+                return redirect()->route('pos.receipt', $existing)->with('success', 'Sale complete!');
+            }
+        }
+
+        DB::transaction(function () use ($data, $clientUuid) {
             $subtotal = collect($data['items'])->sum(fn($i) => $i['qty'] * $i['unit_price']);
             $discount = (float)($data['discount'] ?? 0);
             $total    = max(0, $subtotal - $discount);
@@ -72,7 +93,7 @@ class PosController extends Controller
                 'amount_paid'    => $paid,
                 'change_due'     => $change,
                 'payment_method' => $data['payment_method'],
-                'notes'          => $data['notes'] ?? null,
+                'notes'          => trim(($data['notes'] ?? '') . ($clientUuid ? ' [client_uuid:' . $clientUuid . ']' : '')) ?: null,
             ]);
 
             foreach ($data['items'] as $item) {
@@ -92,6 +113,16 @@ class PosController extends Controller
 
             session(['last_pos_sale_id' => $sale->id]);
         });
+
+        $sale = PosSale::find(session('last_pos_sale_id'));
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok'          => true,
+                'sale_number' => $sale?->sale_number,
+                'receipt_url' => $sale ? route('pos.receipt', $sale) : route('pos.index'),
+            ]);
+        }
 
         return redirect()->route('pos.receipt', session('last_pos_sale_id'))
             ->with('success', 'Sale complete!');

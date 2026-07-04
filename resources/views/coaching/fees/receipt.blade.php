@@ -17,8 +17,14 @@
   <div id="receipt" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
     {{-- Header --}}
     <div class="bg-slate-800 text-white px-6 py-5 text-center">
+      @if($logoPath = \App\Models\Setting::getValue('logo_path'))
+      <img src="{{ asset('storage/'.$logoPath) }}" alt="Logo" class="max-h-16 mx-auto mb-2">
+      @endif
       <h1 class="text-xl font-bold">Fee Receipt</h1>
-      <p class="text-slate-300 text-sm mt-1">{{ config('app.name') }}</p>
+      <p class="text-slate-300 text-sm mt-1">{{ \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? config('app.name')) }}</p>
+      @if($ntn = \App\Models\Setting::getValue('ntn_number'))
+      <p class="text-slate-300 text-xs mt-0.5">NTN: {{ $ntn }}</p>
+      @endif
     </div>
 
     <div class="px-6 py-5 space-y-5">
@@ -84,6 +90,9 @@
           <span>PKR {{ number_format($fee->balance_due) }}</span>
         </div>
         @endif
+        @if(($taxPercent = \App\Models\Setting::getValue('sales_tax_percent')) && $taxPercent > 0)
+        <p class="text-xs text-slate-400 text-center pt-1">Prices inclusive of {{ $taxPercent + 0 }}% sales tax</p>
+        @endif
       </div>
 
       {{-- Status Badge --}}
@@ -136,6 +145,7 @@
   #receipt [class*="py-"] { padding-top: 1mm !important; padding-bottom: 1mm !important; }
   #receipt [class*="border"] { border-color: #000 !important; }
   #receipt .rounded-full { border: 1px solid #000 !important; }
+  #receipt img { max-height: 15mm !important; width: auto !important; margin: 0 auto 1mm !important; }
 }
 </style>
 @endsection

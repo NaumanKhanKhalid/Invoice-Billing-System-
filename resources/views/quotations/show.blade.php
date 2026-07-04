@@ -66,6 +66,9 @@ $statusClass = [
         <div>
           <p class="text-sm font-medium opacity-80">QUOTATION / ESTIMATE</p>
           <p class="text-2xl font-bold mt-0.5">{{ $quotation->quote_number }}</p>
+          @if($ntn = \App\Models\Setting::getValue('ntn_number'))
+          <p class="text-xs opacity-70 mt-0.5">NTN: {{ $ntn }}</p>
+          @endif
         </div>
         <div class="text-right">
           <p class="text-sm opacity-80">Date</p>
@@ -127,6 +130,9 @@ $statusClass = [
         <span>TOTAL</span>
         <span class="text-green-700">PKR {{ number_format($quotation->total) }}</span>
       </div>
+      @if(($taxPercent = \App\Models\Setting::getValue('sales_tax_percent')) && $taxPercent > 0)
+      <p class="text-xs text-slate-400 text-center pt-1">Prices inclusive of {{ $taxPercent + 0 }}% sales tax</p>
+      @endif
     </div>
 
     @if($quotation->notes)
