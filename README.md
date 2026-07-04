@@ -18,7 +18,13 @@
     <td><img src="docs/screenshots/18-coaching-dashboard.png" alt="Coaching center dashboard" /></td>
     <td><img src="docs/screenshots/13-hardware-reports.png" alt="Reports" /></td>
   </tr>
+  <tr>
+    <td><img src="docs/screenshots/26-settings-feature-toggles.png" alt="Per-tenant feature toggles" /></td>
+    <td><img src="docs/screenshots/28-activity-log.png" alt="Activity log (audit trail)" /></td>
+  </tr>
 </table>
+
+*All 28 screenshots in [`docs/screenshots/`](docs/screenshots/); full module-by-module documentation in [`docs/PROJECT_DOCUMENTATION.md`](docs/PROJECT_DOCUMENTATION.md).*
 
 ## Key Features
 
@@ -28,14 +34,19 @@
 - **Open Tabs** — running bills for walk-in customers, settle later
 - **Udhar (credit) book** — track credit sales and partial payments, a Pakistani market staple
 - **Day closing** — end-of-day cash reconciliation against recorded sales
-- **Coaching center module** — students, fee vouchers, receipts
-- **Per-tenant feature toggles** — enable/disable modules per client via a central feature registry
+- **Coaching center module** — courses, batches, students, monthly fee collection with receipts and WhatsApp fee reminders
+- **Quotations** — estimates with status tracking (draft → sent → accepted)
+- **Reports & analytics** — P&L, stock valuation, top products, payment-method breakdown, 6-month trend charts
+- **Per-tenant feature toggles** — every module (receipt printing, WhatsApp, open tabs, reports…) can be switched on/off from Settings
+- **Stock guard** — optional block on overselling; race-safe sequential bill numbers under concurrent checkouts
 - **WhatsApp sharing** — send itemized receipts and quotations with one tap
 - **Thermal receipt printing** — 80mm-friendly receipt layouts
 - **Audit trail** — activity logging across tenant actions
 - **Role-based access** — owner / manager / cashier permissions
 - **Admin impersonation** — central admin can log in as any tenant for support
 - **Google Drive backup** — per-tenant database backups
+- **Staff & salaries** — payroll tracking with month-wise paid/due status
+- **Demo data seeding** — one-click realistic Karachi-market sample data per shop type
 
 ## Architecture
 
