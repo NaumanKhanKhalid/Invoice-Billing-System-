@@ -83,6 +83,10 @@ Tenants are created from the central admin panel (`/admin`); each new tenant's d
 php artisan tenants:run "migrate"
 ```
 
+## Subscription Plans
+
+Tenants subscribe on **Basic / Pro / Business** plans (1–12 months). Expired or suspended shops are automatically blocked by middleware until renewal — plan management, renewals, and payment history live in the central admin panel.
+
 ## Roadmap
 
 - FBR-compliant tax fields on invoices
@@ -92,4 +96,4 @@ php artisan tenants:run "migrate"
 
 ## License
 
-Copyright © 2026. **All rights reserved.** This is a commercial project; the source is published for portfolio/review purposes only. No use, copying, or distribution without written permission.
+Copyright © 2026 ShopSaas. **All rights reserved.** This is proprietary commercial software. No use, copying, modification, or distribution without written permission.
