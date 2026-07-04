@@ -12,6 +12,7 @@
 
 return [
     'receipt_print' => [
+        'min_plan'    => 'basic',
         'label'       => 'Receipt Printing',
         'description' => 'Receipts par Print button (thermal/A4 printer ke liye)',
         'icon'        => 'printer',
@@ -19,6 +20,7 @@ return [
         'default'     => true,
     ],
     'whatsapp_share' => [
+        'min_plan'    => 'pro',
         'label'       => 'WhatsApp Share',
         'description' => 'Bills, receipts aur fee reminders WhatsApp par bhejna',
         'icon'        => 'message-circle',
@@ -26,6 +28,7 @@ return [
         'default'     => true,
     ],
     'quotations' => [
+        'min_plan'    => 'pro',
         'label'       => 'Quotations',
         'description' => 'Customer ko estimate/quote banana',
         'icon'        => 'file-text',
@@ -33,6 +36,7 @@ return [
         'default'     => true,
     ],
     'open_tabs' => [
+        'min_plan'    => 'pro',
         'label'       => 'Open Tabs (Running Bills)',
         'description' => 'Mechanic/karigar ka chalta bill — items add hote rahen, akhir mein ek bill',
         'icon'        => 'receipt',
@@ -40,6 +44,7 @@ return [
         'default'     => true,
     ],
     'udhar_book' => [
+        'min_plan'    => 'basic',
         'label'       => 'Udhar Book',
         'description' => 'Customers ko udhaar dena aur wasooli track karna',
         'icon'        => 'book-open',
@@ -47,6 +52,7 @@ return [
         'default'     => true,
     ],
     'reports' => [
+        'min_plan'    => 'pro',
         'label'       => 'Reports & Analytics',
         'description' => 'Sales, profit, stock aur expense reports',
         'icon'        => 'bar-chart-3',
@@ -54,6 +60,7 @@ return [
         'default'     => true,
     ],
     'day_closing' => [
+        'min_plan'    => 'basic',
         'label'       => 'Day Closing',
         'description' => 'Din ke akhir mein cash milana aur din band karna',
         'icon'        => 'moon',
@@ -61,6 +68,7 @@ return [
         'default'     => true,
     ],
     'expenses' => [
+        'min_plan'    => 'basic',
         'label'       => 'Expenses',
         'description' => 'Rozana kharche record karna',
         'icon'        => 'wallet',
@@ -68,6 +76,7 @@ return [
         'default'     => true,
     ],
     'staff_module' => [
+        'min_plan'    => 'basic',
         'label'       => 'Staff & Salaries',
         'description' => 'Staff members aur unki salary ka hisaab',
         'icon'        => 'hard-hat',
@@ -75,6 +84,7 @@ return [
         'default'     => true,
     ],
     'barcode_scanner' => [
+        'min_plan'    => 'pro',
         'label'       => 'Barcode Camera Scanner',
         'description' => 'POS par phone camera se barcode scan karna',
         'icon'        => 'scan-line',
@@ -82,6 +92,7 @@ return [
         'default'     => true,
     ],
     'stock_guard' => [
+        'min_plan'    => 'pro',
         'label'       => 'Stock Guard (Negative Stock Block)',
         'description' => 'Jitna stock hai us se zyada sale nahi hone degi (off = udhaar stock allow)',
         'icon'        => 'shield-check',
@@ -89,6 +100,7 @@ return [
         'default'     => true,
     ],
     'audit_log' => [
+        'min_plan'    => 'business',
         'label'       => 'Activity Log (Audit Trail)',
         'description' => 'Kis user ne kya add/edit/delete kiya — sab ka record',
         'icon'        => 'history',

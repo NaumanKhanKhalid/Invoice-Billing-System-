@@ -28,12 +28,35 @@ if (!function_exists('feature_enabled')) {
             return $cache[$key] = false;
         }
 
+        if (!plan_allows($key)) {
+            return $cache[$key] = false;
+        }
+
         $value = \App\Models\Setting::getValue("feature_$key");
         if ($value === null) {
             return $cache[$key] = (bool) $registry['default'];
         }
 
         return $cache[$key] = $value === '1';
+    }
+}
+
+if (!function_exists('plan_allows')) {
+    /**
+     * Check whether the tenant's subscription plan tier includes a feature.
+     * Plan ranks: basic(1) < pro(2) < business(3). Outside tenancy → allowed.
+     */
+    function plan_allows(string $featureKey): bool
+    {
+        $minPlan = config("features.$featureKey.min_plan", 'basic');
+        if (!tenancy()->initialized) {
+            return true;
+        }
+
+        $ranks = ['basic' => 1, 'pro' => 2, 'business' => 3];
+        $tenantRank = $ranks[tenant()->plan ?? 'basic'] ?? 1;
+
+        return $tenantRank >= ($ranks[$minPlan] ?? 1);
     }
 }
 
