@@ -351,6 +351,11 @@ function productSearch() {
                     body: JSON.stringify(this.form)
                 });
                 const data = await res.json();
+                if (!res.ok) {
+                    const msg = data.error || (data.errors ? Object.values(data.errors)[0][0] : 'Could not add item.');
+                    if (typeof showToast === 'function') showToast(msg, 'error'); else alert(msg);
+                    return;
+                }
                 // Update parent tabManager
                 const mgr = Alpine.$data(document.querySelector('[x-data^="tabManager"]'));
                 if (mgr) mgr.items = data.items;

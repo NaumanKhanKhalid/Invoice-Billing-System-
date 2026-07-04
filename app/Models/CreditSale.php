@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class CreditSale extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'udhar_customer_id', 'customer_name', 'phone', 'amount', 'amount_paid', 'amount_due',
         'sale_date', 'due_date', 'description', 'status', 'notes'

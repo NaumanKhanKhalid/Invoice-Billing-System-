@@ -28,11 +28,13 @@
                autofocus>
       </div>
 
-      <button type="button" @click="openCamera()" x-show="cameraSupported"
+      @if(feature_enabled('barcode_scanner'))
+      <button type="button" @click="openCamera()"
               class="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl transition shrink-0">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
         Scan
       </button>
+      @endif
 
       <a href="{{ route('pos.index') }}" class="text-xs text-slate-400 hover:text-slate-600 shrink-0 hidden lg:block whitespace-nowrap">History →</a>
     </div>
@@ -269,11 +271,12 @@
     </div>
   </div>
 
+  @if(feature_enabled('barcode_scanner'))
   {{-- Camera Modal --}}
   <div x-show="cameraOpen" x-transition
-       class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
        @keydown.escape.window="closeCamera()">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden" @click.outside="closeCamera()">
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
         <div>
           <h3 class="font-bold text-slate-900">Camera Scanner</h3>
@@ -282,15 +285,9 @@
         <button @click="closeCamera()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
       </div>
       <div class="relative bg-black">
-        <video x-ref="cameraVideo" autoplay playsinline muted class="w-full aspect-video object-cover"></video>
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div class="w-52 h-32 relative">
-            <span class="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-green-400"></span>
-            <span class="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-green-400"></span>
-            <span class="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-green-400"></span>
-            <span class="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-green-400"></span>
-            <div class="absolute inset-x-4 top-1/2 h-px bg-green-400 opacity-80 animate-pulse"></div>
-          </div>
+        <div id="pos-camera-reader" class="w-full" style="min-height:16rem"></div>
+        <div x-show="cameraError" class="absolute inset-0 flex items-center justify-center bg-slate-900/90 p-6">
+          <p class="text-white text-sm text-center leading-relaxed" x-text="cameraError"></p>
         </div>
       </div>
       <div class="px-5 py-4 text-center">
@@ -299,6 +296,7 @@
       </div>
     </div>
   </div>
+  @endif
 </div>
 
 <script>
@@ -319,11 +317,11 @@ function posApp() {
       { value: 'credit',    label: 'Udhar',     icon: '📋' },
     ],
     scanMsg: '', scanOk: true, scanTimer: null,
-    cameraOpen: false, cameraSupported: false,
-    cameraStatus: '', lastCameraResult: '',
-    cameraStream: null, barcodeDetector: null, scanInterval: null,
+    scannerEnabled: {{ feature_enabled('barcode_scanner') ? 'true' : 'false' }},
+    cameraOpen: false, cameraStatus: '', cameraError: '', lastCameraResult: '',
+    html5Qr: null,
 
-    init() { this.cameraSupported = 'BarcodeDetector' in window; },
+    init() {},
 
     get categories() {
       return [...new Set(this.products.map(p => p.category).filter(Boolean))].sort();
@@ -378,35 +376,60 @@ function posApp() {
       this.scanTimer = setTimeout(() => { this.scanMsg = ''; }, 2200);
     },
 
-    async openCamera() {
-      if (!this.cameraSupported) return;
-      this.cameraOpen = true; this.lastCameraResult = '';
-      this.cameraStatus = 'Camera permission maang raha hai...';
-      try {
-        this.cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } });
-        this.$refs.cameraVideo.srcObject = this.cameraStream;
-        this.cameraStatus = 'Scanning...';
-        this.barcodeDetector = new BarcodeDetector({ formats: ['ean_13','ean_8','code_128','code_39','qr_code','upc_a','upc_e'] });
-        this.scanInterval = setInterval(() => this.detectFrame(), 250);
-      } catch (e) { this.cameraStatus = 'Camera access deny'; }
+    loadScannerLib() {
+      if (window.Html5Qrcode) return Promise.resolve();
+      if (window.__html5QrcodeLoading) return window.__html5QrcodeLoading;
+      window.__html5QrcodeLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('load failed'));
+        document.head.appendChild(s);
+      });
+      return window.__html5QrcodeLoading;
     },
 
-    async detectFrame() {
-      if (!this.$refs.cameraVideo || !this.barcodeDetector) return;
+    async openCamera() {
+      if (!this.scannerEnabled) return;
+      this.cameraOpen = true; this.lastCameraResult = ''; this.cameraError = '';
+      this.cameraStatus = 'Scanner load ho raha hai...';
       try {
-        const codes = await this.barcodeDetector.detect(this.$refs.cameraVideo);
-        if (codes.length > 0) {
-          const code = codes[0].rawValue;
-          this.lastCameraResult = code;
-          this.closeCamera();
-          this.addByBarcode(code);
-        }
-      } catch (_) {}
+        await this.loadScannerLib();
+      } catch (e) {
+        this.cameraError = 'Scanner library load nahi hui. Internet connection check karein aur dobara try karein.';
+        this.cameraStatus = 'Error';
+        return;
+      }
+      this.cameraStatus = 'Camera permission maang raha hai...';
+      try {
+        this.html5Qr = new Html5Qrcode('pos-camera-reader');
+        await this.html5Qr.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 220, height: 140 } },
+          (decodedText) => this.onCameraScan(decodedText),
+          () => {}
+        );
+        this.cameraStatus = 'Scanning...';
+      } catch (e) {
+        this.html5Qr = null;
+        this.cameraError = 'Camera access denied. Browser settings mein camera permission allow karein, phir dobara try karein.';
+        this.cameraStatus = 'Error';
+      }
+    },
+
+    onCameraScan(code) {
+      if (!this.html5Qr) return;
+      this.lastCameraResult = code;
+      this.closeCamera();
+      this.addByBarcode(code);
     },
 
     closeCamera() {
-      clearInterval(this.scanInterval); this.scanInterval = null;
-      if (this.cameraStream) { this.cameraStream.getTracks().forEach(t => t.stop()); this.cameraStream = null; }
+      const qr = this.html5Qr;
+      this.html5Qr = null;
+      if (qr) {
+        qr.stop().then(() => qr.clear()).catch(() => {});
+      }
       this.cameraOpen = false;
     },
   };

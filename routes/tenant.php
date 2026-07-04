@@ -34,6 +34,7 @@ use App\Http\Controllers\CoachingController;
 use App\Http\Controllers\CoachingCourseController;
 use App\Http\Controllers\CoachingStudentController;
 use App\Http\Controllers\CoachingFeeController;
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -247,6 +248,10 @@ Route::middleware([
         Route::get('/coaching/fees', [CoachingFeeController::class, 'index'])->name('coaching.fees.index');
         Route::post('/coaching/fees/{fee}/collect', [CoachingFeeController::class, 'collect'])->name('coaching.fees.collect');
         Route::get('/coaching/fees/{fee}/receipt', [CoachingFeeController::class, 'receipt'])->name('coaching.fees.receipt');
+
+        // Activity Log (audit trail — owner only)
+        Route::get('/activity-log', [ActivityLogController::class, 'index'])
+            ->middleware(['owner', 'feature:audit_log'])->name('activity-log.index');
 
         // Demo Data (owner only)
         Route::middleware('owner')->group(function () {

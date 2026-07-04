@@ -37,13 +37,17 @@ $statusClass = [
         $waText  = urlencode(implode("\n", $waLines));
         $waPhone = preg_replace('/[^0-9]/', '', $quotation->customer_phone ?? '');
       @endphp
+      @if(feature_enabled('whatsapp_share'))
       <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
          class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
         <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
       </a>
+      @endif
+      @if(feature_enabled('receipt_print'))
       <button onclick="window.print()" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
         <i data-lucide="printer" class="w-4 h-4"></i> Print
       </button>
+      @endif
     </div>
   </div>
 

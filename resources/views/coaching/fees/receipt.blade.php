@@ -7,12 +7,14 @@
     <a href="{{ route('coaching.fees.index') }}" class="text-slate-400 hover:text-slate-600">
       <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </a>
+    @if(feature_enabled('receipt_print'))
     <button onclick="window.print()" class="flex items-center gap-2 bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800">
       <i data-lucide="printer" class="w-4 h-4"></i>Print
     </button>
+    @endif
   </div>
 
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
+  <div id="receipt" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
     {{-- Header --}}
     <div class="bg-slate-800 text-white px-6 py-5 text-center">
       <h1 class="text-xl font-bold">Fee Receipt</h1>
@@ -109,8 +111,31 @@
 
 <style>
 @media print {
-  nav, .print\:hidden { display: none !important; }
-  body { background: white; }
+  @page { size: 80mm auto; margin: 2mm; }
+  aside, nav, header, footer, .print\:hidden, .no-print { display: none !important; }
+  body, #main-content { background: white !important; padding: 0 !important; margin: 0 !important; }
+  body * { visibility: hidden; }
+  #receipt, #receipt * { visibility: visible; }
+  #receipt {
+    position: absolute; top: 0; left: 0;
+    width: 76mm !important; max-width: 76mm !important;
+    margin: 0 !important; padding: 0 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important; line-height: 1.3 !important;
+    color: #000 !important; background: #fff !important;
+    border: none !important; border-radius: 0 !important; box-shadow: none !important;
+    overflow: visible !important;
+  }
+  #receipt * {
+    color: #000 !important; background: transparent !important;
+    box-shadow: none !important; border-radius: 0 !important;
+    font-size: 11px !important; line-height: 1.3 !important;
+  }
+  #receipt h1 { font-size: 13px !important; font-weight: bold !important; }
+  #receipt [class*="px-6"] { padding-left: 2mm !important; padding-right: 2mm !important; }
+  #receipt [class*="py-"] { padding-top: 1mm !important; padding-bottom: 1mm !important; }
+  #receipt [class*="border"] { border-color: #000 !important; }
+  #receipt .rounded-full { border: 1px solid #000 !important; }
 }
 </style>
 @endsection

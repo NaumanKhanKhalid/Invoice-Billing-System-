@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class CreditPayment extends Model
 {
+    use LogsActivity;
+
     protected $fillable = ['credit_sale_id', 'amount', 'payment_date', 'method', 'note', 'proof_photo'];
 
     protected function casts(): array

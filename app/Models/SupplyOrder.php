@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SupplyOrder extends Model
 {
-    use HasFactory;
+    use LogsActivity, HasFactory;
 
     protected $table = 'supply_orders';
 

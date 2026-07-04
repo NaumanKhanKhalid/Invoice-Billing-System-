@@ -6,6 +6,7 @@ use App\Models\OpenTab;
 use App\Models\OpenTabItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OpenTabController extends Controller
 {
@@ -24,9 +25,9 @@ class OpenTabController extends Controller
             'notes'          => 'nullable|string|max:500',
         ]);
 
-        $tab = OpenTab::create(array_merge($data, [
+        $tab = DB::transaction(fn () => OpenTab::create(array_merge($data, [
             'tab_number' => OpenTab::nextNumber(),
-        ]));
+        ])));
 
         return redirect()->route('open-tabs.show', $tab)
             ->with('success', 'Tab opened for ' . $tab->customer_name);
@@ -51,6 +52,15 @@ class OpenTabController extends Controller
             'price'        => 'required|numeric|min:0',
             'unit'         => 'nullable|string|max:20',
         ]);
+
+        if (feature_enabled('stock_guard') && !empty($data['product_id'])) {
+            $product = Product::find($data['product_id']);
+            if ($product && $data['qty'] > $product->stock_qty) {
+                return response()->json([
+                    'error' => "Not enough stock for {$product->name}. Available: {$product->stock_qty} {$product->unit}.",
+                ], 422);
+            }
+        }
 
         $openTab->items()->create([
             'product_id'   => $data['product_id'] ?? null,

@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\SupplyOrder;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SupplyController extends Controller
 {
@@ -80,16 +81,20 @@ class SupplyController extends Controller
         $customer = Customer::findOrFail($data['customer_id']);
         $dueDate  = Carbon::parse($data['date'])->addDays($customer->credit_days ?? 30)->toDateString();
 
-        $order = SupplyOrder::create(array_merge($data, [
-            'invoice_number' => $this->nextInvoiceNumber(),
-            'total_amount'   => $total,
-            'amount_paid'    => 0,
-            'amount_due'     => $total,
-            'payment_status' => 'unpaid',
-            'due_date'       => $dueDate,
-        ]));
+        $order = DB::transaction(function () use ($data, $customer, $total, $dueDate) {
+            $order = SupplyOrder::create(array_merge($data, [
+                'invoice_number' => $this->nextInvoiceNumber(),
+                'total_amount'   => $total,
+                'amount_paid'    => 0,
+                'amount_due'     => $total,
+                'payment_status' => 'unpaid',
+                'due_date'       => $dueDate,
+            ]));
 
-        $customer->increment('current_balance', $total);
+            $customer->increment('current_balance', $total);
+
+            return $order;
+        });
 
         return redirect()->route('supply.show', $order)->with('success', 'Supply order recorded: ' . $order->invoice_number);
     }
@@ -218,7 +223,9 @@ class SupplyController extends Controller
     private function nextInvoiceNumber(): string
     {
         $year  = date('Y');
-        $count = SupplyOrder::whereYear('created_at', $year)->count() + 1;
+        // lockForUpdate is only effective inside a DB::transaction (store wraps
+        // this) so two simultaneous requests cannot get the same number
+        $count = SupplyOrder::whereYear('created_at', $year)->lockForUpdate()->count() + 1;
         return 'SO-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
     }
 }

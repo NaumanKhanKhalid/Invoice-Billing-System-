@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseOrder extends Model
 {
-    use HasFactory;
+    use LogsActivity, HasFactory;
 
     protected $fillable = ['supplier_id', 'date', 'invoice_number', 'live_weight_kg', 'dead_on_arrival_kg', 'rate_per_kg_live', 'total_amount', 'amount_paid', 'amount_due', 'due_date', 'payment_status', 'notes'];
 

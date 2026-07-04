@@ -6,6 +6,7 @@ use App\Models\PosSale;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class PosController extends Controller
 {
@@ -48,8 +49,20 @@ class PosController extends Controller
             $paid     = (float)$data['amount_paid'];
             $change   = max(0, $paid - $total);
 
+            if (feature_enabled('stock_guard')) {
+                foreach ($data['items'] as $item) {
+                    $product = Product::lockForUpdate()->find($item['product_id']);
+                    if ($product && $item['qty'] > $product->stock_qty) {
+                        throw ValidationException::withMessages([
+                            'items' => "Not enough stock for {$product->name}. Available: {$product->stock_qty} {$product->unit}.",
+                        ]);
+                    }
+                }
+            }
+
+            // lockForUpdate so two simultaneous sales cannot get the same number
             $sale = PosSale::create([
-                'sale_number'    => 'POS-' . date('Ymd') . '-' . str_pad(PosSale::whereDate('date', today())->count() + 1, 3, '0', STR_PAD_LEFT),
+                'sale_number'    => 'POS-' . date('Ymd') . '-' . str_pad(PosSale::whereDate('date', today())->lockForUpdate()->count() + 1, 3, '0', STR_PAD_LEFT),
                 'date'           => today(),
                 'customer_name'  => $data['customer_name'] ?? null,
                 'customer_phone' => $data['customer_phone'] ?? null,

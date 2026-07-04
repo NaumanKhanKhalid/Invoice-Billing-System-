@@ -5,6 +5,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchasePayment;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseController extends Controller
 {
@@ -53,22 +54,26 @@ class PurchaseController extends Controller
         $total    = round($liveKg * (float)$data['rate_per_kg_live'], 2);
         $dueDate  = \Carbon\Carbon::parse($data['date'])->addDays($supplier->credit_days)->toDateString();
 
-        $order = PurchaseOrder::create([
-            'supplier_id'        => $data['supplier_id'],
-            'date'               => $data['date'],
-            'invoice_number'     => $this->generateInvoiceNumber(),
-            'live_weight_kg'     => $liveKg,
-            'dead_on_arrival_kg' => (float)($data['dead_on_arrival_kg'] ?? 0),
-            'rate_per_kg_live'   => $data['rate_per_kg_live'],
-            'total_amount'       => $total,
-            'amount_paid'        => 0,
-            'amount_due'         => $total,
-            'due_date'           => $dueDate,
-            'payment_status'     => 'unpaid',
-            'notes'              => $data['notes'] ?? null,
-        ]);
+        $order = DB::transaction(function () use ($data, $supplier, $liveKg, $total, $dueDate) {
+            $order = PurchaseOrder::create([
+                'supplier_id'        => $data['supplier_id'],
+                'date'               => $data['date'],
+                'invoice_number'     => $this->generateInvoiceNumber(),
+                'live_weight_kg'     => $liveKg,
+                'dead_on_arrival_kg' => (float)($data['dead_on_arrival_kg'] ?? 0),
+                'rate_per_kg_live'   => $data['rate_per_kg_live'],
+                'total_amount'       => $total,
+                'amount_paid'        => 0,
+                'amount_due'         => $total,
+                'due_date'           => $dueDate,
+                'payment_status'     => 'unpaid',
+                'notes'              => $data['notes'] ?? null,
+            ]);
 
-        $supplier->increment('balance', $total);
+            $supplier->increment('balance', $total);
+
+            return $order;
+        });
 
         return redirect()->route('purchases.show', $order)->with('success', "Purchase order {$order->invoice_number} created.");
     }
@@ -191,7 +196,9 @@ class PurchaseController extends Controller
     private function generateInvoiceNumber(): string
     {
         $year  = date('Y');
-        $count = PurchaseOrder::whereYear('created_at', $year)->count() + 1;
+        // lockForUpdate is only effective inside a DB::transaction (store wraps
+        // this) so two simultaneous requests cannot get the same number
+        $count = PurchaseOrder::whereYear('created_at', $year)->lockForUpdate()->count() + 1;
         return 'PO-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
     }
 }

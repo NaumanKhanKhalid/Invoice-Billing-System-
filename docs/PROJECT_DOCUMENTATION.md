@@ -297,6 +297,9 @@ Har major screen ka screenshot `docs/screenshots/` mein hai (demo data ke sath l
 | 23 | Admin tenants list |
 | 24 | Staff & Salaries (This Month Paid/Due badges) |
 | 25 | Quotation with WhatsApp share button |
+| 26 | Settings — Features On/Off toggles |
+| 27 | POS with barcode Scan button |
+| 28 | Activity Log (audit trail) |
 
 ### 10.4b UI improvement candidates (design better karne ke liye)
 1. **Mobile responsiveness** — sidebar mobile par kaisi behave karti hai, tables horizontal scroll — audit needed.

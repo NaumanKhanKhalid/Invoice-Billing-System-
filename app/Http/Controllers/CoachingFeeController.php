@@ -6,6 +6,7 @@ use App\Models\CoachingFeeCollection;
 use App\Models\CoachingStudent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CoachingFeeController extends Controller
 {
@@ -67,16 +68,18 @@ class CoachingFeeController extends Controller
         $balance     = max(0, $netDue - $totalPaid);
         $status      = $balance <= 0 ? 'paid' : ($totalPaid > 0 ? 'partial' : 'pending');
 
-        $fee->update([
-            'discount_amount' => $discount,
-            'amount_paid'     => $totalPaid,
-            'balance_due'     => $balance,
-            'payment_date'    => today()->toDateString(),
-            'payment_method'  => $data['payment_method'],
-            'receipt_number'  => $fee->receipt_number ?? CoachingFeeCollection::nextReceiptNumber(),
-            'status'          => $status,
-            'notes'           => $data['notes'] ?? $fee->notes,
-        ]);
+        DB::transaction(function () use ($fee, $data, $discount, $totalPaid, $balance, $status) {
+            $fee->update([
+                'discount_amount' => $discount,
+                'amount_paid'     => $totalPaid,
+                'balance_due'     => $balance,
+                'payment_date'    => today()->toDateString(),
+                'payment_method'  => $data['payment_method'],
+                'receipt_number'  => $fee->receipt_number ?? CoachingFeeCollection::nextReceiptNumber(),
+                'status'          => $status,
+                'notes'           => $data['notes'] ?? $fee->notes,
+            ]);
+        });
 
         return back()->with('success', 'Payment recorded for ' . $fee->student->name);
     }

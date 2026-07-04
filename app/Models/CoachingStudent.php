@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CoachingStudent extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'batch_id', 'name', 'phone', 'guardian_name', 'guardian_phone',
         'address', 'enrollment_date', 'custom_fee', 'discount_percent',

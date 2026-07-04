@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class DaySummary extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'date', 'opening_cash', 'pos_sales_count', 'pos_revenue',
         'purchase_cost', 'total_expenses', 'expected_cash',

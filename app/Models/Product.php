@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'name', 'sku', 'barcode', 'category', 'description', 'unit',
         'cost_price', 'sale_price', 'stock_qty', 'low_stock_alert', 'is_active',

@@ -296,6 +296,12 @@
                 </a>
                 @endif
                 @if(in_array(auth()->user()->role ?? '', ['owner', 'admin']))
+                @if(feature_enabled('audit_log'))
+                <a href="{{ route('activity-log.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('activity-log.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
+                  <i data-lucide="history" class="w-3.5 h-3.5 flex-shrink-0"></i> Activity Log
+                </a>
+                @endif
                 <a href="{{ route('tenant.users.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('tenant.users.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> Team Members
@@ -545,6 +551,10 @@
         @if(session('info'))
             document.addEventListener('DOMContentLoaded', () =>
                 showToast(@json(session('info')), 'info'));
+        @endif
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', () =>
+                showToast(@json($errors->first()), 'error'));
         @endif
     </script>
 

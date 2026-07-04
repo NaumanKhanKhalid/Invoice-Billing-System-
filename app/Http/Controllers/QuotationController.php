@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Quotation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuotationController extends Controller
 {
@@ -59,21 +60,32 @@ class QuotationController extends Controller
             ];
         }
 
-        $quotation = Quotation::create([
-            'quote_number'   => $data['quote_number'],
-            'date'           => $data['date'],
-            'valid_until'    => $data['valid_until'] ?? null,
-            'customer_name'  => $data['customer_name'] ?? null,
-            'customer_phone' => $data['customer_phone'] ?? null,
-            'customer_email' => $data['customer_email'] ?? null,
-            'subtotal'       => $subtotal,
-            'discount'       => $discount,
-            'total'          => max(0, $subtotal - $discount),
-            'notes'          => $data['notes'] ?? null,
-            'status'         => 'draft',
-        ]);
+        $quotation = DB::transaction(function () use ($data, $subtotal, $discount, $rows) {
+            // Re-check under lock: another request may have taken this number
+            // between validation and insert — regenerate if so
+            $quoteNumber = $data['quote_number'];
+            if (Quotation::where('quote_number', $quoteNumber)->lockForUpdate()->exists()) {
+                $quoteNumber = Quotation::nextNumber();
+            }
 
-        $quotation->items()->createMany($rows);
+            $quotation = Quotation::create([
+                'quote_number'   => $quoteNumber,
+                'date'           => $data['date'],
+                'valid_until'    => $data['valid_until'] ?? null,
+                'customer_name'  => $data['customer_name'] ?? null,
+                'customer_phone' => $data['customer_phone'] ?? null,
+                'customer_email' => $data['customer_email'] ?? null,
+                'subtotal'       => $subtotal,
+                'discount'       => $discount,
+                'total'          => max(0, $subtotal - $discount),
+                'notes'          => $data['notes'] ?? null,
+                'status'         => 'draft',
+            ]);
+
+            $quotation->items()->createMany($rows);
+
+            return $quotation;
+        });
 
         return redirect()->route('quotations.show', $quotation)
             ->with('success', 'Quotation ' . $quotation->quote_number . ' created.');
