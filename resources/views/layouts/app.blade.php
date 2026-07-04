@@ -341,6 +341,9 @@
             <a href="{{ route('admin.plans') }}" class="nav-item {{ request()->routeIs('admin.plans') ? 'active' : '' }}">
                 <i data-lucide="credit-card" class="w-4 h-4"></i> Plans & Revenue
             </a>
+            <a href="{{ route('admin.logs') }}" class="nav-item {{ request()->routeIs('admin.logs') ? 'active' : '' }}">
+                <i data-lucide="file-warning" class="w-4 h-4"></i> Error Logs
+            </a>
             @endif
         </nav>
 

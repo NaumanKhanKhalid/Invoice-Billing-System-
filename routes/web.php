@@ -25,4 +25,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->gro
     Route::get('/tenants/{tenant}/payments', [TenantController::class, 'payments'])->name('tenants.payments');
     Route::post('/tenants/{tenant}/impersonate', [ImpersonateController::class, 'start'])->name('tenants.impersonate');
     Route::get('/plans', fn() => view('admin.plans'))->name('plans');
+    Route::get('/logs', [\App\Http\Controllers\Admin\LogViewerController::class, 'index'])->name('logs');
 });
