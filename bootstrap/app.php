@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'super.admin'         => \App\Http\Middleware\SuperAdminOnly::class,
             'tenant.subscription' => \App\Http\Middleware\CheckTenantSubscription::class,
             'tenant.onboarding'   => \App\Http\Middleware\TenantOnboarding::class,
+            'feature'             => \App\Http\Middleware\EnsureFeatureEnabled::class,
+            'owner'               => \App\Http\Middleware\OwnerOnly::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

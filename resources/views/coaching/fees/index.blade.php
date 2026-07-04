@@ -115,7 +115,7 @@
                 @else
                 <a href="{{ route('coaching.fees.receipt', $fee) }}" class="text-xs text-slate-500 hover:underline">Receipt</a>
                 @endif
-                @if($fee->student->phone)
+                @if($fee->student->phone && feature_enabled('whatsapp_share'))
                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $fee->student->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $fee->student->name . ' — ' . $monthDate->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein. Balance: PKR ' . number_format($fee->balance_due)) }}"
                    target="_blank" class="text-xs text-green-600 hover:underline">WA</a>
                 @endif

@@ -49,7 +49,7 @@ Route::middleware([
     });
 
     // Impersonation — no auth required (token IS the auth)
-    Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'start'])->name('impersonate.start');
+    Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'start'])->middleware('throttle:10,1')->name('impersonate.start');
     Route::post('/impersonate/stop', [TenantImpersonateController::class, 'stop'])->name('impersonate.stop');
 
     // Google OAuth callback
@@ -71,17 +71,21 @@ Route::middleware([
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         // Reports
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::middleware('feature:reports')->group(function () {
+            Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        });
 
-        // Settings
-        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-        Route::get('/google/connect', [GoogleDriveController::class, 'connect'])->name('google.connect');
-        Route::post('/google/disconnect', [GoogleDriveController::class, 'disconnect'])->name('google.disconnect');
-        Route::post('/backup/google', [GoogleDriveController::class, 'backup'])->name('backup.google');
-        Route::get('/backup/list', [GoogleDriveController::class, 'listBackups'])->name('settings.backups');
-        Route::post('/backup/restore/{fileId}', [GoogleDriveController::class, 'restore'])->name('backup.restore');
-        Route::delete('/backup/delete/{fileId}', [GoogleDriveController::class, 'deleteBackup'])->name('backup.delete');
+        // Settings + backups (owner only)
+        Route::middleware('owner')->group(function () {
+            Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+            Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+            Route::get('/google/connect', [GoogleDriveController::class, 'connect'])->name('google.connect');
+            Route::post('/google/disconnect', [GoogleDriveController::class, 'disconnect'])->name('google.disconnect');
+            Route::post('/backup/google', [GoogleDriveController::class, 'backup'])->name('backup.google');
+            Route::get('/backup/list', [GoogleDriveController::class, 'listBackups'])->name('settings.backups');
+            Route::post('/backup/restore/{fileId}', [GoogleDriveController::class, 'restore'])->name('backup.restore');
+            Route::delete('/backup/delete/{fileId}', [GoogleDriveController::class, 'deleteBackup'])->name('backup.delete');
+        });
 
         // Suppliers
         Route::resource('suppliers', SupplierController::class);
@@ -117,17 +121,20 @@ Route::middleware([
 
         // Day End
         // Open Tabs (running bills for mechanics/workshop customers)
-        Route::get('/open-tabs/search-products', [OpenTabController::class, 'searchProducts'])->name('open-tabs.search');
-        Route::get('/open-tabs', [OpenTabController::class, 'index'])->name('open-tabs.index');
-        Route::post('/open-tabs', [OpenTabController::class, 'store'])->name('open-tabs.store');
-        Route::get('/open-tabs/{openTab}', [OpenTabController::class, 'show'])->name('open-tabs.show');
-        Route::post('/open-tabs/{openTab}/items', [OpenTabController::class, 'addItem'])->name('open-tabs.add-item');
-        Route::delete('/open-tabs/{openTab}/items/{item}', [OpenTabController::class, 'removeItem'])->name('open-tabs.remove-item');
-        Route::post('/open-tabs/{openTab}/close', [OpenTabController::class, 'close'])->name('open-tabs.close');
-        Route::get('/open-tabs/{openTab}/receipt', [OpenTabController::class, 'receipt'])->name('open-tabs.receipt');
-        Route::delete('/open-tabs/{openTab}', [OpenTabController::class, 'destroy'])->name('open-tabs.destroy');
+        Route::middleware('feature:open_tabs')->group(function () {
+            Route::get('/open-tabs/search-products', [OpenTabController::class, 'searchProducts'])->name('open-tabs.search');
+            Route::get('/open-tabs', [OpenTabController::class, 'index'])->name('open-tabs.index');
+            Route::post('/open-tabs', [OpenTabController::class, 'store'])->name('open-tabs.store');
+            Route::get('/open-tabs/{openTab}', [OpenTabController::class, 'show'])->name('open-tabs.show');
+            Route::post('/open-tabs/{openTab}/items', [OpenTabController::class, 'addItem'])->name('open-tabs.add-item');
+            Route::delete('/open-tabs/{openTab}/items/{item}', [OpenTabController::class, 'removeItem'])->name('open-tabs.remove-item');
+            Route::post('/open-tabs/{openTab}/close', [OpenTabController::class, 'close'])->name('open-tabs.close');
+            Route::get('/open-tabs/{openTab}/receipt', [OpenTabController::class, 'receipt'])->name('open-tabs.receipt');
+            Route::delete('/open-tabs/{openTab}', [OpenTabController::class, 'destroy'])->name('open-tabs.destroy');
+        });
 
         // General shop day-end summary
+        Route::middleware('feature:day_closing')->group(function () {
         Route::get('/day-summary', [DaySummaryController::class, 'index'])->name('day-summary.index');
         Route::get('/day-summary/create', [DaySummaryController::class, 'create'])->name('day-summary.create');
         Route::post('/day-summary', [DaySummaryController::class, 'store'])->name('day-summary.store');
@@ -143,16 +150,23 @@ Route::middleware([
         Route::put('/day-end/{dayEnd}', [DayEndController::class, 'update'])->name('day-end.update');
         Route::delete('/day-end/{dayEnd}', [DayEndController::class, 'destroy'])->name('day-end.destroy');
         Route::post('/day-end/{dayEnd}/close', [DayEndController::class, 'close'])->name('day-end.close');
+        });
 
         // Expenses
-        Route::resource('expenses', ExpenseController::class)->except(['show']);
+        Route::middleware('feature:expenses')->group(function () {
+            Route::resource('expenses', ExpenseController::class)->except(['show']);
+        });
 
         // Staff
-        Route::resource('staff', StaffController::class);
-        Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
-        Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
+        Route::middleware('feature:staff_module')->group(function () {
+            Route::resource('staff', StaffController::class)->except(['destroy']);
+            Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->middleware('owner')->name('staff.destroy');
+            Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
+            Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
+        });
 
         // Udhar Book
+        Route::middleware('feature:udhar_book')->group(function () {
         Route::get('/udhar/report', [CreditSaleController::class, 'report'])->name('udhar.report');
         Route::get('/udhar', [CreditSaleController::class, 'index'])->name('udhar.index');
         Route::get('/udhar/create', [CreditSaleController::class, 'create'])->name('udhar.create');
@@ -162,10 +176,11 @@ Route::middleware([
         Route::put('/udhar/{creditSale}', [CreditSaleController::class, 'update'])->name('udhar.update');
         Route::post('/udhar/{creditSale}/payment', [CreditSaleController::class, 'storePayment'])->name('udhar.payment');
         Route::delete('/udhar/{creditSale}/payment/{payment}', [CreditSaleController::class, 'destroyPayment'])->name('udhar.payment.destroy');
-        Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->name('udhar.destroy');
+        Route::delete('/udhar/{creditSale}', [CreditSaleController::class, 'destroy'])->middleware('owner')->name('udhar.destroy');
 
         // Udhar Customers
         Route::resource('udhar-customers', UdharCustomerController::class);
+        });
 
         // Products & Inventory
         Route::resource('products', ProductController::class);
@@ -180,12 +195,14 @@ Route::middleware([
         Route::post('/product-purchases/{productPurchase}/payment', [ProductPurchaseController::class, 'storePayment'])->name('product-purchases.payment');
 
         // Quotations
+        Route::middleware('feature:quotations')->group(function () {
         Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
         Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
         Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
         Route::get('/quotations/{quotation}', [QuotationController::class, 'show'])->name('quotations.show');
         Route::patch('/quotations/{quotation}/status', [QuotationController::class, 'updateStatus'])->name('quotations.status');
         Route::delete('/quotations/{quotation}', [QuotationController::class, 'destroy'])->name('quotations.destroy');
+        });
 
         // Ledger
         Route::get('/ledger/supplier/{supplier}', [LedgerController::class, 'supplier'])->name('ledger.supplier');
@@ -231,16 +248,20 @@ Route::middleware([
         Route::post('/coaching/fees/{fee}/collect', [CoachingFeeController::class, 'collect'])->name('coaching.fees.collect');
         Route::get('/coaching/fees/{fee}/receipt', [CoachingFeeController::class, 'receipt'])->name('coaching.fees.receipt');
 
-        // Demo Data
-        Route::post('/settings/seed-demo', [DummyDataController::class, 'seed'])->name('demo.seed');
-        Route::post('/settings/delete-demo', [DummyDataController::class, 'delete'])->name('demo.delete');
+        // Demo Data (owner only)
+        Route::middleware('owner')->group(function () {
+            Route::post('/settings/seed-demo', [DummyDataController::class, 'seed'])->name('demo.seed');
+            Route::post('/settings/delete-demo', [DummyDataController::class, 'delete'])->name('demo.delete');
+        });
 
         // Team / Users
-        Route::get('/users', [TenantUserController::class, 'index'])->name('tenant.users.index');
-        Route::get('/users/create', [TenantUserController::class, 'create'])->name('tenant.users.create');
-        Route::post('/users', [TenantUserController::class, 'store'])->name('tenant.users.store');
-        Route::delete('/users/{user}', [TenantUserController::class, 'destroy'])->name('tenant.users.destroy');
-        Route::post('/users/{user}/reset-password', [TenantUserController::class, 'resetPassword'])->name('tenant.users.reset-password');
+        Route::middleware('owner')->group(function () {
+            Route::get('/users', [TenantUserController::class, 'index'])->name('tenant.users.index');
+            Route::get('/users/create', [TenantUserController::class, 'create'])->name('tenant.users.create');
+            Route::post('/users', [TenantUserController::class, 'store'])->name('tenant.users.store');
+            Route::delete('/users/{user}', [TenantUserController::class, 'destroy'])->name('tenant.users.destroy');
+            Route::post('/users/{user}/reset-password', [TenantUserController::class, 'resetPassword'])->name('tenant.users.reset-password');
+        });
     });
 
     require __DIR__.'/auth.php';

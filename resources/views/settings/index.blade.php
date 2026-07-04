@@ -110,6 +110,37 @@
         </div>
     </div>
 
+    <!-- Feature Toggles -->
+    <form method="POST" action="{{ route('settings.update') }}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        @csrf
+        <input type="hidden" name="features_form" value="1">
+        <div class="flex items-center justify-between mb-1">
+            <h2 class="font-semibold text-slate-900 flex items-center gap-2">
+                <i data-lucide="toggle-right" class="w-4 h-4 text-green-600"></i>
+                Features On / Off
+            </h2>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Save Features</button>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">Jo feature aapki dukaan ko nahi chahiye usko off kar dein — sidebar aur buttons se ghayab ho jayega.</p>
+        @php $shopTypeForFeatures = tenant()->shop_type ?? 'general'; @endphp
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            @foreach(config('features') as $fKey => $f)
+                @continue($f['shop_types'] !== null && !in_array($shopTypeForFeatures, $f['shop_types']))
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 hover:border-green-300 hover:bg-green-50/40 cursor-pointer transition-colors">
+                    <input type="checkbox" name="features[]" value="{{ $fKey }}"
+                           @checked(feature_enabled($fKey))
+                           class="mt-0.5 w-4 h-4 rounded border-slate-300 text-green-600 focus:ring-green-500">
+                    <span class="flex-1 min-w-0">
+                        <span class="flex items-center gap-2 text-sm font-medium text-slate-800">
+                            <i data-lucide="{{ $f['icon'] }}" class="w-3.5 h-3.5 text-slate-400"></i>{{ $f['label'] }}
+                        </span>
+                        <span class="block text-xs text-slate-400 mt-0.5">{{ $f['description'] }}</span>
+                    </span>
+                </label>
+            @endforeach
+        </div>
+    </form>
+
     <form method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data" class="space-y-5">
         @csrf
 

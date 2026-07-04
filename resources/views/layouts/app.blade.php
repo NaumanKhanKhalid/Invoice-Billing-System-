@@ -198,18 +198,22 @@
                 <i data-lucide="users" class="w-4 h-4"></i> Customers
             </a>
 
+            @if(feature_enabled('quotations'))
             <a href="{{ route('quotations.index') }}" class="nav-item {{ request()->routeIs('quotations.*') ? 'active' : '' }}">
                 <i data-lucide="file-text" class="w-4 h-4"></i> Quotations
             </a>
+            @endif
 
+            @if(feature_enabled('open_tabs'))
             <a href="{{ route('open-tabs.index') }}" class="nav-item {{ request()->routeIs('open-tabs.*') ? 'active' : '' }}">
                 <i data-lucide="receipt" class="w-4 h-4"></i> Open Tabs
             </a>
+            @endif
 
             @endif
 
             {{-- ── COMMON (all shop types except coaching) ── --}}
-            @if(!$isCoaching)
+            @if(!$isCoaching && feature_enabled('udhar_book'))
             @php $overdueUdhar = \App\Models\CreditSale::where('status','!=','paid')->whereDate('due_date','<=',today())->count(); @endphp
             <a href="{{ route('udhar.index') }}" class="nav-item {{ request()->routeIs('udhar.*') ? 'active' : '' }}">
                 <i data-lucide="book-open" class="w-4 h-4"></i> Udhar Book
@@ -219,7 +223,7 @@
             </a>
             @endif
 
-            @if(!$isCoaching)
+            @if(!$isCoaching && feature_enabled('expenses'))
             <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
             </a>
@@ -239,22 +243,24 @@
             <a href="{{ route('coaching.courses.index') }}" class="nav-item {{ request()->routeIs('coaching.courses.*') ? 'active' : '' }}">
                 <i data-lucide="book-open" class="w-4 h-4"></i> Courses & Batches
             </a>
+            @if(feature_enabled('expenses'))
             <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
             </a>
             @endif
+            @endif
 
-            @if($isChicken)
+            @if($isChicken && feature_enabled('day_closing'))
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i> Daily Records
             </a>
-            @elseif(!$isCoaching)
+            @elseif(!$isCoaching && feature_enabled('day_closing'))
             <a href="{{ route('day-summary.index') }}" class="nav-item {{ request()->routeIs('day-summary.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i> Day Closing
             </a>
             @endif
 
-            @if(!$isCoaching)
+            @if(!$isCoaching && feature_enabled('reports'))
             <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports
             </a>
@@ -283,10 +289,13 @@
                   <i data-lucide="user-check" class="w-3.5 h-3.5 flex-shrink-0"></i> Udhar Customers
                 </a>
                 @endif
+                @if(feature_enabled('staff_module'))
                 <a href="{{ route('staff.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('staff.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="hard-hat" class="w-3.5 h-3.5 flex-shrink-0"></i> Staff & Salaries
                 </a>
+                @endif
+                @if(in_array(auth()->user()->role ?? '', ['owner', 'admin']))
                 <a href="{{ route('tenant.users.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('tenant.users.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> Team Members
@@ -295,6 +304,7 @@
                    class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition-colors {{ request()->routeIs('settings.*') ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5' }}">
                   <i data-lucide="settings" class="w-3.5 h-3.5 flex-shrink-0"></i> Settings
                 </a>
+                @endif
               </div>
             </div>
             @else

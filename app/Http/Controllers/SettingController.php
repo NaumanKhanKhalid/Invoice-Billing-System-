@@ -47,6 +47,15 @@ class SettingController extends Controller
             $this->settingService->set('logo_path', $path);
         }
 
+        // Feature toggles — checkboxes post enabled keys under features[];
+        // only process when the Features form section was submitted
+        if ($request->has('features_form')) {
+            $enabled = $request->input('features', []);
+            foreach (array_keys(config('features')) as $key) {
+                $this->settingService->set("feature_$key", in_array($key, $enabled) ? '1' : '0');
+            }
+        }
+
         return back()->with('success', 'Settings saved successfully.');
     }
 }

@@ -310,6 +310,21 @@ Har major screen ka screenshot `docs/screenshots/` mein hai (demo data ke sath l
 
 ---
 
+## 10.5 Feature Toggle System ⚙️ (NEW)
+
+Har tenant apne features Settings → "Features On / Off" se control karta hai.
+
+- **Registry**: `config/features.php` — har feature ki label, description, icon, applicable shop_types, default.
+- **Helper**: `feature_enabled('key')` — setting `feature_{key}` parhta hai, warna registry default. Shop type par applicable na ho to hamesha false.
+- **Route guard**: `feature:key` middleware (`EnsureFeatureEnabled`) — off feature ka URL 403 deta hai.
+- **UI gating**: sidebar links, FAB buttons, Print/WhatsApp buttons sab `feature_enabled()` se chhupte hain.
+- **Toggleable features**: receipt_print, whatsapp_share, quotations, open_tabs, udhar_book, reports, day_closing, expenses, staff_module, barcode_scanner, stock_guard, audit_log.
+
+### Role-based access (owner vs staff)
+- `owner` middleware (`OwnerOnly`) — sirf owner/admin: Settings, backups, Demo Data, Team Members, staff delete, udhar delete.
+- Sidebar mein Team Members + Settings sirf owner ko dikhte hain.
+- Login/forgot-password/impersonation endpoints par throttle (brute-force protection).
+
 ## 11. Known Gaps / Pending Work (Claude ko dene ke liye TODO list)
 
 ### Functional

@@ -1,5 +1,42 @@
 <?php
 
+if (!function_exists('feature_enabled')) {
+    /**
+     * Check whether a toggleable feature is enabled for the current tenant.
+     * Reads setting `feature_{key}` and falls back to the registry default.
+     * Features not applicable to the tenant's shop type are always disabled.
+     */
+    function feature_enabled(string $key): bool
+    {
+        static $cache = [];
+
+        if (array_key_exists($key, $cache)) {
+            return $cache[$key];
+        }
+
+        $registry = config("features.$key");
+        if ($registry === null) {
+            return $cache[$key] = true; // unknown key: never block
+        }
+
+        if (!tenancy()->initialized) {
+            return $cache[$key] = (bool) $registry['default'];
+        }
+
+        $shopType = tenant()->shop_type ?? 'general';
+        if ($registry['shop_types'] !== null && !in_array($shopType, $registry['shop_types'])) {
+            return $cache[$key] = false;
+        }
+
+        $value = \App\Models\Setting::getValue("feature_$key");
+        if ($value === null) {
+            return $cache[$key] = (bool) $registry['default'];
+        }
+
+        return $cache[$key] = $value === '1';
+    }
+}
+
 if (!function_exists('formatKg')) {
     function formatKg(float|int|null $kg): string
     {
