@@ -9,14 +9,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,
             SettingSeeder::class,
+            UserSeeder::class,
+            ChickenTypeSeeder::class,
             DailyRateSeeder::class,
             SupplierSeeder::class,
             CustomerSeeder::class,
             StaffSeeder::class,
+            ClientSeeder::class,
+            ProductSeeder::class,
             SampleDataSeeder::class,
-            SuperAdminSeeder::class,
+            InvoiceSeeder::class,
+            PaymentSeeder::class,
         ]);
     }
 }
