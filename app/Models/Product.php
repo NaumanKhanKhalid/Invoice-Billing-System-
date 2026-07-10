@@ -11,18 +11,31 @@ class Product extends Model
 
     protected $fillable = [
         'name', 'sku', 'barcode', 'category', 'description', 'unit',
-        'cost_price', 'sale_price', 'stock_qty', 'low_stock_alert', 'is_active',
+        'cost_price', 'sale_price', 'wholesale_price', 'stock_qty', 'low_stock_alert', 'is_active',
+        'track_serial', 'purchase_unit', 'conversion_factor',
     ];
 
     protected $casts = [
         'cost_price'  => 'decimal:2',
         'sale_price'  => 'decimal:2',
         'is_active'   => 'boolean',
+        'track_serial' => 'boolean',
+        'wholesale_price' => 'decimal:2',
     ];
 
     public function stockMovements()
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    public function serials()
+    {
+        return $this->hasMany(ProductSerial::class);
+    }
+
+    public function batches()
+    {
+        return $this->hasMany(ProductBatch::class);
     }
 
     public function isLowStock(): bool

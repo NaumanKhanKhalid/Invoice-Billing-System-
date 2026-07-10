@@ -37,8 +37,8 @@ return [
     ],
     'open_tabs' => [
         'min_plan'    => 'pro',
-        'label'       => 'Open Tabs (Running Bills)',
-        'description' => 'Mechanic/karigar ka chalta bill — items add hote rahen, akhir mein ek bill',
+        'label'       => 'Hold Sales (Running Bills)',
+        'description' => 'POS par sale hold karo — customer ke items add hote rahen, akhir mein final bill',
         'icon'        => 'receipt',
         'shop_types'  => ['hardware', 'mobile', 'bike', 'general', 'medical'],
         'default'     => true,
@@ -97,6 +97,14 @@ return [
         'description' => 'Jitna stock hai us se zyada sale nahi hone degi (off = udhaar stock allow)',
         'icon'        => 'shield-check',
         'shop_types'  => ['hardware', 'mobile', 'bike', 'general', 'medical'],
+        'default'     => true,
+    ],
+    'repairs' => [
+        'min_plan'    => 'pro',
+        'label'       => 'Repair Job Cards',
+        'description' => 'Repairing ka kaam — job card banao, advance lo, ready par WhatsApp karo',
+        'icon'        => 'wrench',
+        'shop_types'  => ['mobile', 'hardware', 'bike'],
         'default'     => true,
     ],
     'audit_log' => [

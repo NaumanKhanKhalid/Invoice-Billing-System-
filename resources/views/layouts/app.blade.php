@@ -224,9 +224,9 @@
             </a>
             @endif
 
-            @if(feature_enabled('open_tabs'))
-            <a href="{{ route('open-tabs.index') }}" class="nav-item {{ request()->routeIs('open-tabs.*') ? 'active' : '' }}">
-                <i data-lucide="receipt" class="w-4 h-4"></i> Open Tabs
+            @if(feature_enabled('repairs'))
+            <a href="{{ route('repairs.index') }}" class="nav-item {{ request()->routeIs('repairs.*') ? 'active' : '' }}">
+                <i data-lucide="wrench" class="w-4 h-4"></i> Repairing
             </a>
             @endif
 
