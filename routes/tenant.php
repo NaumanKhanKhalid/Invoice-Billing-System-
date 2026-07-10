@@ -39,6 +39,7 @@ use App\Http\Controllers\DataExportController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ReorderController;
 use App\Http\Controllers\BarcodeLabelController;
+use App\Http\Controllers\RepairJobController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -260,6 +261,18 @@ Route::middleware([
 
         // Stock movement history
         Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+
+        // Repair Job Cards (mobile/bike/hardware repairing)
+        Route::middleware('feature:repairs')->group(function () {
+            Route::get('/repairs', [RepairJobController::class, 'index'])->name('repairs.index');
+            Route::get('/repairs/create', [RepairJobController::class, 'create'])->name('repairs.create');
+            Route::post('/repairs', [RepairJobController::class, 'store'])->name('repairs.store');
+            Route::get('/repairs/{repair}', [RepairJobController::class, 'show'])->name('repairs.show');
+            Route::get('/repairs/{repair}/edit', [RepairJobController::class, 'edit'])->name('repairs.edit');
+            Route::put('/repairs/{repair}', [RepairJobController::class, 'update'])->name('repairs.update');
+            Route::patch('/repairs/{repair}/status', [RepairJobController::class, 'updateStatus'])->name('repairs.status');
+            Route::delete('/repairs/{repair}', [RepairJobController::class, 'destroy'])->name('repairs.destroy');
+        });
 
         // Reorder suggestions + barcode label printing
         Route::get('/reorder', [ReorderController::class, 'index'])->name('reorder.index');
