@@ -37,6 +37,8 @@ use App\Http\Controllers\CoachingFeeController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\DataExportController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\ReorderController;
+use App\Http\Controllers\BarcodeLabelController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -258,6 +260,10 @@ Route::middleware([
 
         // Stock movement history
         Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+
+        // Reorder suggestions + barcode label printing
+        Route::get('/reorder', [ReorderController::class, 'index'])->name('reorder.index');
+        Route::get('/barcode-labels', [BarcodeLabelController::class, 'index'])->name('barcode-labels.index');
 
         // Activity Log (audit trail — owner only)
         Route::get('/activity-log', [ActivityLogController::class, 'index'])
