@@ -52,12 +52,19 @@ class ProductController extends Controller
             'unit'             => 'required|in:pcs,kg,liter,meter,box,dozen,pair',
             'cost_price'       => 'required|numeric|min:0',
             'sale_price'       => 'required|numeric|min:0',
+            'wholesale_price'  => 'nullable|numeric|min:0',
             'stock_qty'        => 'required|integer|min:0',
             'low_stock_alert'  => 'required|integer|min:0',
             'is_active'        => 'boolean',
+            'track_serial'     => 'boolean',
+            'purchase_unit'    => 'nullable|string|max:30',
+            'conversion_factor'=> 'nullable|numeric|min:0.001',
         ]);
 
-        Product::create($data + ['is_active' => $request->boolean('is_active', true)]);
+        Product::create($data + [
+            'is_active'    => $request->boolean('is_active', true),
+            'track_serial' => $request->boolean('track_serial'),
+        ]);
 
         return redirect()->route('products.index')->with('success', "Product '{$data['name']}' created.");
     }
@@ -65,7 +72,14 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $movements = $product->stockMovements()->latest()->take(10)->get();
-        return view('products.show', compact('product', 'movements'));
+
+        $serialsInStock = $serialsSold = 0;
+        if ($product->track_serial) {
+            $serialsInStock = $product->serials()->where('status', 'in_stock')->count();
+            $serialsSold    = $product->serials()->where('status', 'sold')->count();
+        }
+
+        return view('products.show', compact('product', 'movements', 'serialsInStock', 'serialsSold'));
     }
 
     public function edit(Product $product)
@@ -85,10 +99,17 @@ class ProductController extends Controller
             'unit'             => 'required|in:pcs,kg,liter,meter,box,dozen,pair',
             'cost_price'       => 'required|numeric|min:0',
             'sale_price'       => 'required|numeric|min:0',
+            'wholesale_price'  => 'nullable|numeric|min:0',
             'low_stock_alert'  => 'required|integer|min:0',
+            'track_serial'     => 'boolean',
+            'purchase_unit'    => 'nullable|string|max:30',
+            'conversion_factor'=> 'nullable|numeric|min:0.001',
         ]);
 
-        $product->update($data + ['is_active' => $request->boolean('is_active')]);
+        $product->update($data + [
+            'is_active'    => $request->boolean('is_active'),
+            'track_serial' => $request->boolean('track_serial'),
+        ]);
 
         return redirect()->route('products.show', $product)->with('success', 'Product updated.');
     }

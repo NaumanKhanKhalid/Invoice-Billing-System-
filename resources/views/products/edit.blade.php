@@ -10,7 +10,8 @@
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-    <form method="POST" action="{{ route('products.update', $product) }}" class="space-y-4">
+    <form method="POST" action="{{ route('products.update', $product) }}" class="space-y-4"
+          x-data="{ unit: '{{ old('unit', $product->unit) }}', pu: '{{ old('purchase_unit', $product->purchase_unit) }}', cf: '{{ old('conversion_factor', $product->conversion_factor) }}' }">
       @csrf @method('PUT')
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -46,7 +47,7 @@
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Unit *</label>
           <div class="relative">
-            <select name="unit" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
+            <select name="unit" x-model="unit" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
               @foreach(['pcs'=>'Pieces','kg'=>'KG','liter'=>'Liter','meter'=>'Meter','box'=>'Box','dozen'=>'Dozen','pair'=>'Pair'] as $val=>$label)
               <option value="{{ $val }}" @selected(old('unit', $product->unit)===$val)>{{ $label }}</option>
               @endforeach
@@ -68,6 +69,13 @@
         </div>
 
         <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Wholesale Price (optional)</label>
+          <input type="number" name="wholesale_price" value="{{ old('wholesale_price', $product->wholesale_price) }}" min="0" step="0.01"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+          <p class="text-xs text-slate-400 mt-1">Mechanic/thekedaar rate — khali chhodo to sab ko retail</p>
+        </div>
+
+        <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Low Stock Alert At</label>
           <input type="number" name="low_stock_alert" value="{{ old('low_stock_alert', $product->low_stock_alert) }}" min="0"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
@@ -76,6 +84,36 @@
         <div class="sm:col-span-2">
           <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
           <textarea name="description" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none">{{ old('description', $product->description) }}</textarea>
+        </div>
+
+        <div class="sm:col-span-2 flex items-start gap-3">
+          <input type="checkbox" name="track_serial" value="1" id="track_serial" @checked(old('track_serial', $product->track_serial)) class="rounded border-slate-300 text-green-600 mt-0.5">
+          <div>
+            <label for="track_serial" class="text-sm text-slate-700">Track IMEI/Serial Numbers</label>
+            <p class="text-xs text-slate-400">Mobile phones waghera ke liye — har sale par IMEI record hoga</p>
+          </div>
+        </div>
+
+        <div class="sm:col-span-2 border border-slate-200 rounded-lg p-4 space-y-3">
+          <h3 class="text-sm font-semibold text-slate-700">Unit Conversion (optional)</h3>
+          <p class="text-xs text-slate-400">Maal bade unit mein aata hai to yahan set karo</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Purchase Unit</label>
+              <input type="text" name="purchase_unit" x-model="pu" value="{{ old('purchase_unit', $product->purchase_unit) }}" maxlength="30"
+                     class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
+                     placeholder="e.g. Roll">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Conversion Factor</label>
+              <input type="number" name="conversion_factor" x-model="cf" value="{{ old('conversion_factor', $product->conversion_factor) }}" min="0.001" step="0.001"
+                     class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
+                     placeholder="e.g. 100">
+            </div>
+          </div>
+          <p class="text-xs text-green-600" x-show="pu && cf" x-cloak>
+            1 <span x-text="pu"></span> = <span x-text="cf"></span> <span x-text="unit"></span>
+          </p>
         </div>
 
         <div class="sm:col-span-2 flex items-center gap-3">

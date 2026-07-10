@@ -37,6 +37,48 @@
     </div>
   </div>
 
+  @if($product->wholesale_price || $product->track_serial || ($product->purchase_unit && $product->conversion_factor))
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+    <h2 class="font-semibold text-slate-900 mb-3">Pro Details</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      @if($product->wholesale_price)
+      <div>
+        <p class="text-xs text-slate-400 uppercase mb-1">Wholesale Price</p>
+        <p class="text-sm font-semibold text-slate-900">PKR {{ number_format($product->wholesale_price) }}</p>
+      </div>
+      @endif
+      @if($product->track_serial)
+      <div>
+        <p class="text-xs text-slate-400 uppercase mb-1">Serial Tracking</p>
+        <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-700">IMEI/Serial Tracked</span>
+      </div>
+      @endif
+      @if($product->purchase_unit && $product->conversion_factor)
+      <div>
+        <p class="text-xs text-slate-400 uppercase mb-1">Unit Conversion</p>
+        <p class="text-sm font-semibold text-slate-900">1 {{ $product->purchase_unit }} = {{ $product->conversion_factor + 0 }} {{ $product->unit }}</p>
+      </div>
+      @endif
+    </div>
+  </div>
+  @endif
+
+  @if($product->track_serial)
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+    <h2 class="font-semibold text-slate-900 mb-3">Serials</h2>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="text-center">
+        <p class="text-xs text-slate-400 uppercase mb-1">In Stock</p>
+        <p class="text-2xl font-bold text-green-600">{{ $serialsInStock }}</p>
+      </div>
+      <div class="text-center">
+        <p class="text-xs text-slate-400 uppercase mb-1">Sold</p>
+        <p class="text-2xl font-bold text-slate-900">{{ $serialsSold }}</p>
+      </div>
+    </div>
+  </div>
+  @endif
+
   {{-- Stock Adjustment --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5" x-data="{ open: false }">
     <div class="flex items-center justify-between mb-3">

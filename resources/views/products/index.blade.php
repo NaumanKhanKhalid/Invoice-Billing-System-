@@ -7,9 +7,17 @@
       <h1 class="text-xl font-bold text-slate-900">Products & Inventory</h1>
       <p class="text-sm text-slate-500">{{ $products->total() }} products</p>
     </div>
-    <a href="{{ route('products.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-      <i data-lucide="plus" class="w-4 h-4"></i>Add Product
-    </a>
+    <div class="flex items-center gap-2">
+      <a href="{{ route('reorder.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">
+        <i data-lucide="shopping-cart" class="w-4 h-4"></i>Reorder List
+      </a>
+      <a href="{{ route('barcode-labels.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">
+        <i data-lucide="barcode" class="w-4 h-4"></i>Print Labels
+      </a>
+      <a href="{{ route('products.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        <i data-lucide="plus" class="w-4 h-4"></i>Add Product
+      </a>
+    </div>
   </div>
 
   {{-- Stats --}}
@@ -85,12 +93,22 @@
         @foreach($products as $product)
         <tr class="hover:bg-slate-50 {{ $product->stock_qty === 0 ? 'bg-red-50' : ($product->isLowStock() ? 'bg-amber-50' : '') }}">
           <td class="px-4 py-3">
-            <a href="{{ route('products.show', $product) }}" class="font-medium text-slate-900 hover:text-green-600">{{ $product->name }}</a>
+            <div class="flex items-center gap-1.5">
+              <a href="{{ route('products.show', $product) }}" class="font-medium text-slate-900 hover:text-green-600">{{ $product->name }}</a>
+              @if($product->track_serial)
+                <span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-100 text-blue-700">IMEI</span>
+              @endif
+            </div>
             @if($product->sku)<p class="text-xs text-slate-400">SKU: {{ $product->sku }}</p>@endif
           </td>
           <td class="px-4 py-3 text-sm text-slate-500">{{ $product->category ?? '—' }}</td>
           <td class="px-4 py-3 text-sm text-right text-slate-600">{{ number_format($product->cost_price) }}</td>
-          <td class="px-4 py-3 text-sm text-right font-semibold text-slate-900">{{ number_format($product->sale_price) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-semibold text-slate-900">
+            {{ number_format($product->sale_price) }}
+            @if($product->wholesale_price)
+              <p class="text-xs font-normal text-slate-400">W: PKR {{ number_format($product->wholesale_price) }}</p>
+            @endif
+          </td>
           <td class="px-4 py-3 text-center">
             @if($product->stock_qty === 0)
               <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Out of Stock</span>
