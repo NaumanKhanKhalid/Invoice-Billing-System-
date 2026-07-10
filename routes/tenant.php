@@ -129,6 +129,11 @@ Route::middleware([
         // Day End
         // Open Tabs (running bills for mechanics/workshop customers)
         Route::middleware('feature:open_tabs')->group(function () {
+            // POS Hold/Resume (Open Tabs backend, POS UI)
+            Route::post('/pos/hold', [PosController::class, 'holdSale'])->name('pos.hold');
+            Route::get('/pos/hold/{openTab}', [PosController::class, 'holdShow'])->name('pos.hold.show');
+            Route::delete('/pos/hold/{openTab}', [PosController::class, 'holdDelete'])->name('pos.hold.delete');
+
             Route::get('/open-tabs/search-products', [OpenTabController::class, 'searchProducts'])->name('open-tabs.search');
             Route::get('/open-tabs', [OpenTabController::class, 'index'])->name('open-tabs.index');
             Route::post('/open-tabs', [OpenTabController::class, 'store'])->name('open-tabs.store');

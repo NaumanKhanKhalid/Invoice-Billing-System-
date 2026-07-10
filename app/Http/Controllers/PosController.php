@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditSale;
+use App\Models\OpenTab;
 use App\Models\PosSale;
 use App\Models\Product;
+use App\Models\ProductSerial;
+use App\Models\UdharCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -20,27 +24,35 @@ class PosController extends Controller
 
     public function create()
     {
-        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','stock_qty','unit','category']);
+        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category']);
         $todaySales = PosSale::whereDate('date', today())->count();
         $todayRevenue = PosSale::whereDate('date', today())->sum('total');
         $lowStock = Product::where('is_active', true)->whereColumn('stock_qty', '<=', 'low_stock_alert')->count();
-        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock'));
+        $heldSales = feature_enabled('open_tabs') ? $this->openHolds() : collect();
+        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'customer_name'      => 'nullable|string|max:100',
-            'customer_phone'     => 'nullable|string|max:20',
+            'customer_name'      => 'required_if:payment_method,credit|nullable|string|max:100',
+            'customer_phone'     => 'required_if:payment_method,credit|nullable|string|max:20',
             'payment_method'     => 'required|in:cash,jazzcash,easypaisa,bank,credit',
             'discount'           => 'nullable|numeric|min:0',
             'amount_paid'        => 'required|numeric|min:0',
             'notes'              => 'nullable|string',
             'client_uuid'        => 'nullable|string|max:64',
+            'hold_id'            => 'nullable|integer|exists:open_tabs,id',
             'items'              => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.qty'        => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'serials'            => 'nullable|array',
+            'serials.*'          => 'array',
+            'serials.*.*'        => 'string|max:64',
+        ], [
+            'customer_name.required_if'  => 'Udhar sale ke liye customer name zaroori hai.',
+            'customer_phone.required_if' => 'Udhar sale ke liye customer phone zaroori hai.',
         ]);
 
         // Offline-queue dedupe: the POS page retries queued sales when the
@@ -99,7 +111,7 @@ class PosController extends Controller
             foreach ($data['items'] as $item) {
                 $product = Product::find($item['product_id']);
 
-                $sale->items()->create([
+                $saleItem = $sale->items()->create([
                     'product_id'   => $item['product_id'],
                     'product_name' => $product->name,
                     'qty'          => $item['qty'],
@@ -107,8 +119,63 @@ class PosController extends Controller
                     'total'        => $item['qty'] * $item['unit_price'],
                 ]);
 
+                // IMEI/serial capture — optional, shopkeeper may skip
+                foreach ($data['serials'][$item['product_id']] ?? [] as $serial) {
+                    $serial = trim($serial);
+                    if ($serial === '') continue;
+                    $existing = ProductSerial::where('product_id', $item['product_id'])->where('serial', $serial)->first();
+                    if ($existing) {
+                        if ($existing->status === 'in_stock') {
+                            $existing->update(['status' => 'sold', 'pos_sale_item_id' => $saleItem->id]);
+                        }
+                    } else {
+                        ProductSerial::create([
+                            'product_id'       => $item['product_id'],
+                            'serial'           => $serial,
+                            'status'           => 'sold',
+                            'pos_sale_item_id' => $saleItem->id,
+                        ]);
+                    }
+                }
+
                 // Auto stock decrease
                 $product->removeStock($item['qty'], 'POS#' . $sale->id);
+            }
+
+            // Udhar sale — record the unpaid amount in the Udhar Book
+            if ($data['payment_method'] === 'credit') {
+                $unpaid = round($total - $paid, 2);
+                if ($unpaid > 0) {
+                    $udharCustomer = UdharCustomer::firstOrCreate(
+                        ['phone' => $data['customer_phone']],
+                        ['name'  => $data['customer_name']]
+                    );
+
+                    CreditSale::create([
+                        'udhar_customer_id' => $udharCustomer->id,
+                        'customer_name'     => $data['customer_name'],
+                        'phone'             => $data['customer_phone'],
+                        'amount'            => $unpaid,
+                        'amount_paid'       => 0,
+                        'amount_due'        => $unpaid,
+                        'sale_date'         => today(),
+                        'due_date'          => today()->addDays(30),
+                        'description'       => 'POS ' . $sale->sale_number,
+                        'status'            => 'unpaid',
+                    ]);
+
+                    $udharCustomer->increment('total_given', $unpaid);
+                    $udharCustomer->increment('current_balance', $unpaid);
+                }
+            }
+
+            // Sale resumed from a hold — the hold is now settled, remove it
+            if (!empty($data['hold_id'])) {
+                $tab = OpenTab::where('status', 'open')->find($data['hold_id']);
+                if ($tab) {
+                    $tab->items()->delete();
+                    $tab->delete();
+                }
             }
 
             session(['last_pos_sale_id' => $sale->id]);
@@ -140,11 +207,117 @@ class PosController extends Controller
         return view('pos.receipt', compact('posSale'));
     }
 
+    /**
+     * Hold the current POS cart as an OpenTab (POST /pos/hold — pos.hold).
+     * Passing hold_id updates that hold in place (re-hold after resume)
+     * instead of creating a duplicate.
+     */
+    public function holdSale(Request $request)
+    {
+        $data = $request->validate([
+            'hold_id'            => 'nullable|integer|exists:open_tabs,id',
+            'customer_name'      => 'required|string|max:100',
+            'customer_phone'     => 'nullable|string|max:20',
+            'notes'              => 'nullable|string|max:500',
+            'items'              => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.name'       => 'required|string|max:200',
+            'items.*.qty'        => 'required|numeric|min:0.001',
+            'items.*.price'      => 'required|numeric|min:0',
+            'items.*.unit'       => 'nullable|string|max:20',
+        ]);
+
+        $tab = DB::transaction(function () use ($data) {
+            if (!empty($data['hold_id'])) {
+                $tab = OpenTab::where('status', 'open')->findOrFail($data['hold_id']);
+                $tab->update([
+                    'customer_name'  => $data['customer_name'],
+                    'customer_phone' => $data['customer_phone'] ?? null,
+                    'notes'          => $data['notes'] ?? null,
+                ]);
+                $tab->items()->delete();
+            } else {
+                $tab = OpenTab::create([
+                    'tab_number'     => OpenTab::nextNumber(),
+                    'customer_name'  => $data['customer_name'],
+                    'customer_phone' => $data['customer_phone'] ?? null,
+                    'notes'          => $data['notes'] ?? null,
+                ]);
+            }
+
+            foreach ($data['items'] as $item) {
+                $tab->items()->create([
+                    'product_id'   => $item['product_id'],
+                    'product_name' => $item['name'],
+                    'unit'         => $item['unit'] ?? 'pcs',
+                    'qty'          => $item['qty'],
+                    'price'        => $item['price'],
+                    'total'        => round($item['qty'] * $item['price'], 2),
+                ]);
+            }
+
+            $tab->recalculate();
+            return $tab;
+        });
+
+        return response()->json([
+            'ok'         => true,
+            'tab_number' => $tab->tab_number,
+            'holds'      => $this->openHolds(),
+        ]);
+    }
+
+    /** Items of a hold, for resuming into the cart (GET /pos/hold/{openTab} — pos.hold.show). */
+    public function holdShow(OpenTab $openTab)
+    {
+        abort_if($openTab->status === 'closed', 403, 'Hold is closed.');
+
+        return response()->json([
+            'id'             => $openTab->id,
+            'tab_number'     => $openTab->tab_number,
+            'customer_name'  => $openTab->customer_name,
+            'customer_phone' => $openTab->customer_phone,
+            'notes'          => $openTab->notes,
+            'items'          => $openTab->items->map(fn ($i) => [
+                'product_id' => $i->product_id,
+                'name'       => $i->product_name,
+                'qty'        => $i->qty,
+                'price'      => $i->price,
+                'unit'       => $i->unit,
+            ])->values(),
+        ]);
+    }
+
+    /** Delete a hold (DELETE /pos/hold/{openTab} — pos.hold.delete). */
+    public function holdDelete(OpenTab $openTab)
+    {
+        abort_if($openTab->status === 'closed', 403, 'Cannot delete closed hold.');
+        $openTab->items()->delete();
+        $openTab->delete();
+
+        return response()->json(['ok' => true, 'holds' => $this->openHolds()]);
+    }
+
+    /** Open holds in the shape the POS "Held" panel expects. */
+    private function openHolds()
+    {
+        return OpenTab::where('status', 'open')->withCount('items')->latest()->get()
+            ->map(fn ($t) => [
+                'id'             => $t->id,
+                'tab_number'     => $t->tab_number,
+                'customer_name'  => $t->customer_name,
+                'customer_phone' => $t->customer_phone,
+                'items_count'    => $t->items_count,
+                'total'          => $t->total,
+                'created_at'     => $t->created_at?->toIso8601String(),
+            ])->values();
+    }
+
     public function productsApi()
     {
         $products = Product::where('is_active', true)
             ->where('stock_qty', '>', 0)
-            ->select('id', 'name', 'sku', 'sale_price', 'stock_qty', 'unit')
+            ->select('id', 'name', 'sku', 'sale_price', 'wholesale_price', 'track_serial', 'stock_qty', 'unit')
             ->orderBy('name')
             ->get();
         return response()->json($products);

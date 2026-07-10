@@ -1,7 +1,10 @@
 @extends('layouts.app')
 @section('title','POS Counter')
 @section('content')
-<script>window.__POS_PRODUCTS__ = @json($products);</script>
+<script>
+window.__POS_PRODUCTS__ = @json($products);
+window.__POS_HOLDS__ = @json($heldSales ?? []);
+</script>
 
 <style>
   #main-content { padding: 0 !important; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
@@ -54,6 +57,26 @@
       </button>
       @endif
 
+      {{-- Retail | Wholesale price toggle --}}
+      <div class="flex items-center rounded-xl border border-slate-200 overflow-hidden shrink-0 text-xs font-semibold">
+        <button type="button" @click="priceMode = 'retail'"
+                :class="priceMode === 'retail' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'"
+                class="px-3 py-2 transition">Retail</button>
+        <button type="button" @click="priceMode = 'wholesale'"
+                :class="priceMode === 'wholesale' ? 'bg-amber-500 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'"
+                class="px-3 py-2 transition">Wholesale</button>
+      </div>
+
+      @if(feature_enabled('open_tabs'))
+      {{-- Held sales pill --}}
+      <button type="button" @click="holdsPanelOpen = true"
+              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition shrink-0"
+              :class="heldSales.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+        <span x-text="'Held (' + heldSales.length + ')'"></span>
+      </button>
+      @endif
+
       <a href="{{ route('pos.index') }}" class="text-xs text-slate-400 hover:text-slate-600 shrink-0 hidden lg:block whitespace-nowrap">History →</a>
     </div>
 
@@ -94,7 +117,9 @@
             <div class="p-3">
               <p class="text-sm font-bold text-slate-900 leading-tight line-clamp-2" style="min-height:2.5rem" x-text="p.name"></p>
               <p class="text-[10px] text-slate-400 mt-0.5 font-mono truncate" x-text="p.sku || ''"></p>
-              <p class="text-base font-extrabold text-green-600 mt-2" x-text="'PKR ' + Number(p.sale_price).toLocaleString()"></p>
+              <p class="text-base font-extrabold mt-2"
+                 :class="priceMode === 'wholesale' && p.wholesale_price ? 'text-amber-600' : 'text-green-600'"
+                 x-text="'PKR ' + Number(priceFor(p)).toLocaleString()"></p>
               <div class="mt-1.5 flex items-center justify-between">
                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
                       :class="p.stock_qty <= 0 ? 'bg-red-100 text-red-600' : (p.stock_qty <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500')"
@@ -170,9 +195,19 @@
         <span x-show="cart.length > 0"
               class="bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
               x-text="cart.length"></span>
+        <span x-show="holdId" x-cloak
+              class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+              x-text="holdTabNumber"></span>
       </div>
       <div class="flex items-center gap-3">
-        <button @click="cart = []" x-show="cart.length > 0"
+        @if(feature_enabled('open_tabs'))
+        <button type="button" @click="openHoldModal()" x-show="cart.length > 0"
+                class="text-blue-400 hover:text-blue-300 transition text-xs font-medium flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+          Hold
+        </button>
+        @endif
+        <button @click="clearCart()" x-show="cart.length > 0"
                 class="text-slate-500 hover:text-red-400 transition text-xs font-medium flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
           Clear
@@ -261,8 +296,20 @@
 
         {{-- Customer + Cash --}}
         <div class="px-5 pb-2 space-y-2">
-          <input type="text" name="customer_name" x-model="customerName" placeholder="Customer name (optional)"
-                 class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-500 outline-none focus:border-green-500 transition">
+          <p x-show="payMethod === 'credit'" x-cloak class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+            Udhar — customer name aur phone zaroori hain
+          </p>
+          <input type="text" name="customer_name" x-model="customerName"
+                 :placeholder="payMethod === 'credit' ? 'Customer name (required)' : 'Customer name (optional)'"
+                 :required="payMethod === 'credit'"
+                 :class="payMethod === 'credit' && !customerName.trim() ? 'border-amber-500' : 'border-slate-700'"
+                 class="w-full px-3 py-1.5 bg-slate-800 border rounded-xl text-white text-sm placeholder-slate-500 outline-none focus:border-green-500 transition">
+
+          <input x-show="payMethod === 'credit'" x-cloak type="text" name="customer_phone" x-model="customerPhone"
+                 placeholder="Customer phone (required)"
+                 :required="payMethod === 'credit'"
+                 :class="!customerPhone.trim() ? 'border-amber-500' : 'border-slate-700'"
+                 class="w-full px-3 py-1.5 bg-slate-800 border rounded-xl text-white text-sm placeholder-slate-500 outline-none focus:border-green-500 transition">
 
           <div class="flex gap-2">
             <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01" required
@@ -331,6 +378,131 @@
     </div>
   </div>
   @endif
+
+  @if(feature_enabled('open_tabs'))
+  {{-- Hold Sale Modal --}}
+  <div x-show="holdModalOpen" x-cloak x-transition
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+       @keydown.escape.window="holdModalOpen = false">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden" @click.outside="holdModalOpen = false">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div>
+          <h3 class="font-bold text-slate-900" x-text="holdId ? 'Hold Update Karein' : 'Sale Hold Karein'"></h3>
+          <p class="text-xs text-slate-400 mt-0.5">Cart save ho jayega, baad mein resume karein</p>
+        </div>
+        <button type="button" @click="holdModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
+      </div>
+      <form @submit.prevent="confirmHold()" class="px-5 py-4 space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Customer Name <span class="text-red-500">*</span></label>
+          <input type="text" x-model="holdCustomerName" x-ref="holdNameInput" required placeholder="e.g. Rafiq mistri"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-300 outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Phone (optional)</label>
+          <input type="text" x-model="holdCustomerPhone" placeholder="03xx-xxxxxxx"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-300 outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Note (optional)</label>
+          <input type="text" x-model="holdNote" placeholder="e.g. CD-70 ka kaam"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-300 outline-none transition">
+        </div>
+        <button type="submit" :disabled="holdSaving || !holdCustomerName.trim()"
+                class="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white py-2.5 rounded-xl font-bold text-sm transition"
+                x-text="holdSaving ? 'Saving...' : (holdId ? 'Hold Update Karein' : 'Hold Karein — ' + cart.length + ' item(s)')"></button>
+      </form>
+    </div>
+  </div>
+
+  {{-- Held Sales slide-over --}}
+  <div x-show="holdsPanelOpen" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="holdsPanelOpen = false">
+    <div class="absolute inset-0 bg-black/50" @click="holdsPanelOpen = false" x-show="holdsPanelOpen" x-transition.opacity></div>
+    <div class="absolute right-0 inset-y-0 w-full max-w-md bg-white shadow-2xl flex flex-col"
+         x-show="holdsPanelOpen" x-transition:enter="transition transform duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
+        <div>
+          <h3 class="font-bold text-slate-900">Held Sales</h3>
+          <p class="text-xs text-slate-400 mt-0.5" x-text="heldSales.length + ' hold(s) pending'"></p>
+        </div>
+        <button type="button" @click="holdsPanelOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-4 space-y-3">
+        <template x-if="heldSales.length === 0">
+          <div class="flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+            </div>
+            <p class="text-slate-400 text-sm font-medium">Koi hold nahi hai</p>
+            <p class="text-slate-300 text-xs mt-1">Cart mein "Hold" button se sale save karein</p>
+          </div>
+        </template>
+        <template x-for="h in heldSales" :key="h.id">
+          <div class="border border-slate-200 rounded-2xl p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="font-bold text-slate-900 text-sm truncate" x-text="h.customer_name"></p>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  <span class="font-mono" x-text="h.tab_number"></span>
+                  <span> · </span>
+                  <span x-text="h.items_count + ' item(s)'"></span>
+                  <span> · </span>
+                  <span x-text="timeAgo(h.created_at)"></span>
+                </p>
+              </div>
+              <p class="font-extrabold text-green-600 text-sm whitespace-nowrap" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button type="button" @click="resumeHold(h)"
+                      class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-1.5 rounded-xl text-xs font-bold transition">Resume</button>
+              <button type="button" @click="deleteHold(h)"
+                      class="px-3 py-1.5 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl text-xs font-bold transition">Delete</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+  @endif
+
+  {{-- IMEI / Serial capture modal --}}
+  <div x-show="serialModalOpen" x-cloak x-transition
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+       @keydown.escape.window="serialModalOpen = false">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh]" @click.outside="serialModalOpen = false">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
+        <div>
+          <h3 class="font-bold text-slate-900">IMEI / Serial Numbers</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Scan karein ya type karein — Enter se agla box</p>
+        </div>
+        <button type="button" @click="serialModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+        <template x-for="si in serialItems" :key="si.id">
+          <div>
+            <p class="text-xs font-bold text-slate-600 mb-1.5" x-text="si.name + ' — ' + si.qty + ' pcs'"></p>
+            <div class="space-y-1.5">
+              <template x-for="n in si.qty" :key="n">
+                <input type="text" maxlength="64"
+                       x-model="serialInputs[si.id][n - 1]"
+                       :data-serial-idx="serialInputIndex(si.id, n - 1)"
+                       @keydown.enter.prevent="focusNextSerial(si.id, n - 1)"
+                       :placeholder="'Serial / IMEI #' + n"
+                       class="w-full px-3 py-2 text-sm font-mono border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-300 outline-none transition">
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="px-5 py-4 border-t border-slate-100 flex gap-2 shrink-0">
+        <button type="button" @click="skipSerials()"
+                class="px-4 py-2.5 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl text-xs font-bold transition">Skip</button>
+        <button type="button" @click="confirmSerials()"
+                class="flex-1 bg-green-600 hover:bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm transition">Continue Sale</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -351,8 +523,27 @@ function posApp() {
       { value: 'credit',    label: 'Udhar',     icon: '📋' },
     ],
     customerName: '',
+    customerPhone: '',
     submitting: false,
     mobileCartOpen: false,
+    // Retail / Wholesale price mode (new adds only — cart items keep their price)
+    priceMode: 'retail',
+    // Hold / Resume (Open Tabs backend)
+    holdsEnabled: {{ feature_enabled('open_tabs') ? 'true' : 'false' }},
+    heldSales: window.__POS_HOLDS__ || [],
+    holdsPanelOpen: false,
+    holdModalOpen: false,
+    holdSaving: false,
+    holdId: null,          // set when cart was resumed from a hold → re-hold updates in place
+    holdTabNumber: '',
+    holdCustomerName: '',
+    holdCustomerPhone: '',
+    holdNote: '',
+    // IMEI / serial capture
+    serialModalOpen: false,
+    serialItems: [],
+    serialInputs: {},
+    serials: {},
     offlineQueue: [],
     syncing: false,
     QUEUE_KEY: 'pos_offline_queue',
@@ -388,16 +579,27 @@ function posApp() {
       return {
         client_uuid:    this.makeUuid(),
         customer_name:  this.customerName || null,
+        customer_phone: this.customerPhone || null,
         payment_method: this.payMethod,
         discount:       Number(this.discount || 0),
         amount_paid:    Number(this.amountPaid || 0),
+        hold_id:        this.holdId || null,
+        serials:        Object.keys(this.serials).length ? this.serials : null,
         items:          this.cart.map(i => ({ product_id: i.id, qty: i.qty, unit_price: i.price })),
       };
     },
 
     resetSale() {
       this.cart = []; this.discount = 0; this.amountPaid = 0;
-      this.customerName = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
+      this.customerName = ''; this.customerPhone = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
+      this.holdId = null; this.holdTabNumber = '';
+      this.serials = {}; this.serialItems = []; this.serialInputs = {};
+    },
+
+    clearCart() {
+      this.cart = [];
+      this.holdId = null; this.holdTabNumber = '';
+      this.serials = {};
     },
 
     postSale(payload) {
@@ -419,7 +621,67 @@ function posApp() {
       this.flash('Net nahi hai — sale offline save ho gayi, baad mein sync hogi', true);
     },
 
-    async submitSale() {
+    submitSale() {
+      if (this.cart.length === 0 || this.submitting) return;
+
+      // Udhar requires customer name + phone
+      if (this.payMethod === 'credit' && (!this.customerName.trim() || !this.customerPhone.trim())) {
+        this.flash('Udhar ke liye customer name aur phone dono likhein', false);
+        return;
+      }
+
+      // IMEI/serial products — collect serials first (skippable)
+      const trackable = this.cart.filter(i => i.track_serial);
+      if (trackable.length > 0) { this.openSerialModal(trackable); return; }
+
+      this.finishSubmit();
+    },
+
+    // ── IMEI / serial capture ───────────────────────────────────
+    openSerialModal(trackable) {
+      this.serialItems = trackable.map(i => ({ id: i.id, name: i.name, qty: i.qty }));
+      this.serialInputs = {};
+      this.serialItems.forEach(si => { this.serialInputs[si.id] = Array(si.qty).fill(''); });
+      this.serialModalOpen = true;
+      this.$nextTick(() => {
+        const first = document.querySelector('[data-serial-idx="0"]');
+        if (first) first.focus();
+      });
+    },
+
+    serialInputIndex(productId, n) {
+      let idx = 0;
+      for (const si of this.serialItems) {
+        if (si.id === productId) return idx + n;
+        idx += si.qty;
+      }
+      return idx + n;
+    },
+
+    focusNextSerial(productId, n) {
+      const next = document.querySelector('[data-serial-idx="' + (this.serialInputIndex(productId, n) + 1) + '"]');
+      if (next) next.focus();
+      else this.confirmSerials();
+    },
+
+    confirmSerials() {
+      const serials = {};
+      for (const si of this.serialItems) {
+        const list = (this.serialInputs[si.id] || []).map(s => (s || '').trim()).filter(Boolean);
+        if (list.length) serials[si.id] = list;
+      }
+      this.serials = serials;
+      this.serialModalOpen = false;
+      this.finishSubmit();
+    },
+
+    skipSerials() {
+      this.serials = {};
+      this.serialModalOpen = false;
+      this.finishSubmit();
+    },
+
+    async finishSubmit() {
       if (this.cart.length === 0 || this.submitting) return;
       const payload = this.buildPayload();
 
@@ -490,11 +752,126 @@ function posApp() {
     get change()   { return Math.max(0, Number(this.amountPaid || 0) - this.total); },
     setFullPay()   { this.amountPaid = this.total; },
 
+    // Effective price for new adds: wholesale rate when toggled (fallback to retail)
+    priceFor(p) {
+      return (this.priceMode === 'wholesale' && p.wholesale_price)
+        ? parseFloat(p.wholesale_price)
+        : parseFloat(p.sale_price);
+    },
+
     addToCart(p) {
       if (p.stock_qty <= 0) return;
       const ex = this.cart.find(i => i.id == p.id);
       if (ex) { if (ex.qty < p.stock_qty) ex.qty++; }
-      else this.cart.push({ id: p.id, name: p.name, unit: p.unit, price: parseFloat(p.sale_price), qty: 1, stock: p.stock_qty });
+      else this.cart.push({ id: p.id, name: p.name, unit: p.unit, price: this.priceFor(p), qty: 1, stock: p.stock_qty, track_serial: !!p.track_serial });
+    },
+
+    // ── Hold / Resume (Open Tabs) ───────────────────────────────
+    openHoldModal() {
+      if (this.cart.length === 0) return;
+      if (!this.holdCustomerName) this.holdCustomerName = this.customerName;
+      this.holdModalOpen = true;
+      this.$nextTick(() => this.$refs.holdNameInput && this.$refs.holdNameInput.focus());
+    },
+
+    async confirmHold() {
+      if (this.holdSaving || !this.holdCustomerName.trim()) return;
+      this.holdSaving = true;
+      try {
+        const res = await fetch('{{ route('pos.hold') }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+          },
+          body: JSON.stringify({
+            hold_id:        this.holdId || null,
+            customer_name:  this.holdCustomerName.trim(),
+            customer_phone: this.holdCustomerPhone.trim() || null,
+            notes:          this.holdNote.trim() || null,
+            items:          this.cart.map(i => ({ product_id: i.id, name: i.name, qty: i.qty, price: i.price, unit: i.unit })),
+          }),
+        });
+        if (!res.ok) {
+          let msg = 'Hold save nahi hua (HTTP ' + res.status + ')';
+          try { const j = await res.json(); if (j.message) msg = j.message; } catch (e) {}
+          this.flash(msg, false);
+          return;
+        }
+        const json = await res.json();
+        this.heldSales = json.holds || this.heldSales;
+        this.holdModalOpen = false;
+        this.holdCustomerName = ''; this.holdCustomerPhone = ''; this.holdNote = '';
+        this.resetSale();
+        this.flash('✓ Sale hold ho gayi — ' + json.tab_number, true);
+      } catch (e) {
+        this.flash('Net nahi hai — hold ke liye internet zaroori hai', false);
+      } finally {
+        this.holdSaving = false;
+      }
+    },
+
+    async resumeHold(h) {
+      if (this.cart.length > 0 && !confirm('Cart mein pehle se items hain — unko hata kar yeh hold load karein?')) return;
+      try {
+        const res = await fetch('{{ url('/pos/hold') }}/' + h.id, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) { this.flash('Hold load nahi hua (HTTP ' + res.status + ')', false); return; }
+        const json = await res.json();
+        this.cart = (json.items || []).map(it => {
+          const p = this.products.find(pr => pr.id == it.product_id);
+          return {
+            id:           it.product_id,
+            name:         it.name,
+            unit:         it.unit || (p ? p.unit : 'pcs'),
+            price:        parseFloat(it.price),
+            qty:          Math.max(1, Math.round(Number(it.qty))),
+            stock:        p ? p.stock_qty : Number(it.qty),
+            track_serial: p ? !!p.track_serial : false,
+          };
+        });
+        this.holdId = json.id;
+        this.holdTabNumber = json.tab_number;
+        this.customerName = json.customer_name || '';
+        this.customerPhone = json.customer_phone || '';
+        this.holdCustomerName = json.customer_name || '';
+        this.holdCustomerPhone = json.customer_phone || '';
+        this.holdNote = json.notes || '';
+        this.holdsPanelOpen = false;
+        this.flash('✓ ' + json.tab_number + ' resume ho gaya — ' + (json.customer_name || ''), true);
+      } catch (e) {
+        this.flash('Net nahi hai — hold load nahi hua', false);
+      }
+    },
+
+    async deleteHold(h) {
+      if (!confirm(h.customer_name + ' ka hold (' + h.tab_number + ') delete karein?')) return;
+      try {
+        const res = await fetch('{{ url('/pos/hold') }}/' + h.id, {
+          method: 'DELETE',
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+          },
+        });
+        if (!res.ok) { this.flash('Hold delete nahi hua (HTTP ' + res.status + ')', false); return; }
+        const json = await res.json();
+        this.heldSales = json.holds || this.heldSales.filter(x => x.id !== h.id);
+        if (this.holdId === h.id) { this.holdId = null; this.holdTabNumber = ''; }
+        this.flash('Hold delete ho gaya', true);
+      } catch (e) {
+        this.flash('Net nahi hai — hold delete nahi hua', false);
+      }
+    },
+
+    timeAgo(iso) {
+      if (!iso) return '';
+      const mins = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60000));
+      if (mins < 1) return 'abhi abhi';
+      if (mins < 60) return mins + ' min pehle';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + ' ghante pehle';
+      return Math.floor(hrs / 24) + ' din pehle';
     },
 
     removeFromCart(id) { this.cart = this.cart.filter(i => i.id != id); },
