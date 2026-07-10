@@ -4,26 +4,39 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\InteractsWithTenancy;
 use Tests\TestCase;
 
 class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
+    use InteractsWithTenancy;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->createTenant();
+    }
+
+    private function makeUser(): User
+    {
+        return $this->inTenant(fn () => User::factory()->create());
+    }
 
     public function test_confirm_password_screen_can_be_rendered(): void
     {
-        $user = User::factory()->create();
+        $user = $this->makeUser();
 
-        $response = $this->actingAs($user)->get('/confirm-password');
+        $response = $this->actingAs($user)->get($this->tenantUrl('/confirm-password'));
 
         $response->assertStatus(200);
     }
 
     public function test_password_can_be_confirmed(): void
     {
-        $user = User::factory()->create();
+        $user = $this->makeUser();
 
-        $response = $this->actingAs($user)->post('/confirm-password', [
+        $response = $this->actingAs($user)->post($this->tenantUrl('/confirm-password'), [
             'password' => 'password',
         ]);
 
@@ -33,9 +46,9 @@ class PasswordConfirmationTest extends TestCase
 
     public function test_password_is_not_confirmed_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $user = $this->makeUser();
 
-        $response = $this->actingAs($user)->post('/confirm-password', [
+        $response = $this->actingAs($user)->post($this->tenantUrl('/confirm-password'), [
             'password' => 'wrong-password',
         ]);
 

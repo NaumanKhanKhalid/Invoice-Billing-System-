@@ -29,3 +29,4 @@ Thumbs.db
 
 # Local sqlite tenant databases (dev/testing)
 /database/tenant-*
+/database/testing.sqlite
