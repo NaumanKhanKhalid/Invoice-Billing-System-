@@ -2,7 +2,7 @@
 @section('title','Dashboard')
 @section('content')
 @php
-$shopLabels = ['hardware'=>'Hardware Shop','mobile'=>'Mobile Shop','bike'=>'Bike Shop','general'=>'General Store'];
+$shopLabels = ['hardware'=>'Hardware Shop','mobile'=>'Mobile Shop','bike'=>'Bike Shop','general'=>'General Store','medical'=>'Medical Store'];
 $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
 @endphp
 <div class="space-y-6">
@@ -22,6 +22,20 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
       </a>
     </div>
   </div>
+
+  {{-- Expiry alert (medical shops only) --}}
+  @if($shopType === 'medical' && ($expiringSoonCount ?? 0) > 0)
+  <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+    <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+      <i data-lucide="calendar-x" class="w-4 h-4 text-red-600"></i>
+    </div>
+    <div class="flex-1">
+      <p class="text-sm font-semibold text-red-800">{{ $expiringSoonCount }} item{{ $expiringSoonCount > 1 ? 's' : '' }} 30 din mein expire ho rahe hain</p>
+      <p class="text-xs text-red-600">Expiry Report dekho</p>
+    </div>
+    <a href="{{ route('expiry-report.index') }}" class="text-xs font-medium text-red-700 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">Expiry Report →</a>
+  </div>
+  @endif
 
   {{-- Low stock alert --}}
   @if($outOfStock > 0)

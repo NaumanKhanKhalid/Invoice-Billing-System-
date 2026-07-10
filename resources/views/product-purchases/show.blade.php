@@ -38,6 +38,12 @@
         <tr>
           <td class="px-4 py-3 text-sm font-medium text-slate-900">
             <a href="{{ route('products.show', $item->product) }}" class="hover:text-green-600">{{ $item->product->name }}</a>
+            @if($batch = $batches->get($item->id))
+            <p class="text-xs text-slate-400 mt-0.5">
+              @if($batch->batch_no)Batch: {{ $batch->batch_no }} · @endif
+              <span class="{{ $batch->isExpired() ? 'text-red-500 font-medium' : '' }}">Expiry: {{ $batch->expiry_date->format('M Y') }}</span>
+            </p>
+            @endif
           </td>
           <td class="px-4 py-3 text-sm text-center text-slate-600">{{ $item->qty }} {{ $item->product->unit }}</td>
           <td class="px-4 py-3 text-sm text-right text-slate-600">{{ number_format($item->unit_price) }}</td>

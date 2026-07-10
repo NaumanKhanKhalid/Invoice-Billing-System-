@@ -40,6 +40,7 @@ use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ReorderController;
 use App\Http\Controllers\BarcodeLabelController;
 use App\Http\Controllers\RepairJobController;
+use App\Http\Controllers\ExpiryReportController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -273,6 +274,9 @@ Route::middleware([
             Route::patch('/repairs/{repair}/status', [RepairJobController::class, 'updateStatus'])->name('repairs.status');
             Route::delete('/repairs/{repair}', [RepairJobController::class, 'destroy'])->name('repairs.destroy');
         });
+
+        // Expiry report (medical batches)
+        Route::get('/expiry-report', [ExpiryReportController::class, 'index'])->name('expiry-report.index');
 
         // Reorder suggestions + barcode label printing
         Route::get('/reorder', [ReorderController::class, 'index'])->name('reorder.index');

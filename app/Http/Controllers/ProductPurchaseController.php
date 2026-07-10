@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductBatch;
 use App\Models\ProductPurchase;
+use App\Models\ProductPurchaseItem;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +32,18 @@ class ProductPurchaseController extends Controller
     {
         $suppliers = Supplier::where('is_active', true)->orderBy('name')->get();
         $products  = Product::where('is_active', true)->orderBy('name')->get();
-        return view('product-purchases.create', compact('suppliers', 'products'));
+
+        // Last purchase rate per product (rate is stored per base unit)
+        $lastRates = ProductPurchaseItem::query()
+            ->join('product_purchases', 'product_purchases.id', '=', 'product_purchase_items.product_purchase_id')
+            ->orderBy('product_purchase_items.id')
+            ->get(['product_purchase_items.product_id', 'product_purchase_items.unit_price', 'product_purchases.date'])
+            ->keyBy('product_id')
+            ->map(fn ($i) => ['rate' => (float) $i->unit_price, 'date' => \Carbon\Carbon::parse($i->date)->format('d M Y')]);
+
+        $isMedical = (tenant()->shop_type ?? 'general') === 'medical';
+
+        return view('product-purchases.create', compact('suppliers', 'products', 'lastRates', 'isMedical'));
     }
 
     public function store(Request $request)
@@ -46,6 +59,8 @@ class ProductPurchaseController extends Controller
             'items.*.product_id'=> 'required|exists:products,id',
             'items.*.qty'       => 'required|integer|min:1',
             'items.*.unit_price'=> 'required|numeric|min:0',
+            'items.*.batch_no'  => 'nullable|string|max:50',
+            'items.*.expiry'    => 'nullable|date_format:Y-m',
         ]);
 
         DB::transaction(function () use ($data) {
@@ -65,22 +80,45 @@ class ProductPurchaseController extends Controller
                 'notes'          => $data['notes'] ?? null,
             ]);
 
+            $isMedical = (tenant()->shop_type ?? 'general') === 'medical';
+
             foreach ($data['items'] as $item) {
-                $purchase->items()->create([
+                $product = Product::find($item['product_id']);
+
+                // Unit conversion: qty is entered in purchase_unit (e.g. carton/dozen).
+                // product_purchase_items only has a single qty column, so we store the
+                // CONVERTED base-unit qty (and a per-base-unit price so total stays correct).
+                $factor    = ($product->purchase_unit && $product->conversion_factor > 0) ? (float) $product->conversion_factor : 1;
+                $baseQty   = (int) round($item['qty'] * $factor);
+                $basePrice = $factor > 1 ? round($item['unit_price'] / $factor, 2) : $item['unit_price'];
+
+                $purchaseItem = $purchase->items()->create([
                     'product_id' => $item['product_id'],
-                    'qty'        => $item['qty'],
-                    'unit_price' => $item['unit_price'],
+                    'qty'        => $baseQty,
+                    'unit_price' => $basePrice,
                     'total'      => $item['qty'] * $item['unit_price'],
                 ]);
 
-                // Auto stock increase
-                $product = Product::find($item['product_id']);
+                // Auto stock increase (in base units)
                 $product->addStock(
-                    $item['qty'],
-                    $item['unit_price'],
+                    $baseQty,
+                    $basePrice,
                     'purchase#' . $purchase->id,
                     'Product purchase'
                 );
+
+                // Batch + expiry tracking (medical shops)
+                if ($isMedical && !empty($item['expiry'])) {
+                    ProductBatch::create([
+                        'product_id'               => $product->id,
+                        'batch_no'                 => $item['batch_no'] ?? null,
+                        // End of the chosen expiry month
+                        'expiry_date'              => \Carbon\Carbon::createFromFormat('Y-m', $item['expiry'])
+                                                        ->startOfMonth()->addMonth()->subDay()->toDateString(),
+                        'qty'                      => $baseQty,
+                        'product_purchase_item_id' => $purchaseItem->id,
+                    ]);
+                }
             }
         });
 
@@ -91,7 +129,9 @@ class ProductPurchaseController extends Controller
     public function show(ProductPurchase $productPurchase)
     {
         $productPurchase->load('supplier', 'items.product');
-        return view('product-purchases.show', compact('productPurchase'));
+        $batches = ProductBatch::whereIn('product_purchase_item_id', $productPurchase->items->pluck('id'))
+            ->get()->keyBy('product_purchase_item_id');
+        return view('product-purchases.show', compact('productPurchase', 'batches'));
     }
 
     public function destroy(ProductPurchase $productPurchase)

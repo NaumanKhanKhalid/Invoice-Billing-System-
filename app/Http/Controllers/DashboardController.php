@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\DailyRecord;
 use App\Models\Expense;
 use App\Models\Product;
+use App\Models\ProductBatch;
 use App\Models\PosSale;
 use App\Models\ProductPurchase;
 use App\Models\PurchaseOrder;
@@ -94,6 +95,11 @@ class DashboardController extends Controller
 
         $recentSales    = PosSale::latest('date')->limit(8)->get();
 
+        // Medical: batches expiring within 30 days (including already expired)
+        $expiringSoonCount = $shopType === 'medical'
+            ? ProductBatch::where('qty', '>', 0)->whereDate('expiry_date', '<=', today()->addDays(30))->count()
+            : 0;
+
         for ($i = 5; $i >= 0; $i--) {
             $m = now()->subMonths($i);
             $monthlySales[] = (float) PosSale::whereYear('date', $m->year)->whereMonth('date', $m->month)->sum('total');
@@ -102,7 +108,7 @@ class DashboardController extends Controller
         return view('dashboard.product', compact(
             'todaySales', 'todayPurchases', 'todayExpenses', 'todayProfit', 'todayTxCount',
             'monthSales', 'monthPurchases', 'monthExpenses', 'monthProfit',
-            'lowStock', 'totalProducts', 'outOfStock',
+            'lowStock', 'totalProducts', 'outOfStock', 'expiringSoonCount',
             'supplierDue', 'supplierDue2', 'overdueCount',
             'recentSales',
             'monthlyLabels', 'monthlySales',

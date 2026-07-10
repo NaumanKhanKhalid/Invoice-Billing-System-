@@ -7,7 +7,7 @@
        addItem(product) {
          const existing = this.items.find(i => i.product_id == product.id);
          if (existing) { existing.qty++; existing.total = existing.qty * existing.unit_price; }
-         else this.items.push({ product_id: product.id, name: product.name, unit: product.unit, stock: product.stock_qty, qty: 1, unit_price: product.sale_price, total: product.sale_price });
+         else this.items.push({ product_id: product.id, name: product.name, unit: product.unit, stock: product.stock_qty, qty: 1, unit_price: product.sale_price, total: product.sale_price, punit: product.purchase_unit, factor: product.conversion_factor ? parseFloat(product.conversion_factor) : null, batch_no: '', expiry: '' });
          this.recalc();
        },
        removeItem(idx) { this.items.splice(idx, 1); this.recalc(); },
@@ -17,6 +17,7 @@
        get due() { return Math.max(0, this.subtotal - this.amountPaid); },
        searchQ: '',
        products: @json($products),
+       lastRates: @json($lastRates),
        get filtered() { return this.searchQ.length < 1 ? this.products.slice(0,20) : this.products.filter(p => p.name.toLowerCase().includes(this.searchQ.toLowerCase()) || (p.sku && p.sku.toLowerCase().includes(this.searchQ.toLowerCase()))).slice(0,20); }
      }">
 
@@ -78,16 +79,34 @@
                       <td class="py-2">
                         <p class="font-medium text-slate-900" x-text="item.name"></p>
                         <input type="hidden" :name="'items['+idx+'][product_id]'" :value="item.product_id">
+                        @if($isMedical)
+                        <div class="flex gap-1.5 mt-1">
+                          <input type="text" :name="'items['+idx+'][batch_no]'" x-model="item.batch_no" placeholder="Batch #"
+                                 class="w-24 px-2 py-1 border border-slate-200 rounded text-xs outline-none focus:ring-1 focus:ring-green-300">
+                          <input type="month" :name="'items['+idx+'][expiry]'" x-model="item.expiry" title="Expiry"
+                                 class="w-32 px-2 py-1 border border-slate-200 rounded text-xs text-slate-600 outline-none focus:ring-1 focus:ring-green-300">
+                        </div>
+                        @endif
                       </td>
                       <td class="py-2 text-center">
                         <input type="number" :name="'items['+idx+'][qty]'" x-model.number="item.qty" min="1"
                                @input="item.total = item.qty * item.unit_price"
                                class="w-20 text-center px-2 py-1 border border-slate-200 rounded text-sm outline-none focus:ring-1 focus:ring-green-300">
+                        <template x-if="item.punit && item.factor">
+                          <div class="mt-0.5">
+                            <p class="text-[11px] font-medium text-slate-500" x-text="item.punit"></p>
+                            <p class="text-[11px] text-green-600" x-text="'= ' + ((item.qty || 0) * item.factor).toLocaleString() + ' ' + item.unit"></p>
+                          </div>
+                        </template>
                       </td>
                       <td class="py-2 text-right">
                         <input type="number" :name="'items['+idx+'][unit_price]'" x-model.number="item.unit_price" min="0" step="0.01"
                                @input="item.total = item.qty * item.unit_price"
                                class="w-24 text-right px-2 py-1 border border-slate-200 rounded text-sm outline-none focus:ring-1 focus:ring-green-300">
+                        <template x-if="lastRates[item.product_id]">
+                          <p class="text-[11px] text-slate-400 mt-0.5"
+                             x-text="'Pichli baar: PKR ' + lastRates[item.product_id].rate.toLocaleString() + ' (' + lastRates[item.product_id].date + ')'"></p>
+                        </template>
                       </td>
                       <td class="py-2 text-right font-semibold text-slate-900" x-text="'PKR ' + (item.qty * item.unit_price).toLocaleString()"></td>
                       <td class="py-2 text-right">
