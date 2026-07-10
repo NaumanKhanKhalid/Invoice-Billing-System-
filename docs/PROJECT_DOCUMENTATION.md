@@ -157,6 +157,25 @@ Hardware/bike shops ka khaas flow: mechanic aata hai, din bhar items leta rehta 
 - **Close Tab**: discount + amount_paid + payment_method → receipt print.
 - Status: `open` / `closed`.
 
+### 6.7b POS Hold/Resume (Open Tabs ka naya roop) ⭐
+Open Tabs ka alag page khatam — ab POS ke andar "Hold" hai:
+- Cart bana kar **Hold** karo (customer name/phone/note) — `open_tabs` tables hi backend hain
+- Header par **Held (N)** — Resume karo, items add karo, dobara Hold (wahi bill update hota hai)
+- Checkout par hold khud delete — ek hi sales history
+- **POS Udhar link**: payment method "Udhar" par CreditSale + UdharCustomer khud bantay hain
+- **Retail | Wholesale toggle** — do rates (products.wholesale_price)
+- **IMEI capture** — track_serial products par checkout se pehle serials ka modal → `product_serials`
+
+### 6.7c Repairing / Job Cards (`RepairJobController`) ⭐
+Mobile/bike/hardware ki repairing income: JOB-0001, status flow (pending → in_progress → ready → delivered), advance/final cost, ready par WhatsApp message, printable 80mm job card. Feature toggle: `repairs`.
+
+### 6.7d Inventory Pro
+- **Unit conversion**: products.purchase_unit + conversion_factor (1 Roll = 100 Meter) — purchase par auto-convert
+- **Last rate hint**: purchase form par "Pichli baar: PKR x"
+- **Medical batches**: purchase par batch# + expiry → `product_batches`; **Expiry Report** (/expiry-report) + dashboard red alert
+- **Reorder List** (/reorder): low-stock → supplier ko WhatsApp order
+- **Barcode Labels** (/barcode-labels): Code128 price stickers print
+
 ### 6.8 Day Summary / Day Closing (`DaySummaryController` → `day_summaries`)
 Product shops ka din band karne ka system (chicken ke DayEnd ka product version):
 - Auto-fetch: us din ki POS sales, purchases, expenses.
