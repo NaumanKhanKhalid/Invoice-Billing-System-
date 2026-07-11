@@ -111,7 +111,7 @@
             <td class="px-4 py-3 text-right">
               <div class="flex items-center justify-end gap-2">
                 @if($fee->status !== 'paid')
-                <button @click="open=!open" class="inline-flex items-center gap-1 text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                <button @click="open=!open" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium transition-colors">
                   <i data-lucide="banknote" class="w-3.5 h-3.5"></i>Collect
                 </button>
                 @else
