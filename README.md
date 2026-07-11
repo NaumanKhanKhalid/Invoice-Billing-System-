@@ -80,7 +80,7 @@ php artisan serve
 Tenants are created from the central admin panel (`/admin`); each new tenant's database is created and migrated automatically. For local subdomains, add entries like `shop1.localhost` to your hosts file. After adding new tenant migrations, run:
 
 ```bash
-php artisan tenants:run "migrate"
+php artisan tenants:migrate
 ```
 
 ## Subscription Plans
