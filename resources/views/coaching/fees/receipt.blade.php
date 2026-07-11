@@ -17,7 +17,7 @@
           . "Paid: PKR " . number_format($fee->amount_paid)
           . ($fee->balance_due > 0 ? "\nBalance: PKR " . number_format($fee->balance_due) : "")
           . "\nShukriya! 🙏");
-        $waPhone = preg_replace('/[^0-9]/', '', $fee->student->phone);
+        $waPhone = wa_number($fee->student->phone);
       @endphp
       <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
          class="inline-flex items-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">

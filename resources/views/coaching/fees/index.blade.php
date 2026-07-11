@@ -121,7 +121,7 @@
                 </a>
                 @endif
                 @if($fee->student->phone && feature_enabled('whatsapp_share'))
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $fee->student->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $fee->student->name . ' — ' . $monthDate->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein. Balance: PKR ' . number_format($fee->balance_due)) }}"
+                <a href="https://wa.me/{{ wa_number($fee->student->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $fee->student->name . ' — ' . $monthDate->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein. Balance: PKR ' . number_format($fee->balance_due)) }}"
                    target="_blank" title="WhatsApp reminder"
                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 text-xs font-medium transition-colors">
                   <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>WhatsApp

@@ -53,7 +53,7 @@
             <dd class="text-slate-800 mt-0.5">
               {{ $student->phone ?? '—' }}
               @if($student->phone)
-              <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $student->phone) }}"
+              <a href="https://wa.me/{{ wa_number($student->phone) }}"
                  target="_blank" class="text-xs text-green-600 hover:underline ml-2">WhatsApp</a>
               @endif
             </dd>

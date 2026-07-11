@@ -19,7 +19,7 @@
         $waLines[] = '*Total: PKR ' . number_format($openTab->total) . '*';
         $waLines[] = 'Shukriya! 🙏';
         $waText  = urlencode(implode("\n", $waLines));
-        $waPhone = preg_replace('/[^0-9]/', '', $openTab->customer_phone ?? '');
+        $waPhone = wa_number($openTab->customer_phone ?? '');
       @endphp
       @if(feature_enabled('whatsapp_share'))
       <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"

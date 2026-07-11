@@ -1,5 +1,28 @@
 <?php
 
+if (!function_exists('wa_number')) {
+    /**
+     * Normalise a Pakistani phone number to WhatsApp (wa.me) international
+     * format: digits only, no leading 0, with the 92 country code.
+     * Examples: 0300-1234567 → 923001234567 ; +92 300 1234567 → 923001234567
+     */
+    function wa_number(?string $phone): string
+    {
+        $digits = preg_replace('/[^0-9]/', '', $phone ?? '');
+        if ($digits === '') return '';
+
+        if (str_starts_with($digits, '0')) {
+            $digits = '92' . substr($digits, 1);      // 03xx… → 923xx…
+        } elseif (str_starts_with($digits, '92')) {
+            // already international
+        } elseif (str_starts_with($digits, '3') && strlen($digits) === 10) {
+            $digits = '92' . $digits;                 // 3xx… → 923xx…
+        }
+
+        return $digits;
+    }
+}
+
 if (!function_exists('feature_enabled')) {
     /**
      * Check whether a toggleable feature is enabled for the current tenant.

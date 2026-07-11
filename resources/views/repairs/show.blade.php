@@ -16,8 +16,7 @@
     <div class="flex items-center gap-2">
       @if(feature_enabled('whatsapp_share') && $job->status === 'ready' && $job->customer_phone)
       @php
-        $waPhone = preg_replace('/\D/', '', $job->customer_phone);
-        $waPhone = str_starts_with($waPhone, '0') ? '92' . substr($waPhone, 1) : $waPhone;
+        $waPhone = wa_number($job->customer_phone);
         $waText = "Assalam o Alaikum {$job->customer_name} — aapka {$job->device} theek ho gaya hai, aa kar le jayen. Total: PKR " . number_format($job->final_cost ?? $job->estimated_cost ?? 0);
       @endphp
       <a href="https://wa.me/{{ $waPhone }}?text={{ urlencode($waText) }}" target="_blank"

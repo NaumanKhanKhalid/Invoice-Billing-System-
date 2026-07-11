@@ -35,7 +35,7 @@ $statusClass = [
         $waLines[] = '*Total: PKR ' . number_format($quotation->total) . '*';
         if ($quotation->valid_until) $waLines[] = 'Valid until: ' . $quotation->valid_until->format('d M Y');
         $waText  = urlencode(implode("\n", $waLines));
-        $waPhone = preg_replace('/[^0-9]/', '', $quotation->customer_phone ?? '');
+        $waPhone = wa_number($quotation->customer_phone ?? '');
       @endphp
       @if(feature_enabled('whatsapp_share'))
       <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"

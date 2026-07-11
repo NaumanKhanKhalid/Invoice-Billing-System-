@@ -56,7 +56,7 @@
       <select x-model="supplier" class="appearance-none pl-8 pr-7 py-1.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
         <option value="">Select Supplier</option>
         @foreach($suppliers as $sup)
-        <option value="{{ preg_replace('/\D/', '', $sup->phone) }}">{{ $sup->name }} ({{ $sup->phone }})</option>
+        <option value="{{ wa_number($sup->phone) }}">{{ $sup->name }} ({{ $sup->phone }})</option>
         @endforeach
       </select>
       <i data-lucide="chevron-down" class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>

@@ -81,7 +81,7 @@
           <div class="text-right">
             <p class="text-sm font-semibold text-red-600">PKR {{ number_format($s->effectiveFee()) }}</p>
             @if($s->phone && feature_enabled('whatsapp_share'))
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $s->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $s->name . ' — ' . now()->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein.') }}"
+            <a href="https://wa.me/{{ wa_number($s->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $s->name . ' — ' . now()->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein.') }}"
                target="_blank" class="text-xs text-green-600 hover:underline">WhatsApp</a>
             @endif
           </div>

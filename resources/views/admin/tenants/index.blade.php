@@ -48,7 +48,7 @@
         <div class="flex items-center gap-3">
           <span class="text-xs text-amber-700 font-semibold">{{ $t->plan_expires_at->format('d M Y') }}</span>
           @if($t->owner_phone)
-          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $t->owner_phone) }}?text={{ urlencode('Assalam o Alaikum ' . $t->owner_name . ' bhai! Aapka ShopSaas plan ' . $t->plan_expires_at->format('d M Y') . ' ko expire ho raha hai. Renew karne ke liye rabta karen.') }}"
+          <a href="https://wa.me/{{ wa_number($t->owner_phone) }}?text={{ urlencode('Assalam o Alaikum ' . $t->owner_name . ' bhai! Aapka ShopSaas plan ' . $t->plan_expires_at->format('d M Y') . ' ko expire ho raha hai. Renew karne ke liye rabta karen.') }}"
              target="_blank"
              class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded text-xs font-medium">
             WhatsApp

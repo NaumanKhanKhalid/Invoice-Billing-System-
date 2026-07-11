@@ -158,7 +158,7 @@
         @if($creditSale->phone && $creditSale->status !== 'paid')
         @php
           $waMsg = urlencode("Dear " . $creditSale->customer_name . ", you have an outstanding balance of " . formatCurrency($creditSale->amount_due) . " due by " . $creditSale->due_date->format('d M Y') . ". Please arrange payment. — " . \App\Models\Setting::getValue('company_name', tenancy()->initialized ? tenant()->shop_name : config('app.name')));
-          $waPhone = preg_replace('/[^0-9]/', '', $creditSale->phone);
+          $waPhone = wa_number($creditSale->phone);
           if (str_starts_with($waPhone, '0')) $waPhone = '92' . substr($waPhone, 1);
         @endphp
         <a href="https://wa.me/{{ $waPhone }}?text={{ $waMsg }}" target="_blank"
