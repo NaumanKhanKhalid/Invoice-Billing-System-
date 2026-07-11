@@ -151,8 +151,9 @@
                   </div>
                   <div class="grid grid-cols-2 gap-2">
                     <div>
-                      <label class="text-xs text-slate-500">Discount</label>
+                      <label class="text-xs text-slate-500">Discount (is mahine)</label>
                       <input name="discount_amount" type="number" min="0" value="{{ $fee->discount_amount }}"
+                             placeholder="PKR chhoot"
                              class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
                     </div>
                     <div>

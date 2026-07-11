@@ -58,9 +58,10 @@
                  class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Discount (%)</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Permanent Discount (%)</label>
           <input name="discount_percent" type="number" min="0" max="100" value="{{ old('discount_percent', $student->discount_percent) }}"
                  class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p class="text-xs text-slate-400 mt-1">Har mahine apne aap lagega. Ek dafa ki chhoot fee collect karte waqt dena.</p>
         </div>
       </div>
     </div>
