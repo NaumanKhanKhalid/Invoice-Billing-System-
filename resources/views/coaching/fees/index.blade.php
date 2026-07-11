@@ -111,13 +111,21 @@
             <td class="px-4 py-3 text-right">
               <div class="flex items-center justify-end gap-2">
                 @if($fee->status !== 'paid')
-                <button @click="open=!open" class="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700">Collect</button>
+                <button @click="open=!open" class="inline-flex items-center gap-1 text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                  <i data-lucide="banknote" class="w-3.5 h-3.5"></i>Collect
+                </button>
                 @else
-                <a href="{{ route('coaching.fees.receipt', $fee) }}" class="text-xs text-slate-500 hover:underline">Receipt</a>
+                <a href="{{ route('coaching.fees.receipt', $fee) }}"
+                   class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition-colors">
+                  <i data-lucide="receipt" class="w-3.5 h-3.5"></i>Receipt
+                </a>
                 @endif
                 @if($fee->student->phone && feature_enabled('whatsapp_share'))
                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $fee->student->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $fee->student->name . ' — ' . $monthDate->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein. Balance: PKR ' . number_format($fee->balance_due)) }}"
-                   target="_blank" class="text-xs text-green-600 hover:underline">WA</a>
+                   target="_blank" title="WhatsApp reminder"
+                   class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 text-xs font-medium transition-colors">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>WhatsApp
+                </a>
                 @endif
               </div>
               {{-- Collect Form --}}
