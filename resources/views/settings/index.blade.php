@@ -202,7 +202,11 @@
                     <input type="file" name="logo" accept="image/*"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                     @if(!empty($settings['logo_path']))
-                    <p class="text-xs text-slate-400 mt-1">Current logo: {{ $settings['logo_path'] }}</p>
+                    <div class="mt-2 flex items-center gap-3">
+                      <img src="{{ asset('storage/' . $settings['logo_path']) }}" alt="Logo"
+                           class="h-12 w-12 object-contain rounded-lg border border-slate-200 bg-white p-1">
+                      <span class="text-xs text-slate-400">Current logo — sidebar aur receipts par show hoga</span>
+                    </div>
                     @endif
                 </div>
                 <div class="sm:col-span-2">
