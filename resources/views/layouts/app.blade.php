@@ -15,8 +15,15 @@
         $isCoaching = $shopType === 'coaching';
     @endphp
     <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
+    @php $faviconLogo = ($isTenantCtx && tenancy()->initialized) ? \App\Models\Setting::getValue('logo_path') : null; @endphp
+    @if($faviconLogo)
+    {{-- Tenant ka apna logo browser tab par (white-label) --}}
+    <link rel="icon" href="{{ tenant_asset($faviconLogo) }}">
+    <link rel="apple-touch-icon" href="{{ tenant_asset($faviconLogo) }}">
+    @else
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" href="/favicon.ico">
+    @endif
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
