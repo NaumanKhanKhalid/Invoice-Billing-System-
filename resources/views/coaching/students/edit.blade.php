@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Edit Student')
 @section('content')
-<div class="max-w-2xl mx-auto space-y-6">
+<div class="space-y-6">
 
   <div class="flex items-center gap-3">
     <a href="{{ route('coaching.students.show', $student) }}" class="text-slate-400 hover:text-slate-600">
