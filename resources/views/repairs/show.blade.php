@@ -125,7 +125,7 @@
   <div id="receipt" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
     <div class="bg-slate-800 text-white px-6 py-5 text-center">
       @if($logoPath = \App\Models\Setting::getValue('logo_path'))
-      <img src="{{ asset('storage/'.$logoPath) }}" alt="Logo" class="max-h-16 mx-auto mb-2">
+      <img src="{{ tenant_asset($logoPath) }}" alt="Logo" class="max-h-16 mx-auto mb-2">
       @endif
       <h1 class="text-xl font-bold">Repair Job Card</h1>
       <p class="text-slate-300 text-sm mt-1">{{ \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? config('app.name')) }}</p>

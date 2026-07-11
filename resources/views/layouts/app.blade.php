@@ -151,7 +151,7 @@
             @php $shopLogo = \App\Models\Setting::getValue('logo_path'); @endphp
             <div class="flex items-center gap-2.5">
               @if($shopLogo)
-              <img src="{{ asset('storage/' . $shopLogo) }}" alt="Logo"
+              <img src="{{ tenant_asset($shopLogo) }}" alt="Logo"
                    class="w-9 h-9 rounded-lg object-contain bg-white p-0.5 flex-shrink-0">
               @else
               <div class="w-9 h-9 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">

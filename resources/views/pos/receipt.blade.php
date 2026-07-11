@@ -37,7 +37,7 @@
     @php $shopName = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop'); @endphp
     <div class="text-center mb-4">
       @if($logoPath = \App\Models\Setting::getValue('logo_path'))
-      <img src="{{ asset('storage/'.$logoPath) }}" alt="{{ $shopName }}" class="max-h-16 mx-auto mb-2">
+      <img src="{{ tenant_asset($logoPath) }}" alt="{{ $shopName }}" class="max-h-16 mx-auto mb-2">
       @endif
       <h1 class="text-lg font-bold">{{ $shopName }}</h1>
       @if($ntn = \App\Models\Setting::getValue('ntn_number'))
