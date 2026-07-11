@@ -381,7 +381,7 @@
     </aside>
 
     <!-- Main content -->
-    <div class="flex-1 flex flex-col min-h-screen min-w-0">
+    <div id="app-shell" class="flex-1 flex flex-col min-h-screen min-w-0">
         <!-- Top bar (mobile) -->
         <header class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
             <button onclick="openSidebar()" class="text-slate-600">

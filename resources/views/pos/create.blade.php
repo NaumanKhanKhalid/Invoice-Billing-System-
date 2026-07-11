@@ -7,6 +7,9 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 </script>
 
 <style>
+  /* Lock the POS to the viewport height so the products grid and cart items
+     scroll internally while the checkout stays pinned (page itself never scrolls). */
+  #app-shell { height: 100vh; min-height: 0 !important; overflow: hidden; }
   #main-content { padding: 0 !important; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
   /* Cart panel layout is defined here (not via md: Tailwind utilities) so it
      works even on an older/purged asset build. */
@@ -525,11 +528,9 @@ function posApp() {
     amountPaid: 0,
     payMethod: 'cash',
     payMethods: [
-      { value: 'cash',      label: 'Cash',      icon: '💵' },
-      { value: 'jazzcash',  label: 'JazzCash',  icon: '📱' },
-      { value: 'easypaisa', label: 'EasyPaisa', icon: '📱' },
-      { value: 'bank',      label: 'Bank',      icon: '🏦' },
-      { value: 'credit',    label: 'Udhar',     icon: '📋' },
+      { value: 'cash',   label: 'Cash',   icon: '💵' },
+      { value: 'online', label: 'Online', icon: '📱' },
+      { value: 'credit', label: 'Udhar',  icon: '📋' },
     ],
     customerName: '',
     customerPhone: '',

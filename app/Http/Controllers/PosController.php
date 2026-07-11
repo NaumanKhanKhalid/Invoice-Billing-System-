@@ -37,7 +37,7 @@ class PosController extends Controller
         $data = $request->validate([
             'customer_name'      => 'required_if:payment_method,credit|nullable|string|max:100',
             'customer_phone'     => 'required_if:payment_method,credit|nullable|string|max:20',
-            'payment_method'     => 'required|in:cash,jazzcash,easypaisa,bank,credit',
+            'payment_method'     => 'required|in:cash,online,jazzcash,easypaisa,bank,credit',
             'discount'           => 'nullable|numeric|min:0',
             'amount_paid'        => 'required|numeric|min:0',
             'notes'              => 'nullable|string',
