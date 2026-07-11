@@ -59,6 +59,10 @@ Route::middleware([
     Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'start'])->middleware('throttle:10,1')->name('impersonate.start');
     Route::post('/impersonate/stop', [TenantImpersonateController::class, 'stop'])->name('impersonate.stop');
 
+    // Public fee receipt — parents open this from the WhatsApp link (signed, no login)
+    Route::get('/r/fee/{fee}', [CoachingFeeController::class, 'publicReceipt'])
+        ->middleware('signed')->name('coaching.fees.public-receipt');
+
     // Google OAuth callback
     Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');
 

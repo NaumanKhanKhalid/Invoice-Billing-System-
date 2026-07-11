@@ -89,4 +89,14 @@ class CoachingFeeController extends Controller
         $fee->load('student.batch.course');
         return view('coaching.fees.receipt', compact('fee'));
     }
+
+    /**
+     * Public receipt — opened by parents from the WhatsApp link.
+     * No login; access is guarded by the signed-URL middleware.
+     */
+    public function publicReceipt(CoachingFeeCollection $fee)
+    {
+        $fee->load('student.batch.course');
+        return view('coaching.fees.public-receipt', compact('fee'));
+    }
 }
