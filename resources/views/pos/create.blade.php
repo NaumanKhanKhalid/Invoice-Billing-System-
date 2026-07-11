@@ -11,7 +11,7 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
   /* Cart panel layout is defined here (not via md: Tailwind utilities) so it
      works even on an older/purged asset build. */
   .pos-cart {
-    width: 20rem; flex-shrink: 0; border-left: 1px solid #1e293b;
+    width: 20rem; flex-shrink: 0; border-left: 1px solid #e2e8f0;
     position: static; transform: none;
   }
   @media (min-width: 1280px) { .pos-cart { width: 24rem; } }
@@ -193,108 +193,108 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
   {{-- ══ RIGHT: Cart + Checkout ══ --}}
   {{-- Mobile: full-screen slide-up panel; Desktop (md+): static sidebar --}}
   {{-- Compiled Tailwind lacks translate-y-full/md:translate-y-0 variants, so slide is driven by custom .pos-cart CSS below --}}
-  <div class="pos-cart flex flex-col bg-slate-900 overflow-hidden transition-transform duration-200"
+  <div class="pos-cart flex flex-col bg-white overflow-hidden transition-transform duration-200"
        :class="mobileCartOpen ? 'open' : ''">
 
     {{-- Cart header --}}
-    <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between shrink-0">
+    <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
       <div class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-        <span class="text-white font-bold text-sm">Cart</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        <span class="text-slate-900 font-bold text-sm">Cart</span>
         <span x-show="cart.length > 0"
-              class="bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
+              class="bg-green-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
               x-text="cart.length"></span>
         <span x-show="holdId" x-cloak
-              class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+              class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
               x-text="holdTabNumber"></span>
       </div>
       <div class="flex items-center gap-3">
         @if(feature_enabled('open_tabs'))
         <button type="button" @click="openHoldModal()" x-show="cart.length > 0"
-                class="text-blue-400 hover:text-blue-300 transition text-xs font-medium flex items-center gap-1">
+                class="text-blue-600 hover:text-blue-700 transition text-xs font-medium flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
           Hold
         </button>
         @endif
         <button @click="clearCart()" x-show="cart.length > 0"
-                class="text-slate-500 hover:text-red-400 transition text-xs font-medium flex items-center gap-1">
+                class="text-slate-400 hover:text-red-500 transition text-xs font-medium flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
           Clear
         </button>
         <button type="button" @click="mobileCartOpen = false"
-                class="md:hidden w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center transition">✕</button>
+                class="md:hidden w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">✕</button>
       </div>
     </div>
 
     {{-- Cart items (scrollable) --}}
-    <div class="overflow-y-auto py-2 px-3 space-y-2" style="flex:1 1 0; min-height:0;">
+    <div class="overflow-y-auto py-3 px-3 space-y-2 bg-slate-50" style="flex:1 1 0; min-height:0;">
       <template x-if="cart.length === 0">
         <div class="flex flex-col items-center justify-center h-full py-10 text-center">
-          <div class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
-          <p class="text-slate-500 text-sm">Cart khali hai</p>
-          <p class="text-slate-600 text-xs mt-1">Product card click karein</p>
+          <p class="text-slate-500 text-sm font-medium">Cart khali hai</p>
+          <p class="text-slate-400 text-xs mt-1">Product card click karein</p>
         </div>
       </template>
 
       <template x-for="(item, idx) in cart" :key="item.id">
-        <div class="bg-slate-800 rounded-xl p-3 flex gap-3 items-start">
+        <div class="bg-white border border-slate-200 rounded-xl p-3 flex gap-3 items-start shadow-sm">
           <div class="flex-1 min-w-0">
-            <p class="text-white text-sm font-semibold leading-snug" x-text="item.name"></p>
-            <p class="text-green-400 text-xs mt-0.5 font-medium" x-text="'PKR ' + Number(item.price).toLocaleString() + ' / ' + item.unit"></p>
+            <p class="text-slate-900 text-sm font-semibold leading-snug" x-text="item.name"></p>
+            <p class="text-slate-400 text-xs mt-0.5 font-medium" x-text="'PKR ' + Number(item.price).toLocaleString() + ' / ' + item.unit"></p>
           </div>
           <div class="flex flex-col items-end gap-1.5 shrink-0">
             <div class="flex items-center gap-1">
               <button type="button" @click="item.qty > 1 ? item.qty-- : removeFromCart(item.id)"
-                      class="w-7 h-7 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold flex items-center justify-center transition text-base leading-none">−</button>
-              <span class="text-white font-bold text-sm w-7 text-center tabular-nums" x-text="item.qty"></span>
+                      class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition text-base leading-none">−</button>
+              <span class="text-slate-900 font-bold text-sm w-7 text-center tabular-nums" x-text="item.qty"></span>
               <button type="button" @click="item.qty < item.stock ? item.qty++ : null"
                       :disabled="item.qty >= item.stock"
                       class="w-7 h-7 rounded-lg bg-green-600 hover:bg-green-500 text-white font-bold flex items-center justify-center transition text-base leading-none disabled:opacity-30">+</button>
             </div>
-            <p class="text-white font-extrabold text-sm tabular-nums" x-text="'PKR ' + (item.qty * item.price).toLocaleString()"></p>
+            <p class="text-green-700 font-extrabold text-sm tabular-nums" x-text="'PKR ' + (item.qty * item.price).toLocaleString()"></p>
           </div>
         </div>
       </template>
     </div>
 
     {{-- Checkout (fixed bottom) --}}
-    <div class="shrink-0 border-t border-slate-800">
+    <div class="shrink-0 border-t border-slate-200 bg-white">
       {{-- Submitted via fetch (submitSale) so failed sales can be queued offline --}}
       <form method="POST" action="{{ route('pos.store') }}" @submit.prevent="submitSale()">
         @csrf
 
         {{-- Totals --}}
         <div class="px-5 pt-3 pb-2 space-y-1.5">
-          <div class="flex justify-between text-sm text-slate-400">
+          <div class="flex justify-between text-sm text-slate-500">
             <span>Subtotal</span>
-            <span x-text="'PKR ' + subtotal.toLocaleString()" class="tabular-nums"></span>
+            <span x-text="'PKR ' + subtotal.toLocaleString()" class="tabular-nums text-slate-700"></span>
           </div>
-          <div class="flex justify-between items-center text-sm text-slate-400">
+          <div class="flex justify-between items-center text-sm text-slate-500">
             <span>Discount</span>
             <div class="flex items-center gap-1.5">
-              <span class="text-slate-500 text-xs">PKR</span>
+              <span class="text-slate-400 text-xs">PKR</span>
               <input type="number" name="discount" x-model="discount" min="0" step="1"
-                     class="w-20 text-right px-2 py-1 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm outline-none focus:border-green-500 transition tabular-nums">
+                     class="w-20 text-right px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             </div>
           </div>
-          <div class="flex justify-between items-baseline pt-1.5 border-t border-slate-800">
-            <span class="text-slate-300 font-semibold text-sm">Total</span>
-            <span class="text-white text-xl font-extrabold tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
+          <div class="flex justify-between items-baseline pt-1.5 border-t border-slate-100">
+            <span class="text-slate-700 font-semibold text-sm">Total</span>
+            <span class="text-slate-900 text-xl font-extrabold tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
           </div>
         </div>
 
         {{-- Payment method --}}
         <div class="px-5 pb-2">
-          <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1.5">Payment Method</p>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Payment Method</p>
           <input type="hidden" name="payment_method" x-model="payMethod">
           <div class="grid grid-cols-3 gap-1.5">
             <template x-for="pm in payMethods" :key="pm.value">
               <button type="button" @click="payMethod = pm.value"
                       :class="payMethod === pm.value
-                        ? 'bg-green-600 border-green-500 text-white'
-                        : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'"
+                        ? 'bg-green-600 border-green-600 text-white'
+                        : 'bg-white border-slate-200 text-slate-500 hover:border-green-300'"
                       class="py-1.5 px-1 rounded-xl border text-center transition">
                 <span x-text="pm.icon" class="block text-sm"></span>
                 <span x-text="pm.label" class="text-[10px] font-semibold leading-none mt-0.5 block"></span>
@@ -305,39 +305,39 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 
         {{-- Customer + Cash --}}
         <div class="px-5 pb-2 space-y-2">
-          <p x-show="payMethod === 'credit'" x-cloak class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+          <p x-show="payMethod === 'credit'" x-cloak class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">
             Udhar — customer name aur phone zaroori hain
           </p>
           <input type="text" name="customer_name" x-model="customerName"
                  :placeholder="payMethod === 'credit' ? 'Customer name (required)' : 'Customer name (optional)'"
                  :required="payMethod === 'credit'"
-                 :class="payMethod === 'credit' && !customerName.trim() ? 'border-amber-500' : 'border-slate-700'"
-                 class="w-full px-3 py-1.5 bg-slate-800 border rounded-xl text-white text-sm placeholder-slate-500 outline-none focus:border-green-500 transition">
+                 :class="payMethod === 'credit' && !customerName.trim() ? 'border-amber-400 ring-2 ring-amber-100' : 'border-slate-200'"
+                 class="w-full px-3 py-2 bg-white border rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
 
           <input x-show="payMethod === 'credit'" x-cloak type="text" name="customer_phone" x-model="customerPhone"
                  placeholder="Customer phone (required)"
                  :required="payMethod === 'credit'"
-                 :class="!customerPhone.trim() ? 'border-amber-500' : 'border-slate-700'"
-                 class="w-full px-3 py-1.5 bg-slate-800 border rounded-xl text-white text-sm placeholder-slate-500 outline-none focus:border-green-500 transition">
+                 :class="!customerPhone.trim() ? 'border-amber-400 ring-2 ring-amber-100' : 'border-slate-200'"
+                 class="w-full px-3 py-2 bg-white border rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
 
           <div class="flex gap-2">
             <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01" required
                    placeholder="Cash received..."
-                   class="flex-1 min-w-0 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm outline-none focus:border-green-500 transition tabular-nums">
+                   class="flex-1 min-w-0 px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             <button type="button" @click="setFullPay()"
-                    class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
+                    class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
           </div>
 
-          <div x-show="change > 0" class="flex justify-between items-center bg-emerald-950 border border-emerald-800 rounded-xl px-3 py-1.5">
-            <span class="text-emerald-400 text-sm font-semibold">Change</span>
-            <span class="text-emerald-300 font-extrabold text-sm tabular-nums" x-text="'PKR ' + change.toLocaleString()"></span>
+          <div x-show="change > 0" class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+            <span class="text-emerald-700 text-sm font-semibold">Change</span>
+            <span class="text-emerald-700 font-extrabold text-sm tabular-nums" x-text="'PKR ' + change.toLocaleString()"></span>
           </div>
         </div>
 
         {{-- Submit --}}
         <div class="px-4 pb-4">
           <button type="submit" :disabled="cart.length === 0 || submitting"
-                  class="w-full bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-500 text-white py-3 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-2">
+                  class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             <span x-text="submitting ? 'Processing...' : (cart.length === 0 ? 'Add items to cart' : 'Complete Sale — PKR ' + total.toLocaleString())"></span>
           </button>
@@ -350,14 +350,14 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 
   {{-- ══ Mobile cart bottom bar (<md) ══ --}}
   <button type="button" @click="mobileCartOpen = true"
-          class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-slate-900 border-t border-slate-800 px-4 py-3 flex items-center justify-between text-left">
+          class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-green-600 px-4 py-3 flex items-center justify-between text-left shadow-lg">
     <span class="flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
       <span class="text-white font-bold text-sm" x-text="cart.length + ' item(s)'"></span>
     </span>
     <span class="flex items-center gap-2">
       <span class="text-white font-extrabold text-sm tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
-      <span class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl">View Cart</span>
+      <span class="bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-xl">View Cart</span>
     </span>
   </button>
 
