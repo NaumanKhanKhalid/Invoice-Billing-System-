@@ -8,9 +8,18 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 
 <style>
   #main-content { padding: 0 !important; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
-  /* Mobile cart slide-up (compiled Tailwind lacks translate-y responsive variants) */
+  /* Cart panel layout is defined here (not via md: Tailwind utilities) so it
+     works even on an older/purged asset build. */
+  .pos-cart {
+    width: 20rem; flex-shrink: 0; border-left: 1px solid #1e293b;
+    position: static; transform: none;
+  }
+  @media (min-width: 1280px) { .pos-cart { width: 24rem; } }
   @media (max-width: 767px) {
-    .pos-cart { transform: translateY(100%); }
+    .pos-cart {
+      position: fixed; inset: 0; z-index: 40; width: 100%;
+      border-left: 0; transform: translateY(100%);
+    }
     .pos-cart.open { transform: translateY(0); }
   }
 </style>
@@ -184,7 +193,7 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
   {{-- ══ RIGHT: Cart + Checkout ══ --}}
   {{-- Mobile: full-screen slide-up panel; Desktop (md+): static sidebar --}}
   {{-- Compiled Tailwind lacks translate-y-full/md:translate-y-0 variants, so slide is driven by custom .pos-cart CSS below --}}
-  <div class="pos-cart fixed inset-0 z-40 md:static md:z-auto w-full md:w-80 xl:w-96 flex flex-col bg-slate-900 shrink-0 md:border-l border-slate-800 overflow-hidden transition-transform duration-200 md:transition-none"
+  <div class="pos-cart flex flex-col bg-slate-900 overflow-hidden transition-transform duration-200"
        :class="mobileCartOpen ? 'open' : ''">
 
     {{-- Cart header --}}
@@ -354,7 +363,7 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 
   @if(feature_enabled('barcode_scanner'))
   {{-- Camera Modal --}}
-  <div x-show="cameraOpen" x-transition
+  <div x-show="cameraOpen" x-cloak x-transition
        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
        @keydown.escape.window="closeCamera()">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden" @click.outside="closeCamera()">
