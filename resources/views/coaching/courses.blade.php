@@ -45,11 +45,15 @@
         </div>
         <div class="flex items-center gap-2 ml-4">
           <button onclick="openEditCourse({{ $course->id }}, '{{ addslashes($course->name) }}', {{ $course->monthly_fee }}, '{{ addslashes($course->description ?? '') }}')"
-                  class="text-xs text-blue-600 hover:underline">Edit</button>
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
+          </button>
           <form action="{{ route('coaching.courses.destroy', $course) }}" method="POST"
                 onsubmit="return confirm('Delete course?')">
             @csrf @method('DELETE')
-            <button class="text-xs text-red-500 hover:underline">Delete</button>
+            <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete
+            </button>
           </form>
         </div>
       </div>
@@ -93,11 +97,15 @@
         </div>
         <div class="flex items-center gap-2 ml-4">
           <button onclick="openEditBatch({{ $batch->id }}, {{ $batch->course_id }}, '{{ addslashes($batch->name) }}', '{{ addslashes($batch->timing ?? '') }}', '{{ addslashes($batch->days ?? '') }}', '{{ addslashes($batch->teacher_name ?? '') }}', {{ $batch->capacity }})"
-                  class="text-xs text-blue-600 hover:underline">Edit</button>
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
+          </button>
           <form action="{{ route('coaching.batches.destroy', $batch) }}" method="POST"
                 onsubmit="return confirm('Delete batch?')">
             @csrf @method('DELETE')
-            <button class="text-xs text-red-500 hover:underline">Delete</button>
+            <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete
+            </button>
           </form>
         </div>
       </div>

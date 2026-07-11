@@ -79,9 +79,15 @@
               @endif
             </td>
             <td class="px-4 py-3 text-right">
-              <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('coaching.students.show', $student) }}" class="text-blue-600 hover:underline text-xs">View</a>
-                <a href="{{ route('coaching.students.edit', $student) }}" class="text-slate-500 hover:underline text-xs">Edit</a>
+              <div class="flex items-center justify-end gap-2">
+                <a href="{{ route('coaching.students.show', $student) }}"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>View
+                </a>
+                <a href="{{ route('coaching.students.edit', $student) }}"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
+                </a>
               </div>
             </td>
           </tr>
