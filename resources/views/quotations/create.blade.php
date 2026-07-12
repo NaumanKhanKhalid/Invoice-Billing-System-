@@ -2,7 +2,7 @@
 @section('title', 'New Quotation')
 @section('content')
 <script>window.__QUOTE_PRODUCTS__ = @json($products);</script>
-<div class="max-w-3xl mx-auto space-y-5"
+<div class="max-w-4xl w-full mx-auto space-y-5"
      x-data="quoteForm()"
      x-init="init()">
 
@@ -92,7 +92,8 @@
         <p x-show="search && !filtered.length" class="mt-1 text-xs text-slate-400 px-1">No products match</p>
       </div>
 
-      <table class="w-full">
+      <div class="overflow-x-auto">
+      <table class="w-full min-w-[520px]">
         <thead class="bg-slate-50 border-b border-slate-100">
           <tr>
             <th class="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Description</th>
@@ -133,6 +134,7 @@
           </template>
         </tbody>
       </table>
+      </div>
 
       <div class="px-5 py-4 bg-slate-50 border-t border-slate-200 space-y-1.5">
         <div class="flex justify-between text-sm text-slate-600">
@@ -177,7 +179,12 @@ function quoteForm() {
     },
 
     addProduct(p) {
-      this.rows.push({ product_id: p.id, name: p.name, unit: p.unit || '', qty: 1, price: parseFloat(p.sale_price) || 0, total: parseFloat(p.sale_price) || 0 });
+      const price = parseFloat(p.sale_price) || 0;
+      const newRow = { product_id: p.id, name: p.name, unit: p.unit || '', qty: 1, price: price, total: price };
+      // Reuse a blank row if one exists, otherwise append.
+      const blank = this.rows.findIndex(r => !r.name && !r.product_id);
+      if (blank !== -1) this.rows.splice(blank, 1, newRow);
+      else this.rows.push(newRow);
       this.search = '';
       this.filtered = [];
       this.calcTotal();
