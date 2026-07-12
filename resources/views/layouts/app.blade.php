@@ -53,17 +53,12 @@
            already slides via .open, so this only applies from md up.
            Slides out via margin (not display:none) so it animates smoothly. */
         body { overflow-x: hidden; }
-        #app-shell { transition: padding-left 0.28s ease; }
-        #sidebar-opener { display: inline-flex; opacity: 0; visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0s linear 0.28s; }
+        /* When collapsed on desktop a slim top bar (with the menu button)
+           appears so every page keeps a consistent header, like the POS. */
+        #desktop-topbar { display: none; }
         @media (min-width: 768px) {
             html.sidebar-collapsed #sidebar { margin-left: -16rem; }
-            /* Shift content right so the floating opener sits in a gutter,
-               never on top of a page's own top-left button (e.g. POS back). */
-            html.sidebar-collapsed #app-shell { padding-left: 3.5rem; }
-            html.sidebar-collapsed #sidebar-opener {
-                opacity: 1; visibility: visible;
-                transition: opacity 0.2s ease 0.12s, visibility 0s linear 0s; }
+            html.sidebar-collapsed #desktop-topbar { display: flex; }
         }
 
         .nav-item {
@@ -171,11 +166,6 @@
     <!-- Mobile overlay -->
     <div id="overlay" onclick="closeSidebar()"></div>
 
-    <!-- Floating opener (desktop, shown only when sidebar collapsed) -->
-    <button type="button" id="sidebar-opener" onclick="toggleSidebarCollapse()" title="Menu kholein"
-            class="fixed top-3 left-3 z-40 w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-500 items-center justify-center shadow-sm hover:bg-slate-50 hover:text-slate-700 transition">
-        <i data-lucide="panel-left-open" class="w-4 h-4"></i>
-    </button>
 
     <!-- Sidebar -->
     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto">
@@ -420,6 +410,15 @@
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
             <span class="font-semibold text-slate-800">{{ $appShopName }}</span>
+        </header>
+
+        <!-- Top bar (desktop, shown only when sidebar collapsed) -->
+        <header id="desktop-topbar" class="bg-white border-b border-slate-200 px-4 py-2.5 items-center gap-3">
+            <button type="button" onclick="toggleSidebarCollapse()" title="Menu kholein"
+                    class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition shrink-0">
+                <i data-lucide="panel-left-open" class="w-4 h-4"></i>
+            </button>
+            <span class="font-semibold text-slate-700 text-sm">{{ $appShopName }}</span>
         </header>
 
         <!-- Subscription expiry warning banner -->

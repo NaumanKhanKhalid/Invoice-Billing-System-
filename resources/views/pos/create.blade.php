@@ -26,10 +26,9 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
     }
     .pos-cart.open { transform: translateY(0); }
   }
-  /* On POS the sidebar toggle lives inside the top bar, so hide the global
-     floating opener + its gutter here and show the in-bar menu button. */
-  #sidebar-opener { display: none !important; }
-  html.sidebar-collapsed #app-shell { padding-left: 0 !important; }
+  /* On POS the sidebar toggle lives inside the POS top bar, so hide the
+     global desktop top bar here and show the in-bar menu button instead. */
+  #desktop-topbar { display: none !important; }
   .pos-menu-btn { display: none; }
   html.sidebar-collapsed .pos-menu-btn { display: flex; }
   /* Hide the global quick-add FAB on POS — it overlaps the cart checkout. */
