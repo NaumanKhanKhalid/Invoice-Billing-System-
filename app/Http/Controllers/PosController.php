@@ -7,6 +7,7 @@ use App\Models\OpenTab;
 use App\Models\PosSale;
 use App\Models\Product;
 use App\Models\ProductSerial;
+use App\Models\Quotation;
 use App\Models\UdharCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,8 @@ class PosController extends Controller
         $lowStock = Product::where('is_active', true)->whereColumn('stock_qty', '<=', 'low_stock_alert')->count();
         $heldSales = feature_enabled('open_tabs') ? $this->openHolds() : collect();
         $customers = UdharCustomer::orderBy('name')->get(['id','name','phone','current_balance']);
-        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales', 'customers'));
+        $nextQuoteNumber = feature_enabled('quotations') ? Quotation::nextNumber() : null;
+        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales', 'customers', 'nextQuoteNumber'));
     }
 
     public function store(Request $request)

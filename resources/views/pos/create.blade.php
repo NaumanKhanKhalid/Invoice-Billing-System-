@@ -441,12 +441,19 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </div>
 
         {{-- Submit --}}
-        <div class="px-4 pt-1 pb-6">
+        <div class="px-4 pt-1 pb-6 space-y-2">
           <button type="submit" :disabled="cart.length === 0 || submitting"
                   class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             <span x-text="submitting ? 'Processing...' : (cart.length === 0 ? 'Add items to cart' : 'Complete Sale — PKR ' + total.toLocaleString())"></span>
           </button>
+          @if(feature_enabled('quotations'))
+          <button type="button" @click="saveQuotation()" :disabled="cart.length === 0"
+                  class="w-full bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 disabled:opacity-40 text-slate-600 py-2.5 rounded-2xl font-bold text-sm transition flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+            Quotation banayein
+          </button>
+          @endif
         </div>
       </form>
     </div>
@@ -658,6 +665,8 @@ function posApp() {
     customerName: '',
     customerPhone: '',
     customers: window.__POS_CUSTOMERS__ || [],
+    quoteNumber: @json($nextQuoteNumber ?? ''),
+    quoteToday: @json(date('Y-m-d')),
     customerQuery: '',
     showCustList: false,
     addingCustomer: false,
@@ -787,6 +796,34 @@ function posApp() {
       this.cart = [];
       this.holdId = null; this.holdTabNumber = '';
       this.serials = {};
+    },
+
+    /* Build a quotation from the current cart and open it (normal POST) */
+    saveQuotation() {
+      if (!this.cart.length) return;
+      const f = document.createElement('form');
+      f.method = 'POST';
+      f.action = @json(route('quotations.store'));
+      const add = (n, v) => {
+        const i = document.createElement('input');
+        i.type = 'hidden'; i.name = n; i.value = (v === null || v === undefined) ? '' : v;
+        f.appendChild(i);
+      };
+      add('_token', @json(csrf_token()));
+      add('quote_number', this.quoteNumber);
+      add('date', this.quoteToday);
+      add('customer_name', this.customerName);
+      add('customer_phone', this.customerPhone);
+      add('discount', Number(this.discount || 0));
+      this.cart.forEach((it, i) => {
+        add(`items[${i}][product_id]`, it.id);
+        add(`items[${i}][product_name]`, it.name);
+        add(`items[${i}][unit]`, it.unit || '');
+        add(`items[${i}][qty]`, it.qty);
+        add(`items[${i}][unit_price]`, it.price);
+      });
+      document.body.appendChild(f);
+      f.submit();
     },
 
     postSale(payload) {
