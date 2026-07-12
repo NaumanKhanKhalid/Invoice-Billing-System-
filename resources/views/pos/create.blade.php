@@ -31,6 +31,8 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
   html.sidebar-collapsed #app-shell { padding-left: 0 !important; }
   .pos-menu-btn { display: none; }
   html.sidebar-collapsed .pos-menu-btn { display: flex; }
+  /* Hide the global quick-add FAB on POS — it overlaps the cart checkout. */
+  .fab-dial { display: none !important; }
 </style>
 
 <div class="flex flex-col flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
@@ -284,7 +286,7 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
             <span>Discount</span>
             <div class="flex items-center gap-1.5">
               <span class="text-slate-400 text-xs">PKR</span>
-              <input type="number" name="discount" x-model="discount" min="0" step="1"
+              <input type="number" name="discount" x-model="discount" min="0" step="1" placeholder="0"
                      class="w-20 text-right px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             </div>
           </div>
@@ -550,8 +552,8 @@ function posApp() {
     cart: [],
     searchQ: '',
     activeCategory: null,
-    discount: 0,
-    amountPaid: 0,
+    discount: '',
+    amountPaid: '',
     payMethod: 'cash',
     payMethods: [
       { value: 'cash',   label: 'Cash',   icon: '💵' },
