@@ -314,54 +314,8 @@ class DummyDataService
 
         $productModels = collect($products)->map(fn($p) => Product::create($p + ['is_active' => true, 'description' => '']));
         static::seedProductPurchases($suppliers, $productModels);
-        static::seedPosSalesMedical($productModels);
+        static::seedPosSales($productModels);   // 6-month spread history
         static::seedCommonMedical();
-    }
-
-    private static function seedPosSalesMedical($products): void
-    {
-        $methods   = ['cash', 'cash', 'cash', 'cash', 'jazzcash', 'easypaisa'];
-        $customers = ['Walk-in', 'Haji Sahab', 'Baji Tahira', 'Uncle Rasheed', 'Asif bhai', 'Sana Baji'];
-
-        for ($i = 1; $i <= 12; $i++) {
-            $selectedProducts = $products->random(min(rand(1, 4), $products->count()));
-            $subtotal = 0;
-            $items    = [];
-
-            foreach ($selectedProducts as $product) {
-                $qty      = rand(1, 5);
-                $price    = $product->sale_price;
-                $items[]  = ['product' => $product, 'qty' => $qty, 'price' => $price, 'total' => $qty * $price];
-                $subtotal += $qty * $price;
-            }
-
-            $discount = rand(0, 1) ? rand(10, 100) : 0;
-            $total    = $subtotal - $discount;
-
-            $sale = PosSale::create([
-                'sale_number'    => 'POS-DEMO-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'date'           => now()->subDays(rand(0, 14)),
-                'customer_name'  => collect($customers)->random(),
-                'customer_phone' => '',
-                'subtotal'       => $subtotal,
-                'discount'       => $discount,
-                'total'          => $total,
-                'amount_paid'    => $total,
-                'change_due'     => 0,
-                'payment_method' => collect($methods)->random(),
-            ]);
-
-            foreach ($items as $item) {
-                PosSaleItem::create([
-                    'pos_sale_id'  => $sale->id,
-                    'product_id'   => $item['product']->id,
-                    'product_name' => $item['product']->name,
-                    'qty'          => $item['qty'],
-                    'unit_price'   => $item['price'],
-                    'total'        => $item['total'],
-                ]);
-            }
-        }
     }
 
     private static function seedCommonMedical(): void
@@ -426,20 +380,34 @@ class DummyDataService
         Staff::create(['name' => 'Usman Khan',   'phone' => '0333-3456789', 'role' => 'delivery_boy', 'salary' => 16000, 'joining_date' => now()->subMonths(1)->toDateString(), 'is_active' => true]);
 
         // Expenses — valid categories: staff_salary, delivery, shop_rent, electricity, fuel, maintenance, other
-        $expenseData = [
-            ['category' => 'shop_rent',   'description' => 'Monthly shop rent',       'amount' => 18000, 'paid_to' => 'Landlord Malik Sahab'],
-            ['category' => 'electricity', 'description' => 'LESCO electricity bill',   'amount' => 3500,  'paid_to' => 'LESCO Office'],
-            ['category' => 'delivery',    'description' => 'Delivery rickshaw fare',   'amount' => 800,   'paid_to' => 'Driver Rashid'],
-            ['category' => 'staff_salary','description' => 'Ahmed Ali monthly salary', 'amount' => 35000, 'paid_to' => 'Ahmed Ali'],
-            ['category' => 'staff_salary','description' => 'Bilal Hassan salary',      'amount' => 22000, 'paid_to' => 'Bilal Hassan'],
-            ['category' => 'maintenance', 'description' => 'AC service & gas fill',    'amount' => 2500,  'paid_to' => 'Technician Asif'],
-            ['category' => 'other',       'description' => 'Stationery & bags',        'amount' => 650,   'paid_to' => 'Raja Stationery'],
-        ];
-
-        foreach ($expenseData as $i => $exp) {
+        // Recurring rent + electricity + salaries for each of the last 6 months, plus occasional one-offs.
+        $seq = 0;
+        for ($m = 5; $m >= 0; $m--) {
+            $month = now()->subMonths($m);
+            $recurring = [
+                ['category' => 'shop_rent',    'description' => $month->format('M') . ' shop rent',      'amount' => 18000, 'paid_to' => 'Landlord Malik Sahab'],
+                ['category' => 'electricity',  'description' => 'LESCO bill ' . $month->format('M'),     'amount' => rand(2800, 4500), 'paid_to' => 'LESCO Office'],
+                ['category' => 'staff_salary', 'description' => 'Ahmed Ali salary ' . $month->format('M'), 'amount' => 35000, 'paid_to' => 'Ahmed Ali'],
+                ['category' => 'staff_salary', 'description' => 'Bilal Hassan salary ' . $month->format('M'), 'amount' => 22000, 'paid_to' => 'Bilal Hassan'],
+            ];
+            foreach ($recurring as $exp) {
+                $seq++;
+                Expense::create($exp + [
+                    'date'           => $month->copy()->startOfMonth()->addDays(rand(1, 5))->toDateString(),
+                    'receipt_number' => 'EXP-DEMO-' . str_pad($seq, 3, '0', STR_PAD_LEFT),
+                ]);
+            }
+        }
+        // A few recent one-off expenses
+        foreach ([
+            ['category' => 'delivery',    'description' => 'Delivery rickshaw fare', 'amount' => 800,  'paid_to' => 'Driver Rashid'],
+            ['category' => 'maintenance', 'description' => 'AC service & gas fill',  'amount' => 2500, 'paid_to' => 'Technician Asif'],
+            ['category' => 'other',       'description' => 'Stationery & bags',      'amount' => 650,  'paid_to' => 'Raja Stationery'],
+        ] as $exp) {
+            $seq++;
             Expense::create($exp + [
-                'date'           => now()->subDays(rand(0, 10))->toDateString(),
-                'receipt_number' => 'EXP-DEMO-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
+                'date'           => now()->subDays(rand(0, 12))->toDateString(),
+                'receipt_number' => 'EXP-DEMO-' . str_pad($seq, 3, '0', STR_PAD_LEFT),
             ]);
         }
 
@@ -471,85 +439,110 @@ class DummyDataService
 
     private static function seedProductPurchases($suppliers, $products): void
     {
-        for ($i = 1; $i <= 5; $i++) {
-            $selectedProducts = $products->random(min(rand(2, 4), $products->count()));
-            $total = 0;
-            $items = [];
+        // ~2 stock purchases per month across the last 6 months
+        $seq = 0;
+        for ($m = 5; $m >= 0; $m--) {
+            $monthStart = now()->subMonths($m)->startOfMonth();
+            foreach ([rand(2, 8), rand(15, 25)] as $dayOffset) {
+                $seq++;
+                $date = $monthStart->copy()->addDays($dayOffset);
+                if ($date->isFuture()) $date = now()->subDays(rand(1, 3));
 
-            foreach ($selectedProducts as $product) {
-                $qty     = rand(5, 20);
-                $price   = $product->cost_price;
-                $items[] = ['product' => $product, 'qty' => $qty, 'price' => $price, 'total' => $qty * $price];
-                $total  += $qty * $price;
-            }
+                $selectedProducts = $products->random(min(rand(2, 5), $products->count()));
+                $total = 0;
+                $items = [];
+                foreach ($selectedProducts as $product) {
+                    $qty     = rand(5, 25);
+                    $price   = (float) $product->cost_price;
+                    $items[] = ['product' => $product, 'qty' => $qty, 'price' => $price, 'total' => $qty * $price];
+                    $total  += $qty * $price;
+                }
 
-            $paid = $i <= 3 ? $total : round($total * 0.6);
+                // Most older purchases fully paid; a couple recent ones partial
+                $paid = ($m <= 1 && rand(0, 1)) ? round($total * 0.6) : $total;
 
-            $purchase = ProductPurchase::create([
-                'supplier_id'    => $suppliers->random()->id,
-                'date'           => now()->subDays(($i - 1) * 3)->toDateString(),
-                'invoice_number' => 'PP-DEMO-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'total_amount'   => $total,
-                'amount_paid'    => $paid,
-                'amount_due'     => $total - $paid,
-                'payment_status' => $paid >= $total ? 'paid' : 'partial',
-                'due_date'       => now()->addDays(15)->toDateString(),
-            ]);
-
-            foreach ($items as $item) {
-                ProductPurchaseItem::create([
-                    'product_purchase_id' => $purchase->id,
-                    'product_id'          => $item['product']->id,
-                    'qty'                 => $item['qty'],
-                    'unit_price'          => $item['price'],
-                    'total'               => $item['total'],
+                $purchase = ProductPurchase::create([
+                    'supplier_id'    => $suppliers->random()->id,
+                    'date'           => $date->toDateString(),
+                    'invoice_number' => 'PP-DEMO-' . str_pad($seq, 3, '0', STR_PAD_LEFT),
+                    'total_amount'   => $total,
+                    'amount_paid'    => $paid,
+                    'amount_due'     => $total - $paid,
+                    'payment_status' => $paid >= $total ? 'paid' : 'partial',
+                    'due_date'       => $date->copy()->addDays(15)->toDateString(),
                 ]);
+
+                foreach ($items as $item) {
+                    ProductPurchaseItem::create([
+                        'product_purchase_id' => $purchase->id,
+                        'product_id'          => $item['product']->id,
+                        'qty'                 => $item['qty'],
+                        'unit_price'          => $item['price'],
+                        'total'               => $item['total'],
+                    ]);
+                }
             }
         }
     }
 
     private static function seedPosSales($products): void
     {
-        // payment_method enum: cash, jazzcash, easypaisa, bank, credit
-        $methods = ['cash', 'cash', 'cash', 'jazzcash', 'easypaisa', 'bank'];
+        // Realistic running-shop history: sales spread across the last 6 months
+        // so dashboards, reports and the 6-month trend chart look alive.
+        // payment_method enum: cash, online, credit (+ legacy jazzcash/easypaisa/bank)
+        $methods   = ['cash', 'cash', 'cash', 'cash', 'online', 'online', 'credit'];
+        $customers = ['Walk-in', 'Walk-in', 'Walk-in', 'Tariq sb', 'Asif bhai', 'Bilal bhai',
+                      'Rashid', 'Haji Sahab', 'Baji Nusrat', 'Uncle Karim', 'Shahid'];
 
-        for ($i = 1; $i <= 8; $i++) {
-            $selectedProducts = $products->random(min(rand(1, 3), $products->count()));
-            $subtotal = 0;
-            $items    = [];
+        $seq = 0;
+        for ($m = 5; $m >= 0; $m--) {
+            $monthStart = now()->subMonths($m)->startOfMonth();
+            // Slightly busier in recent months
+            $salesThisMonth = rand(10, 16) + (5 - $m);
 
-            foreach ($selectedProducts as $product) {
-                $qty      = rand(1, 3);
-                $price    = $product->sale_price;
-                $items[]  = ['product' => $product, 'qty' => $qty, 'price' => $price, 'total' => $qty * $price];
-                $subtotal += $qty * $price;
-            }
+            for ($n = 0; $n < $salesThisMonth; $n++) {
+                $seq++;
+                // A random day within this month, clamped to today for the current month
+                $date = $monthStart->copy()->addDays(rand(0, 27))->setTime(rand(9, 21), rand(0, 59));
+                if ($date->isFuture()) $date = now()->subHours(rand(1, 72));
 
-            $discount = rand(0, 1) ? rand(50, 200) : 0;
-            $total    = $subtotal - $discount;
+                $selectedProducts = $products->random(min(rand(1, 4), $products->count()));
+                $subtotal = 0;
+                $items    = [];
+                foreach ($selectedProducts as $product) {
+                    $qty      = rand(1, 4);
+                    $price    = (float) $product->sale_price;
+                    $items[]  = ['product' => $product, 'qty' => $qty, 'price' => $price, 'total' => $qty * $price];
+                    $subtotal += $qty * $price;
+                }
 
-            $sale = PosSale::create([
-                'sale_number'    => 'POS-DEMO-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'date'           => now()->subDays(rand(0, 10)),
-                'customer_name'  => collect(['Walk-in', 'Tariq sb', 'Asif bhai', 'Bilal bhai'])->random(),
-                'customer_phone' => '',
-                'subtotal'       => $subtotal,
-                'discount'       => $discount,
-                'total'          => $total,
-                'amount_paid'    => $total,
-                'change_due'     => 0,
-                'payment_method' => collect($methods)->random(),
-            ]);
+                $discount = rand(0, 3) === 0 ? rand(20, 200) : 0;
+                $total    = max(0, $subtotal - $discount);
+                $method   = collect($methods)->random();
 
-            foreach ($items as $item) {
-                PosSaleItem::create([
-                    'pos_sale_id'  => $sale->id,
-                    'product_id'   => $item['product']->id,
-                    'product_name' => $item['product']->name,
-                    'qty'          => $item['qty'],
-                    'unit_price'   => $item['price'],
-                    'total'        => $item['total'],
+                $sale = PosSale::create([
+                    'sale_number'    => 'POS-DEMO-' . str_pad($seq, 4, '0', STR_PAD_LEFT),
+                    'date'           => $date,
+                    'customer_name'  => collect($customers)->random(),
+                    'customer_phone' => '',
+                    'subtotal'       => $subtotal,
+                    'discount'       => $discount,
+                    'total'          => $total,
+                    'amount_paid'    => $total,
+                    'change_due'     => 0,
+                    'payment_method' => $method,
                 ]);
+
+                foreach ($items as $item) {
+                    PosSaleItem::create([
+                        'pos_sale_id'  => $sale->id,
+                        'product_id'   => $item['product']->id,
+                        'product_name' => $item['product']->name,
+                        'qty'          => $item['qty'],
+                        'unit_price'   => $item['price'],
+                        'total'        => $item['total'],
+                    ]);
+                }
             }
         }
     }
