@@ -49,6 +49,17 @@
 
         #sidebar { background: #0f172a; transition: transform 0.25s ease; }
 
+        /* Desktop sidebar collapse toggle (persisted). On mobile the sidebar
+           already slides via .open, so this only applies from md up. */
+        #sidebar-opener { display: none; }
+        @media (min-width: 768px) {
+            html.sidebar-collapsed #sidebar { display: none; }
+            html.sidebar-collapsed #sidebar-opener { display: inline-flex; }
+            /* Shift content right so the floating opener sits in a gutter,
+               never on top of a page's own top-left button (e.g. POS back). */
+            html.sidebar-collapsed #app-shell { padding-left: 3.25rem; }
+        }
+
         .nav-item {
             display: flex; align-items: center; gap: 10px;
             padding: 9px 12px; border-radius: 8px;
@@ -146,9 +157,19 @@
     </style>
 </head>
 <body class="min-h-screen flex">
+<script>
+    /* Apply saved sidebar-collapsed state before paint to avoid a flash */
+    try { if (localStorage.getItem('sidebarCollapsed') === '1') document.documentElement.classList.add('sidebar-collapsed'); } catch (e) {}
+</script>
 
     <!-- Mobile overlay -->
     <div id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- Floating opener (desktop, shown only when sidebar collapsed) -->
+    <button type="button" id="sidebar-opener" onclick="toggleSidebarCollapse()" title="Menu kholein"
+            class="fixed top-3 left-3 z-40 w-10 h-10 rounded-xl bg-slate-900 text-white items-center justify-center shadow-lg hover:bg-slate-800 transition">
+        <i data-lucide="panel-left-open" class="w-5 h-5"></i>
+    </button>
 
     <!-- Sidebar -->
     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto">
@@ -169,6 +190,11 @@
                 <p class="text-sm font-bold text-white truncate">{{ $appShopName }}</p>
                 <p class="text-xs text-slate-400 capitalize">{{ tenant()->shop_type ?? '' }} · {{ tenant()->plan ?? 'basic' }}</p>
               </div>
+              {{-- Collapse sidebar (desktop only) --}}
+              <button type="button" onclick="toggleSidebarCollapse()" title="Sidebar band karein"
+                      class="hidden md:flex ml-auto w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700/60 transition flex-shrink-0">
+                <i data-lucide="panel-left-close" class="w-5 h-5"></i>
+              </button>
             </div>
             @else
             <p class="text-sm font-bold text-white">⚡ Admin Panel</p>
@@ -523,6 +549,13 @@
         function closeSidebar() {
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('overlay').classList.remove('show');
+        }
+
+        /* Desktop sidebar collapse — state saved so it sticks across pages */
+        function toggleSidebarCollapse() {
+            const collapsed = document.documentElement.classList.toggle('sidebar-collapsed');
+            try { localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0'); } catch (e) {}
+            if (window.lucide) lucide.createIcons({ icons: lucide.icons });
         }
 
         /* ── Toast System ── */
