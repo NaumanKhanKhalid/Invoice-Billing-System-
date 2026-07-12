@@ -428,8 +428,8 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
   </div>
 
   {{-- Held Sales slide-over --}}
-  <div x-show="holdsPanelOpen" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="holdsPanelOpen = false">
-    <div class="absolute inset-0 bg-black/50" @click="holdsPanelOpen = false" x-show="holdsPanelOpen" x-transition.opacity></div>
+  <div x-show="holdsPanelOpen" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="holdsPanelOpen = false; confirmDeleteId = null">
+    <div class="absolute inset-0 bg-black/50" @click="holdsPanelOpen = false; confirmDeleteId = null" x-show="holdsPanelOpen" x-transition.opacity></div>
     <div class="absolute right-0 inset-y-0 w-full max-w-md bg-white shadow-2xl flex flex-col"
          x-show="holdsPanelOpen" x-transition:enter="transition transform duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
          x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
@@ -451,25 +451,45 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
           </div>
         </template>
         <template x-for="h in heldSales" :key="h.id">
-          <div class="border border-slate-200 rounded-2xl p-4">
+          <div class="border border-slate-200 rounded-2xl p-4 hover:border-slate-300 hover:shadow-sm transition">
             <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <p class="font-bold text-slate-900 text-sm truncate" x-text="h.customer_name"></p>
-                <p class="text-xs text-slate-400 mt-0.5">
-                  <span class="font-mono" x-text="h.tab_number"></span>
-                  <span> · </span>
-                  <span x-text="h.items_count + ' item(s)'"></span>
-                  <span> · </span>
-                  <span x-text="timeAgo(h.created_at)"></span>
-                </p>
+              <div class="min-w-0 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="font-bold text-slate-900 text-sm truncate" x-text="h.customer_name"></p>
+                  <p class="text-xs text-slate-400 mt-0.5">
+                    <span class="font-mono font-semibold text-slate-500" x-text="h.tab_number"></span>
+                    <span> · </span>
+                    <span x-text="h.items_count + ' item(s)'"></span>
+                  </p>
+                  <p class="text-[11px] text-slate-400 mt-0.5" x-text="timeAgo(h.created_at)"></p>
+                </div>
               </div>
               <p class="font-extrabold text-green-600 text-sm whitespace-nowrap" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
             </div>
-            <div class="flex gap-2 mt-3">
+
+            {{-- Normal actions --}}
+            <div class="flex gap-2 mt-3" x-show="confirmDeleteId !== h.id">
               <button type="button" @click="resumeHold(h)"
-                      class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-1.5 rounded-xl text-xs font-bold transition">Resume</button>
+                      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-bold transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                Resume
+              </button>
+              <button type="button" @click="confirmDeleteId = h.id"
+                      class="px-3 py-2 border border-slate-200 text-slate-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50 rounded-xl text-xs font-bold transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </button>
+            </div>
+
+            {{-- Inline delete confirm (replaces the native browser popup) --}}
+            <div class="mt-3 bg-red-50 border border-red-100 rounded-xl p-2.5 flex items-center gap-2" x-show="confirmDeleteId === h.id" x-cloak>
+              <span class="text-xs text-red-700 font-medium flex-1">Ye hold delete karein?</span>
               <button type="button" @click="deleteHold(h)"
-                      class="px-3 py-1.5 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl text-xs font-bold transition">Delete</button>
+                      class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition">Haan, delete</button>
+              <button type="button" @click="confirmDeleteId = null"
+                      class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold transition">Nahi</button>
             </div>
           </div>
         </template>
@@ -542,6 +562,7 @@ function posApp() {
     holdsEnabled: {{ feature_enabled('open_tabs') ? 'true' : 'false' }},
     heldSales: window.__POS_HOLDS__ || [],
     holdsPanelOpen: false,
+    confirmDeleteId: null,
     holdModalOpen: false,
     holdSaving: false,
     holdId: null,          // set when cart was resumed from a hold → re-hold updates in place
@@ -855,7 +876,7 @@ function posApp() {
     },
 
     async deleteHold(h) {
-      if (!confirm(h.customer_name + ' ka hold (' + h.tab_number + ') delete karein?')) return;
+      this.confirmDeleteId = null;
       try {
         const res = await fetch('{{ url('/pos/hold') }}/' + h.id, {
           method: 'DELETE',
