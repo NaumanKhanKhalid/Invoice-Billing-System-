@@ -4,6 +4,7 @@
 <script>
 window.__POS_PRODUCTS__ = @json($products);
 window.__POS_HOLDS__ = @json($heldSales ?? []);
+window.__POS_CUSTOMERS__ = @json($customers ?? []);
 </script>
 
 <style>
@@ -237,6 +238,79 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
       </div>
     </div>
 
+    {{-- Customer --}}
+    <div class="shrink-0 px-3 py-2.5 border-b border-slate-100 bg-white" @click.outside="showCustList = false">
+      {{-- Search / walk-in state --}}
+      <template x-if="!selectedCustomer && !addingCustomer">
+        <div class="relative">
+          <div class="flex gap-1.5">
+            <div class="relative flex-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" x-model="customerQuery" @focus="showCustList = true" @input="showCustList = true"
+                     placeholder="Walk-in customer — naam/number se dhoondein"
+                     class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+            </div>
+            <button type="button" @click="startAddCustomer()" title="Naya customer add karein"
+                    class="w-9 h-9 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </button>
+          </div>
+          {{-- Suggestions --}}
+          <div x-show="showCustList && filteredCustomers.length" x-cloak
+               class="absolute z-20 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden max-h-56 overflow-y-auto">
+            <template x-for="c in filteredCustomers" :key="c.id">
+              <button type="button" @click="pickCustomer(c)"
+                      class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2 border-b border-slate-50 last:border-0 transition">
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-slate-800 truncate" x-text="c.name"></span>
+                  <span class="block text-xs text-slate-400" x-text="c.phone || '—'"></span>
+                </span>
+                <span x-show="c.current_balance > 0" class="text-[11px] font-bold text-amber-600 whitespace-nowrap"
+                      x-text="'Udhar ' + Number(c.current_balance).toLocaleString()"></span>
+              </button>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      {{-- Add-new inline form --}}
+      <template x-if="addingCustomer">
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Naya Customer</p>
+            <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-medium">Cancel</button>
+          </div>
+          <input type="text" x-model="customerName" placeholder="Customer ka naam"
+                 class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+          <div class="flex gap-1.5">
+            <input type="text" x-model="customerPhone" placeholder="Phone (udhar ke liye zaroori)"
+                   class="flex-1 min-w-0 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+            <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
+                    class="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-bold rounded-xl transition whitespace-nowrap">Use</button>
+          </div>
+        </div>
+      </template>
+
+      {{-- Selected customer chip --}}
+      <template x-if="selectedCustomer">
+        <div class="flex items-center gap-2.5 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+          <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm shrink-0"
+               x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-bold text-slate-800 truncate" x-text="selectedCustomer.name"></p>
+            <p class="text-xs text-slate-500 truncate"
+               x-text="(selectedCustomer.phone || 'No phone') + (selectedCustomer.current_balance > 0 ? '  ·  Udhar PKR ' + Number(selectedCustomer.current_balance).toLocaleString() : '')"></p>
+          </div>
+          <button type="button" @click="clearCustomer()" title="Hatayein"
+                  class="w-6 h-6 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 flex items-center justify-center shrink-0 transition text-xs">✕</button>
+        </div>
+      </template>
+
+      {{-- Udhar reminder --}}
+      <p x-show="payMethod === 'credit' && !customerPhone.trim()" x-cloak
+         class="text-[11px] text-amber-600 font-semibold mt-1.5">Udhar sale ke liye customer name aur phone zaroori hai.</p>
+    </div>
+
     {{-- Cart items (scrollable) --}}
     <div class="overflow-y-auto py-3 px-3 space-y-2 bg-slate-50" style="flex:1 1 0; min-height:0;">
       <template x-if="cart.length === 0">
@@ -314,23 +388,8 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
           </div>
         </div>
 
-        {{-- Customer + Cash --}}
+        {{-- Cash --}}
         <div class="px-5 pb-2 space-y-2">
-          <p x-show="payMethod === 'credit'" x-cloak class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">
-            Udhar — customer name aur phone zaroori hain
-          </p>
-          <input type="text" name="customer_name" x-model="customerName"
-                 :placeholder="payMethod === 'credit' ? 'Customer name (required)' : 'Customer name (optional)'"
-                 :required="payMethod === 'credit'"
-                 :class="payMethod === 'credit' && !customerName.trim() ? 'border-amber-400 ring-2 ring-amber-100' : 'border-slate-200'"
-                 class="w-full px-3 py-2 bg-white border rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
-
-          <input x-show="payMethod === 'credit'" x-cloak type="text" name="customer_phone" x-model="customerPhone"
-                 placeholder="Customer phone (required)"
-                 :required="payMethod === 'credit'"
-                 :class="!customerPhone.trim() ? 'border-amber-400 ring-2 ring-amber-100' : 'border-slate-200'"
-                 class="w-full px-3 py-2 bg-white border rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
-
           <div class="flex gap-2">
             <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01" required
                    placeholder="Cash received..."
@@ -562,6 +621,11 @@ function posApp() {
     ],
     customerName: '',
     customerPhone: '',
+    customers: window.__POS_CUSTOMERS__ || [],
+    customerQuery: '',
+    showCustList: false,
+    addingCustomer: false,
+    selectedCustomer: null,
     submitting: false,
     mobileCartOpen: false,
     // Retail / Wholesale price mode (new adds only — cart items keep their price)
@@ -629,10 +693,57 @@ function posApp() {
     },
 
     resetSale() {
-      this.cart = []; this.discount = 0; this.amountPaid = 0;
+      this.cart = []; this.discount = ''; this.amountPaid = '';
       this.customerName = ''; this.customerPhone = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
       this.holdId = null; this.holdTabNumber = '';
       this.serials = {}; this.serialItems = []; this.serialInputs = {};
+      this.clearCustomer();
+    },
+
+    /* ── Customer picker ── */
+    get filteredCustomers() {
+      const q = this.customerQuery.trim().toLowerCase();
+      const list = q
+        ? this.customers.filter(c =>
+            (c.name || '').toLowerCase().includes(q) ||
+            (c.phone || '').toLowerCase().includes(q))
+        : this.customers;
+      return list.slice(0, 8);
+    },
+    pickCustomer(c) {
+      this.selectedCustomer = c;
+      this.customerName = c.name || '';
+      this.customerPhone = c.phone || '';
+      this.showCustList = false;
+      this.addingCustomer = false;
+      this.customerQuery = '';
+    },
+    startAddCustomer() {
+      this.addingCustomer = true;
+      this.showCustList = false;
+      this.customerName = this.customerQuery.trim();
+      this.customerPhone = '';
+      this.customerQuery = '';
+    },
+    cancelAddCustomer() {
+      this.addingCustomer = false;
+      this.customerName = '';
+      this.customerPhone = '';
+    },
+    saveNewCustomer() {
+      if (!this.customerName.trim()) return;
+      this.selectedCustomer = {
+        id: null, name: this.customerName.trim(),
+        phone: this.customerPhone.trim(), current_balance: 0,
+      };
+      this.addingCustomer = false;
+    },
+    clearCustomer() {
+      this.selectedCustomer = null;
+      this.addingCustomer = false;
+      this.customerQuery = '';
+      this.customerName = '';
+      this.customerPhone = '';
     },
 
     clearCart() {

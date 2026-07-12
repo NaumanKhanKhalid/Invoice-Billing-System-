@@ -29,7 +29,8 @@ class PosController extends Controller
         $todayRevenue = PosSale::whereDate('date', today())->sum('total');
         $lowStock = Product::where('is_active', true)->whereColumn('stock_qty', '<=', 'low_stock_alert')->count();
         $heldSales = feature_enabled('open_tabs') ? $this->openHolds() : collect();
-        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales'));
+        $customers = UdharCustomer::orderBy('name')->get(['id','name','phone','current_balance']);
+        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales', 'customers'));
     }
 
     public function store(Request $request)
