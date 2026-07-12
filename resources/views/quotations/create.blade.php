@@ -85,7 +85,7 @@
             <button type="button" @click="addProduct(p)"
                     class="w-full text-left px-3 py-2 text-sm hover:bg-green-50 flex items-center justify-between">
               <span x-text="p.name"></span>
-              <span class="text-xs text-slate-400" x-text="'PKR ' + Number(p.selling_price).toLocaleString()"></span>
+              <span class="text-xs text-slate-400" x-text="'PKR ' + Number(p.sale_price).toLocaleString()"></span>
             </button>
           </template>
         </div>
@@ -177,7 +177,7 @@ function quoteForm() {
     },
 
     addProduct(p) {
-      this.rows.push({ product_id: p.id, name: p.name, unit: p.unit || '', qty: 1, price: parseFloat(p.selling_price) || 0, total: parseFloat(p.selling_price) || 0 });
+      this.rows.push({ product_id: p.id, name: p.name, unit: p.unit || '', qty: 1, price: parseFloat(p.sale_price) || 0, total: parseFloat(p.sale_price) || 0 });
       this.search = '';
       this.filtered = [];
       this.calcTotal();

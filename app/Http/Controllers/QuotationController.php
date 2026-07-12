@@ -22,7 +22,7 @@ class QuotationController extends Controller
 
     public function create()
     {
-        $products    = Product::orderBy('name')->get(['id', 'name', 'unit', 'selling_price']);
+        $products    = Product::orderBy('name')->get(['id', 'name', 'unit', 'sale_price']);
         $quoteNumber = Quotation::nextNumber();
         return view('quotations.create', compact('products', 'quoteNumber'));
     }
