@@ -442,7 +442,7 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </div>
 
         {{-- Submit --}}
-        <div class="px-4 pb-4">
+        <div class="px-4 pt-1 pb-6">
           <button type="submit" :disabled="cart.length === 0 || submitting"
                   class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
