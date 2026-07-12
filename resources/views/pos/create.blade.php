@@ -275,18 +275,34 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
 
       {{-- Add-new inline form --}}
       <template x-if="addingCustomer">
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between">
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Naya Customer</p>
-            <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-medium">Cancel</button>
+        <div class="rounded-2xl border border-green-200 bg-green-50/60 p-3">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-md bg-green-600 text-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </span>
+              <p class="text-[11px] text-green-800 font-bold uppercase tracking-wider">Naya Customer</p>
+            </div>
+            <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">Cancel</button>
           </div>
-          <input type="text" x-model="customerName" placeholder="Customer ka naam"
-                 class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
-          <div class="flex gap-1.5">
-            <input type="text" x-model="customerPhone" placeholder="Phone (udhar ke liye zaroori)"
-                   class="flex-1 min-w-0 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+
+          <div class="space-y-2">
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" x-model="customerName" placeholder="Customer ka naam" @keydown.enter.prevent="saveNewCustomer()"
+                     class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
+            </div>
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <input type="tel" x-model="customerPhone" placeholder="Phone number" @keydown.enter.prevent="saveNewCustomer()"
+                     class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
+            </div>
+            <p class="text-[11px] text-slate-400 leading-snug">Udhar sale ke liye phone number zaroori hai.</p>
             <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
-                    class="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-bold rounded-xl transition whitespace-nowrap">Use</button>
+                    class="w-full py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition flex items-center justify-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              Customer add karein
+            </button>
           </div>
         </div>
       </template>
