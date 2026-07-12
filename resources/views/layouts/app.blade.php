@@ -249,10 +249,6 @@
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> Purchases
             </a>
 
-            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-                <i data-lucide="users" class="w-4 h-4"></i> Customers
-            </a>
-
             @if(feature_enabled('quotations'))
             <a href="{{ route('quotations.index') }}" class="nav-item {{ request()->routeIs('quotations.*') ? 'active' : '' }}">
                 <i data-lucide="file-text" class="w-4 h-4"></i> Quotations
