@@ -25,6 +25,12 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
     }
     .pos-cart.open { transform: translateY(0); }
   }
+  /* On POS the sidebar toggle lives inside the top bar, so hide the global
+     floating opener + its gutter here and show the in-bar menu button. */
+  #sidebar-opener { display: none !important; }
+  html.sidebar-collapsed #app-shell { padding-left: 0 !important; }
+  .pos-menu-btn { display: none; }
+  html.sidebar-collapsed .pos-menu-btn { display: flex; }
 </style>
 
 <div class="flex flex-col flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
@@ -47,6 +53,11 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 
     {{-- Top bar --}}
     <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center gap-3 shrink-0">
+      <button type="button" onclick="toggleSidebarCollapse()" title="Menu kholein"
+              class="pos-menu-btn w-9 h-9 rounded-lg border border-slate-200 items-center justify-center text-slate-500 hover:bg-slate-50 shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>
+      </button>
+
       <div class="relative flex-1">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="text" x-ref="mainInput" x-model="searchQ"
