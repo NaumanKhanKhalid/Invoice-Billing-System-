@@ -173,8 +173,8 @@
 
     <!-- Floating opener (desktop, shown only when sidebar collapsed) -->
     <button type="button" id="sidebar-opener" onclick="toggleSidebarCollapse()" title="Menu kholein"
-            class="fixed top-3 left-3 z-40 w-10 h-10 rounded-xl bg-slate-900 text-white items-center justify-center shadow-lg hover:bg-slate-800 transition">
-        <i data-lucide="panel-left-open" class="w-5 h-5"></i>
+            class="fixed top-3 left-3 z-40 w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-500 items-center justify-center shadow-sm hover:bg-slate-50 hover:text-slate-700 transition">
+        <i data-lucide="panel-left-open" class="w-4 h-4"></i>
     </button>
 
     <!-- Sidebar -->
