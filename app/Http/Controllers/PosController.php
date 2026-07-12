@@ -38,6 +38,7 @@ class PosController extends Controller
         $data = $request->validate([
             'customer_name'      => 'required_if:payment_method,credit|nullable|string|max:100',
             'customer_phone'     => 'required_if:payment_method,credit|nullable|string|max:20',
+            'udhar_customer_id'  => 'nullable|integer|exists:udhar_customers,id',
             'payment_method'     => 'required|in:cash,online,jazzcash,easypaisa,bank,credit',
             'discount'           => 'nullable|numeric|min:0',
             'amount_paid'        => 'required|numeric|min:0',
@@ -147,10 +148,16 @@ class PosController extends Controller
             if ($data['payment_method'] === 'credit') {
                 $unpaid = round($total - $paid, 2);
                 if ($unpaid > 0) {
-                    $udharCustomer = UdharCustomer::firstOrCreate(
-                        ['phone' => $data['customer_phone']],
-                        ['name'  => $data['customer_name']]
-                    );
+                    // Existing udhar customer selected in POS → link by id (proper),
+                    // otherwise register a new one (matched/created by phone).
+                    if (!empty($data['udhar_customer_id'])) {
+                        $udharCustomer = UdharCustomer::find($data['udhar_customer_id']);
+                    } else {
+                        $udharCustomer = UdharCustomer::firstOrCreate(
+                            ['phone' => $data['customer_phone']],
+                            ['name'  => $data['customer_name']]
+                        );
+                    }
 
                     CreditSale::create([
                         'udhar_customer_id' => $udharCustomer->id,

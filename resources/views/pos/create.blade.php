@@ -683,6 +683,7 @@ function posApp() {
         client_uuid:    this.makeUuid(),
         customer_name:  this.customerName || null,
         customer_phone: this.customerPhone || null,
+        udhar_customer_id: (this.selectedCustomer && this.selectedCustomer.id) ? this.selectedCustomer.id : null,
         payment_method: this.payMethod,
         discount:       Number(this.discount || 0),
         amount_paid:    Number(this.amountPaid || 0),
