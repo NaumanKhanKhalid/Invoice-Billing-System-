@@ -47,11 +47,6 @@ window.__POS_HOLDS__ = @json($heldSales ?? []);
 
     {{-- Top bar --}}
     <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center gap-3 shrink-0">
-      <a href="{{ route('pos.index') }}"
-         class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 shrink-0">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-      </a>
-
       <div class="relative flex-1">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="text" x-ref="mainInput" x-model="searchQ"
