@@ -295,7 +295,7 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       {{-- Add-new inline form --}}
       <template x-if="addingCustomer">
         <div class="rounded-2xl border border-green-200 bg-green-50/60 p-3">
-          <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center justify-between mb-3.5">
             <div class="flex items-center gap-1.5">
               <span class="w-5 h-5 rounded-md bg-green-600 text-white flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -409,15 +409,17 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         <div class="px-5 pb-2">
           <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Payment Method</p>
           <input type="hidden" name="payment_method" x-model="payMethod">
-          <div class="grid grid-cols-3 gap-1.5">
+          <div class="grid grid-cols-3 gap-2">
             <template x-for="pm in payMethods" :key="pm.value">
               <button type="button" @click="payMethod = pm.value"
                       :class="payMethod === pm.value
-                        ? 'bg-green-600 border-green-600 text-white'
-                        : 'bg-white border-slate-200 text-slate-500 hover:border-green-300'"
-                      class="py-1.5 px-1 rounded-xl border text-center transition">
-                <span x-text="pm.icon" class="block text-sm"></span>
-                <span x-text="pm.label" class="text-[10px] font-semibold leading-none mt-0.5 block"></span>
+                        ? 'border-green-500 bg-green-50 text-green-700'
+                        : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
+                      class="flex flex-col items-center gap-1.5 py-2.5 rounded-2xl border-2 transition">
+                <span :class="payMethod === pm.value ? 'bg-green-100' : 'bg-slate-50'"
+                      class="w-8 h-8 rounded-lg flex items-center justify-center text-base transition"
+                      x-text="pm.icon"></span>
+                <span x-text="pm.label" class="text-xs font-bold"></span>
               </button>
             </template>
           </div>
