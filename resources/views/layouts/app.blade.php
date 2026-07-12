@@ -47,17 +47,23 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
 
-        #sidebar { background: #0f172a; transition: transform 0.25s ease; }
+        #sidebar { background: #0f172a; transition: transform 0.25s ease, margin-left 0.28s ease; }
 
         /* Desktop sidebar collapse toggle (persisted). On mobile the sidebar
-           already slides via .open, so this only applies from md up. */
-        #sidebar-opener { display: none; }
+           already slides via .open, so this only applies from md up.
+           Slides out via margin (not display:none) so it animates smoothly. */
+        body { overflow-x: hidden; }
+        #app-shell { transition: padding-left 0.28s ease; }
+        #sidebar-opener { display: inline-flex; opacity: 0; visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0s linear 0.28s; }
         @media (min-width: 768px) {
-            html.sidebar-collapsed #sidebar { display: none; }
-            html.sidebar-collapsed #sidebar-opener { display: inline-flex; }
+            html.sidebar-collapsed #sidebar { margin-left: -16rem; }
             /* Shift content right so the floating opener sits in a gutter,
                never on top of a page's own top-left button (e.g. POS back). */
-            html.sidebar-collapsed #app-shell { padding-left: 3.25rem; }
+            html.sidebar-collapsed #app-shell { padding-left: 3.5rem; }
+            html.sidebar-collapsed #sidebar-opener {
+                opacity: 1; visibility: visible;
+                transition: opacity 0.2s ease 0.12s, visibility 0s linear 0s; }
         }
 
         .nav-item {
@@ -555,7 +561,6 @@
         function toggleSidebarCollapse() {
             const collapsed = document.documentElement.classList.toggle('sidebar-collapsed');
             try { localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0'); } catch (e) {}
-            if (window.lucide) lucide.createIcons({ icons: lucide.icons });
         }
 
         /* ── Toast System ── */
