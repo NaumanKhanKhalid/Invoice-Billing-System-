@@ -240,35 +240,56 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
 
     {{-- Customer --}}
     <div class="shrink-0 px-3 py-2.5 border-b border-slate-100 bg-white" @click.outside="showCustList = false">
-      {{-- Search / walk-in state --}}
+      {{-- Search / walk-in state — dropdown with search + add-new inside --}}
       <template x-if="!selectedCustomer && !addingCustomer">
         <div class="relative">
-          <div class="flex gap-1.5">
-            <div class="relative flex-1">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <input type="text" x-model="customerQuery" @focus="showCustList = true" @input="showCustList = true"
-                     placeholder="Walk-in customer — naam/number se dhoondein"
-                     class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+          {{-- Trigger --}}
+          <button type="button"
+                  @click="showCustList = !showCustList; if (showCustList) $nextTick(() => $refs.custSearch && $refs.custSearch.focus())"
+                  class="w-full flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition"
+                  :class="showCustList ? 'ring-2 ring-green-300 bg-white' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="flex-1 text-left text-slate-500">Walk-in Customer</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform" :class="showCustList ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+
+          {{-- Dropdown panel --}}
+          <div x-show="showCustList" x-cloak x-transition.opacity.duration.100ms
+               class="absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden">
+            {{-- Search --}}
+            <div class="p-2 border-b border-slate-100">
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" x-ref="custSearch" x-model="customerQuery"
+                       placeholder="Naam ya number se dhoondein"
+                       class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+              </div>
             </div>
-            <button type="button" @click="startAddCustomer()" title="Naya customer add karein"
-                    class="w-9 h-9 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            {{-- List --}}
+            <div class="max-h-52 overflow-y-auto">
+              <template x-for="c in filteredCustomers" :key="c.id">
+                <button type="button" @click="pickCustomer(c)"
+                        class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2 border-b border-slate-50 last:border-0 transition">
+                  <span class="min-w-0">
+                    <span class="block text-sm font-semibold text-slate-800 truncate" x-text="c.name"></span>
+                    <span class="block text-xs text-slate-400" x-text="c.phone || '—'"></span>
+                  </span>
+                  <span x-show="c.current_balance > 0" class="text-[11px] font-bold text-amber-600 whitespace-nowrap"
+                        x-text="'Udhar ' + Number(c.current_balance).toLocaleString()"></span>
+                </button>
+              </template>
+              <div x-show="!filteredCustomers.length" class="px-3 py-4 text-center text-xs text-slate-400">
+                Koi customer nahi mila
+              </div>
+            </div>
+            {{-- Add new (inside dropdown) --}}
+            <button type="button" @click="startAddCustomer()"
+                    class="w-full flex items-center gap-2 px-3 py-2.5 border-t border-slate-100 bg-slate-50 hover:bg-green-50 text-green-700 font-semibold text-sm transition">
+              <span class="w-5 h-5 rounded-md bg-green-600 text-white flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+              </span>
+              <span x-text="customerQuery.trim() ? ('Naya customer: ' + customerQuery.trim()) : 'Naya customer add karein'"></span>
             </button>
-          </div>
-          {{-- Suggestions --}}
-          <div x-show="showCustList && filteredCustomers.length" x-cloak
-               class="absolute z-20 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden max-h-56 overflow-y-auto">
-            <template x-for="c in filteredCustomers" :key="c.id">
-              <button type="button" @click="pickCustomer(c)"
-                      class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2 border-b border-slate-50 last:border-0 transition">
-                <span class="min-w-0">
-                  <span class="block text-sm font-semibold text-slate-800 truncate" x-text="c.name"></span>
-                  <span class="block text-xs text-slate-400" x-text="c.phone || '—'"></span>
-                </span>
-                <span x-show="c.current_balance > 0" class="text-[11px] font-bold text-amber-600 whitespace-nowrap"
-                      x-text="'Udhar ' + Number(c.current_balance).toLocaleString()"></span>
-              </button>
-            </template>
           </div>
         </div>
       </template>
