@@ -243,15 +243,21 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       {{-- Search / walk-in state — dropdown with search + add-new inside --}}
       <template x-if="!selectedCustomer && !addingCustomer">
         <div class="relative">
-          {{-- Trigger --}}
-          <button type="button"
-                  @click="showCustList = !showCustList; if (showCustList) $nextTick(() => $refs.custSearch && $refs.custSearch.focus())"
-                  class="w-full flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition"
-                  :class="showCustList ? 'ring-2 ring-green-300 bg-white' : ''">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span class="flex-1 text-left text-slate-500">Walk-in Customer</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform" :class="showCustList ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
+          {{-- Trigger + add-new button --}}
+          <div class="flex gap-1.5">
+            <button type="button"
+                    @click="showCustList = !showCustList; if (showCustList) $nextTick(() => $refs.custSearch && $refs.custSearch.focus())"
+                    class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition"
+                    :class="showCustList ? 'ring-2 ring-green-300 bg-white' : ''">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span class="flex-1 text-left text-slate-500 truncate">Walk-in Customer</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform" :class="showCustList ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <button type="button" @click="startAddCustomer()" title="Naya customer add karein"
+                    class="w-9 h-9 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </button>
+          </div>
 
           {{-- Dropdown panel --}}
           <div x-show="showCustList" x-cloak x-transition.opacity.duration.100ms
@@ -282,14 +288,6 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                 Koi customer nahi mila
               </div>
             </div>
-            {{-- Add new (inside dropdown) --}}
-            <button type="button" @click="startAddCustomer()"
-                    class="w-full flex items-center gap-2 px-3 py-2.5 border-t border-slate-100 bg-slate-50 hover:bg-green-50 text-green-700 font-semibold text-sm transition">
-              <span class="w-5 h-5 rounded-md bg-green-600 text-white flex items-center justify-center shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
-              </span>
-              <span x-text="customerQuery.trim() ? ('Naya customer: ' + customerQuery.trim()) : 'Naya customer add karein'"></span>
-            </button>
           </div>
         </div>
       </template>
