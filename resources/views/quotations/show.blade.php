@@ -10,7 +10,7 @@ $statusClass = [
   'expired'  => 'bg-slate-100 text-slate-400',
 ][$quotation->status] ?? 'bg-slate-100 text-slate-600';
 @endphp
-<div class="max-w-3xl mx-auto space-y-5">
+<div class="max-w-4xl w-full mx-auto space-y-5">
 
   <div class="flex items-center gap-3 flex-wrap">
     <a href="{{ route('quotations.index') }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
@@ -57,90 +57,124 @@ $statusClass = [
   </div>
   @endif
 
-  {{-- Quotation Card --}}
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
+  {{-- Quotation document --}}
+  @php
+    $logo  = \App\Models\Setting::getValue('logo_path');
+    $cname = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop');
+    $addr  = \App\Models\Setting::getValue('company_address');
+    $cphone = \App\Models\Setting::getValue('company_phone');
+    $ntn   = \App\Models\Setting::getValue('ntn_number');
+  @endphp
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
 
-    {{-- Header banner --}}
-    <div class="bg-green-600 px-6 py-5 text-white">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-sm font-medium opacity-80">QUOTATION / ESTIMATE</p>
-          <p class="text-2xl font-bold mt-0.5">{{ $quotation->quote_number }}</p>
-          @if($ntn = \App\Models\Setting::getValue('ntn_number'))
-          <p class="text-xs opacity-70 mt-0.5">NTN: {{ $ntn }}</p>
-          @endif
+    {{-- Letterhead --}}
+    <div class="px-6 pt-6 pb-5 flex items-start justify-between gap-4 border-b border-slate-100">
+      <div class="flex items-start gap-3 min-w-0">
+        @if($logo)
+        <img src="{{ tenant_asset($logo) }}" alt="Logo" class="w-12 h-12 rounded-xl object-contain bg-white border border-slate-100 p-1 shrink-0">
+        @else
+        <div class="w-12 h-12 rounded-xl bg-green-600 text-white flex items-center justify-center font-bold text-lg shrink-0">{{ strtoupper(substr($cname, 0, 1)) }}</div>
+        @endif
+        <div class="min-w-0">
+          <p class="font-bold text-slate-900 text-lg leading-tight">{{ $cname }}</p>
+          @if($addr)<p class="text-xs text-slate-500 mt-0.5 leading-snug">{{ $addr }}</p>@endif
+          @if($cphone)<p class="text-xs text-slate-500">{{ $cphone }}</p>@endif
+          @if($ntn)<p class="text-xs text-slate-400">NTN: {{ $ntn }}</p>@endif
         </div>
-        <div class="text-right">
-          <p class="text-sm opacity-80">Date</p>
-          <p class="text-lg font-semibold">{{ $quotation->date->format('d M Y') }}</p>
-          @if($quotation->valid_until)
-          <p class="text-xs opacity-70 mt-0.5">Valid until {{ $quotation->valid_until->format('d M Y') }}</p>
-          @endif
-        </div>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-green-600">Quotation</p>
+        <p class="text-xl font-extrabold text-slate-900 mt-0.5 tabular-nums">{{ $quotation->quote_number }}</p>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold mt-1.5 {{ $statusClass }}">
+          <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ ucfirst($quotation->status) }}
+        </span>
       </div>
     </div>
 
-    {{-- Customer info --}}
-    @if($quotation->customer_name || $quotation->customer_phone)
-    <div class="px-6 py-3 bg-slate-50 border-b border-slate-100">
-      <p class="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">Customer</p>
-      @if($quotation->customer_name)<p class="font-semibold text-slate-800">{{ $quotation->customer_name }}</p>@endif
-      @if($quotation->customer_phone)<p class="text-sm text-slate-500">{{ $quotation->customer_phone }}</p>@endif
-      @if($quotation->customer_email)<p class="text-sm text-slate-500">{{ $quotation->customer_email }}</p>@endif
+    {{-- Bill-to + dates --}}
+    <div class="px-6 py-4 grid grid-cols-2 gap-4 border-b border-slate-100 bg-slate-50/60">
+      <div class="min-w-0">
+        <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1">Bill To</p>
+        @if($quotation->customer_name)
+        <p class="font-semibold text-slate-800 text-sm truncate">{{ $quotation->customer_name }}</p>
+        @else
+        <p class="text-slate-400 text-sm italic">Walk-in customer</p>
+        @endif
+        @if($quotation->customer_phone)<p class="text-xs text-slate-500">{{ $quotation->customer_phone }}</p>@endif
+        @if($quotation->customer_email)<p class="text-xs text-slate-500 truncate">{{ $quotation->customer_email }}</p>@endif
+      </div>
+      <div class="text-right text-sm space-y-0.5">
+        <div class="flex justify-end gap-2"><span class="text-slate-400">Date</span><span class="font-medium text-slate-700 tabular-nums">{{ $quotation->date->format('d M Y') }}</span></div>
+        @if($quotation->valid_until)
+        <div class="flex justify-end gap-2"><span class="text-slate-400">Valid until</span><span class="font-medium text-slate-700 tabular-nums">{{ $quotation->valid_until->format('d M Y') }}</span></div>
+        @endif
+      </div>
     </div>
-    @endif
 
     {{-- Items --}}
-    <table class="w-full">
-      <thead class="bg-slate-50 border-b border-slate-200">
+    <div class="overflow-x-auto">
+    <table class="w-full min-w-[480px]">
+      <thead class="border-b border-slate-200">
         <tr>
-          <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">#</th>
-          <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Item / Description</th>
-          <th class="px-5 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Qty</th>
-          <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Unit Price</th>
-          <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
+          <th class="px-5 py-2.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-8">#</th>
+          <th class="px-5 py-2.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Item / Description</th>
+          <th class="px-5 py-2.5 text-center text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Qty</th>
+          <th class="px-5 py-2.5 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Unit Price</th>
+          <th class="px-5 py-2.5 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-100">
+      <tbody class="divide-y divide-slate-50">
         @foreach($quotation->items as $i => $item)
-        <tr>
-          <td class="px-5 py-3 text-sm text-slate-400">{{ $i + 1 }}</td>
+        <tr class="{{ $i % 2 ? 'bg-slate-50/40' : '' }}">
+          <td class="px-5 py-3 text-sm text-slate-400 tabular-nums">{{ $i + 1 }}</td>
           <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $item->product_name }}</td>
-          <td class="px-5 py-3 text-sm text-center text-slate-600">{{ $item->qty }}{{ $item->unit ? ' '.$item->unit : '' }}</td>
-          <td class="px-5 py-3 text-sm text-right text-slate-600">PKR {{ number_format($item->unit_price) }}</td>
-          <td class="px-5 py-3 text-sm text-right font-semibold text-slate-900">PKR {{ number_format($item->total) }}</td>
+          <td class="px-5 py-3 text-sm text-center text-slate-600 tabular-nums">{{ rtrim(rtrim(number_format($item->qty, 2), '0'), '.') }}{{ $item->unit ? ' '.$item->unit : '' }}</td>
+          <td class="px-5 py-3 text-sm text-right text-slate-600 tabular-nums">PKR {{ number_format($item->unit_price) }}</td>
+          <td class="px-5 py-3 text-sm text-right font-semibold text-slate-900 tabular-nums">PKR {{ number_format($item->total) }}</td>
         </tr>
         @endforeach
       </tbody>
     </table>
+    </div>
 
     {{-- Totals --}}
-    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 space-y-1.5">
-      <div class="flex justify-between text-sm text-slate-600">
-        <span>Subtotal</span>
-        <span>PKR {{ number_format($quotation->subtotal) }}</span>
+    <div class="px-6 py-4 border-t border-slate-100 flex justify-end">
+      <div class="w-full max-w-[240px] space-y-1.5">
+        <div class="flex justify-between text-sm text-slate-500">
+          <span>Subtotal</span>
+          <span class="tabular-nums">PKR {{ number_format($quotation->subtotal) }}</span>
+        </div>
+        @if($quotation->discount > 0)
+        <div class="flex justify-between text-sm text-red-500">
+          <span>Discount</span>
+          <span class="tabular-nums">- PKR {{ number_format($quotation->discount) }}</span>
+        </div>
+        @endif
+        <div class="flex justify-between items-baseline pt-2 border-t border-slate-200">
+          <span class="font-bold text-slate-800">Total</span>
+          <span class="text-lg font-extrabold text-green-700 tabular-nums">PKR {{ number_format($quotation->total) }}</span>
+        </div>
       </div>
-      @if($quotation->discount > 0)
-      <div class="flex justify-between text-sm text-red-500">
-        <span>Discount</span>
-        <span>- PKR {{ number_format($quotation->discount) }}</span>
-      </div>
-      @endif
-      <div class="flex justify-between text-base font-bold text-slate-900 pt-1.5 border-t border-slate-300">
-        <span>TOTAL</span>
-        <span class="text-green-700">PKR {{ number_format($quotation->total) }}</span>
-      </div>
-      @if(($taxPercent = \App\Models\Setting::getValue('sales_tax_percent')) && $taxPercent > 0)
-      <p class="text-xs text-slate-400 text-center pt-1">Prices inclusive of {{ $taxPercent + 0 }}% sales tax</p>
-      @endif
     </div>
+
+    @if(($taxPercent = \App\Models\Setting::getValue('sales_tax_percent')) && $taxPercent > 0)
+    <p class="px-6 pb-2 text-xs text-slate-400 text-right">Prices inclusive of {{ $taxPercent + 0 }}% sales tax</p>
+    @endif
 
     @if($quotation->notes)
     <div class="px-6 py-3 border-t border-slate-100">
-      <p class="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">Notes</p>
-      <p class="text-sm text-slate-600">{{ $quotation->notes }}</p>
+      <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1">Notes</p>
+      <p class="text-sm text-slate-600 whitespace-pre-line">{{ $quotation->notes }}</p>
     </div>
     @endif
+
+    {{-- Footer --}}
+    <div class="px-6 py-3 border-t border-slate-100 bg-slate-50/60 text-center">
+      <p class="text-[11px] text-slate-400">
+        Ye ek quotation/estimate hai, invoice nahi.
+        @if($quotation->valid_until) Rates {{ $quotation->valid_until->format('d M Y') }} tak valid hain. @endif
+      </p>
+    </div>
   </div>
 
   {{-- Status Update --}}
