@@ -1,35 +1,54 @@
 @extends('layouts.app')
 @section('title','Receipt #'.$posSale->sale_number)
 @section('content')
-<div class="max-w-sm mx-auto">
-  {{-- Print button --}}
-  <div class="flex gap-3 mb-6 print:hidden">
-    @if(feature_enabled('receipt_print'))
-    <button onclick="window.print()" class="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
-      <i data-lucide="printer" class="w-4 h-4"></i>Print Receipt
-    </button>
-    @endif
-    @php
-      $waShop  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop');
-      $waLines = ["*{$waShop}* — Receipt {$posSale->sale_number}", $posSale->date->format('d M Y'), ''];
-      foreach ($posSale->items as $ri) {
-          $waLines[] = "{$ri->product_name} — {$ri->qty} x " . number_format($ri->unit_price) . " = " . number_format($ri->total);
-      }
-      if ($posSale->discount > 0) $waLines[] = 'Discount: PKR ' . number_format($posSale->discount);
-      $waLines[] = '*Total: PKR ' . number_format($posSale->total) . '*';
-      $waLines[] = 'Shukriya! 🙏';
-      $waText  = urlencode(implode("\n", $waLines));
-      $waPhone = wa_number($posSale->customer_phone ?? '');
-    @endphp
-    @if(feature_enabled('whatsapp_share'))
-    <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
-       class="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
-      <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp
-    </a>
-    @endif
-    <a href="{{ route('pos.create') }}" class="flex-1 inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
-      <i data-lucide="plus" class="w-4 h-4"></i>New Sale
-    </a>
+<div class="max-w-md mx-auto space-y-5">
+  @php
+    $waShop  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop');
+    $waLines = ["*{$waShop}* — Receipt {$posSale->sale_number}", $posSale->date->format('d M Y'), ''];
+    foreach ($posSale->items as $ri) {
+        $waLines[] = "{$ri->product_name} — {$ri->qty} x " . number_format($ri->unit_price) . " = " . number_format($ri->total);
+    }
+    if ($posSale->discount > 0) $waLines[] = 'Discount: PKR ' . number_format($posSale->discount);
+    $waLines[] = '*Total: PKR ' . number_format($posSale->total) . '*';
+    $waLines[] = 'Shukriya! 🙏';
+    $waText  = urlencode(implode("\n", $waLines));
+    $waPhone = wa_number($posSale->customer_phone ?? '');
+  @endphp
+
+  {{-- Success confirmation --}}
+  <div class="print:hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="p-6 text-center">
+      <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2 class="text-lg font-bold text-slate-900">Sale Complete!</h2>
+      <p class="text-xs text-slate-400 mt-0.5 font-mono">{{ $posSale->sale_number }}</p>
+      <p class="text-3xl font-extrabold text-slate-900 mt-3 tabular-nums">PKR {{ number_format($posSale->total) }}</p>
+      <div class="flex items-center justify-center gap-2 mt-2">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold">{{ ucfirst($posSale->payment_method) }}</span>
+        @if($posSale->change_due > 0)
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold tabular-nums">Change PKR {{ number_format($posSale->change_due) }}</span>
+        @endif
+      </div>
+    </div>
+
+    {{-- Actions --}}
+    <div class="grid grid-cols-3 border-t border-slate-100 divide-x divide-slate-100">
+      @if(feature_enabled('receipt_print'))
+      <button onclick="window.print()" class="flex flex-col items-center gap-1.5 py-3.5 text-green-700 hover:bg-green-50 transition text-xs font-bold">
+        <i data-lucide="printer" class="w-5 h-5"></i>Print
+      </button>
+      @endif
+      @if(feature_enabled('whatsapp_share'))
+      <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
+         class="flex flex-col items-center gap-1.5 py-3.5 text-emerald-600 hover:bg-emerald-50 transition text-xs font-bold">
+        <i data-lucide="message-circle" class="w-5 h-5"></i>WhatsApp
+      </a>
+      @endif
+      <a href="{{ route('pos.create') }}" class="flex flex-col items-center gap-1.5 py-3.5 text-slate-700 hover:bg-slate-50 transition text-xs font-bold">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>New Sale
+      </a>
+    </div>
   </div>
 
   {{-- Receipt --}}
