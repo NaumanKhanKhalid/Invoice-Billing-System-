@@ -613,7 +613,8 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
        style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px);"
        @keydown.escape.window="closeSaleModal()">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xs overflow-hidden"
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden mx-auto"
+         style="width:100%;max-width:22rem;"
          x-transition:enter="ease-out duration-200"
          x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
          @click.outside="closeSaleModal()">
