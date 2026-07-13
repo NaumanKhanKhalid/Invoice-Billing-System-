@@ -134,6 +134,15 @@
   </div>
 </div>
 
+<script>
+  // Opened from the POS "Print" action (?print=1) → print immediately, then close.
+  if (new URLSearchParams(location.search).get('print') === '1') {
+    window.addEventListener('load', () => setTimeout(() => {
+      window.print();
+      window.addEventListener('afterprint', () => window.close());
+    }, 300));
+  }
+</script>
 <style>
 @media print {
   @page { size: 80mm auto; margin: 2mm; }

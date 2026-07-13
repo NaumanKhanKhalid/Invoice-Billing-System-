@@ -608,6 +608,63 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   </div>
   @endif
 
+  {{-- ══ Sale Complete modal (stays on POS, next order ready) ══ --}}
+  <div x-show="saleModalOpen" x-cloak x-transition.opacity
+       class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px);"
+       @keydown.escape.window="closeSaleModal()">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xs overflow-hidden"
+         x-transition:enter="ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+         @click.outside="closeSaleModal()">
+      <div class="p-6 text-center">
+        <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Sale Complete!</h3>
+        <p class="text-xs text-slate-400 font-mono mt-0.5" x-text="lastSale.number"></p>
+        <p class="text-4xl font-extrabold text-slate-900 mt-3 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
+        <div class="flex items-center justify-center gap-2 mt-2">
+          <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold capitalize" x-text="lastSale.payMethod"></span>
+          <template x-if="lastSale.change > 0">
+            <span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold tabular-nums" x-text="'Change PKR ' + Number(lastSale.change).toLocaleString()"></span>
+          </template>
+        </div>
+      </div>
+
+      {{-- Print / WhatsApp --}}
+      <div class="grid grid-cols-2 border-t border-slate-100 divide-x divide-slate-100"
+           x-show="{{ feature_enabled('receipt_print') ? 'true' : 'false' }} || lastSale.whatsappUrl">
+        @if(feature_enabled('receipt_print'))
+        <button type="button" @click="printReceipt()" class="flex items-center justify-center gap-2 py-3.5 text-green-700 hover:bg-green-50 text-sm font-bold transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print
+        </button>
+        @endif
+        <template x-if="lastSale.whatsappUrl">
+          <a :href="lastSale.whatsappUrl" target="_blank" class="flex items-center justify-center gap-2 py-3.5 text-emerald-600 hover:bg-emerald-50 text-sm font-bold transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            WhatsApp
+          </a>
+        </template>
+      </div>
+
+      {{-- New Sale (primary) --}}
+      <button type="button" @click="closeSaleModal()"
+              class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+        New Sale
+      </button>
+
+      @if(feature_enabled('receipt_print'))
+      <label class="flex items-center justify-center gap-2 py-2.5 text-xs text-slate-400 border-t border-slate-100 cursor-pointer select-none">
+        <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="rounded border-slate-300 text-green-600 focus:ring-green-300">
+        Har sale par auto-print
+      </label>
+      @endif
+    </div>
+  </div>
+
   {{-- IMEI / Serial capture modal --}}
   <div x-show="serialModalOpen" x-cloak x-transition
        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
@@ -667,6 +724,10 @@ function posApp() {
     customers: window.__POS_CUSTOMERS__ || [],
     quoteNumber: @json($nextQuoteNumber ?? ''),
     quoteToday: @json(date('Y-m-d')),
+    saleModalOpen: false,
+    lastSale: { number: '', total: 0, change: 0, payMethod: 'cash', receiptUrl: '', whatsappUrl: null },
+    autoPrint: false,
+    saleModalTimer: null,
     customerQuery: '',
     showCustList: false,
     addingCustomer: false,
@@ -702,6 +763,7 @@ function posApp() {
 
     init() {
       this.loadQueue();
+      try { this.autoPrint = localStorage.getItem('posAutoPrint') === '1'; } catch (e) {}
       window.addEventListener('online', () => this.syncQueue());
       // Try syncing anything left over from a previous session
       this.syncQueue();
@@ -845,6 +907,41 @@ function posApp() {
       this.flash('Net nahi hai — sale offline save ho gayi, baad mein sync hogi', true);
     },
 
+    // ── Sale complete modal (stay on POS, ready for next order) ──
+    showSaleComplete(json) {
+      this.lastSale = {
+        number:      json.sale_number || '',
+        total:       Number(json.total || this.total || 0),
+        change:      Number(json.change || 0),
+        payMethod:   json.payment_method || this.payMethod,
+        receiptUrl:  json.receipt_url || '',
+        whatsappUrl: json.whatsapp_url || null,
+      };
+      this.resetSale();               // cart clear — POS turant next order ke liye ready
+      this.saleModalOpen = true;
+      if (this.autoPrint) this.printReceipt();
+      // Auto-close after a few seconds so a busy counter never stays blocked
+      clearTimeout(this.saleModalTimer);
+      this.saleModalTimer = setTimeout(() => { this.saleModalOpen = false; }, 6000);
+    },
+
+    printReceipt() {
+      if (!this.lastSale.receiptUrl) return;
+      const sep = this.lastSale.receiptUrl.includes('?') ? '&' : '?';
+      window.open(this.lastSale.receiptUrl + sep + 'print=1', '_blank');
+    },
+
+    closeSaleModal() {
+      clearTimeout(this.saleModalTimer);
+      this.saleModalOpen = false;
+      this.$nextTick(() => { if (this.$refs.mainInput) this.$refs.mainInput.focus(); });
+    },
+
+    toggleAutoPrint() {
+      this.autoPrint = !this.autoPrint;
+      try { localStorage.setItem('posAutoPrint', this.autoPrint ? '1' : '0'); } catch (e) {}
+    },
+
     submitSale() {
       if (this.cart.length === 0 || this.submitting) return;
 
@@ -916,7 +1013,7 @@ function posApp() {
         const res = await this.postSale(payload);
         if (res.ok) {
           const json = await res.json();
-          window.location = json.receipt_url || '{{ route('pos.index') }}';
+          this.showSaleComplete(json);
           return;
         }
         // Server reached but rejected (e.g. validation / stock) — don't queue, show error

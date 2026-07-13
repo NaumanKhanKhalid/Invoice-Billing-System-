@@ -194,10 +194,26 @@ class PosController extends Controller
         $sale = PosSale::find(session('last_pos_sale_id'));
 
         if ($request->wantsJson()) {
+            $waUrl = null;
+            if ($sale && feature_enabled('whatsapp_share')) {
+                $shop  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop');
+                $lines = ["*{$shop}* — Receipt {$sale->sale_number}", $sale->date->format('d M Y'), ''];
+                foreach ($sale->items as $ri) {
+                    $lines[] = "{$ri->product_name} — {$ri->qty} x " . number_format($ri->unit_price) . " = " . number_format($ri->total);
+                }
+                if ($sale->discount > 0) $lines[] = 'Discount: PKR ' . number_format($sale->discount);
+                $lines[] = '*Total: PKR ' . number_format($sale->total) . '*';
+                $lines[] = 'Shukriya! 🙏';
+                $waUrl = 'https://wa.me/' . wa_number($sale->customer_phone ?? '') . '?text=' . urlencode(implode("\n", $lines));
+            }
             return response()->json([
-                'ok'          => true,
-                'sale_number' => $sale?->sale_number,
-                'receipt_url' => $sale ? route('pos.receipt', $sale) : route('pos.index'),
+                'ok'             => true,
+                'sale_number'    => $sale?->sale_number,
+                'receipt_url'    => $sale ? route('pos.receipt', $sale) : route('pos.index'),
+                'total'          => $sale ? (float) $sale->total : 0,
+                'change'         => $sale ? (float) $sale->change_due : 0,
+                'payment_method' => $sale?->payment_method,
+                'whatsapp_url'   => $waUrl,
             ]);
         }
 
