@@ -2,7 +2,7 @@
 @section('title', 'New Quotation')
 @section('content')
 <script>window.__QUOTE_PRODUCTS__ = @json($products);</script>
-<div class="max-w-4xl w-full mx-auto space-y-5"
+<div class="space-y-5"
      x-data="quoteForm()"
      x-init="init()">
 

@@ -10,7 +10,7 @@ $statusClass = [
   'expired'  => 'bg-slate-100 text-slate-400',
 ][$quotation->status] ?? 'bg-slate-100 text-slate-600';
 @endphp
-<div class="max-w-4xl w-full mx-auto space-y-5">
+<div class="space-y-5">
 
   <div class="flex items-center gap-3 flex-wrap">
     <a href="{{ route('quotations.index') }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
