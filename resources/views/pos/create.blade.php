@@ -196,13 +196,6 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       </div>
     </div>
 
-    {{-- Bottom status --}}
-    <div class="bg-white border-t border-slate-200 px-4 py-2 flex items-center gap-3 text-xs text-slate-400 shrink-0">
-      <span x-text="products.length + ' products'"></span>
-      <span>·</span>
-      <span x-text="filtered.length + ' shown'"></span>
-      <span x-show="cart.length > 0" class="ml-auto text-green-600 font-semibold" x-text="cart.length + ' item(s) in cart'"></span>
-    </div>
   </div>
 
   {{-- ══ RIGHT: Cart + Checkout ══ --}}
