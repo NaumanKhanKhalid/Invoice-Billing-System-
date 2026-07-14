@@ -223,26 +223,13 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
               class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
               x-text="holdTabNumber"></span>
       </div>
-      <div class="flex items-center gap-3">
-        @if(feature_enabled('open_tabs'))
-        <button type="button" @click="openHoldModal()" x-show="cart.length > 0"
-                class="text-blue-600 hover:text-blue-700 transition text-xs font-medium flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
-          Hold
-        </button>
-        @endif
-        <button @click="clearCart()" x-show="cart.length > 0"
-                class="text-slate-400 hover:text-red-500 transition text-xs font-medium flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-          Clear
-        </button>
-        <button type="button" @click="mobileCartOpen = false"
-                class="md:hidden w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">✕</button>
-      </div>
+      <button type="button" @click="mobileCartOpen = false"
+              class="md:hidden w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">✕</button>
     </div>
 
     {{-- Customer --}}
     <div class="shrink-0 px-3 py-2.5 border-b border-slate-100 bg-white" @click.outside="showCustList = false">
+      <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1.5">Customer Information</p>
       {{-- Search / walk-in state — dropdown with search + add-new inside --}}
       <template x-if="!selectedCustomer && !addingCustomer">
         <div class="relative">
@@ -386,6 +373,28 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
 
     {{-- Checkout (fixed bottom) --}}
     <div class="shrink-0 border-t border-slate-200 bg-white">
+
+      {{-- Quick action bar --}}
+      <div class="grid @if(feature_enabled('open_tabs')) grid-cols-3 @else grid-cols-2 @endif divide-x divide-slate-100 border-b border-slate-100">
+        @if(feature_enabled('open_tabs'))
+        <button type="button" @click="openHoldModal()" :disabled="cart.length === 0"
+                class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-40 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+          Hold
+        </button>
+        @endif
+        <button type="button" @click="clearCart()" :disabled="cart.length === 0"
+                class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 disabled:opacity-40 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          Clear
+        </button>
+        <a href="{{ route('pos.index') }}"
+           class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+          Orders
+        </a>
+      </div>
+
       {{-- Submitted via fetch (submitSale) so failed sales can be queued offline --}}
       <form method="POST" action="{{ route('pos.store') }}" @submit.prevent="submitSale()">
         @csrf
