@@ -349,11 +349,11 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
          class="text-[11px] text-amber-600 font-semibold mt-1.5">Udhar sale ke liye customer name aur phone zaroori hai.</p>
     </div>
 
-    {{-- Cart items (scrollable) --}}
-    <div class="overflow-y-auto py-3 px-3 space-y-2 bg-slate-50" style="flex:1 1 0; min-height:0;">
+    {{-- Cart items (scrollable, compact list) --}}
+    <div class="overflow-y-auto bg-white" style="flex:1 1 0; min-height:0;">
       <template x-if="cart.length === 0">
         <div class="flex flex-col items-center justify-center h-full py-10 text-center">
-          <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mb-3">
+          <div class="w-14 h-14 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
           <p class="text-slate-500 text-sm font-medium">Cart khali hai</p>
@@ -362,22 +362,24 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       </template>
 
       <template x-for="(item, idx) in cart" :key="item.id">
-        <div class="bg-white border border-slate-200 rounded-xl p-3 flex gap-3 items-start shadow-sm">
+        <div class="flex items-center gap-2 px-3 py-2 border-b border-slate-100 hover:bg-slate-50/60 transition">
+          <button type="button" @click="removeFromCart(item.id)" title="Hatayein"
+                  class="text-slate-300 hover:text-red-500 shrink-0 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          </button>
           <div class="flex-1 min-w-0">
-            <p class="text-slate-900 text-sm font-semibold leading-snug" x-text="item.name"></p>
-            <p class="text-slate-400 text-xs mt-0.5 font-medium" x-text="'PKR ' + Number(item.price).toLocaleString() + ' / ' + item.unit"></p>
+            <p class="text-[13px] font-semibold text-slate-800 leading-tight truncate" x-text="item.name"></p>
+            <p class="text-[11px] text-slate-400" x-text="'PKR ' + Number(item.price).toLocaleString() + ' / ' + item.unit"></p>
           </div>
-          <div class="flex flex-col items-end gap-1.5 shrink-0">
-            <div class="flex items-center gap-1">
-              <button type="button" @click="item.qty > 1 ? item.qty-- : removeFromCart(item.id)"
-                      class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition text-base leading-none">−</button>
-              <span class="text-slate-900 font-bold text-sm w-7 text-center tabular-nums" x-text="item.qty"></span>
-              <button type="button" @click="item.qty < item.stock ? item.qty++ : null"
-                      :disabled="item.qty >= item.stock"
-                      class="w-7 h-7 rounded-lg bg-green-600 hover:bg-green-500 text-white font-bold flex items-center justify-center transition text-base leading-none disabled:opacity-30">+</button>
-            </div>
-            <p class="text-green-700 font-extrabold text-sm tabular-nums" x-text="'PKR ' + (item.qty * item.price).toLocaleString()"></p>
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" @click="item.qty > 1 ? item.qty-- : removeFromCart(item.id)"
+                    class="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center transition text-sm leading-none">−</button>
+            <span class="text-slate-900 font-bold text-[13px] w-6 text-center tabular-nums" x-text="item.qty"></span>
+            <button type="button" @click="item.qty < item.stock ? item.qty++ : null"
+                    :disabled="item.qty >= item.stock"
+                    class="w-6 h-6 rounded-md bg-green-600 hover:bg-green-500 text-white font-bold flex items-center justify-center transition text-sm leading-none disabled:opacity-30">+</button>
           </div>
+          <p class="w-[70px] text-right text-[13px] font-extrabold text-slate-900 tabular-nums shrink-0" x-text="Number(item.qty * item.price).toLocaleString()"></p>
         </div>
       </template>
     </div>
