@@ -164,36 +164,6 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </template>
       </div>
 
-      {{-- Today at a Glance --}}
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-auto pt-2">
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 font-medium">Today's Sales</p>
-            <p class="text-xl font-extrabold text-slate-900">{{ $todaySales }}</p>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 font-medium">Today's Revenue</p>
-            <p class="text-xl font-extrabold text-slate-900">{{ number_format($todayRevenue) }}</p>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl border border-{{ $lowStock > 0 ? 'amber' : 'slate' }}-200 p-4 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-{{ $lowStock > 0 ? 'amber' : 'slate' }}-50 flex items-center justify-center shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-{{ $lowStock > 0 ? 'amber-600' : 'slate-400' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 font-medium">Low Stock</p>
-            <p class="text-xl font-extrabold text-{{ $lowStock > 0 ? 'amber-600' : 'slate-900' }}">{{ $lowStock }}</p>
-          </div>
-        </div>
-      </div>
     </div>
 
   </div>
@@ -357,13 +327,13 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
             <p class="text-[13px] font-semibold text-slate-800 leading-tight truncate" x-text="item.name"></p>
             <p class="text-[11px] text-slate-400" x-text="'PKR ' + Number(item.price).toLocaleString() + ' / ' + item.unit"></p>
           </div>
-          <div class="flex items-center gap-1 shrink-0">
+          <div class="flex items-center gap-0.5 shrink-0 bg-slate-100 rounded-full p-0.5">
             <button type="button" @click="item.qty > 1 ? item.qty-- : removeFromCart(item.id)"
-                    class="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center transition text-sm leading-none">−</button>
+                    class="w-6 h-6 rounded-full bg-white hover:bg-slate-50 text-slate-600 shadow-sm font-bold flex items-center justify-center transition text-sm leading-none">−</button>
             <span class="text-slate-900 font-bold text-[13px] w-6 text-center tabular-nums" x-text="item.qty"></span>
             <button type="button" @click="item.qty < item.stock ? item.qty++ : null"
                     :disabled="item.qty >= item.stock"
-                    class="w-6 h-6 rounded-md bg-green-600 hover:bg-green-500 text-white font-bold flex items-center justify-center transition text-sm leading-none disabled:opacity-30">+</button>
+                    class="w-6 h-6 rounded-full bg-green-600 hover:bg-green-500 text-white shadow-sm font-bold flex items-center justify-center transition text-sm leading-none disabled:opacity-30">+</button>
           </div>
           <p class="w-[70px] text-right text-[13px] font-extrabold text-slate-900 tabular-nums shrink-0" x-text="Number(item.qty * item.price).toLocaleString()"></p>
         </div>
@@ -377,28 +347,27 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         @csrf
 
         {{-- Totals --}}
-        <div class="px-5 pt-3 pb-2 space-y-1.5">
-          <div class="flex justify-between text-sm text-slate-500">
+        <div class="px-4 pt-2 pb-1.5 space-y-1">
+          <div class="flex justify-between text-[13px] text-slate-500">
             <span>Subtotal</span>
             <span x-text="'PKR ' + subtotal.toLocaleString()" class="tabular-nums text-slate-700"></span>
           </div>
-          <div class="flex justify-between items-center text-sm text-slate-500">
+          <div class="flex justify-between items-center text-[13px] text-slate-500">
             <span>Discount</span>
             <div class="flex items-center gap-1.5">
               <span class="text-slate-400 text-xs">PKR</span>
               <input type="number" name="discount" x-model="discount" min="0" step="1" placeholder="0"
-                     class="w-20 text-right px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+                     class="w-16 text-right px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             </div>
           </div>
-          <div class="flex justify-between items-baseline pt-1.5 border-t border-slate-100">
+          <div class="flex justify-between items-baseline pt-1 border-t border-slate-100">
             <span class="text-slate-700 font-semibold text-sm">Total</span>
-            <span class="text-slate-900 text-xl font-extrabold tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
+            <span class="text-slate-900 text-lg font-extrabold tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
           </div>
         </div>
 
         {{-- Payment method --}}
-        <div class="px-5 pb-2">
-          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Payment Method</p>
+        <div class="px-4 pb-1.5">
           <input type="hidden" name="payment_method" x-model="payMethod">
           <div class="grid grid-cols-3 gap-1.5">
             <template x-for="pm in payMethods" :key="pm.value">
@@ -415,23 +384,23 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </div>
 
         {{-- Cash --}}
-        <div class="px-5 pb-2 space-y-2">
+        <div class="px-4 pb-1.5 space-y-1.5">
           <div class="flex gap-2">
             <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01" required
                    placeholder="Cash received..."
-                   class="flex-1 min-w-0 px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+                   class="flex-1 min-w-0 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             <button type="button" @click="setFullPay()"
-                    class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
+                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
           </div>
 
-          <div x-show="change > 0" class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+          <div x-show="change > 0" class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5">
             <span class="text-emerald-700 text-sm font-semibold">Change</span>
             <span class="text-emerald-700 font-extrabold text-sm tabular-nums" x-text="'PKR ' + change.toLocaleString()"></span>
           </div>
         </div>
 
         {{-- Submit --}}
-        <div class="px-4 pt-1 pb-4 flex gap-2">
+        <div class="px-4 pt-1 pb-3 flex gap-2">
           <button type="submit" :disabled="cart.length === 0 || submitting"
                   class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-[13px] transition flex items-center justify-center gap-2 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
