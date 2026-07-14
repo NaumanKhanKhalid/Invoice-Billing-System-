@@ -172,20 +172,47 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
 
     </div>
 
-    {{-- Compact today stats (pinned bottom of products) --}}
-    <div class="hidden sm:flex shrink-0 items-center gap-5 px-4 py-2 bg-white border-t border-slate-200 text-xs">
-      <span class="flex items-center gap-1.5 text-slate-500">
-        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-        Sales <span class="font-bold text-slate-800 tabular-nums">{{ $todaySales }}</span>
-      </span>
-      <span class="flex items-center gap-1.5 text-slate-500">
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-        Revenue <span class="font-bold text-slate-800 tabular-nums">PKR {{ number_format($todayRevenue) }}</span>
-      </span>
-      <span class="flex items-center gap-1.5 ml-auto {{ $lowStock > 0 ? 'text-amber-600' : 'text-slate-500' }}">
-        <span class="w-1.5 h-1.5 rounded-full {{ $lowStock > 0 ? 'bg-amber-500' : 'bg-slate-300' }}"></span>
-        Low stock <span class="font-bold tabular-nums">{{ $lowStock }}</span>
-      </span>
+    {{-- Bottom bar: today stats (left) + actions (right) — products width only --}}
+    <div class="hidden sm:flex shrink-0 items-center gap-3 px-4 py-2 bg-white border-t border-slate-200">
+      <div class="flex items-center gap-4 text-xs min-w-0 overflow-hidden">
+        <span class="flex items-center gap-1.5 text-slate-500 whitespace-nowrap">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+          Sales <span class="font-bold text-slate-800 tabular-nums">{{ $todaySales }}</span>
+        </span>
+        <span class="flex items-center gap-1.5 text-slate-500 whitespace-nowrap">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+          Revenue <span class="font-bold text-slate-800 tabular-nums">PKR {{ number_format($todayRevenue) }}</span>
+        </span>
+        <span class="flex items-center gap-1.5 whitespace-nowrap {{ $lowStock > 0 ? 'text-amber-600' : 'text-slate-500' }}">
+          <span class="w-1.5 h-1.5 rounded-full {{ $lowStock > 0 ? 'bg-amber-500' : 'bg-slate-300' }}"></span>
+          Low stock <span class="font-bold tabular-nums">{{ $lowStock }}</span>
+        </span>
+      </div>
+
+      <div class="flex items-center gap-1.5 ml-auto shrink-0">
+        @if(feature_enabled('open_tabs'))
+        <button type="button" @click="openHoldModal()" :disabled="cart.length === 0"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50 disabled:opacity-40 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+          Hold
+        </button>
+        @endif
+        <button type="button" @click="clearCart()" :disabled="cart.length === 0"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-red-300 hover:text-red-600 hover:bg-red-50 disabled:opacity-40 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          Clear
+        </button>
+        <a href="{{ route('pos.index') }}"
+           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:text-slate-800 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+          Orders
+        </a>
+        <a href="{{ route('products.index') }}"
+           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:text-slate-800 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          Products
+        </a>
+      </div>
     </div>
 
   </div>
@@ -466,32 +493,6 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   </div>
 
   </div>{{-- /flex row --}}
-
-  {{-- ══ Bottom action footer (full width, desktop) ══ --}}
-  <div class="hidden md:flex shrink-0 items-center justify-center gap-2 px-4 py-2 bg-white border-t border-slate-200">
-    @if(feature_enabled('open_tabs'))
-    <button type="button" @click="openHoldModal()" :disabled="cart.length === 0"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50 disabled:opacity-40 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
-      Hold
-    </button>
-    @endif
-    <button type="button" @click="clearCart()" :disabled="cart.length === 0"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-red-300 hover:text-red-600 hover:bg-red-50 disabled:opacity-40 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-      Clear
-    </button>
-    <a href="{{ route('pos.index') }}"
-       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:text-slate-800 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
-      View Orders
-    </a>
-    <a href="{{ route('products.index') }}"
-       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:text-slate-800 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-      Products
-    </a>
-  </div>
 
   {{-- ══ Mobile cart bottom bar (<md) ══ --}}
   <button type="button" @click="mobileCartOpen = true"
