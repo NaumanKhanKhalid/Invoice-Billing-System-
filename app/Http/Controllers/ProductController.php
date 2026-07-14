@@ -49,6 +49,7 @@ class ProductController extends Controller
             'barcode'          => 'nullable|string|max:50|unique:products,barcode',
             'category'         => 'nullable|string|max:80',
             'description'      => 'nullable|string',
+            'image'            => 'nullable|image|max:2048',
             'unit'             => 'required|in:pcs,kg,liter,meter,box,dozen,pair',
             'cost_price'       => 'required|numeric|min:0',
             'sale_price'       => 'required|numeric|min:0',
@@ -60,6 +61,11 @@ class ProductController extends Controller
             'purchase_unit'    => 'nullable|string|max:30',
             'conversion_factor'=> 'nullable|numeric|min:0.001',
         ]);
+
+        unset($data['image']);
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
 
         Product::create($data + [
             'is_active'    => $request->boolean('is_active', true),
@@ -96,6 +102,7 @@ class ProductController extends Controller
             'barcode'          => 'nullable|string|max:50|unique:products,barcode,'.$product->id,
             'category'         => 'nullable|string|max:80',
             'description'      => 'nullable|string',
+            'image'            => 'nullable|image|max:2048',
             'unit'             => 'required|in:pcs,kg,liter,meter,box,dozen,pair',
             'cost_price'       => 'required|numeric|min:0',
             'sale_price'       => 'required|numeric|min:0',
@@ -105,6 +112,12 @@ class ProductController extends Controller
             'purchase_unit'    => 'nullable|string|max:30',
             'conversion_factor'=> 'nullable|numeric|min:0.001',
         ]);
+
+        unset($data['image']);
+        if ($request->hasFile('image')) {
+            if ($product->image_path) \Storage::disk('public')->delete($product->image_path);
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
 
         $product->update($data + [
             'is_active'    => $request->boolean('is_active'),

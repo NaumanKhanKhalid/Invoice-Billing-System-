@@ -111,10 +111,19 @@
       <div class="flex justify-between font-bold text-base">
         <span>TOTAL</span><span>PKR {{ number_format($posSale->total) }}</span>
       </div>
+      @if($posSale->payment_method === 'split')
+      <div class="flex justify-between text-slate-500">
+        <span>Paid — Cash</span><span>{{ number_format($posSale->cash_amount) }}</span>
+      </div>
+      <div class="flex justify-between text-slate-500">
+        <span>Paid — Online</span><span>{{ number_format($posSale->online_amount) }}</span>
+      </div>
+      @else
       <div class="flex justify-between text-slate-500">
         <span>Paid ({{ ucfirst($posSale->payment_method) }})</span>
         <span>{{ number_format($posSale->amount_paid) }}</span>
       </div>
+      @endif
       @if($posSale->change_due > 0)
       <div class="flex justify-between font-semibold text-green-600">
         <span>Change</span><span>{{ number_format($posSale->change_due) }}</span>

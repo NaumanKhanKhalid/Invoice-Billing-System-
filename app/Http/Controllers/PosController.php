@@ -25,7 +25,11 @@ class PosController extends Controller
 
     public function create()
     {
-        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category']);
+        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category','image_path']);
+        $products->transform(function ($p) {
+            $p->image_url = $p->image_path ? tenant_asset($p->image_path) : null;
+            return $p;
+        });
         $todaySales = PosSale::whereDate('date', today())->count();
         $todayRevenue = PosSale::whereDate('date', today())->sum('total');
         $lowStock = Product::where('is_active', true)->whereColumn('stock_qty', '<=', 'low_stock_alert')->count();
@@ -41,9 +45,11 @@ class PosController extends Controller
             'customer_name'      => 'required_if:payment_method,credit|nullable|string|max:100',
             'customer_phone'     => 'required_if:payment_method,credit|nullable|string|max:20',
             'udhar_customer_id'  => 'nullable|integer|exists:udhar_customers,id',
-            'payment_method'     => 'required|in:cash,online,jazzcash,easypaisa,bank,credit',
+            'payment_method'     => 'required|in:cash,online,jazzcash,easypaisa,bank,credit,split',
             'discount'           => 'nullable|numeric|min:0',
             'amount_paid'        => 'required|numeric|min:0',
+            'cash_amount'        => 'nullable|numeric|min:0',
+            'online_amount'      => 'nullable|numeric|min:0',
             'notes'              => 'nullable|string',
             'client_uuid'        => 'nullable|string|max:64',
             'hold_id'            => 'nullable|integer|exists:open_tabs,id',
@@ -108,6 +114,8 @@ class PosController extends Controller
                 'total'          => $total,
                 'amount_paid'    => $paid,
                 'change_due'     => $change,
+                'cash_amount'    => $data['payment_method'] === 'split' ? (float)($data['cash_amount'] ?? 0) : null,
+                'online_amount'  => $data['payment_method'] === 'split' ? (float)($data['online_amount'] ?? 0) : null,
                 'payment_method' => $data['payment_method'],
                 'notes'          => trim(($data['notes'] ?? '') . ($clientUuid ? ' [client_uuid:' . $clientUuid . ']' : '')) ?: null,
             ]);

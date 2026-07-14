@@ -10,8 +10,8 @@
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-    <form method="POST" action="{{ route('products.update', $product) }}" class="space-y-4"
-          x-data="{ unit: '{{ old('unit', $product->unit) }}', pu: '{{ old('purchase_unit', $product->purchase_unit) }}', cf: '{{ old('conversion_factor', $product->conversion_factor) }}' }">
+    <form method="POST" action="{{ route('products.update', $product) }}" class="space-y-4" enctype="multipart/form-data"
+          x-data="{ unit: '{{ old('unit', $product->unit) }}', pu: '{{ old('purchase_unit', $product->purchase_unit) }}', cf: '{{ old('conversion_factor', $product->conversion_factor) }}', imgPreview: '' }">
       @csrf @method('PUT')
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -84,6 +84,24 @@
         <div class="sm:col-span-2">
           <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
           <textarea name="description" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none">{{ old('description', $product->description) }}</textarea>
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-medium text-slate-600 mb-1">Product Image <span class="text-slate-400 font-normal">(POS card par dikhega)</span></label>
+          <div class="flex items-center gap-3">
+            <div class="w-16 h-16 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+              <template x-if="imgPreview"><img :src="imgPreview" class="w-full h-full object-cover"></template>
+              @if($product->image_path)
+              <img x-show="!imgPreview" src="{{ tenant_asset($product->image_path) }}" class="w-full h-full object-cover">
+              @endif
+              <template x-if="!imgPreview">
+                @if(!$product->image_path)<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>@endif
+              </template>
+            </div>
+            <input type="file" name="image" accept="image/*"
+                   @change="const f=$event.target.files[0]; imgPreview = f ? URL.createObjectURL(f) : ''"
+                   class="text-sm text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-700 file:text-xs file:font-semibold hover:file:bg-slate-200">
+          </div>
         </div>
 
         <div class="sm:col-span-2 flex items-start gap-3">

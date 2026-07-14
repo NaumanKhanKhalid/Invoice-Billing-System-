@@ -12,7 +12,7 @@ class PosSale extends Model
     protected $fillable = [
         'sale_number', 'date', 'customer_name', 'customer_phone',
         'subtotal', 'discount', 'total', 'amount_paid', 'change_due',
-        'payment_method', 'notes',
+        'cash_amount', 'online_amount', 'payment_method', 'notes',
     ];
 
     protected $casts = ['date' => 'date'];

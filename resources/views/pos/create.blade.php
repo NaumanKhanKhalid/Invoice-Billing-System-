@@ -131,25 +131,31 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         <template x-for="p in filtered" :key="p.id">
           <button type="button" @click="addToCart(p)"
                   :disabled="p.stock_qty <= 0"
-                  class="group relative text-left rounded-xl border-2 bg-white transition-all duration-150 overflow-hidden"
+                  class="group relative flex flex-col text-left rounded-xl border bg-white transition-all duration-150 overflow-hidden"
                   :class="p.stock_qty <= 0
-                    ? 'border-slate-100 opacity-50 cursor-not-allowed'
-                    : 'border-transparent hover:border-green-400 hover:shadow-md cursor-pointer active:scale-95'">
+                    ? 'border-slate-100 opacity-60 cursor-not-allowed'
+                    : 'border-slate-200 hover:border-green-400 hover:shadow-md cursor-pointer active:scale-[0.98]'">
 
-            <div class="h-1 w-full shrink-0"
-                 :class="p.stock_qty <= 0 ? 'bg-red-300' : (p.stock_qty <= 5 ? 'bg-amber-400' : 'bg-green-400')"></div>
+            {{-- Image / placeholder --}}
+            <div class="relative aspect-square bg-slate-50 flex items-center justify-center overflow-hidden">
+              <template x-if="p.image_url">
+                <img :src="p.image_url" :alt="p.name" loading="lazy" class="w-full h-full object-cover">
+              </template>
+              <template x-if="!p.image_url">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+              </template>
+              <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm"
+                    :class="p.stock_qty <= 0 ? 'bg-red-500/90 text-white' : (p.stock_qty <= 5 ? 'bg-amber-400/90 text-white' : 'bg-white/85 text-slate-600')"
+                    x-text="p.stock_qty <= 0 ? 'Out' : p.stock_qty + ' ' + p.unit"></span>
+              <span class="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition"></span>
+            </div>
 
-            <div class="p-2.5">
-              <p class="text-[13px] font-bold text-slate-900 leading-snug line-clamp-2" style="min-height:2.2rem" x-text="p.name"></p>
-              <p class="text-[9px] text-slate-400 mt-0.5 font-mono truncate" x-text="p.sku || ''"></p>
-              <div class="mt-1.5 flex items-end justify-between gap-1">
-                <p class="text-sm font-extrabold leading-none"
-                   :class="priceMode === 'wholesale' && p.wholesale_price ? 'text-amber-600' : 'text-green-600'"
-                   x-text="'PKR ' + Number(priceFor(p)).toLocaleString()"></p>
-                <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
-                      :class="p.stock_qty <= 0 ? 'bg-red-100 text-red-600' : (p.stock_qty <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500')"
-                      x-text="p.stock_qty <= 0 ? 'Out' : p.stock_qty + ' ' + p.unit"></span>
-              </div>
+            {{-- Info --}}
+            <div class="p-2 flex flex-col gap-0.5">
+              <p class="text-[12.5px] font-semibold text-slate-800 leading-tight line-clamp-2" style="min-height:2.1rem" x-text="p.name"></p>
+              <p class="text-sm font-extrabold leading-none mt-0.5"
+                 :class="priceMode === 'wholesale' && p.wholesale_price ? 'text-amber-600' : 'text-green-600'"
+                 x-text="'PKR ' + Number(priceFor(p)).toLocaleString()"></p>
             </div>
           </button>
         </template>
@@ -164,6 +170,22 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </template>
       </div>
 
+    </div>
+
+    {{-- Compact today stats (pinned bottom of products) --}}
+    <div class="hidden sm:flex shrink-0 items-center gap-5 px-4 py-2 bg-white border-t border-slate-200 text-xs">
+      <span class="flex items-center gap-1.5 text-slate-500">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+        Sales <span class="font-bold text-slate-800 tabular-nums">{{ $todaySales }}</span>
+      </span>
+      <span class="flex items-center gap-1.5 text-slate-500">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+        Revenue <span class="font-bold text-slate-800 tabular-nums">PKR {{ number_format($todayRevenue) }}</span>
+      </span>
+      <span class="flex items-center gap-1.5 ml-auto {{ $lowStock > 0 ? 'text-amber-600' : 'text-slate-500' }}">
+        <span class="w-1.5 h-1.5 rounded-full {{ $lowStock > 0 ? 'bg-amber-500' : 'bg-slate-300' }}"></span>
+        Low stock <span class="font-bold tabular-nums">{{ $lowStock }}</span>
+      </span>
     </div>
 
   </div>
@@ -369,31 +391,56 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         {{-- Payment method --}}
         <div class="px-4 pb-1.5">
           <input type="hidden" name="payment_method" x-model="payMethod">
-          <div class="grid grid-cols-3 gap-1.5">
+          <div class="grid grid-cols-4 gap-1.5">
             <template x-for="pm in payMethods" :key="pm.value">
               <button type="button" @click="payMethod = pm.value"
                       :class="payMethod === pm.value
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
-                      class="flex items-center justify-center gap-1.5 py-2 rounded-xl border transition">
-                <span class="text-sm" x-text="pm.icon"></span>
-                <span x-text="pm.label" class="text-xs font-bold"></span>
+                      class="flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-xl border transition">
+                <span class="text-sm leading-none" x-text="pm.icon"></span>
+                <span x-text="pm.label" class="text-[10px] font-bold"></span>
               </button>
             </template>
           </div>
         </div>
 
-        {{-- Cash --}}
+        {{-- Cash / Split inputs --}}
         <div class="px-4 pb-1.5 space-y-1.5">
-          <div class="flex gap-2">
-            <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01" required
-                   placeholder="Cash received..."
+          {{-- Single tender --}}
+          <div class="flex gap-2" x-show="payMethod !== 'split'">
+            <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01"
+                   :required="payMethod !== 'split'"
+                   :placeholder="payMethod === 'online' ? 'Amount received...' : 'Cash received...'"
                    class="flex-1 min-w-0 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             <button type="button" @click="setFullPay()"
                     class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
           </div>
 
-          <div x-show="change > 0" class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5">
+          {{-- Split tender: cash + online --}}
+          <div x-show="payMethod === 'split'" x-cloak class="space-y-1.5">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="relative">
+                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs">💵</span>
+                <input type="number" x-model="cashAmount" min="0" step="0.01" placeholder="Cash"
+                       class="w-full pl-7 pr-2 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+              </div>
+              <div class="relative">
+                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs">📱</span>
+                <input type="number" x-model="onlineAmount" min="0" step="0.01" placeholder="Online"
+                       class="w-full pl-7 pr-2 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] px-1">
+              <button type="button" @click="cashAmount = String(Math.max(0, total - (Number(onlineAmount)||0)))"
+                      class="text-green-600 font-semibold hover:underline">Baaki cash me</button>
+              <span class="tabular-nums font-semibold"
+                    :class="splitPaid >= total ? 'text-emerald-600' : 'text-amber-600'"
+                    x-text="'Paid ' + splitPaid.toLocaleString() + ' / ' + total.toLocaleString()"></span>
+            </div>
+          </div>
+
+          <div x-show="change > 0" x-cloak class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5">
             <span class="text-emerald-700 text-sm font-semibold">Change</span>
             <span class="text-emerald-700 font-extrabold text-sm tabular-nums" x-text="'PKR ' + change.toLocaleString()"></span>
           </div>
@@ -699,11 +746,14 @@ function posApp() {
     activeCategory: null,
     discount: '',
     amountPaid: '',
+    cashAmount: '',
+    onlineAmount: '',
     payMethod: 'cash',
     payMethods: [
       { value: 'cash',   label: 'Cash',   icon: '💵' },
       { value: 'online', label: 'Online', icon: '📱' },
       { value: 'credit', label: 'Udhar',  icon: '📋' },
+      { value: 'split',  label: 'Split',  icon: '🔀' },
     ],
     customerName: '',
     customerPhone: '',
@@ -782,7 +832,9 @@ function posApp() {
         udhar_customer_id: (this.selectedCustomer && this.selectedCustomer.id) ? this.selectedCustomer.id : null,
         payment_method: this.payMethod,
         discount:       Number(this.discount || 0),
-        amount_paid:    Number(this.amountPaid || 0),
+        amount_paid:    this.paidTotal,
+        cash_amount:    this.payMethod === 'split' ? (Number(this.cashAmount) || 0) : null,
+        online_amount:  this.payMethod === 'split' ? (Number(this.onlineAmount) || 0) : null,
         hold_id:        this.holdId || null,
         serials:        Object.keys(this.serials).length ? this.serials : null,
         items:          this.cart.map(i => ({ product_id: i.id, qty: i.qty, unit_price: i.price })),
@@ -790,7 +842,7 @@ function posApp() {
     },
 
     resetSale() {
-      this.cart = []; this.discount = ''; this.amountPaid = '';
+      this.cart = []; this.discount = ''; this.amountPaid = ''; this.cashAmount = ''; this.onlineAmount = '';
       this.customerName = ''; this.customerPhone = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
       this.holdId = null; this.holdTabNumber = '';
       this.serials = {}; this.serialItems = []; this.serialInputs = {};
@@ -940,6 +992,12 @@ function posApp() {
         return;
       }
 
+      // Split must cover the total
+      if (this.payMethod === 'split' && this.splitPaid + 0.01 < this.total) {
+        this.flash('Split me cash + online milakar total ' + this.total.toLocaleString() + ' hona chahiye', false);
+        return;
+      }
+
       // IMEI/serial products — collect serials first (skippable)
       const trackable = this.cart.filter(i => i.track_serial);
       if (trackable.length > 0) { this.openSerialModal(trackable); return; }
@@ -1059,7 +1117,9 @@ function posApp() {
 
     get subtotal() { return this.cart.reduce((s, i) => s + i.qty * i.price, 0); },
     get total()    { return Math.max(0, this.subtotal - Number(this.discount || 0)); },
-    get change()   { return Math.max(0, Number(this.amountPaid || 0) - this.total); },
+    get splitPaid() { return (Number(this.cashAmount) || 0) + (Number(this.onlineAmount) || 0); },
+    get paidTotal() { return this.payMethod === 'split' ? this.splitPaid : (Number(this.amountPaid) || 0); },
+    get change()   { return Math.max(0, this.paidTotal - this.total); },
     setFullPay()   { this.amountPaid = this.total; },
 
     // Effective price for new adds: wholesale rate when toggled (fallback to retail)
