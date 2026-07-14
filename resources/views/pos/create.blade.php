@@ -412,16 +412,14 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         <div class="px-5 pb-2">
           <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Payment Method</p>
           <input type="hidden" name="payment_method" x-model="payMethod">
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-3 gap-1.5">
             <template x-for="pm in payMethods" :key="pm.value">
               <button type="button" @click="payMethod = pm.value"
                       :class="payMethod === pm.value
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
-                      class="flex flex-col items-center gap-1.5 py-2.5 rounded-2xl border-2 transition">
-                <span :class="payMethod === pm.value ? 'bg-green-100' : 'bg-slate-50'"
-                      class="w-8 h-8 rounded-lg flex items-center justify-center text-base transition"
-                      x-text="pm.icon"></span>
+                      class="flex items-center justify-center gap-1.5 py-2 rounded-xl border transition">
+                <span class="text-sm" x-text="pm.icon"></span>
                 <span x-text="pm.label" class="text-xs font-bold"></span>
               </button>
             </template>
@@ -445,16 +443,16 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </div>
 
         {{-- Submit --}}
-        <div class="px-4 pt-1 pb-6 space-y-2">
+        <div class="px-4 pt-1 pb-4 space-y-1.5">
           <button type="submit" :disabled="cart.length === 0 || submitting"
-                  class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-[13px] transition flex items-center justify-center gap-2 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             <span x-text="submitting ? 'Processing...' : (cart.length === 0 ? 'Add items to cart' : 'Complete Sale — PKR ' + total.toLocaleString())"></span>
           </button>
           @if(feature_enabled('quotations'))
           <button type="button" @click="saveQuotation()" :disabled="cart.length === 0"
-                  class="w-full bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 disabled:opacity-40 text-slate-600 py-2.5 rounded-2xl font-bold text-sm transition flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+                  class="w-full bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 disabled:opacity-40 text-slate-600 py-2 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
             Quotation banayein
           </button>
           @endif
