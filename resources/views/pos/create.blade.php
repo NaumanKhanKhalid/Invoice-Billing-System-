@@ -309,18 +309,24 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </div>
       </template>
 
-      {{-- Selected customer chip --}}
+      {{-- Selected customer — same field style as the dropdown --}}
       <template x-if="selectedCustomer">
-        <div class="flex items-center gap-2.5 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
-          <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm shrink-0"
-               x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></div>
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-bold text-slate-800 truncate" x-text="selectedCustomer.name"></p>
-            <p class="text-xs text-slate-500 truncate"
-               x-text="(selectedCustomer.phone || 'No phone') + (selectedCustomer.current_balance > 0 ? '  ·  Udhar PKR ' + Number(selectedCustomer.current_balance).toLocaleString() : '')"></p>
-          </div>
+        <div class="flex gap-1.5">
+          <button type="button" title="Customer badlein"
+                  @click="clearCustomer(); showCustList = true; $nextTick(() => $refs.custSearch && $refs.custSearch.focus())"
+                  class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition">
+            <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-[11px] shrink-0"
+                  x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></span>
+            <span class="flex-1 text-left min-w-0">
+              <span class="block text-slate-800 font-semibold leading-tight truncate" x-text="selectedCustomer.name"></span>
+              <span class="block text-[11px] text-slate-400 leading-tight truncate"
+                    x-text="(selectedCustomer.phone || 'No phone') + (selectedCustomer.current_balance > 0 ? '  ·  Udhar PKR ' + Number(selectedCustomer.current_balance).toLocaleString() : '')"></span>
+            </span>
+          </button>
           <button type="button" @click="clearCustomer()" title="Hatayein"
-                  class="w-6 h-6 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 flex items-center justify-center shrink-0 transition text-xs">✕</button>
+                  class="w-9 h-9 rounded-xl border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 flex items-center justify-center shrink-0 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </template>
 
