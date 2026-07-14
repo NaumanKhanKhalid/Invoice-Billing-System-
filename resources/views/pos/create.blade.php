@@ -33,6 +33,11 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   html.sidebar-collapsed .pos-menu-btn { display: flex; }
   /* Hide the global quick-add FAB on POS — it overlaps the cart checkout. */
   .fab-dial { display: none !important; }
+  /* Horizontal category strip without a visible scrollbar */
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  /* Give the cart a touch less width on small laptops so products breathe */
+  @media (min-width: 768px) and (max-width: 1279px) { .pos-cart { width: 18rem; } }
 </style>
 
 <div class="flex flex-col flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
@@ -108,43 +113,42 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
     </div>
 
     {{-- Category tabs --}}
-    <div class="px-4 pt-3 pb-0 flex gap-2 flex-wrap shrink-0" x-show="categories.length > 0 && !searchQ">
+    <div class="px-4 pt-3 pb-0 flex gap-2 flex-nowrap overflow-x-auto no-scrollbar shrink-0" x-show="categories.length > 0 && !searchQ">
       <button @click="activeCategory = null"
               :class="activeCategory === null ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 hover:bg-slate-50'"
-              class="px-3 py-1 rounded-lg text-xs font-semibold border border-slate-200 transition">All</button>
+              class="px-3 py-1 rounded-lg text-xs font-semibold border border-slate-200 transition whitespace-nowrap shrink-0">All</button>
       <template x-for="cat in categories" :key="cat">
         <button @click="activeCategory = (activeCategory === cat ? null : cat)"
                 :class="activeCategory === cat ? 'bg-green-600 text-white border-green-600' : 'bg-white text-slate-600 hover:bg-slate-50'"
-                class="px-3 py-1 rounded-lg text-xs font-semibold border border-slate-200 transition"
+                class="px-3 py-1 rounded-lg text-xs font-semibold border border-slate-200 transition whitespace-nowrap shrink-0"
                 x-text="cat"></button>
       </template>
     </div>
 
     {{-- Product grid --}}
     <div class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4 flex flex-col gap-4">
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5">
         <template x-for="p in filtered" :key="p.id">
           <button type="button" @click="addToCart(p)"
                   :disabled="p.stock_qty <= 0"
-                  class="group relative text-left rounded-2xl border-2 bg-white transition-all duration-150 overflow-hidden"
+                  class="group relative text-left rounded-xl border-2 bg-white transition-all duration-150 overflow-hidden"
                   :class="p.stock_qty <= 0
                     ? 'border-slate-100 opacity-50 cursor-not-allowed'
                     : 'border-transparent hover:border-green-400 hover:shadow-md cursor-pointer active:scale-95'">
 
-            <div class="h-1.5 w-full shrink-0"
+            <div class="h-1 w-full shrink-0"
                  :class="p.stock_qty <= 0 ? 'bg-red-300' : (p.stock_qty <= 5 ? 'bg-amber-400' : 'bg-green-400')"></div>
 
-            <div class="p-3">
-              <p class="text-sm font-bold text-slate-900 leading-tight line-clamp-2" style="min-height:2.5rem" x-text="p.name"></p>
-              <p class="text-[10px] text-slate-400 mt-0.5 font-mono truncate" x-text="p.sku || ''"></p>
-              <p class="text-base font-extrabold mt-2"
-                 :class="priceMode === 'wholesale' && p.wholesale_price ? 'text-amber-600' : 'text-green-600'"
-                 x-text="'PKR ' + Number(priceFor(p)).toLocaleString()"></p>
-              <div class="mt-1.5 flex items-center justify-between">
-                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+            <div class="p-2.5">
+              <p class="text-[13px] font-bold text-slate-900 leading-snug line-clamp-2" style="min-height:2.2rem" x-text="p.name"></p>
+              <p class="text-[9px] text-slate-400 mt-0.5 font-mono truncate" x-text="p.sku || ''"></p>
+              <div class="mt-1.5 flex items-end justify-between gap-1">
+                <p class="text-sm font-extrabold leading-none"
+                   :class="priceMode === 'wholesale' && p.wholesale_price ? 'text-amber-600' : 'text-green-600'"
+                   x-text="'PKR ' + Number(priceFor(p)).toLocaleString()"></p>
+                <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
                       :class="p.stock_qty <= 0 ? 'bg-red-100 text-red-600' : (p.stock_qty <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500')"
-                      x-text="p.stock_qty <= 0 ? 'Out of stock' : p.stock_qty + ' ' + p.unit"></span>
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">+</span>
+                      x-text="p.stock_qty <= 0 ? 'Out' : p.stock_qty + ' ' + p.unit"></span>
               </div>
             </div>
           </button>
@@ -765,6 +769,9 @@ function posApp() {
     init() {
       this.loadQueue();
       try { this.autoPrint = localStorage.getItem('posAutoPrint') === '1'; } catch (e) {}
+      // On smaller screens the POS needs every pixel — collapse the sidebar
+      // automatically (kiosk-style). User can still reopen it from the top bar.
+      if (window.innerWidth < 1280) document.documentElement.classList.add('sidebar-collapsed');
       window.addEventListener('online', () => this.syncQueue());
       // Try syncing anything left over from a previous session
       this.syncQueue();
