@@ -127,7 +127,7 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
 
     {{-- Product grid --}}
     <div class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4 flex flex-col gap-4">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5">
+      <div class="grid gap-2.5" style="grid-template-columns:repeat(auto-fill,minmax(132px,1fr))">
         <template x-for="p in filtered" :key="p.id">
           <button type="button" @click="addToCart(p)"
                   :disabled="p.stock_qty <= 0"
@@ -136,13 +136,13 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                     ? 'border-slate-100 opacity-60 cursor-not-allowed'
                     : 'border-slate-200 hover:border-green-400 hover:shadow-md cursor-pointer active:scale-[0.98]'">
 
-            {{-- Image / placeholder --}}
-            <div class="relative aspect-square bg-slate-50 flex items-center justify-center overflow-hidden">
+            {{-- Image / placeholder (fixed height so every card is uniform) --}}
+            <div class="relative bg-slate-50 flex items-center justify-center overflow-hidden" style="height:5.5rem">
               <template x-if="p.image_url">
-                <img :src="p.image_url" :alt="p.name" loading="lazy" class="w-full h-full object-cover">
+                <img :src="p.image_url" :alt="p.name" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
               </template>
               <template x-if="!p.image_url">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
               </template>
               <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm"
                     :class="p.stock_qty <= 0 ? 'bg-red-500/90 text-white' : (p.stock_qty <= 5 ? 'bg-amber-400/90 text-white' : 'bg-white/85 text-slate-600')"
@@ -161,7 +161,7 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </template>
 
         <template x-if="filtered.length === 0">
-          <div class="col-span-5 flex flex-col items-center justify-center py-16 text-center">
+          <div class="flex flex-col items-center justify-center py-16 text-center" style="grid-column:1/-1">
             <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
             </div>
@@ -391,14 +391,14 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         {{-- Payment method --}}
         <div class="px-4 pb-1.5">
           <input type="hidden" name="payment_method" x-model="payMethod">
-          <div class="grid grid-cols-4 gap-1.5">
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem">
             <template x-for="pm in payMethods" :key="pm.value">
               <button type="button" @click="payMethod = pm.value"
                       :class="payMethod === pm.value
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
-                      class="flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-xl border transition">
-                <span class="text-sm leading-none" x-text="pm.icon"></span>
+                      class="flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl border transition">
+                <span class="text-base leading-none" x-text="pm.icon"></span>
                 <span x-text="pm.label" class="text-[10px] font-bold"></span>
               </button>
             </template>
