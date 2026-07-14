@@ -373,28 +373,6 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
 
     {{-- Checkout (fixed bottom) --}}
     <div class="shrink-0 border-t border-slate-200 bg-white">
-
-      {{-- Quick action bar --}}
-      <div class="grid @if(feature_enabled('open_tabs')) grid-cols-3 @else grid-cols-2 @endif divide-x divide-slate-100 border-b border-slate-100">
-        @if(feature_enabled('open_tabs'))
-        <button type="button" @click="openHoldModal()" :disabled="cart.length === 0"
-                class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-40 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
-          Hold
-        </button>
-        @endif
-        <button type="button" @click="clearCart()" :disabled="cart.length === 0"
-                class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 disabled:opacity-40 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-          Clear
-        </button>
-        <a href="{{ route('pos.index') }}"
-           class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
-          Orders
-        </a>
-      </div>
-
       {{-- Submitted via fetch (submitSale) so failed sales can be queued offline --}}
       <form method="POST" action="{{ route('pos.store') }}" @submit.prevent="submitSale()">
         @csrf
@@ -473,6 +451,32 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   </div>
 
   </div>{{-- /flex row --}}
+
+  {{-- ══ Bottom action footer (full width, desktop) ══ --}}
+  <div class="hidden md:flex shrink-0 items-center justify-center gap-2 px-4 py-2 bg-white border-t border-slate-200">
+    @if(feature_enabled('open_tabs'))
+    <button type="button" @click="openHoldModal()" :disabled="cart.length === 0"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50 disabled:opacity-40 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+      Hold
+    </button>
+    @endif
+    <button type="button" @click="clearCart()" :disabled="cart.length === 0"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-red-300 hover:text-red-600 hover:bg-red-50 disabled:opacity-40 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+      Clear
+    </button>
+    <a href="{{ route('pos.index') }}"
+       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:text-slate-800 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+      View Orders
+    </a>
+    <a href="{{ route('products.index') }}"
+       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:text-slate-800 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+      Products
+    </a>
+  </div>
 
   {{-- ══ Mobile cart bottom bar (<md) ══ --}}
   <button type="button" @click="mobileCartOpen = true"
