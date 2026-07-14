@@ -432,17 +432,17 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
         </div>
 
         {{-- Submit --}}
-        <div class="px-4 pt-1 pb-4 space-y-1.5">
+        <div class="px-4 pt-1 pb-4 flex gap-2">
           <button type="submit" :disabled="cart.length === 0 || submitting"
-                  class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-[13px] transition flex items-center justify-center gap-2 shadow-sm">
+                  class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-[13px] transition flex items-center justify-center gap-2 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span x-text="submitting ? 'Processing...' : (cart.length === 0 ? 'Add items to cart' : 'Complete Sale — PKR ' + total.toLocaleString())"></span>
+            <span x-text="submitting ? 'Processing...' : 'Complete Sale'"></span>
           </button>
           @if(feature_enabled('quotations'))
-          <button type="button" @click="saveQuotation()" :disabled="cart.length === 0"
-                  class="w-full bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 disabled:opacity-40 text-slate-600 py-2 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
-            Quotation banayein
+          <button type="button" @click="saveQuotation()" :disabled="cart.length === 0" title="Quotation banayein"
+                  class="shrink-0 bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 disabled:opacity-40 text-slate-600 px-3.5 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+            Quotation
           </button>
           @endif
         </div>
