@@ -45,7 +45,21 @@ class Product extends Model
 
     public function addStock(int $qty, float $unitPrice = null, string $reference = null, string $notes = null): void
     {
-        $this->increment('stock_qty', $qty);
+        $oldQty = (float) $this->stock_qty;
+
+        // Weighted-average costing: blend the new purchase cost into the
+        // running cost so profit reports stay accurate across price changes.
+        //   new cost = (oldQty*oldCost + inQty*inCost) / (oldQty + inQty)
+        if ($unitPrice !== null && $unitPrice > 0 && $qty > 0) {
+            $newTotalQty = $oldQty + $qty;
+            $this->cost_price = $newTotalQty > 0
+                ? round((($oldQty * (float) $this->cost_price) + ($qty * $unitPrice)) / $newTotalQty, 2)
+                : $unitPrice;
+        }
+
+        $this->stock_qty = $oldQty + $qty;
+        $this->save();
+
         $this->stockMovements()->create([
             'type'       => 'in',
             'qty'        => $qty,
