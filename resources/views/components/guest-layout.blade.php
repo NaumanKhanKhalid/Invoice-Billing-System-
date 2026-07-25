@@ -12,13 +12,8 @@
         $shopIcon  = $typeIcons[$shopType] ?? '🏪';
     @endphp
     <title>{{ $isTenant ? $shopName : 'Admin' }} — ShopSaas</title>
-    @php $faviconLogo = $isTenant ? \App\Models\Setting::getValue('logo_path') : null; @endphp
-    @if($faviconLogo)
-    <link rel="icon" href="{{ tenant_asset($faviconLogo) }}">
-    @else
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="alternate icon" href="/favicon.ico">
-    @endif
+    <link rel="icon" href="{{ shop_favicon() }}">
+    <link rel="apple-touch-icon" href="{{ shop_favicon() }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     @php $m = json_decode(file_get_contents(public_path('build/manifest.json')), true); @endphp

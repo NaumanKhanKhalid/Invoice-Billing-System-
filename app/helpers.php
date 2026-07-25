@@ -106,3 +106,32 @@ if (!function_exists('formatCurrency')) {
         return $prefix . $formatted;
     }
 }
+
+if (!function_exists('shop_favicon')) {
+    /**
+     * Favicon for the current context. Uses the tenant's uploaded logo if set,
+     * otherwise a shop-type emoji on the brand-green tile (central = cart).
+     */
+    function shop_favicon(): string
+    {
+        $isTenant = function_exists('tenancy') && tenancy()->initialized;
+
+        if ($isTenant) {
+            $logo = \App\Models\Setting::getValue('logo_path');
+            if ($logo) return tenant_asset($logo);
+        }
+
+        $icons = [
+            'chicken' => '🍗', 'bike' => '🏍️', 'hardware' => '🔧', 'mobile' => '📱',
+            'general' => '🏪', 'medical' => '💊', 'coaching' => '🎓',
+        ];
+        $type  = $isTenant ? (tenant()->shop_type ?? '') : '';
+        $emoji = $isTenant ? ($icons[$type] ?? '🏪') : '🛒';
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
+             . '<rect width="64" height="64" rx="14" fill="#16a34a"/>'
+             . '<text x="32" y="46" font-size="34" text-anchor="middle">' . $emoji . '</text></svg>';
+
+        return 'data:image/svg+xml,' . rawurlencode($svg);
+    }
+}

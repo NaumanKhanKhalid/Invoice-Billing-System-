@@ -4,14 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fee Receipt — {{ $fee->receipt_number }}</title>
-    @php
-        $faviconLogo = \App\Models\Setting::getValue('logo_path');
-    @endphp
-    @if($faviconLogo)
-    <link rel="icon" href="{{ tenant_asset($faviconLogo) }}">
-    @else
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    @endif
+    <link rel="icon" href="{{ shop_favicon() }}">
     @php $m = json_decode(file_get_contents(public_path('build/manifest.json')), true); @endphp
     <link rel="stylesheet" href="/build/{{ $m['resources/css/app.css']['file'] }}">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
