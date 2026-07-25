@@ -10,6 +10,12 @@ use Google\Service\Drive\DriveFile;
 
 class GoogleDriveController extends Controller
 {
+    /** Google Drive backup is optional — only usable once OAuth creds are set. */
+    public static function isConfigured(): bool
+    {
+        return filled(env('GOOGLE_CLIENT_ID')) && filled(env('GOOGLE_CLIENT_SECRET'));
+    }
+
     private function getClient(): Client
     {
         $client = new Client();
@@ -24,6 +30,10 @@ class GoogleDriveController extends Controller
 
     public function connect()
     {
+        if (!self::isConfigured()) {
+            return redirect()->route('settings.index')->with('error',
+                'Google Drive backup abhi configure nahi hai. Admin ko .env me GOOGLE_CLIENT_ID aur GOOGLE_CLIENT_SECRET set karne honge.');
+        }
         $client = $this->getClient();
         return redirect($client->createAuthUrl());
     }
