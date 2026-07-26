@@ -664,11 +664,11 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
     <div class="px-3 pt-3 pb-1 text-right">
       <p class="text-2xl font-extrabold text-slate-900 tabular-nums truncate" x-text="calcExpr || '0'"></p>
     </div>
-    <div class="grid grid-cols-4 gap-1.5 p-2.5">
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem;padding:0.625rem">
       <template x-for="k in ['C','DEL','%','÷','7','8','9','×','4','5','6','-','1','2','3','+','0','.','=']" :key="k">
         <button type="button" @click="calcPress(k)"
+                :style="k === '=' ? 'grid-column:span 2' : ''"
                 :class="{
-                  'col-span-2': k === '=' ,
                   'bg-slate-100 text-slate-700 hover:bg-slate-200': ['C','DEL','%'].includes(k),
                   'bg-slate-800 text-white hover:bg-slate-700': ['÷','×','-','+'].includes(k),
                   'bg-green-600 text-white hover:bg-green-700': k === '=',
