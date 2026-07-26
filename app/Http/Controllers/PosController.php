@@ -25,7 +25,7 @@ class PosController extends Controller
 
     public function create()
     {
-        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category','image_path']);
+        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category','image_path','variant_group','variant_name']);
         $products->transform(function ($p) {
             $p->image_url = $p->image_path ? tenant_asset($p->image_path) : null;
             return $p;

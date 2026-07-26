@@ -128,39 +128,42 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
     {{-- Product grid --}}
     <div class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4 flex flex-col gap-4">
       <div class="grid gap-2.5" style="grid-template-columns:repeat(auto-fill,minmax(132px,1fr))">
-        <template x-for="p in filtered" :key="p.id">
-          <button type="button" @click="addToCart(p)"
-                  :disabled="p.stock_qty <= 0"
+        <template x-for="entry in displayList" :key="entry.id">
+          <button type="button"
+                  @click="entry.isGroup ? openVariantPicker(entry) : addToCart(entry.product)"
+                  :disabled="cardStock(entry) <= 0"
                   class="group relative flex flex-col text-left rounded-xl border bg-white transition-all duration-150 overflow-hidden"
-                  :class="p.stock_qty <= 0
+                  :class="cardStock(entry) <= 0
                     ? 'border-slate-100 opacity-60 cursor-not-allowed'
                     : 'border-slate-200 hover:border-green-400 hover:shadow-md cursor-pointer active:scale-[0.98]'">
 
             {{-- Image / placeholder (fixed height so every card is uniform) --}}
             <div class="relative bg-slate-50 flex items-center justify-center overflow-hidden" style="height:5.5rem">
-              <template x-if="p.image_url">
-                <img :src="p.image_url" :alt="p.name" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
+              <template x-if="cardImg(entry)">
+                <img :src="cardImg(entry)" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
               </template>
-              <template x-if="!p.image_url">
+              <template x-if="!cardImg(entry)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
               </template>
               <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm"
-                    :class="p.stock_qty <= 0 ? 'bg-red-500/90 text-white' : (p.stock_qty <= 5 ? 'bg-amber-400/90 text-white' : 'bg-white/85 text-slate-600')"
-                    x-text="p.stock_qty <= 0 ? 'Out' : p.stock_qty + ' ' + p.unit"></span>
+                    :class="cardStock(entry) <= 0 ? 'bg-red-500/90 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-400/90 text-white' : 'bg-white/85 text-slate-600')"
+                    x-text="cardStockLabel(entry)"></span>
+              {{-- variant count chip --}}
+              <template x-if="entry.isGroup">
+                <span class="absolute top-1.5 left-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800/85 text-white" x-text="entry.variants.length + ' options'"></span>
+              </template>
               <span class="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition"></span>
             </div>
 
             {{-- Info --}}
             <div class="p-2 flex flex-col gap-0.5">
-              <p class="text-[12.5px] font-semibold text-slate-800 leading-tight line-clamp-2" style="min-height:2.1rem" x-text="p.name"></p>
-              <p class="text-sm font-extrabold leading-none mt-0.5"
-                 :class="priceMode === 'wholesale' && p.wholesale_price ? 'text-amber-600' : 'text-green-600'"
-                 x-text="'PKR ' + Number(priceFor(p)).toLocaleString()"></p>
+              <p class="text-[12.5px] font-semibold text-slate-800 leading-tight line-clamp-2" style="min-height:2.1rem" x-text="entry.isGroup ? entry.group : entry.product.name"></p>
+              <p class="text-sm font-extrabold leading-none mt-0.5 text-green-600" x-text="cardPrice(entry)"></p>
             </div>
           </button>
         </template>
 
-        <template x-if="filtered.length === 0">
+        <template x-if="displayList.length === 0">
           <div class="flex flex-col items-center justify-center py-16 text-center" style="grid-column:1/-1">
             <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
@@ -641,6 +644,39 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   </div>
   @endif
 
+  {{-- ══ Variant picker modal ══ --}}
+  <div x-show="variantModalOpen" x-cloak x-transition.opacity
+       class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(15,23,42,0.5);backdrop-filter:blur(2px);"
+       @keydown.escape.window="variantModalOpen = false">
+    <div class="bg-white rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col max-h-[85vh]" style="max-width:24rem" @click.outside="variantModalOpen = false">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 shrink-0">
+        <div class="min-w-0">
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Variant chunein</p>
+          <h3 class="font-bold text-slate-900 truncate" x-text="variantGroupName"></h3>
+        </div>
+        <button type="button" @click="variantModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">✕</button>
+      </div>
+      <div class="overflow-y-auto p-2">
+        <template x-for="v in variantOptions" :key="v.id">
+          <button type="button" @click="pickVariant(v)" :disabled="v.stock_qty <= 0"
+                  class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-100 hover:border-green-300 hover:bg-green-50 disabled:opacity-40 disabled:cursor-not-allowed transition mb-1.5">
+            <div class="w-10 h-10 rounded-lg bg-slate-50 overflow-hidden flex items-center justify-center shrink-0">
+              <template x-if="v.image_url"><img :src="v.image_url" class="w-full h-full object-cover"></template>
+              <template x-if="!v.image_url"><span class="text-slate-300 text-lg">▦</span></template>
+            </div>
+            <div class="flex-1 min-w-0 text-left">
+              <p class="text-sm font-bold text-slate-800 truncate" x-text="v.variant_name || v.name"></p>
+              <p class="text-[11px] font-semibold" :class="v.stock_qty <= 0 ? 'text-red-500' : 'text-slate-400'"
+                 x-text="v.stock_qty <= 0 ? 'Out of stock' : v.stock_qty + ' ' + v.unit + ' available'"></p>
+            </div>
+            <p class="text-sm font-extrabold text-green-600 shrink-0" x-text="'PKR ' + Number(priceFor(v)).toLocaleString()"></p>
+          </button>
+        </template>
+      </div>
+    </div>
+  </div>
+
   {{-- ══ Sale Complete modal (stays on POS, next order ready) ══ --}}
   <div x-show="saleModalOpen" x-cloak x-transition.opacity
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -762,6 +798,9 @@ function posApp() {
     quoteNumber: @json($nextQuoteNumber ?? ''),
     quoteToday: @json(date('Y-m-d')),
     saleModalOpen: false,
+    variantModalOpen: false,
+    variantGroupName: '',
+    variantOptions: [],
     lastSale: { number: '', total: 0, change: 0, payMethod: 'cash', receiptUrl: '', whatsappUrl: null },
     autoPrint: false,
     saleModalTimer: null,
@@ -1110,10 +1149,51 @@ function posApp() {
         list = list.filter(p =>
           p.name.toLowerCase().includes(q) ||
           (p.sku && p.sku.toLowerCase().includes(q)) ||
-          (p.barcode && p.barcode.toLowerCase().includes(q))
+          (p.barcode && p.barcode.toLowerCase().includes(q)) ||
+          (p.variant_group && p.variant_group.toLowerCase().includes(q)) ||
+          (p.variant_name && p.variant_name.toLowerCase().includes(q))
         );
       }
-      return list.slice(0, 40);
+      return list;
+    },
+
+    // Group variants (same variant_group) into one card; others stay single.
+    get displayList() {
+      const groups = {}; const result = [];
+      for (const p of this.filtered) {
+        if (p.variant_group) {
+          if (!groups[p.variant_group]) {
+            groups[p.variant_group] = { isGroup: true, group: p.variant_group, variants: [], id: 'g:' + p.variant_group };
+            result.push(groups[p.variant_group]);
+          }
+          groups[p.variant_group].variants.push(p);
+        } else {
+          result.push({ isGroup: false, product: p, id: 'p:' + p.id });
+        }
+      }
+      return result.slice(0, 40);
+    },
+
+    // ── Card display helpers (work for both single + group) ──
+    cardStock(e) { return e.isGroup ? e.variants.reduce((s, v) => s + Number(v.stock_qty || 0), 0) : e.product.stock_qty; },
+    cardUnit(e)  { return e.isGroup ? (e.variants[0] ? e.variants[0].unit : '') : e.product.unit; },
+    cardImg(e)   { if (e.isGroup) { const v = e.variants.find(x => x.image_url); return v ? v.image_url : null; } return e.product.image_url; },
+    cardPrice(e) {
+      const p = e.isGroup ? Math.min(...e.variants.map(v => this.priceFor(v))) : this.priceFor(e.product);
+      return (e.isGroup ? 'from PKR ' : 'PKR ') + Number(p).toLocaleString();
+    },
+    cardStockLabel(e) { const s = this.cardStock(e); return s <= 0 ? 'Out' : s + ' ' + this.cardUnit(e); },
+
+    // ── Variant picker ──
+    openVariantPicker(entry) {
+      this.variantGroupName = entry.group;
+      this.variantOptions = entry.variants;
+      this.variantModalOpen = true;
+    },
+    pickVariant(v) {
+      this.variantModalOpen = false;
+      this.addToCart(v);
+      this.flash('✓ ' + (v.variant_name || v.name), true);
     },
 
     get subtotal() { return this.cart.reduce((s, i) => s + i.qty * i.price, 0); },
@@ -1134,7 +1214,10 @@ function posApp() {
       if (p.stock_qty <= 0) return;
       const ex = this.cart.find(i => i.id == p.id);
       if (ex) { if (ex.qty < p.stock_qty) ex.qty++; }
-      else this.cart.push({ id: p.id, name: p.name, unit: p.unit, price: this.priceFor(p), qty: 1, stock: p.stock_qty, track_serial: !!p.track_serial });
+      else {
+        const nm = (p.variant_group && p.variant_name) ? (p.variant_group + ' — ' + p.variant_name) : p.name;
+        this.cart.push({ id: p.id, name: nm, unit: p.unit, price: this.priceFor(p), qty: 1, stock: p.stock_qty, track_serial: !!p.track_serial });
+      }
     },
 
     // ── Hold / Resume (Open Tabs) ───────────────────────────────

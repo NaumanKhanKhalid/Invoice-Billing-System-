@@ -48,6 +48,24 @@
         </div>
 
         <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Variant Group <span class="text-slate-400 font-normal">(optional)</span></label>
+          <input type="text" name="variant_group" value="{{ old('variant_group') }}" list="vg-list"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
+                 placeholder="e.g. iPhone 13">
+          <datalist id="vg-list">
+            @foreach(\App\Models\Product::whereNotNull('variant_group')->distinct()->pluck('variant_group') as $vg)<option value="{{ $vg }}">@endforeach
+          </datalist>
+          <p class="text-[11px] text-slate-400 mt-1">Same group ke products POS par ek card me aayenge.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Variant Name <span class="text-slate-400 font-normal">(optional)</span></label>
+          <input type="text" name="variant_name" value="{{ old('variant_name') }}"
+                 class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
+                 placeholder="e.g. 128GB / Black">
+        </div>
+
+        <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Unit *</label>
           <div class="relative">
             <select name="unit" x-model="unit" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
