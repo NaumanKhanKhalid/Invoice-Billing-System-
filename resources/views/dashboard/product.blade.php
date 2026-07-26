@@ -23,17 +23,42 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
     </div>
   </div>
 
-  {{-- Expiry alert (medical shops only) --}}
-  @if($shopType === 'medical' && ($expiringSoonCount ?? 0) > 0)
-  <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-    <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-      <i data-lucide="calendar-x" class="w-4 h-4 text-red-600"></i>
+  {{-- Expiry alert — expired + soon-to-expire batches --}}
+  @if((($expiredCount ?? 0) + ($expiringSoonCount ?? 0)) > 0)
+  <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+    <div class="flex items-start gap-3">
+      <div class="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+        <i data-lucide="calendar-x" class="w-4 h-4 text-amber-600"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-bold text-amber-900 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          @if(($expiredCount ?? 0) > 0)
+          <span class="text-red-700">{{ $expiredCount }} expire ho chuke</span>
+          @endif
+          @if(($expiredCount ?? 0) > 0 && ($expiringSoonCount ?? 0) > 0)<span class="text-amber-400">·</span>@endif
+          @if(($expiringSoonCount ?? 0) > 0)
+          <span>{{ $expiringSoonCount }} agle 30 din mein expire</span>
+          @endif
+        </p>
+        {{-- Nearest few items --}}
+        <div class="mt-2 flex flex-col gap-1">
+          @foreach(($expiringItems ?? []) as $b)
+          @php
+            $isPast = $b->expiry_date->isPast();
+            $days = (int) now()->startOfDay()->diffInDays($b->expiry_date->copy()->startOfDay(), false);
+          @endphp
+          <div class="flex items-center justify-between text-xs gap-2">
+            <span class="font-medium text-slate-700 truncate">{{ $b->product->name ?? 'Product' }} <span class="text-slate-400">({{ rtrim(rtrim(number_format($b->qty,2),'0'),'.') }})</span></span>
+            <span class="whitespace-nowrap font-semibold {{ $isPast ? 'text-red-600' : ($days <= 7 ? 'text-amber-700' : 'text-slate-500') }}">
+              {{ $b->expiry_date->format('d M Y') }}
+              @if($isPast) · expired @else · {{ $days }} din @endif
+            </span>
+          </div>
+          @endforeach
+        </div>
+      </div>
+      <a href="{{ route('expiry-report.index') }}" class="text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">Report →</a>
     </div>
-    <div class="flex-1">
-      <p class="text-sm font-semibold text-red-800">{{ $expiringSoonCount }} item{{ $expiringSoonCount > 1 ? 's' : '' }} 30 din mein expire ho rahe hain</p>
-      <p class="text-xs text-red-600">Expiry Report dekho</p>
-    </div>
-    <a href="{{ route('expiry-report.index') }}" class="text-xs font-medium text-red-700 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">Expiry Report →</a>
   </div>
   @endif
 

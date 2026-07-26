@@ -95,10 +95,17 @@ class DashboardController extends Controller
 
         $recentSales    = PosSale::latest('date')->limit(8)->get();
 
-        // Medical: batches expiring within 30 days (including already expired)
-        $expiringSoonCount = $shopType === 'medical'
-            ? ProductBatch::where('qty', '>', 0)->whereDate('expiry_date', '<=', today()->addDays(30))->count()
-            : 0;
+        // Expiry alerts — for any shop that records batch expiry (medical etc.)
+        $expiredCount      = ProductBatch::where('qty', '>', 0)->whereDate('expiry_date', '<', today())->count();
+        $expiringSoonCount = ProductBatch::where('qty', '>', 0)
+            ->whereDate('expiry_date', '>=', today())
+            ->whereDate('expiry_date', '<=', today()->addDays(30))
+            ->count();
+        $expiringItems = ($expiredCount + $expiringSoonCount) > 0
+            ? ProductBatch::with('product')->where('qty', '>', 0)
+                ->whereDate('expiry_date', '<=', today()->addDays(30))
+                ->orderBy('expiry_date')->limit(5)->get()
+            : collect();
 
         for ($i = 5; $i >= 0; $i--) {
             $m = now()->subMonths($i);
@@ -108,7 +115,7 @@ class DashboardController extends Controller
         return view('dashboard.product', compact(
             'todaySales', 'todayPurchases', 'todayExpenses', 'todayProfit', 'todayTxCount',
             'monthSales', 'monthPurchases', 'monthExpenses', 'monthProfit',
-            'lowStock', 'totalProducts', 'outOfStock', 'expiringSoonCount',
+            'lowStock', 'totalProducts', 'outOfStock', 'expiringSoonCount', 'expiredCount', 'expiringItems',
             'supplierDue', 'supplierDue2', 'overdueCount',
             'recentSales',
             'monthlyLabels', 'monthlySales',
