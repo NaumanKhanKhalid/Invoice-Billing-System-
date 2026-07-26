@@ -82,6 +82,12 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       </button>
       @endif
 
+      {{-- Calculator --}}
+      <button type="button" @click="calcOpen = !calcOpen" title="Calculator"
+              class="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-700 flex items-center justify-center shrink-0 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="8" x2="8" y1="14" y2="14"/><line x1="12" x2="12" y1="14" y2="14"/><line x1="16" x2="16" y1="14" y2="14"/><line x1="8" x2="8" y1="18" y2="18"/><line x1="12" x2="12" y1="18" y2="18"/><line x1="16" x2="16" y1="18" y2="18"/></svg>
+      </button>
+
       {{-- Retail | Wholesale price toggle --}}
       <div class="flex items-center rounded-xl border border-slate-200 overflow-hidden shrink-0 text-xs font-semibold">
         <button type="button" @click="priceMode = 'retail'"
@@ -644,6 +650,35 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   </div>
   @endif
 
+  {{-- ══ Calculator (floating) ══ --}}
+  <div x-show="calcOpen" x-cloak x-transition
+       class="fixed z-50 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+       style="top:4rem;right:1rem;width:15rem" @click.outside="calcOpen = false">
+    <div class="flex items-center justify-between px-3 py-2 bg-slate-800 text-white">
+      <span class="text-xs font-bold flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+        Calculator
+      </span>
+      <button type="button" @click="calcOpen = false" class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center text-slate-300">✕</button>
+    </div>
+    <div class="px-3 pt-3 pb-1 text-right">
+      <p class="text-2xl font-extrabold text-slate-900 tabular-nums truncate" x-text="calcExpr || '0'"></p>
+    </div>
+    <div class="grid grid-cols-4 gap-1.5 p-2.5">
+      <template x-for="k in ['C','DEL','%','÷','7','8','9','×','4','5','6','-','1','2','3','+','0','.','=']" :key="k">
+        <button type="button" @click="calcPress(k)"
+                :class="{
+                  'col-span-2': k === '=' ,
+                  'bg-slate-100 text-slate-700 hover:bg-slate-200': ['C','DEL','%'].includes(k),
+                  'bg-slate-800 text-white hover:bg-slate-700': ['÷','×','-','+'].includes(k),
+                  'bg-green-600 text-white hover:bg-green-700': k === '=',
+                  'bg-slate-50 text-slate-900 hover:bg-slate-100': !['C','DEL','%','÷','×','-','+','='].includes(k)
+                }"
+                class="py-2.5 rounded-xl font-bold text-sm transition" x-text="k"></button>
+      </template>
+    </div>
+  </div>
+
   {{-- ══ Variant picker modal ══ --}}
   <div x-show="variantModalOpen" x-cloak x-transition.opacity
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -798,6 +833,8 @@ function posApp() {
     quoteNumber: @json($nextQuoteNumber ?? ''),
     quoteToday: @json(date('Y-m-d')),
     saleModalOpen: false,
+    calcOpen: false,
+    calcExpr: '',
     variantModalOpen: false,
     variantGroupName: '',
     variantOptions: [],
@@ -1183,6 +1220,29 @@ function posApp() {
       return (e.isGroup ? 'from PKR ' : 'PKR ') + Number(p).toLocaleString();
     },
     cardStockLabel(e) { const s = this.cardStock(e); return s <= 0 ? 'Out' : s + ' ' + this.cardUnit(e); },
+
+    // ── Calculator ──
+    calcPress(k) {
+      if (k === 'C')   { this.calcExpr = ''; return; }
+      if (k === 'DEL') { this.calcExpr = this.calcExpr.slice(0, -1); return; }
+      if (k === '=')   { this.calcEval(); return; }
+      // don't allow two operators in a row
+      if (['+','-','×','÷','%'].includes(k) && /[+\-×÷%]$/.test(this.calcExpr)) {
+        this.calcExpr = this.calcExpr.slice(0, -1) + k;
+      } else {
+        this.calcExpr += k;
+      }
+    },
+    calcEval() {
+      try {
+        let e = this.calcExpr.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100');
+        e = e.replace(/[^0-9+\-*/.() ]/g, '');
+        if (!e) return;
+        let r = Function('"use strict";return (' + e + ')')();
+        if (!isFinite(r)) { this.calcExpr = 'Error'; return; }
+        this.calcExpr = String(Math.round(r * 10000) / 10000);
+      } catch (err) { this.calcExpr = 'Error'; }
+    },
 
     // ── Variant picker ──
     openVariantPicker(entry) {
