@@ -107,10 +107,29 @@ class DashboardController extends Controller
                 ->orderBy('expiry_date')->limit(5)->get()
             : collect();
 
+        $monthlyProfit = [];
         for ($i = 5; $i >= 0; $i--) {
             $m = now()->subMonths($i);
             $monthlySales[] = (float) PosSale::whereYear('date', $m->year)->whereMonth('date', $m->month)->sum('total');
+
+            // Gross margin = revenue − cost of goods sold (using current cost as proxy)
+            $row = \DB::table('pos_sale_items as i')
+                ->join('pos_sales as s', 's.id', '=', 'i.pos_sale_id')
+                ->join('products as p', 'p.id', '=', 'i.product_id')
+                ->whereYear('s.date', $m->year)->whereMonth('s.date', $m->month)
+                ->selectRaw('COALESCE(SUM(i.total),0) as rev, COALESCE(SUM(i.qty * p.cost_price),0) as cogs')
+                ->first();
+            $monthlyProfit[] = round((float) $row->rev - (float) $row->cogs, 2);
         }
+
+        // Top-selling products this month (by quantity)
+        $topProducts = \DB::table('pos_sale_items as i')
+            ->join('pos_sales as s', 's.id', '=', 'i.pos_sale_id')
+            ->whereYear('s.date', now()->year)->whereMonth('s.date', now()->month)
+            ->selectRaw('i.product_name, SUM(i.qty) as qty, SUM(i.total) as revenue')
+            ->groupBy('i.product_name')
+            ->orderByDesc('qty')
+            ->limit(5)->get();
 
         return view('dashboard.product', compact(
             'todaySales', 'todayPurchases', 'todayExpenses', 'todayProfit', 'todayTxCount',
@@ -118,7 +137,7 @@ class DashboardController extends Controller
             'lowStock', 'totalProducts', 'outOfStock', 'expiringSoonCount', 'expiredCount', 'expiringItems',
             'supplierDue', 'supplierDue2', 'overdueCount',
             'recentSales',
-            'monthlyLabels', 'monthlySales',
+            'monthlyLabels', 'monthlySales', 'monthlyProfit', 'topProducts',
             'udharTotalDue', 'udharOverdueCount', 'udharDueTodayCount', 'udharDueThisWeek',
             'shopType'
         ));

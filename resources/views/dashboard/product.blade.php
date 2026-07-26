@@ -214,10 +214,16 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="font-semibold text-slate-900">6-Month POS Sales</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Revenue per month</p>
+          <h2 class="font-semibold text-slate-900">Sales &amp; Profit — 6 Months</h2>
+          <div class="flex items-center gap-3 mt-1">
+            <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-sm bg-green-600"></span>Sales</span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Profit</span>
+          </div>
         </div>
-        <p class="text-lg font-bold text-green-600">{{ formatCurrency(array_sum($monthlySales)) }}</p>
+        <div class="text-right">
+          <p class="text-lg font-bold text-green-600">{{ formatCurrency(array_sum($monthlySales)) }}</p>
+          <p class="text-xs {{ array_sum($monthlyProfit) >= 0 ? 'text-blue-600' : 'text-red-600' }}">Profit {{ formatCurrency(array_sum($monthlyProfit)) }}</p>
+        </div>
       </div>
       <canvas id="salesChart" height="140"></canvas>
     </div>
@@ -248,6 +254,34 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
     </div>
   </div>
 
+  {{-- Top-selling products this month --}}
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="font-semibold text-slate-900">Top Products — This Month</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Sabse zyada bikne wale (quantity)</p>
+      </div>
+      <a href="{{ route('reports.index') }}" class="text-xs text-green-600 hover:underline font-medium">Reports →</a>
+    </div>
+    @php $maxQty = optional($topProducts->first())->qty ?: 1; @endphp
+    @forelse($topProducts as $i => $tp)
+    <div class="flex items-center gap-3 py-2 {{ !$loop->last ? 'border-b border-slate-50' : '' }}">
+      <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 {{ $i === 0 ? 'bg-green-600 text-white' : 'bg-slate-100 text-slate-500' }}">{{ $i + 1 }}</span>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-sm font-semibold text-slate-800 truncate">{{ $tp->product_name }}</p>
+          <p class="text-xs font-bold text-slate-600 whitespace-nowrap">{{ rtrim(rtrim(number_format($tp->qty,2),'0'),'.') }} sold · {{ formatCurrency($tp->revenue) }}</p>
+        </div>
+        <div class="mt-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 rounded-full" style="width: {{ max(6, round($tp->qty / $maxQty * 100)) }}%"></div>
+        </div>
+      </div>
+    </div>
+    @empty
+    <p class="text-sm text-slate-400 text-center py-6">Is mahine abhi koi sale nahi hui.</p>
+    @endforelse
+  </div>
+
 </div>
 @push('scripts')
 <script>
@@ -255,9 +289,12 @@ new Chart(document.getElementById('salesChart'), {
     type: 'bar',
     data: {
         labels: @json($monthlyLabels),
-        datasets: [{ label: 'Sales (PKR)', data: @json($monthlySales), backgroundColor: 'rgba(22,163,74,0.7)', borderColor: '#16a34a', borderWidth: 0, borderRadius: 6 }]
+        datasets: [
+            { type: 'bar', label: 'Sales', data: @json($monthlySales), backgroundColor: 'rgba(22,163,74,0.7)', borderRadius: 6, order: 2 },
+            { type: 'line', label: 'Profit', data: @json($monthlyProfit), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', borderWidth: 2.5, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#3b82f6', fill: true, order: 1 }
+        ]
     },
-    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' PKR ' + ctx.raw.toLocaleString() } } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v, color: '#94a3b8' }, grid: { color: '#f1f5f9' }, border: { display: false } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' }, border: { display: false } } } }
+    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': PKR ' + ctx.raw.toLocaleString() } } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v, color: '#94a3b8' }, grid: { color: '#f1f5f9' }, border: { display: false } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' }, border: { display: false } } } }
 });
 </script>
 @endpush
