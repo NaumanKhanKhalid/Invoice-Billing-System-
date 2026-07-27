@@ -13,6 +13,8 @@
         $isChicken = $shopType === 'chicken';
         $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general', 'medical']);
         $isCoaching = $shopType === 'coaching';
+        // Role gate: cashiers only see the sales counter; managers/owners see everything
+        $canManage = !$isTenantCtx || (auth()->check() && auth()->user()->canManage());
     @endphp
     <title>@yield('title', $appShopName) — {{ $appShopName }}</title>
     {{-- Tenant logo (white-label) if set, else shop-type emoji tile --}}
@@ -197,7 +199,7 @@
             {{-- ── Tenant sidebar ── --}}
 
             {{-- Dashboard (all except coaching — coaching has its own below) --}}
-            @if(!$isCoaching)
+            @if(!$isCoaching && $canManage)
             <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
             </a>
@@ -235,6 +237,7 @@
                 <i data-lucide="receipt" class="w-4 h-4"></i> Sales History
             </a>
 
+            @if($canManage)
             <a href="{{ route('products.index') }}" class="nav-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
                 <i data-lucide="package" class="w-4 h-4"></i> Products & Stock
             </a>
@@ -242,6 +245,7 @@
             <a href="{{ route('product-purchases.index') }}" class="nav-item {{ request()->routeIs('product-purchases.*') ? 'active' : '' }}">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> Purchases
             </a>
+            @endif
 
             @if(feature_enabled('quotations'))
             <a href="{{ route('quotations.index') }}" class="nav-item {{ request()->routeIs('quotations.*') ? 'active' : '' }}">
@@ -268,7 +272,7 @@
             </a>
             @endif
 
-            @if(!$isCoaching && feature_enabled('expenses'))
+            @if(!$isCoaching && feature_enabled('expenses') && $canManage)
             <a href="{{ route('expenses.index') }}" class="nav-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                 <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
             </a>
@@ -295,6 +299,7 @@
             @endif
             @endif
 
+            @if($canManage)
             @if($isChicken && feature_enabled('day_closing'))
             <a href="{{ route('day-end.index') }}" class="nav-item {{ request()->routeIs('day-end.*') ? 'active' : '' }}">
                 <i data-lucide="moon" class="w-4 h-4"></i> Daily Records
@@ -310,8 +315,10 @@
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports
             </a>
             @endif
+            @endif
 
-            {{-- System dropdown (all) --}}
+            {{-- System dropdown (managers/owners only) --}}
+            @if($canManage)
             @php $systemOpen = request()->routeIs('suppliers.*','staff.*','tenant.users.*','udhar-customers.*','settings.*'); @endphp
             <div x-data="{ open: {{ $systemOpen ? 'true' : 'false' }} }">
               <button @click="open = !open" class="nav-item w-full" :class="open ? 'bg-white/10 text-slate-100' : ''">
@@ -358,6 +365,7 @@
                 @endif
               </div>
             </div>
+            @endif
             @else
             {{-- ── Admin / Central domain sidebar ── --}}
             <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.tenants.*') ? 'active' : '' }}">

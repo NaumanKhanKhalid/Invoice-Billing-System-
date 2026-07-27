@@ -27,6 +27,11 @@ class DashboardController extends Controller
         $isChicken = $shopType === 'chicken';
         $isProduct = in_array($shopType, ['hardware', 'mobile', 'bike', 'general', 'medical']);
 
+        // Cashiers don't see the profit dashboard — straight to the sales counter
+        if ($isProduct && auth()->user()->isCashier()) {
+            return redirect()->route('pos.create');
+        }
+
         // ── Common (all shop types) ──────────────────────────────
         $todayExpenses = Expense::whereDate('date', today())->sum('amount');
         $monthExpenses = Expense::whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');

@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.onboarding'   => \App\Http\Middleware\TenantOnboarding::class,
             'feature'             => \App\Http\Middleware\EnsureFeatureEnabled::class,
             'owner'               => \App\Http\Middleware\OwnerOnly::class,
+            'manager'             => \App\Http\Middleware\ManagerOnly::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

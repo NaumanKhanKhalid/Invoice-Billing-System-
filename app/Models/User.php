@@ -52,6 +52,24 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    /** Shop owner (full access). */
+    public function isOwner(): bool
+    {
+        return in_array($this->role, ['owner', 'admin']);
+    }
+
+    /** Can access management sections (reports, purchases, settings…). Cashier cannot. */
+    public function canManage(): bool
+    {
+        return in_array($this->role, ['owner', 'admin', 'manager']);
+    }
+
+    /** Restricted to the sales counter only. */
+    public function isCashier(): bool
+    {
+        return $this->role === 'cashier';
+    }
+
     public function getInitialsAttribute(): string
     {
         $words = explode(' ', $this->name);

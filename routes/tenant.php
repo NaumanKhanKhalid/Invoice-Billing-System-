@@ -82,7 +82,7 @@ Route::middleware([
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         // Reports
-        Route::middleware('feature:reports')->group(function () {
+        Route::middleware(['feature:reports', 'manager'])->group(function () {
             Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         });
 
@@ -99,7 +99,7 @@ Route::middleware([
         });
 
         // Suppliers
-        Route::resource('suppliers', SupplierController::class);
+        Route::resource('suppliers', SupplierController::class)->middleware('manager');
         Route::post('/suppliers/{supplier}/toggle-status', [SupplierController::class, 'toggleStatus'])->name('suppliers.toggle-status');
 
         // Customers
@@ -114,7 +114,7 @@ Route::middleware([
         Route::delete('/daily-rates/{dailyRate}', [DailyRateController::class, 'destroy'])->name('daily-rates.destroy');
 
         // Purchases
-        Route::resource('purchases', PurchaseController::class);
+        Route::resource('purchases', PurchaseController::class)->middleware('manager');
         Route::post('/purchases/{purchase}/payment', [PurchaseController::class, 'storePayment'])->name('purchases.payment');
         Route::delete('/purchases/{purchase}/payment/{payment}', [PurchaseController::class, 'destroyPayment'])->name('purchases.payment.destroy');
 
@@ -150,7 +150,7 @@ Route::middleware([
         });
 
         // General shop day-end summary
-        Route::middleware('feature:day_closing')->group(function () {
+        Route::middleware(['feature:day_closing', 'manager'])->group(function () {
         Route::get('/day-summary', [DaySummaryController::class, 'index'])->name('day-summary.index');
         Route::get('/day-summary/create', [DaySummaryController::class, 'create'])->name('day-summary.create');
         Route::post('/day-summary', [DaySummaryController::class, 'store'])->name('day-summary.store');
@@ -169,12 +169,12 @@ Route::middleware([
         });
 
         // Expenses
-        Route::middleware('feature:expenses')->group(function () {
+        Route::middleware(['feature:expenses', 'manager'])->group(function () {
             Route::resource('expenses', ExpenseController::class)->except(['show']);
         });
 
         // Staff
-        Route::middleware('feature:staff_module')->group(function () {
+        Route::middleware(['feature:staff_module', 'manager'])->group(function () {
             Route::resource('staff', StaffController::class)->except(['destroy']);
             Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->middleware('owner')->name('staff.destroy');
             Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
@@ -200,7 +200,7 @@ Route::middleware([
         });
 
         // Products & Inventory
-        Route::resource('products', ProductController::class);
+        Route::resource('products', ProductController::class)->middleware('manager');
         Route::post('/products/{product}/stock', [ProductController::class, 'adjustStock'])->name('products.stock');
 
         // Product Purchases (bike/hardware/mobile shops)
