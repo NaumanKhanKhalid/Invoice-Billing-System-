@@ -775,25 +775,39 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Actions --}}
-      <div class="p-5 pt-4 space-y-2 shrink-0 border-t border-slate-50">
+      <div class="p-5 pt-4 space-y-2.5 shrink-0 border-t border-slate-100 bg-slate-50/50">
+        {{-- Primary: Complete Sale --}}
+        <button type="button" @click="confirmPayment(false)" :disabled="submitting"
+                class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3.5 rounded-2xl font-extrabold text-base transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
+          <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span x-text="submitting ? 'Processing...' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
+        </button>
+
+        {{-- Secondary row: Cancel + Print --}}
         <div class="flex gap-2">
           <button type="button" @click="finalizeModalOpen = false"
-                  class="px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
-          <button type="button" @click="confirmPayment(false)" :disabled="submitting"
-                  class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-extrabold text-sm transition flex items-center justify-center gap-2">
-            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span x-text="submitting ? 'Processing...' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
+                  class="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
+          @if(feature_enabled('receipt_print'))
+          <button type="button" @click="confirmPayment(true)" :disabled="submitting"
+                  class="flex-1 bg-white border border-slate-200 hover:border-green-400 hover:text-green-700 hover:bg-green-50/40 text-slate-600 py-2.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
+            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Invoice
           </button>
+          @endif
         </div>
+
+        {{-- Auto-print toggle --}}
         @if(feature_enabled('receipt_print'))
-        <button type="button" @click="confirmPayment(true)" :disabled="submitting"
-                class="w-full bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 text-slate-600 py-2.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
-          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Complete &amp; Print Invoice
-        </button>
-        <label class="flex items-center justify-center gap-2 text-xs text-slate-400 cursor-pointer select-none pt-0.5">
-          <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="rounded border-slate-300 text-green-600 focus:ring-green-300">
-          Har sale par auto-print
+        <label class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white border border-slate-100 cursor-pointer select-none">
+          <span class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Har sale par auto-print
+          </span>
+          <span class="relative inline-flex items-center">
+            <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="sr-only peer">
+            <span class="w-9 h-5 rounded-full bg-slate-200 peer-checked:bg-green-500 transition-colors"></span>
+            <span class="absolute left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+          </span>
         </label>
         @endif
       </div>
