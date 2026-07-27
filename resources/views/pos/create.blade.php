@@ -431,7 +431,7 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
           <input type="hidden" name="payment_method" x-model="payMethod">
           <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem">
             <template x-for="pm in payMethods" :key="pm.value">
-              <button type="button" @click="payMethod = pm.value"
+              <button type="button" @click="payMethod = pm.value; if (pm.value === 'split') splitModalOpen = true"
                       :class="payMethod === pm.value
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
@@ -455,27 +455,19 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                     class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
           </div>
 
-          {{-- Split tender: cash + online --}}
-          <div x-show="payMethod === 'split'" x-cloak class="space-y-1.5">
-            <div class="grid grid-cols-2 gap-2">
-              <div class="relative">
-                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs">💵</span>
-                <input type="number" x-model="cashAmount" min="0" step="0.01" placeholder="Cash"
-                       class="w-full pl-7 pr-2 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
-              </div>
-              <div class="relative">
-                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs">📱</span>
-                <input type="number" x-model="onlineAmount" min="0" step="0.01" placeholder="Online"
-                       class="w-full pl-7 pr-2 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
-              </div>
-            </div>
-            <div class="flex items-center justify-between text-[11px] px-1">
-              <button type="button" @click="cashAmount = String(Math.max(0, total - (Number(onlineAmount)||0)))"
-                      class="text-green-600 font-semibold hover:underline">Baaki cash me</button>
-              <span class="tabular-nums font-semibold"
-                    :class="splitPaid >= total ? 'text-emerald-600' : 'text-amber-600'"
-                    x-text="'Paid ' + splitPaid.toLocaleString() + ' / ' + total.toLocaleString()"></span>
-            </div>
+          {{-- Split tender summary (edit opens modal) --}}
+          <div x-show="payMethod === 'split'" x-cloak>
+            <button type="button" @click="splitModalOpen = true"
+                    class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition">
+              <span class="flex items-center gap-1.5 min-w-0 text-slate-600">
+                <svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="m21 3-7.5 7.5"/><path d="M3 3l7.5 7.5"/><path d="M12 13v8"/></svg>
+                <span x-show="splitPaid > 0" class="truncate font-medium">
+                  Cash <b class="tabular-nums" x-text="Number(cashAmount||0).toLocaleString()"></b> · Online <b class="tabular-nums" x-text="Number(onlineAmount||0).toLocaleString()"></b>
+                </span>
+                <span x-show="splitPaid === 0" class="text-slate-400">Split amounts set karein</span>
+              </span>
+              <span class="text-green-600 text-xs font-bold shrink-0">Edit</span>
+            </button>
           </div>
 
           <div x-show="change > 0" x-cloak class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5">
@@ -651,6 +643,92 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
     </div>
   </div>
   @endif
+
+  {{-- ══ Split Payment modal ══ --}}
+  <div x-show="splitModalOpen" x-cloak x-transition.opacity
+       class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px);"
+       @keydown.escape.window="splitModalOpen = false">
+    <div class="bg-white rounded-3xl shadow-2xl w-full overflow-hidden" style="max-width:26rem"
+         x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         @click.outside="splitModalOpen = false">
+      {{-- Header --}}
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center">
+            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="m21 3-7.5 7.5"/><path d="M3 3l7.5 7.5"/><path d="M12 13v8"/></svg>
+          </span>
+          <h3 class="font-bold text-slate-900">Split Payment</h3>
+        </div>
+        <button type="button" @click="splitModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
+      </div>
+
+      {{-- Total to pay --}}
+      <div class="px-5 pt-4">
+        <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-3">
+          <span class="text-sm text-slate-500 font-medium">Total to pay</span>
+          <span class="text-xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
+        </div>
+      </div>
+
+      {{-- Tenders --}}
+      <div class="px-5 pt-4 space-y-3">
+        {{-- Cash --}}
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> Cash
+            </label>
+            <button type="button" @click="cashAmount = String(Math.max(0, total - (Number(onlineAmount)||0)))" class="text-[11px] text-green-600 font-semibold hover:underline">Baaki cash me</button>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold">PKR</span>
+            <input type="number" x-model="cashAmount" min="0" step="1" placeholder="0"
+                   class="w-full pl-12 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-semibold outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+          </div>
+        </div>
+        {{-- Online --}}
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg> Online
+            </label>
+            <button type="button" @click="onlineAmount = String(Math.max(0, total - (Number(cashAmount)||0)))" class="text-[11px] text-green-600 font-semibold hover:underline">Baaki online me</button>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold">PKR</span>
+            <input type="number" x-model="onlineAmount" min="0" step="1" placeholder="0"
+                   class="w-full pl-12 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-semibold outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+          </div>
+        </div>
+      </div>
+
+      {{-- Summary --}}
+      <div class="px-5 pt-4">
+        <div class="flex items-center justify-between text-sm px-1">
+          <span class="text-slate-500">Paid</span>
+          <span class="font-bold tabular-nums" :class="splitPaid >= total ? 'text-emerald-600' : 'text-amber-600'" x-text="'PKR ' + splitPaid.toLocaleString()"></span>
+        </div>
+        <div class="flex items-center justify-between text-sm px-1 mt-1">
+          <span class="text-slate-500" x-text="splitPaid >= total ? 'Change' : 'Remaining'"></span>
+          <span class="font-bold tabular-nums" :class="splitPaid >= total ? 'text-emerald-600' : 'text-red-500'"
+                x-text="'PKR ' + Math.abs(splitPaid - total).toLocaleString()"></span>
+        </div>
+      </div>
+
+      {{-- Actions --}}
+      <div class="p-5 pt-4 flex gap-2">
+        <button type="button" @click="splitModalOpen = false"
+                class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
+        <button type="button" @click="splitPaid + 0.01 >= total ? splitModalOpen = false : flash('Cash + Online milakar total hona chahiye', false)"
+                :disabled="splitPaid + 0.01 < total"
+                class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-sm transition flex items-center justify-center gap-2">
+          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Confirm Split
+        </button>
+      </div>
+    </div>
+  </div>
 
   {{-- ══ Calculator (floating) ══ --}}
   <div x-show="calcOpen" x-cloak x-transition
@@ -836,6 +914,7 @@ function posApp() {
     quoteNumber: @json($nextQuoteNumber ?? ''),
     quoteToday: @json(date('Y-m-d')),
     saleModalOpen: false,
+    splitModalOpen: false,
     calcOpen: false,
     calcExpr: '',
     variantModalOpen: false,
