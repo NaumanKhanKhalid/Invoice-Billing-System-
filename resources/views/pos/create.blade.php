@@ -161,11 +161,11 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                 </div>
               </template>
               {{-- stock badge (top-left) --}}
-              <span class="absolute top-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md leading-none"
+              <span class="absolute top-2 left-2 text-[9px] font-semibold px-1 py-[2px] rounded leading-none"
                     :class="cardStock(entry) <= 0 ? 'bg-red-500 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-black/5 text-slate-500')"
                     x-text="cardStockLabel(entry)"></span>
               {{-- price badge (top-right) --}}
-              <span class="absolute top-1.5 right-1.5 text-[9px] font-bold text-green-700 bg-white/90 px-1.5 py-[3px] rounded-md tabular-nums leading-none shadow-sm" x-text="cardPrice(entry)"></span>
+              <span class="absolute top-2 right-2 text-[9px] font-bold text-green-700 bg-white/90 px-1 py-[2px] rounded tabular-nums leading-none shadow-sm" x-text="cardPrice(entry)"></span>
               {{-- variant count chip (bottom-left) --}}
               <template x-if="entry.isGroup">
                 <span class="absolute bottom-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md bg-slate-900/80 text-white leading-none" x-text="entry.variants.length + ' options'"></span>
