@@ -160,21 +160,22 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                   <span class="text-xl font-extrabold tracking-tight" :style="'color:' + cardTint(entry)[1]" x-text="cardInitials(entry)"></span>
                 </div>
               </template>
-              <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm"
-                    :class="cardStock(entry) <= 0 ? 'bg-red-500/90 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-400/90 text-white' : 'bg-white/85 text-slate-600')"
+              {{-- stock badge (top-right) --}}
+              <span class="absolute top-1.5 right-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md leading-none"
+                    :class="cardStock(entry) <= 0 ? 'bg-red-500 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-black/5 text-slate-500')"
                     x-text="cardStockLabel(entry)"></span>
               {{-- price badge (top-left) --}}
-              <span class="absolute top-1.5 left-1.5 text-[11px] font-extrabold text-green-700 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-lg shadow-sm tabular-nums" x-text="cardPrice(entry)"></span>
+              <span class="absolute top-1.5 left-1.5 text-[10.5px] font-extrabold text-green-700 bg-white px-1.5 py-[3px] rounded-md shadow-sm border border-slate-100 tabular-nums leading-none" x-text="cardPrice(entry)"></span>
               {{-- variant count chip (bottom-left) --}}
               <template x-if="entry.isGroup">
-                <span class="absolute bottom-1.5 left-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800/85 text-white" x-text="entry.variants.length + ' options'"></span>
+                <span class="absolute bottom-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md bg-slate-900/80 text-white leading-none" x-text="entry.variants.length + ' options'"></span>
               </template>
               <span class="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition"></span>
             </div>
 
             {{-- Info (name only) --}}
             <div class="px-2 py-1.5">
-              <p class="text-[12px] font-semibold text-slate-800 leading-tight line-clamp-2" style="min-height:2rem" x-text="entry.isGroup ? entry.group : entry.product.name"></p>
+              <p class="text-[11px] font-medium text-slate-700 leading-snug line-clamp-2" style="min-height:1.8rem" x-text="entry.isGroup ? entry.group : entry.product.name"></p>
             </div>
           </button>
         </template>
