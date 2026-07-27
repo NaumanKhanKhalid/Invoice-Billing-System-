@@ -154,8 +154,8 @@ class PosController extends Controller
                 $product->removeStock($item['qty'], 'POS#' . $sale->id);
             }
 
-            // Udhar sale — record the unpaid amount in the Udhar Book
-            if ($data['payment_method'] === 'credit') {
+            // Udhar sale (or the unpaid part of a split) — record in the Udhar Book
+            if (in_array($data['payment_method'], ['credit', 'split'])) {
                 $unpaid = round($total - $paid, 2);
                 if ($unpaid > 0) {
                     // Existing udhar customer selected in POS → link by id (proper),

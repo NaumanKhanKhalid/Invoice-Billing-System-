@@ -443,37 +443,19 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
           </div>
         </div>
 
-        {{-- Cash / Split inputs --}}
-        <div class="px-4 pb-1.5 space-y-1.5">
-          {{-- Single tender --}}
-          <div class="flex gap-2" x-show="payMethod !== 'split'">
-            <input type="number" name="amount_paid" x-model="amountPaid" min="0" step="0.01"
-                   :required="payMethod !== 'split'"
-                   :placeholder="payMethod === 'online' ? 'Amount received...' : 'Cash received...'"
-                   class="flex-1 min-w-0 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
-            <button type="button" @click="setFullPay()"
-                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl transition whitespace-nowrap">Exact</button>
-          </div>
-
-          {{-- Split tender summary (edit opens modal) --}}
-          <div x-show="payMethod === 'split'" x-cloak>
-            <button type="button" @click="splitModalOpen = true"
-                    class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition">
-              <span class="flex items-center gap-1.5 min-w-0 text-slate-600">
-                <svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="m21 3-7.5 7.5"/><path d="M3 3l7.5 7.5"/><path d="M12 13v8"/></svg>
-                <span x-show="splitPaid > 0" class="truncate font-medium">
-                  Cash <b class="tabular-nums" x-text="Number(cashAmount||0).toLocaleString()"></b> · Online <b class="tabular-nums" x-text="Number(onlineAmount||0).toLocaleString()"></b>
-                </span>
-                <span x-show="splitPaid === 0" class="text-slate-400">Split amounts set karein</span>
+        {{-- Split tender summary (edit opens modal) --}}
+        <div class="px-4 pb-1.5" x-show="payMethod === 'split'" x-cloak>
+          <button type="button" @click="splitModalOpen = true"
+                  class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition">
+            <span class="flex items-center gap-1.5 min-w-0 text-slate-600">
+              <svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="m21 3-7.5 7.5"/><path d="M3 3l7.5 7.5"/><path d="M12 13v8"/></svg>
+              <span x-show="splitAllocated > 0" class="truncate font-medium">
+                <span x-show="splitPaid>0">Cash+Online <b class="tabular-nums" x-text="Number(splitPaid).toLocaleString()"></b></span><span x-show="splitUdhar>0"> · Udhar <b class="tabular-nums" x-text="Number(splitUdhar).toLocaleString()"></b></span>
               </span>
-              <span class="text-green-600 text-xs font-bold shrink-0">Edit</span>
-            </button>
-          </div>
-
-          <div x-show="change > 0" x-cloak class="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5">
-            <span class="text-emerald-700 text-sm font-semibold">Change</span>
-            <span class="text-emerald-700 font-extrabold text-sm tabular-nums" x-text="'PKR ' + change.toLocaleString()"></span>
-          </div>
+              <span x-show="splitAllocated === 0" class="text-slate-400">Split amounts set karein</span>
+            </span>
+            <span class="text-green-600 text-xs font-bold shrink-0">Edit</span>
+          </button>
         </div>
 
         {{-- Submit --}}
@@ -644,6 +626,61 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   </div>
   @endif
 
+  {{-- ══ Finalize modal (cash / online received amount) ══ --}}
+  <div x-show="finalizeModalOpen" x-cloak x-transition.opacity
+       class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px);"
+       @keydown.escape.window="finalizeModalOpen = false">
+    <div class="bg-white rounded-3xl shadow-2xl w-full overflow-hidden" style="max-width:24rem"
+         x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         @click.outside="finalizeModalOpen = false">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900">Finalize Sale</h3>
+        <button type="button" @click="finalizeModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
+      </div>
+
+      <div class="px-5 pt-4">
+        <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-3">
+          <span class="text-sm text-slate-500 font-medium capitalize" x-text="payMethod + ' payment'"></span>
+          <span class="text-xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
+        </div>
+      </div>
+
+      <div class="px-5 pt-4">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider" x-text="payMethod === 'online' ? 'Amount Received' : 'Cash Received'"></label>
+          <div class="flex gap-1.5">
+            <template x-for="q in quickCash" :key="q">
+              <button type="button" @click="receivedAmount = String(q)" x-show="q >= total"
+                      class="text-[11px] font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md" x-text="q.toLocaleString()"></button>
+            </template>
+            <button type="button" @click="receivedAmount = String(total)" class="text-[11px] font-bold text-green-600 hover:underline">Exact</button>
+          </div>
+        </div>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold">PKR</span>
+          <input type="number" x-model="receivedAmount" min="0" step="1"
+                 @keydown.enter="change >= 0 && proceedSale()"
+                 class="w-full pl-12 pr-3 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-lg font-bold outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+        </div>
+        <div class="flex items-center justify-between mt-3 px-1">
+          <span class="text-sm text-slate-500 font-medium">Change to return</span>
+          <span class="text-lg font-extrabold tabular-nums" :class="change > 0 ? 'text-emerald-600' : 'text-slate-400'" x-text="'PKR ' + change.toLocaleString()"></span>
+        </div>
+      </div>
+
+      <div class="p-5 pt-4 flex gap-2">
+        <button type="button" @click="finalizeModalOpen = false"
+                class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
+        <button type="button" @click="proceedSale()" :disabled="submitting || (Number(receivedAmount)||0) + 0.01 < total"
+                class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-sm transition flex items-center justify-center gap-2">
+          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span x-text="submitting ? 'Processing...' : 'Complete Sale'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   {{-- ══ Split Payment modal ══ --}}
   <div x-show="splitModalOpen" x-cloak x-transition.opacity
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -701,18 +738,34 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                    class="w-full pl-12 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-semibold outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
           </div>
         </div>
+        {{-- Udhar (credit) --}}
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></svg> Udhar
+            </label>
+            <button type="button" @click="udharAmount = String(Math.max(0, total - splitPaid))" class="text-[11px] text-green-600 font-semibold hover:underline">Baaki udhar me</button>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold">PKR</span>
+            <input type="number" x-model="udharAmount" min="0" step="1" placeholder="0"
+                   class="w-full pl-12 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-semibold outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+          </div>
+          <p x-show="splitUdhar > 0 && (!customerName.trim() || !customerPhone.trim())" x-cloak
+             class="text-[11px] text-amber-600 font-semibold mt-1">⚠ Udhar ke liye customer select karein (upar).</p>
+        </div>
       </div>
 
       {{-- Summary --}}
       <div class="px-5 pt-4">
         <div class="flex items-center justify-between text-sm px-1">
-          <span class="text-slate-500">Paid</span>
-          <span class="font-bold tabular-nums" :class="splitPaid >= total ? 'text-emerald-600' : 'text-amber-600'" x-text="'PKR ' + splitPaid.toLocaleString()"></span>
+          <span class="text-slate-500">Allocated</span>
+          <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-emerald-600' : 'text-amber-600'" x-text="'PKR ' + splitAllocated.toLocaleString()"></span>
         </div>
         <div class="flex items-center justify-between text-sm px-1 mt-1">
-          <span class="text-slate-500" x-text="splitPaid >= total ? 'Change' : 'Remaining'"></span>
-          <span class="font-bold tabular-nums" :class="splitPaid >= total ? 'text-emerald-600' : 'text-red-500'"
-                x-text="'PKR ' + Math.abs(splitPaid - total).toLocaleString()"></span>
+          <span class="text-slate-500" x-text="splitAllocated > total ? 'Extra' : 'Remaining'"></span>
+          <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-emerald-600' : 'text-red-500'"
+                x-text="'PKR ' + Math.abs(splitAllocated - total).toLocaleString()"></span>
         </div>
       </div>
 
@@ -720,8 +773,9 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       <div class="p-5 pt-4 flex gap-2">
         <button type="button" @click="splitModalOpen = false"
                 class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
-        <button type="button" @click="splitPaid + 0.01 >= total ? splitModalOpen = false : flash('Cash + Online milakar total hona chahiye', false)"
-                :disabled="splitPaid + 0.01 < total"
+        <button type="button"
+                @click="(splitAllocated + 0.01 >= total && !(splitUdhar > 0 && (!customerName.trim() || !customerPhone.trim()))) ? splitModalOpen = false : flash(splitUdhar > 0 && !customerPhone.trim() ? 'Udhar ke liye customer select karein' : 'Cash+Online+Udhar = total hona chahiye', false)"
+                :disabled="splitAllocated + 0.01 < total"
                 class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-sm transition flex items-center justify-center gap-2">
           <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           Confirm Split
@@ -901,6 +955,9 @@ function posApp() {
     amountPaid: '',
     cashAmount: '',
     onlineAmount: '',
+    udharAmount: '',
+    receivedAmount: '',
+    finalizeModalOpen: false,
     payMethod: 'cash',
     payMethods: [
       { value: 'cash',   label: 'Cash',   icon: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>' },
@@ -1001,7 +1058,9 @@ function posApp() {
     },
 
     resetSale() {
-      this.cart = []; this.discount = ''; this.amountPaid = ''; this.cashAmount = ''; this.onlineAmount = '';
+      this.cart = []; this.discount = ''; this.amountPaid = ''; this.receivedAmount = '';
+      this.cashAmount = ''; this.onlineAmount = ''; this.udharAmount = '';
+      this.finalizeModalOpen = false; this.splitModalOpen = false;
       this.customerName = ''; this.customerPhone = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
       this.holdId = null; this.holdTabNumber = '';
       this.serials = {}; this.serialItems = []; this.serialInputs = {};
@@ -1151,16 +1210,31 @@ function posApp() {
         return;
       }
 
-      // Split must cover the total
-      if (this.payMethod === 'split' && this.splitPaid + 0.01 < this.total) {
-        this.flash('Split me cash + online milakar total ' + this.total.toLocaleString() + ' hona chahiye', false);
+      // Split must cover the total; udhar portion needs a customer
+      if (this.payMethod === 'split') {
+        if (this.splitAllocated + 0.01 < this.total) {
+          this.flash('Split total ' + this.total.toLocaleString() + ' cover hona chahiye', false); return;
+        }
+        if (this.splitUdhar > 0 && (!this.customerName.trim() || !this.customerPhone.trim())) {
+          this.flash('Udhar portion ke liye customer zaroori hai', false); this.splitModalOpen = true; return;
+        }
+      }
+
+      // Cash / Online → open finalize modal to enter received amount
+      if (this.payMethod === 'cash' || this.payMethod === 'online') {
+        this.receivedAmount = String(this.total);
+        this.finalizeModalOpen = true;
         return;
       }
 
-      // IMEI/serial products — collect serials first (skippable)
+      this.proceedSale();
+    },
+
+    // Called after amount/split confirmed
+    proceedSale() {
+      this.finalizeModalOpen = false;
       const trackable = this.cart.filter(i => i.track_serial);
       if (trackable.length > 0) { this.openSerialModal(trackable); return; }
-
       this.finishSubmit();
     },
 
@@ -1372,9 +1446,16 @@ function posApp() {
     get subtotal() { return this.cart.reduce((s, i) => s + i.qty * i.price, 0); },
     get total()    { return Math.max(0, this.subtotal - Number(this.discount || 0)); },
     get splitPaid() { return (Number(this.cashAmount) || 0) + (Number(this.onlineAmount) || 0); },
-    get paidTotal() { return this.payMethod === 'split' ? this.splitPaid : (Number(this.amountPaid) || 0); },
+    get splitUdhar() { return Number(this.udharAmount) || 0; },
+    get splitAllocated() { return this.splitPaid + this.splitUdhar; },
+    get quickCash() {
+      const t = this.total; const opts = new Set();
+      [100, 500, 1000, 5000].forEach(step => opts.add(Math.ceil(t / step) * step));
+      return [...opts].filter(v => v > t).sort((a, b) => a - b).slice(0, 3);
+    },
+    get paidTotal() { return this.payMethod === 'split' ? this.splitPaid : (Number(this.receivedAmount) || 0); },
     get change()   { return Math.max(0, this.paidTotal - this.total); },
-    setFullPay()   { this.amountPaid = this.total; },
+    setFullPay()   { this.receivedAmount = this.total; },
 
     // Effective price for new adds: wholesale rate when toggled (fallback to retail)
     priceFor(p) {
