@@ -160,12 +160,12 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                   <span class="text-xl font-extrabold tracking-tight" :style="'color:' + cardTint(entry)[1]" x-text="cardInitials(entry)"></span>
                 </div>
               </template>
-              {{-- stock badge (top-right) --}}
-              <span class="absolute top-1.5 right-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md leading-none"
+              {{-- stock badge (top-left) --}}
+              <span class="absolute top-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md leading-none"
                     :class="cardStock(entry) <= 0 ? 'bg-red-500 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-black/5 text-slate-500')"
                     x-text="cardStockLabel(entry)"></span>
-              {{-- price badge (top-left) --}}
-              <span class="absolute top-1.5 left-1.5 text-[10.5px] font-extrabold text-green-700 bg-white px-1.5 py-[3px] rounded-md shadow-sm border border-slate-100 tabular-nums leading-none" x-text="cardPrice(entry)"></span>
+              {{-- price badge (top-right) --}}
+              <span class="absolute top-1.5 right-1.5 text-[9px] font-bold text-green-700 bg-white/90 px-1.5 py-[3px] rounded-md tabular-nums leading-none shadow-sm" x-text="cardPrice(entry)"></span>
               {{-- variant count chip (bottom-left) --}}
               <template x-if="entry.isGroup">
                 <span class="absolute bottom-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md bg-slate-900/80 text-white leading-none" x-text="entry.variants.length + ' options'"></span>
