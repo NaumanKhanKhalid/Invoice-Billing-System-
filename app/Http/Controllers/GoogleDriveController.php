@@ -76,7 +76,7 @@ class GoogleDriveController extends Controller
 
         // Find or create backup folder
         $service    = new Drive($client);
-        $folderId   = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
+        $folderId   = $this->getOrCreateFolder($service, (\App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop') . ' Backups'));
 
         [$backupName, $content, $error] = $this->createDatabaseDump();
         if ($error) {
@@ -113,7 +113,7 @@ class GoogleDriveController extends Controller
         }
 
         $service  = new Drive($client);
-        $folderId = $this->getOrCreateFolder($service, 'Anwar Chicken Backups');
+        $folderId = $this->getOrCreateFolder($service, (\App\Models\Setting::getValue('company_name', tenant()->shop_name ?? 'Shop') . ' Backups'));
 
         $results = $service->files->listFiles([
             'q'       => "'{$folderId}' in parents and trashed=false",
@@ -251,7 +251,7 @@ class GoogleDriveController extends Controller
     {
         try {
             $pdo    = new \PDO("mysql:host={$host};port={$port};dbname={$db};charset=utf8", $user, $pass);
-            $output = "-- Anwar Chicken Center Database Backup\n-- Date: " . now() . "\n\nSET FOREIGN_KEY_CHECKS=0;\n\n";
+            $output = "-- " . (\App\Models\Setting::getValue("company_name", tenant()->shop_name ?? "Shop")) . " Database Backup\n-- Date: " . now() . "\n\nSET FOREIGN_KEY_CHECKS=0;\n\n";
 
             $tables = $pdo->query("SHOW TABLES")->fetchAll(\PDO::FETCH_COLUMN);
             foreach ($tables as $table) {
