@@ -775,16 +775,16 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Actions --}}
-      <div class="p-5 pt-4 space-y-2.5 shrink-0 border-t border-slate-100 bg-slate-50/50">
+      <div class="p-5 pt-4 shrink-0 border-t border-slate-100 bg-slate-50/50">
         {{-- Primary: Complete Sale --}}
         <button type="button" @click="confirmPayment(false)" :disabled="submitting"
-                class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3.5 rounded-2xl font-extrabold text-base transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
-          <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
+          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           <span x-text="submitting ? 'Processing...' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
         </button>
 
         {{-- Secondary row: Cancel + Print --}}
-        <div class="flex gap-2">
+        <div class="flex gap-2 mt-3">
           <button type="button" @click="finalizeModalOpen = false"
                   class="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
           @if(feature_enabled('receipt_print'))
@@ -798,18 +798,19 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
         {{-- Auto-print toggle --}}
         @if(feature_enabled('receipt_print'))
-        <label class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-slate-100/70 cursor-pointer select-none">
+        <div @click="toggleAutoPrint()" role="switch" :aria-checked="autoPrint"
+             class="flex items-center justify-between gap-2 px-3 py-2.5 mt-3 rounded-xl bg-slate-100/70 cursor-pointer select-none">
           <span class="flex items-center gap-2 text-xs font-semibold text-slate-500">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Har sale par auto-print
           </span>
-          <span class="relative inline-block shrink-0" style="width:38px;height:22px">
-            <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="sr-only peer">
-            <span class="absolute inset-0 rounded-full bg-slate-300 peer-checked:bg-green-500 transition-colors"></span>
-            <span class="absolute rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"
-                  style="top:3px;left:3px;width:16px;height:16px"></span>
+          <span class="relative inline-block shrink-0 rounded-full transition-colors" style="width:38px;height:22px"
+                :style="autoPrint ? 'background:#22c55e' : 'background:#cbd5e1'">
+            <span class="absolute rounded-full bg-white shadow transition-transform"
+                  style="top:3px;left:3px;width:16px;height:16px"
+                  :style="autoPrint ? 'transform:translateX(16px)' : 'transform:translateX(0)'"></span>
           </span>
-        </label>
+        </div>
         @endif
       </div>
     </div>
