@@ -12,10 +12,11 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    // NOTE: Public self-registration is intentionally DISABLED. Tenant owner
+    // accounts are created when the tenant is provisioned (tenant:create /
+    // admin panel); staff logins are managed inside the app. Leaving open
+    // registration on a tenant subdomain would let anyone create an account
+    // and access that shop's data.
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
