@@ -798,15 +798,16 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
         {{-- Auto-print toggle --}}
         @if(feature_enabled('receipt_print'))
-        <label class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white border border-slate-100 cursor-pointer select-none">
+        <label class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-slate-100/70 cursor-pointer select-none">
           <span class="flex items-center gap-2 text-xs font-semibold text-slate-500">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Har sale par auto-print
           </span>
-          <span class="relative inline-flex items-center">
+          <span class="relative inline-block shrink-0" style="width:38px;height:22px">
             <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="sr-only peer">
-            <span class="w-9 h-5 rounded-full bg-slate-200 peer-checked:bg-green-500 transition-colors"></span>
-            <span class="absolute left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+            <span class="absolute inset-0 rounded-full bg-slate-300 peer-checked:bg-green-500 transition-colors"></span>
+            <span class="absolute rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"
+                  style="top:3px;left:3px;width:16px;height:16px"></span>
           </span>
         </label>
         @endif
