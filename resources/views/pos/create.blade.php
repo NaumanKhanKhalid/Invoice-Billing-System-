@@ -160,13 +160,14 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
               <template x-if="entry.isGroup">
                 <span class="absolute top-1.5 left-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800/85 text-white" x-text="entry.variants.length + ' options'"></span>
               </template>
+              {{-- price overlay (bottom) — saves the whole price row below --}}
+              <span class="absolute bottom-1.5 left-1.5 text-[11px] font-extrabold text-green-700 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-lg shadow-sm tabular-nums" x-text="cardPrice(entry)"></span>
               <span class="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition"></span>
             </div>
 
-            {{-- Info --}}
-            <div class="p-2 flex flex-col gap-0.5">
-              <p class="text-[12.5px] font-semibold text-slate-800 leading-tight line-clamp-2" style="min-height:2.1rem" x-text="entry.isGroup ? entry.group : entry.product.name"></p>
-              <p class="text-sm font-extrabold leading-none mt-0.5 text-green-600" x-text="cardPrice(entry)"></p>
+            {{-- Info (name only) --}}
+            <div class="px-2 py-1.5">
+              <p class="text-[12px] font-semibold text-slate-800 leading-tight line-clamp-2" style="min-height:2rem" x-text="entry.isGroup ? entry.group : entry.product.name"></p>
             </div>
           </button>
         </template>
