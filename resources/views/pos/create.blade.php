@@ -653,7 +653,8 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
   {{-- ══ Calculator (floating) ══ --}}
   <div x-show="calcOpen" x-cloak x-transition
        class="fixed z-50 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
-       style="top:4rem;right:1rem;width:15rem" @click.outside="calcOpen = false">
+       style="top:4rem;right:1rem;width:15rem"
+       @keydown.window="calcKey($event)" @click.outside="calcOpen = false">
     <div class="flex items-center justify-between px-3 py-2 bg-slate-800 text-white">
       <span class="text-xs font-bold flex items-center gap-1.5">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
@@ -1224,8 +1225,10 @@ function posApp() {
     // ── Calculator ──
     calcPress(k) {
       if (k === 'C')   { this.calcExpr = ''; return; }
-      if (k === 'DEL') { this.calcExpr = this.calcExpr.slice(0, -1); return; }
+      if (k === 'DEL') { this.calcExpr = (this.calcExpr === 'Error') ? '' : this.calcExpr.slice(0, -1); return; }
       if (k === '=')   { this.calcEval(); return; }
+      // fresh start after an error or a completed result when a digit is typed
+      if (this.calcExpr === 'Error') this.calcExpr = '';
       // don't allow two operators in a row
       if (['+','-','×','÷','%'].includes(k) && /[+\-×÷%]$/.test(this.calcExpr)) {
         this.calcExpr = this.calcExpr.slice(0, -1) + k;
@@ -1236,12 +1239,29 @@ function posApp() {
     calcEval() {
       try {
         let e = this.calcExpr.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100');
-        e = e.replace(/[^0-9+\-*/.() ]/g, '');
-        if (!e) return;
+        e = e.replace(/[^0-9+\-*/.() ]/g, '').trim();
+        if (!e || /[+\-*/.]$/.test(e)) return;   // ignore trailing operator
         let r = Function('"use strict";return (' + e + ')')();
-        if (!isFinite(r)) { this.calcExpr = 'Error'; return; }
-        this.calcExpr = String(Math.round(r * 10000) / 10000);
+        if (r === undefined || r === null || !isFinite(r)) { this.calcExpr = 'Error'; return; }
+        this.calcExpr = String(Math.round((r + Number.EPSILON) * 10000) / 10000);
       } catch (err) { this.calcExpr = 'Error'; }
+    },
+    calcKey(e) {
+      if (!this.calcOpen) return;
+      const k = e.key;
+      let handled = true;
+      if (k >= '0' && k <= '9') this.calcPress(k);
+      else if (k === '.') this.calcPress('.');
+      else if (k === '+' || k === '-') this.calcPress(k);
+      else if (k === '*') this.calcPress('×');
+      else if (k === '/') this.calcPress('÷');
+      else if (k === '%') this.calcPress('%');
+      else if (k === 'Enter' || k === '=') this.calcPress('=');
+      else if (k === 'Backspace') this.calcPress('DEL');
+      else if (k === 'Escape') this.calcOpen = false;
+      else if (k === 'c' || k === 'C') this.calcPress('C');
+      else handled = false;
+      if (handled) { e.preventDefault(); e.stopPropagation(); }
     },
 
     // ── Variant picker ──
