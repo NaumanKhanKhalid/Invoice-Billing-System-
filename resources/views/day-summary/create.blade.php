@@ -97,24 +97,26 @@
         </div>
 
         {{-- Live Calculation --}}
-        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+        <div class="rounded-2xl p-4 border transition-colors"
+             :class="difference > 0 ? 'bg-green-50 border-green-200' : (difference < 0 ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-100')">
           <div class="grid grid-cols-3 grid-stack-sm gap-4 text-center">
             <div>
-              <p class="text-xs text-slate-500 mb-1">Expected Cash</p>
-              <p class="text-lg font-bold text-slate-800" x-text="'PKR ' + Math.round(expectedCash).toLocaleString()"></p>
-              <p class="text-xs text-slate-400">Opening + Revenue − Expenses</p>
+              <p class="text-xs text-slate-500 mb-1 font-medium">Expected Cash</p>
+              <p class="text-lg font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Math.round(expectedCash).toLocaleString()"></p>
+              <p class="text-[11px] text-slate-400">Opening + Revenue − Expenses</p>
             </div>
             <div>
-              <p class="text-xs text-slate-500 mb-1">Counted Cash</p>
-              <p class="text-lg font-bold text-slate-800" x-text="'PKR ' + Math.round(cashReceived).toLocaleString()"></p>
-              <p class="text-xs text-slate-400">Physical count</p>
+              <p class="text-xs text-slate-500 mb-1 font-medium">Counted Cash</p>
+              <p class="text-lg font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Math.round(cashReceived).toLocaleString()"></p>
+              <p class="text-[11px] text-slate-400">Physical count</p>
             </div>
             <div>
-              <p class="text-xs text-slate-500 mb-1">Difference</p>
-              <p class="text-lg font-bold" :class="difference > 0 ? 'text-green-600' : difference < 0 ? 'text-red-600' : 'text-slate-600'"
-                 x-text="(difference >= 0 ? '+' : '') + 'PKR ' + Math.round(Math.abs(difference)).toLocaleString()"></p>
-              <p class="text-xs font-medium" :class="difference > 0 ? 'text-green-500' : difference < 0 ? 'text-red-500' : 'text-slate-400'"
-                 x-text="diffLabel"></p>
+              <p class="text-xs text-slate-500 mb-1 font-medium">Difference</p>
+              <p class="text-lg font-extrabold tabular-nums" :class="difference > 0 ? 'text-green-700' : difference < 0 ? 'text-red-600' : 'text-slate-700'"
+                 x-text="(difference >= 0 ? '+' : '−') + 'PKR ' + Math.round(Math.abs(difference)).toLocaleString()"></p>
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full mt-0.5"
+                    :class="difference > 0 ? 'bg-green-100 text-green-700' : difference < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-200 text-slate-500'"
+                    x-text="diffLabel"></span>
             </div>
           </div>
         </div>
@@ -137,7 +139,7 @@
     <div class="flex items-center justify-end gap-3">
       <a href="{{ route('day-summary.index') }}" class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">Cancel</a>
       <button type="submit"
-              class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+              class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm">
         <i data-lucide="moon" class="w-4 h-4"></i>
         {{ $existing ? 'Update Summary' : 'Save & Close Day' }}
       </button>
