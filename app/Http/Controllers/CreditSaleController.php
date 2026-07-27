@@ -24,13 +24,49 @@ class CreditSaleController extends Controller
 
         $status = $request->get('status', 'all');
         if ($status === 'unpaid') {
-            $query->where('status', 'unpaid');
+            $query->whereIn('status', ['unpaid', 'partial']);
         } elseif ($status === 'overdue') {
             $query->whereIn('status', ['unpaid', 'partial'])
                   ->whereDate('due_date', '<', today());
         }
 
-        $records = $query->orderBy('due_date')->paginate(20)->withQueryString();
+        // Group every credit sale by customer (linked udhar customer if present,
+        // otherwise by name+phone) so the book shows one row per person.
+        $groups = $query->orderBy('due_date')->get()
+            ->groupBy(fn ($s) => $s->udhar_customer_id
+                ? 'id:' . $s->udhar_customer_id
+                : 'name:' . strtolower(trim($s->customer_name)) . '|' . trim($s->phone ?? ''));
+
+        $rows = $groups->map(function ($sales) {
+            $first    = $sales->first();
+            $open     = $sales->whereIn('status', ['unpaid', 'partial']);
+            $nextDue  = $open->min('due_date');
+
+            return (object) [
+                'udhar_customer_id' => $first->udhar_customer_id,
+                'customer_name'     => $first->udharCustomer->name  ?? $first->customer_name,
+                'phone'             => $first->udharCustomer->phone ?? $first->phone,
+                'total_amount'      => $sales->sum('amount'),
+                'total_paid'        => $sales->sum('amount_paid'),
+                'total_due'         => $sales->sum('amount_due'),
+                'sale_count'        => $sales->count(),
+                'open_count'        => $open->count(),
+                'next_due'          => $nextDue,
+                'has_overdue'       => $open->contains(fn ($s) => $s->due_date && $s->due_date->isPast()),
+                'latest_sale'       => $sales->max('sale_date'),
+            ];
+        })->sortByDesc('total_due')->values();
+
+        // Paginate the grouped collection manually.
+        $page    = (int) $request->get('page', 1);
+        $perPage = 20;
+        $records = new \Illuminate\Pagination\LengthAwarePaginator(
+            $rows->forPage($page, $perPage)->values(),
+            $rows->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         $stats = [
             'total_due'     => CreditSale::whereIn('status', ['unpaid', 'partial'])->sum('amount_due'),

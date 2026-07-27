@@ -89,7 +89,7 @@
       <div class="ml-auto flex items-center gap-4 text-sm text-slate-500">
         <span class="flex items-center gap-1.5">
           <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
-          <span class="font-semibold text-slate-700">{{ $records->total() }}</span> records
+          <span class="font-semibold text-slate-700">{{ $records->total() }}</span> customers
         </span>
       </div>
     </div>
@@ -108,7 +108,7 @@
     <div class="flex flex-wrap gap-2">
       @foreach($records->filter(fn($r) => $r->phone) as $r)
       @php
-        $waMsg = urlencode("Dear " . $r->customer_name . ", you have an outstanding balance of " . formatCurrency($r->amount_due) . " due by " . $r->due_date->format('d M Y') . ". Please arrange payment. — " . \App\Models\Setting::getValue('company_name', tenancy()->initialized ? tenant()->shop_name : config('app.name')));
+        $waMsg = urlencode("Dear " . $r->customer_name . ", you have an outstanding balance of " . formatCurrency($r->total_due) . ". Please arrange payment. — " . \App\Models\Setting::getValue('company_name', tenancy()->initialized ? tenant()->shop_name : config('app.name')));
         $waPhone = wa_number($r->phone);
         if (str_starts_with($waPhone, '0')) $waPhone = '92' . substr($waPhone, 1);
       @endphp
@@ -128,72 +128,59 @@
         <tr>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Customer</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Phone</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
+          <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Sales</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Total</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Paid</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Due</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Due Date</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Total Baqi</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Next Due</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
         @forelse($records as $record)
         @php
-          $isOverdue   = in_array($record->status, ['unpaid','partial']) && $record->due_date->isPast();
-          $isToday     = $record->due_date->isToday();
-          $daysOverdue = $isOverdue ? $record->due_date->diffInDays(today()) : 0;
-
-          if ($isOverdue && $daysOverdue >= 60) {
-              $rowClass = 'bg-red-100';
-          } elseif ($isOverdue && $daysOverdue >= 30) {
-              $rowClass = 'bg-red-50';
-          } elseif ($isOverdue && $daysOverdue >= 15) {
-              $rowClass = 'bg-orange-50';
-          } elseif ($isOverdue) {
-              $rowClass = 'bg-yellow-50';
-          } else {
-              $rowClass = '';
-          }
+          $isOverdue = $record->has_overdue;
+          $isToday   = $record->next_due && $record->next_due->isToday();
+          $rowClass  = $isOverdue ? 'bg-red-50/60' : '';
+          $initials  = strtoupper(mb_substr(trim($record->customer_name), 0, 1));
         @endphp
         <tr class="hover:bg-slate-50/80 transition-colors {{ $rowClass }}">
           <td class="px-4 py-3 text-sm font-medium">
-            <a href="{{ route('udhar.show', $record) }}" class="text-slate-900 hover:text-green-600">{{ $record->customer_name }}</a>
-            @if($record->description)<p class="text-xs text-slate-400 mt-0.5">{{ $record->description }}</p>@endif
-            @if($isOverdue && $daysOverdue >= 60)
-              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-700 text-white mt-1">High Risk</span>
-            @endif
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 shrink-0 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-bold">{{ $initials }}</span>
+              <div>
+                <span class="text-slate-900 font-semibold">{{ $record->customer_name }}</span>
+                @if($isOverdue)
+                  <span class="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 align-middle">Overdue</span>
+                @endif
+              </div>
+            </div>
           </td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $record->phone ?? '-' }}</td>
-          <td class="px-4 py-3 text-sm text-right font-medium text-slate-900">{{ formatCurrency($record->amount) }}</td>
-          <td class="px-4 py-3 text-sm text-right text-green-600 font-medium">{{ formatCurrency($record->amount_paid) }}</td>
-          <td class="px-4 py-3 text-sm text-right font-bold {{ $record->amount_due > 0 ? 'text-red-600' : 'text-slate-400' }}">{{ formatCurrency($record->amount_due) }}</td>
-          <td class="px-4 py-3 text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : ($isToday ? 'text-amber-600 font-semibold' : 'text-slate-600') }}">
-            {{ $record->due_date->format('d M Y') }}
-            @if($isOverdue)<p class="text-[10px] text-red-400 font-normal">{{ $daysOverdue }} days overdue</p>@endif
-          </td>
-          <td class="px-4 py-3">
-            @if($record->status === 'paid')
-              <span class="badge badge-green">Paid</span>
-            @elseif($record->status === 'partial')
-              <span class="badge badge-yellow">Partial</span>
-            @else
-              <span class="badge badge-red">Unpaid</span>
+          <td class="px-4 py-3 text-sm text-center text-slate-600">
+            {{ $record->sale_count }}
+            @if($record->open_count < $record->sale_count)
+              <span class="text-[11px] text-slate-400">({{ $record->open_count }} open)</span>
             @endif
+          </td>
+          <td class="px-4 py-3 text-sm text-right text-slate-500">{{ formatCurrency($record->total_amount) }}</td>
+          <td class="px-4 py-3 text-sm text-right text-green-600 font-medium">{{ formatCurrency($record->total_paid) }}</td>
+          <td class="px-4 py-3 text-sm text-right font-bold {{ $record->total_due > 0 ? 'text-red-600' : 'text-slate-400' }}">{{ formatCurrency($record->total_due) }}</td>
+          <td class="px-4 py-3 text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : ($isToday ? 'text-amber-600 font-semibold' : 'text-slate-600') }}">
+            {{ $record->next_due ? $record->next_due->format('d M Y') : '—' }}
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center justify-end gap-2">
-              <a href="{{ route('udhar.show', $record) }}"
+              @if($record->udhar_customer_id)
+              <a href="{{ route('ledger.udhar-customer', $record->udhar_customer_id) }}"
+                 class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
+                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>View Ledger
+              </a>
+              @else
+              <a href="{{ route('udhar.index', ['search' => $record->customer_name]) }}"
                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>View
               </a>
-              @if($record->status === 'unpaid')
-              <form method="POST" action="{{ route('udhar.destroy', $record) }}" class="inline"
-                    data-confirm-title="Delete Udhar Record?" data-confirm-message="Are you sure you want to delete this record?" data-confirm-text="Yes, Delete">
-                @csrf @method('DELETE')
-                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete
-                </button>
-              </form>
               @endif
             </div>
           </td>
