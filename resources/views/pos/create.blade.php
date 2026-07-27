@@ -1518,7 +1518,11 @@ function posApp() {
       [100, 500, 1000, 5000].forEach(step => opts.add(Math.ceil(t / step) * step));
       return [...opts].filter(v => v > t).sort((a, b) => a - b).slice(0, 3);
     },
-    get paidTotal() { return this.payMethod === 'split' ? this.splitPaid : (Number(this.receivedAmount) || 0); },
+    get paidTotal() {
+      if (this.payMethod === 'split')  return this.splitPaid;      // cash + online part
+      if (this.payMethod === 'credit') return 0;                   // full Udhar — nothing paid now
+      return Number(this.receivedAmount) || 0;
+    },
     get change()   { return Math.max(0, this.paidTotal - this.total); },
     setFullPay()   { this.receivedAmount = this.total; },
 
