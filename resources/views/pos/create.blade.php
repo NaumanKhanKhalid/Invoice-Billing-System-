@@ -435,8 +435,8 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                       :class="payMethod === pm.value
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
-                      class="flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl border transition">
-                <span class="text-base leading-none" x-text="pm.icon"></span>
+                      class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl border transition">
+                <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x-html="pm.icon"></svg>
                 <span x-text="pm.label" class="text-[10px] font-bold"></span>
               </button>
             </template>
@@ -825,10 +825,10 @@ function posApp() {
     onlineAmount: '',
     payMethod: 'cash',
     payMethods: [
-      { value: 'cash',   label: 'Cash',   icon: '💵' },
-      { value: 'online', label: 'Online', icon: '📱' },
-      { value: 'credit', label: 'Udhar',  icon: '📋' },
-      { value: 'split',  label: 'Split',  icon: '🔀' },
+      { value: 'cash',   label: 'Cash',   icon: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>' },
+      { value: 'online', label: 'Online', icon: '<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>' },
+      { value: 'credit', label: 'Udhar',  icon: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>' },
+      { value: 'split',  label: 'Split',  icon: '<path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="m21 3-7.5 7.5"/><path d="M3 3l7.5 7.5"/><path d="M12 13v8"/>' },
     ],
     customerName: '',
     customerPhone: '',
