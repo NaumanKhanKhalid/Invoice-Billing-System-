@@ -149,7 +149,9 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                 <img :src="cardImg(entry)" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
               </template>
               <template x-if="!cardImg(entry)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                <div class="absolute inset-0 flex items-center justify-center" :style="'background:' + cardTint(entry)[0]">
+                  <span class="text-xl font-extrabold tracking-tight" :style="'color:' + cardTint(entry)[1]" x-text="cardInitials(entry)"></span>
+                </div>
               </template>
               <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm"
                     :class="cardStock(entry) <= 0 ? 'bg-red-500/90 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-400/90 text-white' : 'bg-white/85 text-slate-600')"
@@ -1221,6 +1223,18 @@ function posApp() {
       return (e.isGroup ? 'from PKR ' : 'PKR ') + Number(p).toLocaleString();
     },
     cardStockLabel(e) { const s = this.cardStock(e); return s <= 0 ? 'Out' : s + ' ' + this.cardUnit(e); },
+    cardName(e) { return e.isGroup ? e.group : e.product.name; },
+    cardInitials(e) {
+      const n = (this.cardName(e) || '?').trim();
+      const parts = n.split(/\s+/);
+      return (parts.length > 1 ? (parts[0][0] + parts[1][0]) : n.slice(0, 2)).toUpperCase();
+    },
+    cardTint(e) {
+      const pal = [['#dcfce7','#15803d'],['#dbeafe','#1d4ed8'],['#fef3c7','#b45309'],['#fce7f3','#be185d'],['#ede9fe','#6d28d9'],['#ccfbf1','#0f766e'],['#ffedd5','#c2410c'],['#e0e7ff','#4338ca'],['#fee2e2','#b91c1c'],['#f0fdfa','#0d9488']];
+      const n = this.cardName(e) || '';
+      let h = 0; for (let i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0;
+      return pal[h % pal.length];
+    },
 
     // ── Calculator ──
     calcPress(k) {
