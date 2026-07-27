@@ -775,14 +775,27 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Actions --}}
-      <div class="p-5 pt-4 flex gap-2 shrink-0 border-t border-slate-50">
-        <button type="button" @click="finalizeModalOpen = false"
-                class="px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
-        <button type="button" @click="confirmPayment()" :disabled="submitting"
-                class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-extrabold text-sm transition flex items-center justify-center gap-2">
-          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          <span x-text="submitting ? 'Processing...' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
+      <div class="p-5 pt-4 space-y-2 shrink-0 border-t border-slate-50">
+        <div class="flex gap-2">
+          <button type="button" @click="finalizeModalOpen = false"
+                  class="px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
+          <button type="button" @click="confirmPayment(false)" :disabled="submitting"
+                  class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-extrabold text-sm transition flex items-center justify-center gap-2">
+            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span x-text="submitting ? 'Processing...' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
+          </button>
+        </div>
+        @if(feature_enabled('receipt_print'))
+        <button type="button" @click="confirmPayment(true)" :disabled="submitting"
+                class="w-full bg-white border border-slate-200 hover:border-green-300 hover:text-green-700 text-slate-600 py-2.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
+          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Complete &amp; Print Invoice
         </button>
+        <label class="flex items-center justify-center gap-2 text-xs text-slate-400 cursor-pointer select-none pt-0.5">
+          <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="rounded border-slate-300 text-green-600 focus:ring-green-300">
+          Har sale par auto-print
+        </label>
+        @endif
       </div>
     </div>
   </div>
@@ -979,6 +992,7 @@ function posApp() {
     saleModalOpen: false,
     splitModalOpen: false,
     isFullscreen: false,
+    printAfter: false,
     calcOpen: false,
     calcExpr: '',
     variantModalOpen: false,
@@ -1198,7 +1212,8 @@ function posApp() {
       }
       this.resetSale();               // cart clear — POS turant next order ke liye ready
       this.saleModalOpen = true;
-      if (this.autoPrint) this.printReceipt();
+      if (this.autoPrint || this.printAfter) this.printReceipt();
+      this.printAfter = false;
       // Auto-close after a few seconds so a busy counter never stays blocked
       clearTimeout(this.saleModalTimer);
       this.saleModalTimer = setTimeout(() => { this.saleModalOpen = false; }, 6000);
@@ -1258,8 +1273,9 @@ function posApp() {
       this.finalizeModalOpen = true;
     },
 
-    // Validate the chosen method then finish
-    confirmPayment() {
+    // Validate the chosen method then finish. print=true → print invoice after.
+    confirmPayment(print = false) {
+      this.printAfter = !!print;
       if (this.payMethod === 'credit' && (!this.customerName.trim() || !this.customerPhone.trim())) {
         this.flash('Udhar ke liye customer select karein', false); return;
       }
