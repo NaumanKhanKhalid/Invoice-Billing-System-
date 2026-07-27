@@ -436,7 +436,7 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
                       class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl border transition">
-                <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x-html="pm.icon"></svg>
+                <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x-html="pm.icon"></svg>
                 <span x-text="pm.label" class="text-[10px] font-bold"></span>
               </button>
             </template>
