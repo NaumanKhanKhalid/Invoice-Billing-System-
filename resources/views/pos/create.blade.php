@@ -421,11 +421,18 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
             <span x-text="'PKR ' + subtotal.toLocaleString()" class="tabular-nums text-slate-700"></span>
           </div>
           <div class="flex justify-between items-center text-[13px] text-slate-500">
-            <span>Discount</span>
-            <div class="flex items-center gap-1.5">
-              <span class="text-slate-400 text-xs">PKR</span>
-              <input type="number" name="discount" x-model="discount" min="0" step="1" placeholder="0"
-                     class="w-16 text-right px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
+            <span class="flex items-center gap-1.5">Discount
+              <span x-show="discountType === 'percent' && discountAmount > 0" x-cloak class="text-[11px] text-red-500 font-semibold tabular-nums" x-text="'−PKR ' + discountAmount.toLocaleString()"></span>
+            </span>
+            <div class="flex items-center gap-1">
+              {{-- type toggle --}}
+              <div class="flex rounded-lg border border-slate-200 overflow-hidden text-[11px] font-bold shrink-0">
+                <button type="button" @click="discountType = 'flat'" :class="discountType === 'flat' ? 'bg-slate-800 text-white' : 'bg-white text-slate-400 hover:bg-slate-50'" class="px-2 py-1 transition">PKR</button>
+                <button type="button" @click="discountType = 'percent'" :class="discountType === 'percent' ? 'bg-slate-800 text-white' : 'bg-white text-slate-400 hover:bg-slate-50'" class="px-2 py-1 transition">%</button>
+              </div>
+              <input type="number" x-model="discount" min="0" step="1" placeholder="0"
+                     :max="discountType === 'percent' ? 100 : null"
+                     class="w-14 text-right px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
             </div>
           </div>
           <div class="flex justify-between items-baseline pt-1 border-t border-slate-100">
@@ -897,6 +904,7 @@ function posApp() {
     searchQ: '',
     activeCategory: null,
     discount: '',
+    discountType: 'flat',
     amountPaid: '',
     cashAmount: '',
     onlineAmount: '',
@@ -994,7 +1002,7 @@ function posApp() {
         customer_phone: this.customerPhone || null,
         udhar_customer_id: (this.selectedCustomer && this.selectedCustomer.id) ? this.selectedCustomer.id : null,
         payment_method: this.payMethod,
-        discount:       Number(this.discount || 0),
+        discount:       this.discountAmount,
         amount_paid:    this.paidTotal,
         cash_amount:    this.payMethod === 'split' ? (Number(this.cashAmount) || 0) : null,
         online_amount:  this.payMethod === 'split' ? (Number(this.onlineAmount) || 0) : null,
@@ -1005,7 +1013,7 @@ function posApp() {
     },
 
     resetSale() {
-      this.cart = []; this.discount = ''; this.amountPaid = ''; this.receivedAmount = '';
+      this.cart = []; this.discount = ''; this.discountType = 'flat'; this.amountPaid = ''; this.receivedAmount = '';
       this.cashAmount = ''; this.onlineAmount = ''; this.udharAmount = '';
       this.finalizeModalOpen = false; this.splitModalOpen = false;
       this.customerName = ''; this.customerPhone = ''; this.payMethod = 'cash'; this.mobileCartOpen = false;
@@ -1425,7 +1433,14 @@ function posApp() {
     },
 
     get subtotal() { return this.cart.reduce((s, i) => s + i.qty * i.price, 0); },
-    get total()    { return Math.max(0, this.subtotal - Number(this.discount || 0)); },
+    get discountAmount() {
+      const v = Number(this.discount) || 0;
+      const amt = this.discountType === 'percent'
+        ? Math.round(this.subtotal * Math.min(Math.max(v, 0), 100) / 100)
+        : Math.max(v, 0);
+      return Math.min(this.subtotal, amt);
+    },
+    get total()    { return Math.max(0, this.subtotal - this.discountAmount); },
     get splitPaid() { return (Number(this.cashAmount) || 0) + (Number(this.onlineAmount) || 0); },
     get splitUdhar() { return Number(this.udharAmount) || 0; },
     get splitAllocated() { return this.splitPaid + this.splitUdhar; },
