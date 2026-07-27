@@ -2,7 +2,7 @@
 @section('title', 'Close Day — ' . \Carbon\Carbon::parse($date)->format('d M Y'))
 @section('content')
 
-<div class="space-y-6 max-w-3xl mx-auto" x-data="{
+<div class="space-y-6" x-data="{
     openingCash: {{ $openingCash }},
     posRevenue: {{ $posRevenue }},
     totalExpenses: {{ $totalExpenses }},
