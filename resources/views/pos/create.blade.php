@@ -583,7 +583,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             </div>
             <div class="text-right shrink-0">
               <p class="text-sm font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Number(s.total).toLocaleString()"></p>
-              <p class="text-[10px] text-slate-400 capitalize" x-text="s.method"></p>
+              <p class="text-[10px] text-slate-400" x-text="payLabel(s.method)"></p>
             </div>
           </a>
         </template>
@@ -868,7 +868,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         <p class="text-xs text-slate-400 font-mono mt-0.5" x-text="lastSale.number"></p>
         <p class="text-4xl font-extrabold text-slate-900 mt-3 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
         <div class="flex items-center justify-center gap-2 mt-2">
-          <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold capitalize" x-text="lastSale.payMethod"></span>
+          <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold" x-text="payLabel(lastSale.payMethod)"></span>
           <template x-if="lastSale.change > 0">
             <span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold tabular-nums" x-text="'Change PKR ' + Number(lastSale.change).toLocaleString()"></span>
           </template>
@@ -1432,6 +1432,10 @@ function posApp() {
       const n = this.cardName(e) || '';
       let h = 0; for (let i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0;
       return pal[h % pal.length];
+    },
+
+    payLabel(m) {
+      return ({ cash: 'Cash', online: 'Online', credit: 'Udhar', split: 'Split' })[m] || (m || '');
     },
 
     // ── Fullscreen ──

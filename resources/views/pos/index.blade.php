@@ -43,7 +43,7 @@
           <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $sale->sale_number }}</td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $sale->date->format('d M Y') }}</td>
           <td class="px-4 py-3 text-sm text-slate-600">{{ $sale->customer_name ?? '—' }}</td>
-          <td class="px-4 py-3 text-sm text-slate-500 capitalize">{{ $sale->payment_method }}</td>
+          <td class="px-4 py-3 text-sm text-slate-500">{{ payment_label($sale->payment_method) }}</td>
           <td class="px-4 py-3 text-sm text-right font-bold text-slate-900">PKR {{ number_format($sale->total) }}</td>
           <td class="px-4 py-3 text-right">
             <div class="flex items-center justify-end gap-2">

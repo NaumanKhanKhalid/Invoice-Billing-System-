@@ -25,7 +25,7 @@
       <p class="text-xs text-slate-400 mt-0.5 font-mono">{{ $posSale->sale_number }}</p>
       <p class="text-3xl font-extrabold text-slate-900 mt-3 tabular-nums">PKR {{ number_format($posSale->total) }}</p>
       <div class="flex items-center justify-center gap-2 mt-2">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold">{{ ucfirst($posSale->payment_method) }}</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold">{{ payment_label($posSale->payment_method) }}</span>
         @if($posSale->change_due > 0)
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold tabular-nums">Change PKR {{ number_format($posSale->change_due) }}</span>
         @endif
@@ -120,7 +120,7 @@
       </div>
       @else
       <div class="flex justify-between text-slate-500">
-        <span>Paid ({{ ucfirst($posSale->payment_method) }})</span>
+        <span>Paid ({{ payment_label($posSale->payment_method) }})</span>
         <span>{{ number_format($posSale->amount_paid) }}</span>
       </div>
       @endif

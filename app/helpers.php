@@ -135,3 +135,19 @@ if (!function_exists('shop_favicon')) {
         return 'data:image/svg+xml,' . rawurlencode($svg);
     }
 }
+
+if (!function_exists('payment_label')) {
+    /** Friendly label for a payment method value (credit → Udhar). */
+    function payment_label(?string $method): string
+    {
+        return [
+            'cash'      => 'Cash',
+            'online'    => 'Online',
+            'credit'    => 'Udhar',
+            'split'     => 'Split',
+            'jazzcash'  => 'JazzCash',
+            'easypaisa' => 'Easypaisa',
+            'bank'      => 'Bank',
+        ][$method] ?? ucfirst((string) $method);
+    }
+}

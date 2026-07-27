@@ -149,7 +149,7 @@
           @foreach($paymentBreakdown as $pm)
           <div class="px-5 py-3 flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-slate-900">{{ ucfirst($pm->payment_method) }}</p>
+              <p class="text-sm font-medium text-slate-900">{{ payment_label($pm->payment_method) }}</p>
               <p class="text-xs text-slate-400">{{ $pm->orders }} sales</p>
             </div>
             <p class="text-sm font-semibold text-slate-700">{{ formatCurrency($pm->total) }}</p>
