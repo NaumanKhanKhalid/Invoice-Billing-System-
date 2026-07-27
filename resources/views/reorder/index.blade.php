@@ -79,12 +79,8 @@
   @endif
 </div>
 
-<script>
-function reorderList() {
-  return {
-    supplier: '',
-    copied: false,
-    items: @json($products->map(fn($p) => [
+@php
+  $reorderItems = $products->map(fn($p) => [
       'id' => $p->id,
       'name' => $p->name,
       'unit' => $p->unit,
@@ -92,7 +88,14 @@ function reorderList() {
       'alert' => $p->low_stock_alert,
       'qty' => $p->suggested_qty,
       'checked' => true,
-    ])->values()),
+  ])->values();
+@endphp
+<script>
+function reorderList() {
+  return {
+    supplier: '',
+    copied: false,
+    items: @json($reorderItems),
     checkedItems() {
       return this.items.filter(i => i.checked);
     },
