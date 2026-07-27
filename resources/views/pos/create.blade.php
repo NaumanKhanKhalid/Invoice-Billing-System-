@@ -5,6 +5,7 @@
 window.__POS_PRODUCTS__ = @json($products);
 window.__POS_HOLDS__ = @json($heldSales ?? []);
 window.__POS_CUSTOMERS__ = @json($customers ?? []);
+window.__POS_RECENT__ = @json($recentSales ?? []);
 </script>
 
 <style>
@@ -115,7 +116,11 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
       </button>
       @endif
 
-      <a href="{{ route('pos.index') }}" class="text-xs text-slate-400 hover:text-slate-600 shrink-0 hidden lg:block whitespace-nowrap">History →</a>
+      <button type="button" @click="recentPanelOpen = true"
+              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 text-xs font-semibold transition shrink-0 whitespace-nowrap">
+        <svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+        <span x-text="'Sales (' + recentSales.length + ')'"></span>
+      </button>
     </div>
 
     {{-- Scan toast --}}
@@ -541,6 +546,51 @@ window.__POS_CUSTOMERS__ = @json($customers ?? []);
     </div>
   </div>
 
+  {{-- Recent Sales quick-view slide-over --}}
+  <div x-show="recentPanelOpen" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="recentPanelOpen = false">
+    <div class="absolute inset-0 bg-black/50" @click="recentPanelOpen = false" x-show="recentPanelOpen" x-transition.opacity></div>
+    <div class="absolute right-0 inset-y-0 w-full max-w-md bg-white shadow-2xl flex flex-col"
+         x-show="recentPanelOpen" x-transition:enter="transition transform duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
+        <div>
+          <h3 class="font-bold text-slate-900">Today's Sales</h3>
+          <p class="text-xs text-slate-400 mt-0.5" x-text="recentSales.length + ' sale(s) · PKR ' + recentSales.reduce((s,r)=>s+Number(r.total||0),0).toLocaleString()"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="{{ route('pos.index') }}" class="text-xs font-semibold text-green-600 hover:underline">Full history →</a>
+          <button type="button" @click="recentPanelOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto p-3 space-y-2">
+        <template x-if="recentSales.length === 0">
+          <div class="flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-14 h-14 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center mb-3">
+              <svg style="width:24px;height:24px" class="text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            </div>
+            <p class="text-slate-500 text-sm font-medium">Aaj abhi koi sale nahi hui</p>
+          </div>
+        </template>
+        <template x-for="s in recentSales" :key="s.number">
+          <a :href="s.url" target="_blank"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-100 hover:border-green-300 hover:bg-green-50/50 transition">
+            <div class="w-9 h-9 rounded-lg bg-green-100 text-green-700 flex items-center justify-center shrink-0">
+              <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-slate-800 truncate" x-text="s.number"></p>
+              <p class="text-[11px] text-slate-400 truncate" x-text="(s.customer || 'Walk-in') + ' · ' + s.time"></p>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-sm font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Number(s.total).toLocaleString()"></p>
+              <p class="text-[10px] text-slate-400 capitalize" x-text="s.method"></p>
+            </div>
+          </a>
+        </template>
+      </div>
+    </div>
+  </div>
+
   {{-- Held Sales slide-over --}}
   <div x-show="holdsPanelOpen" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="holdsPanelOpen = false; confirmDeleteId = null">
     <div class="absolute inset-0 bg-black/50" @click="holdsPanelOpen = false; confirmDeleteId = null" x-show="holdsPanelOpen" x-transition.opacity></div>
@@ -922,6 +972,8 @@ function posApp() {
     customerName: '',
     customerPhone: '',
     customers: window.__POS_CUSTOMERS__ || [],
+    recentSales: window.__POS_RECENT__ || [],
+    recentPanelOpen: false,
     quoteNumber: @json($nextQuoteNumber ?? ''),
     quoteToday: @json(date('Y-m-d')),
     saleModalOpen: false,
@@ -1132,6 +1184,18 @@ function posApp() {
         receiptUrl:  json.receipt_url || '',
         whatsappUrl: json.whatsapp_url || null,
       };
+      // Prepend to the quick-view recent sales list (live, no refresh needed)
+      if (json.sale_number) {
+        this.recentSales.unshift({
+          number: json.sale_number,
+          customer: this.customerName || null,
+          total: Number(json.total || this.total || 0),
+          method: json.payment_method || this.payMethod,
+          time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+          url: json.receipt_url || '',
+        });
+        if (this.recentSales.length > 30) this.recentSales.pop();
+      }
       this.resetSale();               // cart clear — POS turant next order ke liye ready
       this.saleModalOpen = true;
       if (this.autoPrint) this.printReceipt();

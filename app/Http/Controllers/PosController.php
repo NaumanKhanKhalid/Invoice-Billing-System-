@@ -36,7 +36,17 @@ class PosController extends Controller
         $heldSales = feature_enabled('open_tabs') ? $this->openHolds() : collect();
         $customers = UdharCustomer::orderBy('name')->get(['id','name','phone','current_balance']);
         $nextQuoteNumber = feature_enabled('quotations') ? Quotation::nextNumber() : null;
-        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales', 'customers', 'nextQuoteNumber'));
+        $recentSales = PosSale::whereDate('date', today())->latest('id')->limit(25)
+            ->get(['id','sale_number','customer_name','total','payment_method','created_at'])
+            ->map(fn ($s) => [
+                'number'  => $s->sale_number,
+                'customer'=> $s->customer_name,
+                'total'   => (float) $s->total,
+                'method'  => $s->payment_method,
+                'time'    => $s->created_at->format('h:i A'),
+                'url'     => route('pos.receipt', $s->id),
+            ]);
+        return view('pos.create', compact('products', 'todaySales', 'todayRevenue', 'lowStock', 'heldSales', 'customers', 'nextQuoteNumber', 'recentSales'));
     }
 
     public function store(Request $request)
