@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Edit — '.$product->name)
 @section('content')
-<div class="max-w-2xl mx-auto space-y-6">
+<div class="space-y-6">
   <div class="flex items-center gap-3">
     <a href="{{ route('products.show', $product) }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
       <i data-lucide="arrow-left" class="w-4 h-4"></i>

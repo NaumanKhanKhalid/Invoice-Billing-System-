@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','New Product Purchase')
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6"
+<div class="space-y-6"
      x-data="{
        items: [],
        addItem(product) {

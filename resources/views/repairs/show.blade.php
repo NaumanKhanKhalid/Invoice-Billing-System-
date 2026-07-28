@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $job->job_number)
 @section('content')
-<div class="max-w-3xl mx-auto space-y-6">
+<div class="space-y-6">
 
   <div class="flex items-center justify-between print:hidden">
     <div class="flex items-center gap-3">

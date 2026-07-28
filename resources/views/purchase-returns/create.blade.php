@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Return to Supplier')
 @section('content')
-<div class="max-w-2xl mx-auto space-y-5">
+<div class="space-y-5">
 
   <div class="flex items-center gap-3">
     <a href="{{ route('product-purchases.show', $purchase) }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
