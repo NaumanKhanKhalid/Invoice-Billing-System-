@@ -871,26 +871,30 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
          x-transition:enter="ease-out duration-200"
          x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
          @click.outside="closeSaleModal()">
-      {{-- Success header with soft gradient --}}
-      <div class="pt-7 pb-5 px-6 text-center" style="background:linear-gradient(180deg,#f0fdf4 0%,#ffffff 100%)">
-        <div class="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center mb-3 shadow-md ring-4 ring-green-100">
-          <div class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
+      {{-- Success header --}}
+      <div class="pt-7 pb-4 px-6 text-center">
+        <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         </div>
         <h3 class="text-lg font-extrabold text-slate-900">Sale Complete!</h3>
-        <span class="inline-block mt-1 px-2 py-0.5 rounded-md bg-slate-100 text-[11px] font-mono font-semibold text-slate-500" x-text="lastSale.number"></span>
-        <p class="text-4xl font-extrabold text-slate-900 mt-4 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
-        <div class="flex items-center justify-center gap-2 mt-2.5">
-          <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold" x-text="payLabel(lastSale.payMethod)"></span>
-          <template x-if="lastSale.change > 0">
-            <span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold tabular-nums" x-text="'Change PKR ' + Number(lastSale.change).toLocaleString()"></span>
-          </template>
+        <p class="text-xs text-slate-400 font-mono mt-1" x-text="lastSale.number"></p>
+      </div>
+
+      {{-- Amount box --}}
+      <div class="px-5">
+        <div class="rounded-2xl bg-slate-50 px-4 py-4 text-center">
+          <p class="text-3xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
+          <div class="flex items-center justify-center gap-2 mt-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold" x-text="payLabel(lastSale.payMethod)"></span>
+            <template x-if="lastSale.change > 0">
+              <span class="px-2.5 py-0.5 rounded-full bg-white text-slate-600 text-xs font-semibold tabular-nums border border-slate-200" x-text="'Change PKR ' + Number(lastSale.change).toLocaleString()"></span>
+            </template>
+          </div>
         </div>
       </div>
 
       {{-- Print / WhatsApp --}}
-      <div class="px-5 pt-1 pb-3 flex gap-2"
+      <div class="px-5 pt-3 pb-3 flex gap-2"
            x-show="{{ feature_enabled('receipt_print') ? 'true' : 'false' }} || lastSale.whatsappUrl">
         @if(feature_enabled('receipt_print'))
         <button type="button" @click="printReceipt()" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:border-green-400 hover:text-green-700 hover:bg-green-50/50 text-sm font-bold transition">
