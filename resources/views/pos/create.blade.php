@@ -46,13 +46,24 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
   {{-- ══ Offline queue banner ══ --}}
   <div x-show="offlineQueue.length > 0" x-cloak
-       class="bg-amber-100 border-b border-amber-300 px-4 py-2 flex items-center gap-3 shrink-0">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.29 3.86-8.47 14.14A2 2 0 0 0 3.53 21h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
-    <p class="text-xs sm:text-sm font-semibold text-amber-800 flex-1"
-       x-text="offlineQueue.length + ' sales offline saved hain — net aane par khud sync ho jayengi'"></p>
+       class="px-4 py-2.5 flex items-center gap-3 shrink-0 border-b border-amber-200"
+       style="background:linear-gradient(90deg,#fffbeb 0%,#fef3c7 100%)">
+    <span class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 16.5a5 5 0 0 1 0-9 6.5 6.5 0 0 1 12.4 1.5A4.5 4.5 0 0 1 19 17"/><line x1="2" x2="22" y1="2" y2="22"/><path d="M12 12v9"/></svg>
+    </span>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-bold text-amber-900 leading-tight">
+        <span x-text="offlineQueue.length"></span>
+        <span x-text="offlineQueue.length === 1 ? 'sale offline saved' : 'sales offline saved'"></span>
+      </p>
+      <p class="text-[11px] text-amber-700/80 leading-tight mt-0.5"
+         x-text="syncing ? 'Sync ho rahi hai…' : 'Net aate hi khud sync ho jayengi'"></p>
+    </div>
     <button type="button" @click="syncQueue()" :disabled="syncing"
-            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition shrink-0"
-            x-text="syncing ? 'Syncing...' : 'Sync Now'"></button>
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white text-xs font-bold rounded-lg transition shrink-0 shadow-sm">
+      <svg :class="syncing ? 'animate-spin' : ''" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+      <span x-text="syncing ? 'Syncing…' : 'Sync Now'"></span>
+    </button>
   </div>
 
   <div class="flex flex-1 min-h-0 overflow-hidden">
