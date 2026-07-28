@@ -655,21 +655,18 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                   <p class="text-[11px] text-slate-400 mt-0.5" x-text="timeAgo(h.created_at)"></p>
                 </div>
               </div>
-              <div class="text-right shrink-0">
-                <p class="text-[10px] text-slate-400 font-semibold uppercase">Amount</p>
-                <p class="font-extrabold text-green-600 text-sm whitespace-nowrap" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
-              </div>
+              <p class="font-extrabold text-green-600 text-base whitespace-nowrap shrink-0 tabular-nums" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
             </div>
 
             {{-- Normal actions --}}
             <div class="flex gap-2 mt-3" x-show="confirmDeleteId !== h.id">
               <button type="button" @click="resumeHold(h)"
-                      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm shadow-green-600/20">
+                      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white py-2 rounded-lg text-xs font-bold transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                 Resume Sale
               </button>
               <button type="button" @click="confirmDeleteId = h.id" title="Delete hold"
-                      class="px-3 py-2 border border-slate-200 text-slate-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50 rounded-xl text-xs font-bold transition">
+                      class="px-3 py-2 border border-slate-200 text-slate-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50 rounded-lg text-xs font-bold transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
               </button>
             </div>
