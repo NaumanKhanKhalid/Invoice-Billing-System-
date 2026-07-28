@@ -866,19 +866,22 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
        style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px);"
        @keydown.escape.window="closeSaleModal()">
-    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden mx-auto"
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden mx-auto relative"
          style="width:100%;max-width:22rem;"
          x-transition:enter="ease-out duration-200"
          x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
          @click.outside="closeSaleModal()">
-      <div class="p-6 text-center">
-        <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      {{-- Success header with soft gradient --}}
+      <div class="pt-7 pb-5 px-6 text-center" style="background:linear-gradient(180deg,#f0fdf4 0%,#ffffff 100%)">
+        <div class="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center mb-3 shadow-md ring-4 ring-green-100">
+          <div class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
         </div>
-        <h3 class="text-lg font-bold text-slate-900">Sale Complete!</h3>
-        <p class="text-xs text-slate-400 font-mono mt-0.5" x-text="lastSale.number"></p>
-        <p class="text-4xl font-extrabold text-slate-900 mt-3 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
-        <div class="flex items-center justify-center gap-2 mt-2">
+        <h3 class="text-lg font-extrabold text-slate-900">Sale Complete!</h3>
+        <span class="inline-block mt-1 px-2 py-0.5 rounded-md bg-slate-100 text-[11px] font-mono font-semibold text-slate-500" x-text="lastSale.number"></span>
+        <p class="text-4xl font-extrabold text-slate-900 mt-4 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
+        <div class="flex items-center justify-center gap-2 mt-2.5">
           <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold" x-text="payLabel(lastSale.payMethod)"></span>
           <template x-if="lastSale.change > 0">
             <span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold tabular-nums" x-text="'Change PKR ' + Number(lastSale.change).toLocaleString()"></span>
@@ -887,16 +890,16 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Print / WhatsApp --}}
-      <div class="grid grid-cols-2 border-t border-slate-100 divide-x divide-slate-100"
+      <div class="px-5 pt-1 pb-3 flex gap-2"
            x-show="{{ feature_enabled('receipt_print') ? 'true' : 'false' }} || lastSale.whatsappUrl">
         @if(feature_enabled('receipt_print'))
-        <button type="button" @click="printReceipt()" class="flex items-center justify-center gap-2 py-3.5 text-green-700 hover:bg-green-50 text-sm font-bold transition">
+        <button type="button" @click="printReceipt()" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:border-green-400 hover:text-green-700 hover:bg-green-50/50 text-sm font-bold transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print
         </button>
         @endif
         <template x-if="lastSale.whatsappUrl">
-          <a :href="lastSale.whatsappUrl" target="_blank" class="flex items-center justify-center gap-2 py-3.5 text-emerald-600 hover:bg-emerald-50 text-sm font-bold transition">
+          <a :href="lastSale.whatsappUrl" target="_blank" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50/50 text-sm font-bold transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             WhatsApp
           </a>
@@ -904,18 +907,13 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- New Sale (primary) --}}
-      <button type="button" @click="closeSaleModal()"
-              class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition flex items-center justify-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
-        New Sale
-      </button>
-
-      @if(feature_enabled('receipt_print'))
-      <label class="flex items-center justify-center gap-2 py-2.5 text-xs text-slate-400 border-t border-slate-100 cursor-pointer select-none">
-        <input type="checkbox" :checked="autoPrint" @change="toggleAutoPrint()" class="rounded border-slate-300 text-green-600 focus:ring-green-300">
-        Har sale par auto-print
-      </label>
-      @endif
+      <div class="px-5 pb-5">
+        <button type="button" @click="closeSaleModal()"
+                class="w-full py-3.5 rounded-2xl bg-green-600 hover:bg-green-700 active:scale-[.99] text-white font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+          New Sale
+        </button>
+      </div>
     </div>
   </div>
 
