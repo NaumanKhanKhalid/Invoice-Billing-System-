@@ -641,33 +641,29 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           </div>
         </template>
         <template x-for="h in heldSales" :key="h.id">
-          <div class="border border-slate-200 rounded-2xl p-3.5 bg-white hover:border-green-300 hover:shadow-md transition">
+          <div class="border border-slate-200 rounded-2xl p-4 bg-white hover:border-slate-300 transition">
+            {{-- Title + amount --}}
             <div class="flex items-center justify-between gap-3">
-              <div class="min-w-0 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 text-sm font-bold uppercase"
-                     x-text="(h.customer_name || '?').trim().charAt(0)"></div>
-                <div class="min-w-0">
-                  <p class="font-bold text-slate-900 text-sm truncate" x-text="h.customer_name"></p>
-                  <div class="flex items-center gap-1.5 mt-1">
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono font-bold" x-text="h.tab_number"></span>
-                    <span class="text-[11px] text-slate-400" x-text="h.items_count + ' item(s)'"></span>
-                  </div>
-                  <p class="text-[11px] text-slate-400 mt-0.5" x-text="timeAgo(h.created_at)"></p>
-                </div>
-              </div>
-              <p class="font-extrabold text-green-600 text-base whitespace-nowrap shrink-0 tabular-nums" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
+              <p class="font-bold text-slate-900 text-sm truncate" x-text="h.customer_name || ('Order ' + h.tab_number)"></p>
+              <p class="font-extrabold text-slate-900 text-base whitespace-nowrap shrink-0 tabular-nums" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
             </div>
+            {{-- Meta --}}
+            <p class="text-xs text-slate-400 mt-1">
+              <span class="font-mono font-semibold text-slate-500" x-text="h.tab_number"></span>
+              <span> · </span><span x-text="h.items_count + ' item(s)'"></span>
+              <span> · </span><span x-text="timeAgo(h.created_at)"></span>
+            </p>
 
             {{-- Normal actions --}}
-            <div class="flex items-center justify-end gap-2 mt-3" x-show="confirmDeleteId !== h.id">
-              <button type="button" @click="confirmDeleteId = h.id" title="Delete hold"
-                      class="w-9 h-9 inline-flex items-center justify-center border border-slate-200 text-slate-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50 rounded-lg transition shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-              </button>
+            <div class="flex items-center gap-2 mt-3" x-show="confirmDeleteId !== h.id">
               <button type="button" @click="resumeHold(h)"
-                      class="inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white pl-3 pr-4 py-2 rounded-lg text-xs font-bold transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white py-2.5 rounded-xl text-sm font-bold transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                 Resume
+              </button>
+              <button type="button" @click="confirmDeleteId = h.id" title="Delete hold"
+                      class="w-10 h-10 inline-flex items-center justify-center border border-red-200 text-red-500 hover:bg-red-50 rounded-xl transition shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
               </button>
             </div>
 
