@@ -39,6 +39,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
   .no-scrollbar::-webkit-scrollbar { display: none; }
   /* Give the cart a touch less width on small laptops so products breathe */
   @media (min-width: 768px) and (max-width: 1279px) { .pos-cart { width: 18rem; } }
+  @keyframes salePop { from { opacity:0; transform:scale(.4); } to { opacity:1; transform:scale(1); } }
 </style>
 
 <div class="flex flex-col flex-1 min-h-0 bg-slate-100" style="height:100%" x-data="posApp()" x-init="init()">
@@ -871,20 +872,31 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
          x-transition:enter="ease-out duration-200"
          x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
          @click.outside="closeSaleModal()">
-      {{-- Success header --}}
-      <div class="pt-7 pb-4 px-6 text-center">
-        <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      {{-- Decorative gradient header band --}}
+      <div style="height:88px;background:linear-gradient(135deg,#16a34a 0%,#059669 100%)"></div>
+
+      {{-- Success check (overlaps band) --}}
+      <div class="flex justify-center" style="margin-top:-44px">
+        <div class="w-[72px] h-[72px] rounded-full bg-white flex items-center justify-center shadow-lg" style="animation:salePop .35s cubic-bezier(.34,1.56,.64,1) both">
+          <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
         </div>
-        <h3 class="text-lg font-extrabold text-slate-900">Sale Complete!</h3>
-        <p class="text-xs text-slate-400 font-mono mt-1" x-text="lastSale.number"></p>
+      </div>
+
+      {{-- Title --}}
+      <div class="pt-3 pb-1 px-6 text-center">
+        <h3 class="text-xl font-extrabold text-slate-900">Sale Complete!</h3>
+        <p class="text-[13px] text-green-600 font-semibold mt-0.5">Payment received</p>
+        <p class="text-[11px] text-slate-400 font-mono mt-1" x-text="lastSale.number"></p>
       </div>
 
       {{-- Amount box --}}
-      <div class="px-5">
-        <div class="rounded-2xl bg-slate-50 px-4 py-4 text-center">
-          <p class="text-3xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
-          <div class="flex items-center justify-center gap-2 mt-2">
+      <div class="px-5 pt-2">
+        <div class="rounded-2xl px-4 py-4 text-center border border-slate-100" style="background:linear-gradient(180deg,#f8fafc 0%,#ffffff 100%)">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Paid</p>
+          <p class="text-[34px] leading-none font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + Number(lastSale.total).toLocaleString()"></p>
+          <div class="flex items-center justify-center gap-2 mt-3">
             <span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold" x-text="payLabel(lastSale.payMethod)"></span>
             <template x-if="lastSale.change > 0">
               <span class="px-2.5 py-0.5 rounded-full bg-white text-slate-600 text-xs font-semibold tabular-nums border border-slate-200" x-text="'Change PKR ' + Number(lastSale.change).toLocaleString()"></span>
