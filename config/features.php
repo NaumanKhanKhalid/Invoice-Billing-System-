@@ -104,7 +104,7 @@ return [
         'label'       => 'Repair Job Cards',
         'description' => 'Repairing ka kaam — job card banao, advance lo, ready par WhatsApp karo',
         'icon'        => 'wrench',
-        'shop_types'  => ['mobile', 'hardware', 'bike'],
+        'shop_types'  => ['mobile'],
         'default'     => true,
     ],
     'audit_log' => [
