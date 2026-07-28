@@ -123,12 +123,6 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </button>
     </div>
 
-    {{-- Scan toast --}}
-    <div x-show="scanMsg" x-transition.opacity
-         :class="scanOk ? 'bg-emerald-500' : 'bg-red-500'"
-         class="mx-4 mt-2.5 mb-0 px-4 py-2 rounded-xl text-white text-sm font-medium flex items-center gap-2 shadow-lg shrink-0">
-      <span x-text="scanMsg"></span>
-    </div>
 
     {{-- Category tabs --}}
     <div class="px-4 pt-3 pb-0 flex gap-2 flex-nowrap overflow-x-auto no-scrollbar shrink-0" x-show="categories.length > 0 && !searchQ">
@@ -597,14 +591,26 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     <div class="absolute right-0 inset-y-0 w-full max-w-md bg-white shadow-2xl flex flex-col"
          x-show="holdsPanelOpen" x-transition:enter="transition transform duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
          x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
-        <div>
-          <h3 class="font-bold text-slate-900">Held Sales</h3>
-          <p class="text-xs text-slate-400 mt-0.5" x-text="heldSales.length + ' hold(s) pending'"></p>
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0 bg-slate-50/70">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 leading-tight">Held Sales</h3>
+            <p class="text-xs text-slate-400 mt-0.5" x-text="heldSales.length + ' hold' + (heldSales.length === 1 ? '' : 's') + ' pending'"></p>
+          </div>
         </div>
         <button type="button" @click="holdsPanelOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
       </div>
-      <div class="flex-1 overflow-y-auto p-4 space-y-3">
+
+      {{-- Total value bar --}}
+      <div x-show="heldSales.length > 0" class="flex items-center justify-between px-5 py-2.5 bg-amber-50/60 border-b border-amber-100 shrink-0">
+        <span class="text-xs font-semibold text-amber-700 uppercase tracking-wide">Total held value</span>
+        <span class="text-sm font-extrabold text-amber-700 tabular-nums" x-text="'PKR ' + heldSales.reduce((s,h)=>s+Number(h.total||0),0).toLocaleString()"></span>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-2.5">
         <template x-if="heldSales.length === 0">
           <div class="flex flex-col items-center justify-center py-16 text-center">
             <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
@@ -615,33 +621,34 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           </div>
         </template>
         <template x-for="h in heldSales" :key="h.id">
-          <div class="border border-slate-200 rounded-2xl p-4 hover:border-slate-300 hover:shadow-sm transition">
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0 flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
-                </div>
+          <div class="border border-slate-200 rounded-2xl p-3.5 bg-white hover:border-green-300 hover:shadow-md transition">
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 text-sm font-bold uppercase"
+                     x-text="(h.customer_name || '?').trim().charAt(0)"></div>
                 <div class="min-w-0">
                   <p class="font-bold text-slate-900 text-sm truncate" x-text="h.customer_name"></p>
-                  <p class="text-xs text-slate-400 mt-0.5">
-                    <span class="font-mono font-semibold text-slate-500" x-text="h.tab_number"></span>
-                    <span> · </span>
-                    <span x-text="h.items_count + ' item(s)'"></span>
-                  </p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono font-bold" x-text="h.tab_number"></span>
+                    <span class="text-[11px] text-slate-400" x-text="h.items_count + ' item(s)'"></span>
+                  </div>
                   <p class="text-[11px] text-slate-400 mt-0.5" x-text="timeAgo(h.created_at)"></p>
                 </div>
               </div>
-              <p class="font-extrabold text-green-600 text-sm whitespace-nowrap" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
+              <div class="text-right shrink-0">
+                <p class="text-[10px] text-slate-400 font-semibold uppercase">Amount</p>
+                <p class="font-extrabold text-green-600 text-sm whitespace-nowrap" x-text="'PKR ' + Number(h.total).toLocaleString()"></p>
+              </div>
             </div>
 
             {{-- Normal actions --}}
             <div class="flex gap-2 mt-3" x-show="confirmDeleteId !== h.id">
               <button type="button" @click="resumeHold(h)"
-                      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-bold transition">
+                      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm shadow-green-600/20">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                Resume
+                Resume Sale
               </button>
-              <button type="button" @click="confirmDeleteId = h.id"
+              <button type="button" @click="confirmDeleteId = h.id" title="Delete hold"
                       class="px-3 py-2 border border-slate-200 text-slate-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50 rounded-xl text-xs font-bold transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
               </button>
@@ -1530,7 +1537,7 @@ function posApp() {
     pickVariant(v) {
       this.variantModalOpen = false;
       this.addToCart(v);
-      this.flash('✓ ' + (v.variant_name || v.name), true);
+      this.flash('' + (v.variant_name || v.name), true);
     },
 
     get subtotal() { return this.cart.reduce((s, i) => s + i.qty * i.price, 0); },
@@ -1613,7 +1620,7 @@ function posApp() {
         this.holdModalOpen = false;
         this.holdCustomerName = ''; this.holdCustomerPhone = ''; this.holdNote = '';
         this.resetSale();
-        this.flash('✓ Sale hold ho gayi — ' + json.tab_number, true);
+        this.flash('Sale hold ho gayi — ' + json.tab_number, true);
       } catch (e) {
         this.flash('Net nahi hai — hold ke liye internet zaroori hai', false);
       } finally {
@@ -1647,7 +1654,7 @@ function posApp() {
         this.holdCustomerPhone = json.customer_phone || '';
         this.holdNote = json.notes || '';
         this.holdsPanelOpen = false;
-        this.flash('✓ ' + json.tab_number + ' resume ho gaya — ' + (json.customer_name || ''), true);
+        this.flash('' + json.tab_number + ' resume ho gaya — ' + (json.customer_name || ''), true);
       } catch (e) {
         this.flash('Net nahi hai — hold load nahi hua', false);
       }
@@ -1689,18 +1696,20 @@ function posApp() {
       const q = this.searchQ.trim();
       if (!q) return;
       const exact = this.products.find(p => (p.barcode && p.barcode === q) || (p.sku && p.sku === q));
-      if (exact) { this.addToCart(exact); this.flash('✓ ' + exact.name, true); this.searchQ = ''; }
+      if (exact) { this.addToCart(exact); this.flash('' + exact.name, true); this.searchQ = ''; }
     },
 
     addByBarcode(code) {
       const p = this.products.find(p => (p.barcode && p.barcode === code) || (p.sku && p.sku === code));
       if (p) {
         if (p.stock_qty <= 0) { this.flash('Out of stock: ' + p.name, false); return; }
-        this.addToCart(p); this.flash('✓ ' + p.name, true);
+        this.addToCart(p); this.flash('' + p.name, true);
       } else { this.flash('Not found: ' + code, false); }
     },
 
     flash(msg, ok) {
+      // Route POS flashes through the unified top-right toast for a consistent look.
+      if (window.showToast) { window.showToast(msg, ok ? 'success' : 'error', 2600); return; }
       this.scanMsg = msg; this.scanOk = ok;
       clearTimeout(this.scanTimer);
       this.scanTimer = setTimeout(() => { this.scanMsg = ''; }, 2200);
