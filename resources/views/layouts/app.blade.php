@@ -84,17 +84,18 @@
 
         /* ── Toast notifications (unified card style) ── */
         #toast-container {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            position: fixed; top: 20px; right: 20px;
             z-index: 9999; display: flex; flex-direction: column; gap: 10px;
             pointer-events: none; width: max-content; max-width: calc(100vw - 32px);
         }
         .toast {
             position: relative; display: flex; align-items: flex-start; gap: 12px;
-            padding: 14px 16px; border-radius: 12px; overflow: hidden;
-            background: #fff; border: 1px solid var(--toast-accent, #16a34a);
-            box-shadow: 0 12px 32px -8px rgba(15,23,42,0.25);
-            pointer-events: all; min-width: 320px; max-width: 420px;
-            animation: toastIn 0.25s ease both;
+            padding: 13px 15px; border-radius: 14px; overflow: hidden;
+            background: #fff; border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--toast-accent, #16a34a);
+            box-shadow: 0 16px 40px -12px rgba(15,23,42,0.28);
+            pointer-events: all; min-width: 300px; max-width: 380px;
+            animation: toastIn 0.28s cubic-bezier(0.34,1.4,0.64,1) both;
         }
         .toast.hiding { animation: toastOut 0.22s ease forwards; }
         .toast-icon {
@@ -120,12 +121,12 @@
         .toast-warning { --toast-accent: #d97706; --toast-soft: #fffbeb; }
         .toast-info    { --toast-accent: #2563eb; --toast-soft: #eff6ff; }
         @keyframes toastIn {
-            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: translateX(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateX(0) scale(1); }
         }
         @keyframes toastOut {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to   { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to   { opacity: 0; transform: translateX(40px) scale(0.96); }
         }
         @keyframes toastShrink { from { width: 100%; } to { width: 0%; } }
 

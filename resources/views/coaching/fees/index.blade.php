@@ -15,9 +15,6 @@
     </form>
   </div>
 
-  @if(session('success'))
-  <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">{{ session('success') }}</div>
-  @endif
 
   {{-- Summary Cards --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">

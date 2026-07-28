@@ -13,17 +13,6 @@
     </div>
   </div>
 
-  @if(session('success'))
-  <div class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm">
-    <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>{{ session('success') }}
-  </div>
-  @endif
-  @if(session('error'))
-  <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
-    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>{{ session('error') }}
-  </div>
-  @endif
-
   {{-- Stats + Action bar --}}
   <div class="flex items-center justify-between flex-wrap gap-3">
     <div class="flex items-center gap-3">

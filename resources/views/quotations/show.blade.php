@@ -51,12 +51,6 @@ $statusClass = [
     </div>
   </div>
 
-  @if(session('success'))
-  <div class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm">
-    <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>{{ session('success') }}
-  </div>
-  @endif
-
   {{-- Quotation document --}}
   @php
     $logo  = \App\Models\Setting::getValue('logo_path');
