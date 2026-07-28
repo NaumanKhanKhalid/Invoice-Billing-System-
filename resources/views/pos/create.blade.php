@@ -165,9 +165,9 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                   <span class="text-xl font-extrabold tracking-tight" :style="'color:' + cardTint(entry)[1]" x-text="cardInitials(entry)"></span>
                 </div>
               </template>
-              {{-- stock badge (top-left) --}}
-              <span class="absolute top-2 left-2 text-[9px] font-semibold px-1 py-[2px] rounded leading-none"
-                    :class="cardStock(entry) <= 0 ? 'bg-red-500 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-100 text-amber-700' : 'bg-black/5 text-slate-500')"
+              {{-- stock badge (top-left) — solid bg so it stays readable over product photos --}}
+              <span class="absolute top-2 left-2 text-[9px] font-bold px-1 py-[2px] rounded tabular-nums leading-none shadow-sm"
+                    :class="cardStock(entry) <= 0 ? 'bg-red-500 text-white' : (cardStock(entry) <= 5 ? 'bg-amber-400 text-amber-950' : 'bg-white/90 text-slate-600')"
                     x-text="cardStockLabel(entry)"></span>
               {{-- price badge (top-right) --}}
               <span class="absolute top-2 right-2 text-[9px] font-bold text-green-700 bg-white/90 px-1 py-[2px] rounded tabular-nums leading-none shadow-sm" x-text="cardPrice(entry)"></span>
