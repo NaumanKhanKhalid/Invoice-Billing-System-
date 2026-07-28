@@ -782,31 +782,27 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Actions --}}
-      <div class="p-5 pt-4 shrink-0 border-t border-slate-100 bg-slate-50/50">
-        {{-- Primary: Complete Sale --}}
+      <div class="p-5 pt-4 shrink-0 border-t border-slate-100 bg-slate-50/50 space-y-2.5">
+        {{-- 1) Complete Sale only --}}
         <button type="button" @click="confirmPayment(false)" :disabled="submitting"
                 class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
           <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           <span x-text="submitting ? 'Processing...' : 'Complete Sale — PKR ' + total.toLocaleString()"></span>
         </button>
 
-        {{-- Secondary row: Cancel + Print --}}
-        <div class="flex gap-2 mt-3">
-          <button type="button" @click="finalizeModalOpen = false"
-                  class="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Cancel</button>
-          @if(feature_enabled('receipt_print'))
-          <button type="button" @click="confirmPayment(true)" :disabled="submitting"
-                  class="flex-1 bg-white border border-slate-200 hover:border-green-400 hover:text-green-700 hover:bg-green-50/40 text-slate-600 py-2.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
-            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Print Invoice
-          </button>
-          @endif
-        </div>
+        {{-- 2) Complete Sale + Print Invoice --}}
+        @if(feature_enabled('receipt_print'))
+        <button type="button" @click="confirmPayment(true)" :disabled="submitting"
+                class="w-full bg-white border border-green-500 hover:bg-green-50 active:scale-[.99] disabled:opacity-50 text-green-700 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
+          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Complete Sale &amp; Print Invoice
+        </button>
+        @endif
 
         {{-- Auto-print toggle --}}
         @if(feature_enabled('receipt_print'))
         <div @click="toggleAutoPrint()" role="switch" :aria-checked="autoPrint"
-             class="flex items-center justify-between gap-2 px-3 py-2.5 mt-3 rounded-xl bg-slate-100/70 cursor-pointer select-none">
+             class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-slate-100/70 cursor-pointer select-none">
           <span class="flex items-center gap-2 text-xs font-semibold text-slate-500">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Har sale par auto-print
