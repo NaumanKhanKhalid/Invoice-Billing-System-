@@ -1200,6 +1200,17 @@ function posApp() {
       this.flash('Net nahi hai — sale offline save ho gayi, baad mein sync hogi', true);
     },
 
+    // Reduce local product stock for everything in the cart so the grid reflects
+    // the sale instantly (DB is already updated server-side; this avoids a refresh).
+    applySoldStock() {
+      for (const item of this.cart) {
+        const p = this.products.find(pr => pr.id === item.id);
+        if (p && typeof p.stock_qty !== 'undefined') {
+          p.stock_qty = Math.max(0, Number(p.stock_qty) - Number(item.qty || 0));
+        }
+      }
+    },
+
     // ── Sale complete modal (stay on POS, ready for next order) ──
     showSaleComplete(json) {
       this.lastSale = {
@@ -1222,6 +1233,7 @@ function posApp() {
         });
         if (this.recentSales.length > 30) this.recentSales.pop();
       }
+      this.applySoldStock();          // live stock update on product grid (no refresh needed)
       this.resetSale();               // cart clear — POS turant next order ke liye ready
       this.saleModalOpen = true;
       if (this.autoPrint || this.printAfter) this.printReceipt();
