@@ -9,15 +9,34 @@ use Illuminate\Support\Facades\DB;
 
 class QuotationController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $quotations = Quotation::latest()->paginate(20);
+        $query = Quotation::query();
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('quote_number', 'like', "%{$s}%")
+                  ->orWhere('customer_name', 'like', "%{$s}%")
+                  ->orWhere('customer_phone', 'like', "%{$s}%");
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $quotations = $query->latest()->paginate(20)->withQueryString();
+
         $counts = [
+            'all'      => Quotation::count(),
             'draft'    => Quotation::where('status', 'draft')->count(),
             'sent'     => Quotation::where('status', 'sent')->count(),
             'accepted' => Quotation::where('status', 'accepted')->count(),
         ];
-        return view('quotations.index', compact('quotations', 'counts'));
+        $acceptedValue = Quotation::where('status', 'accepted')->sum('total');
+
+        return view('quotations.index', compact('quotations', 'counts', 'acceptedValue'));
     }
 
     public function create()
