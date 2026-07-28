@@ -126,8 +126,8 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
 
     {{-- Category tabs --}}
-    <div class="px-4 pt-3 pb-0 flex gap-2 flex-nowrap overflow-x-auto no-scrollbar shrink-0" x-show="categories.length > 0 && !searchQ">
-      <button @click="activeCategory = null"
+    <div class="px-4 pt-3 pb-0 flex gap-2 flex-nowrap overflow-x-auto no-scrollbar shrink-0" x-show="!searchQ">
+      <button @click="activeCategory = null" x-show="categories.length > 0"
               :class="activeCategory === null ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 hover:bg-slate-50'"
               class="px-3 py-1 rounded-lg text-xs font-semibold border border-slate-200 transition whitespace-nowrap shrink-0">All</button>
       <template x-for="cat in categories" :key="cat">
@@ -136,6 +136,14 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                 class="px-3 py-1 rounded-lg text-xs font-semibold border border-slate-200 transition whitespace-nowrap shrink-0"
                 x-text="cat"></button>
       </template>
+      {{-- Out-of-stock visibility toggle --}}
+      <button @click="hideOutOfStock = !hideOutOfStock"
+              class="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold border transition whitespace-nowrap"
+              :class="hideOutOfStock ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'">
+        <svg x-show="!hideOutOfStock" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg x-show="hideOutOfStock" x-cloak style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+        <span x-text="hideOutOfStock ? 'Out of stock chhupe' : 'Out of stock'"></span>
+      </button>
     </div>
 
     {{-- Product grid --}}
@@ -171,6 +179,12 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                 <span class="absolute bottom-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md bg-slate-900/80 text-white leading-none" x-text="entry.variants.length + ' options'"></span>
               </template>
               <span class="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition"></span>
+              {{-- Out-of-stock overlay --}}
+              <template x-if="cardStock(entry) <= 0">
+                <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(255,255,255,0.55)">
+                  <span class="px-2 py-0.5 rounded-md bg-red-600 text-white text-[10px] font-extrabold uppercase tracking-wide -rotate-6 shadow">Out of Stock</span>
+                </div>
+              </template>
             </div>
 
             {{-- Info (name only) --}}
@@ -979,6 +993,7 @@ function posApp() {
     cart: [],
     searchQ: '',
     activeCategory: null,
+    hideOutOfStock: false,
     discount: '',
     discountType: 'flat',
     amountPaid: '',
@@ -1439,6 +1454,7 @@ function posApp() {
     get displayList() {
       const groups = {}; const result = [];
       for (const p of this.filtered) {
+        if (this.hideOutOfStock && Number(p.stock_qty || 0) <= 0) continue;
         if (p.variant_group) {
           if (!groups[p.variant_group]) {
             groups[p.variant_group] = { isGroup: true, group: p.variant_group, variants: [], id: 'g:' + p.variant_group };

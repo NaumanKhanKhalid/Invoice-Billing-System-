@@ -25,7 +25,12 @@ class PosController extends Controller
 
     public function create()
     {
-        $products = Product::where('is_active', true)->where('stock_qty', '>', 0)->orderBy('name')->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category','image_path','variant_group','variant_name']);
+        // Include out-of-stock items too — they stay visible on the POS (faded + "Out of Stock"),
+        // in-stock first so the counter always sees available products at the top.
+        $products = Product::where('is_active', true)
+            ->orderByRaw('CASE WHEN stock_qty > 0 THEN 0 ELSE 1 END')
+            ->orderBy('name')
+            ->get(['id','name','sku','barcode','sale_price','wholesale_price','track_serial','stock_qty','unit','category','image_path','variant_group','variant_name']);
         $products->transform(function ($p) {
             $p->image_url = $p->image_path ? tenant_asset($p->image_path) : null;
             return $p;
