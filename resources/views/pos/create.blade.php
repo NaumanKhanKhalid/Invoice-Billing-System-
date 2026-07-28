@@ -1205,6 +1205,7 @@ function posApp() {
     queueSale(payload) {
       this.offlineQueue.push(payload);
       this.saveQueue();
+      this.applySoldStock();   // decrement grid stock now (cart still intact) so offline sales also reflect live
       this.resetSale();
       this.flash('Net nahi hai — sale offline save ho gayi, baad mein sync hogi', true);
     },
