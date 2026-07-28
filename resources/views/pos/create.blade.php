@@ -179,12 +179,6 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                 <span class="absolute bottom-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-[3px] rounded-md bg-slate-900/80 text-white leading-none" x-text="entry.variants.length + ' options'"></span>
               </template>
               <span class="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition"></span>
-              {{-- Out-of-stock overlay --}}
-              <template x-if="cardStock(entry) <= 0">
-                <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(255,255,255,0.55)">
-                  <span class="px-2 py-0.5 rounded-md bg-red-600 text-white text-[10px] font-extrabold uppercase tracking-wide -rotate-6 shadow">Out of Stock</span>
-                </div>
-              </template>
             </div>
 
             {{-- Info (name only) --}}
