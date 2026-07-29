@@ -4,18 +4,18 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-xl font-bold text-slate-900">Products & Inventory</h1>
+      <h1 class="text-xl font-bold text-slate-900">{{ __('product.title') }}</h1>
       <p class="text-sm text-slate-500">{{ $products->total() }} products</p>
     </div>
     <div class="flex items-center gap-2">
       <a href="{{ route('reorder.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">
-        <i data-lucide="shopping-cart" class="w-4 h-4"></i>Reorder List
+        <i data-lucide="shopping-cart" class="w-4 h-4"></i>{{ __('product.reorder') }}
       </a>
       <a href="{{ route('barcode-labels.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">
         <i data-lucide="barcode" class="w-4 h-4"></i>Print Labels
       </a>
       <a href="{{ route('products.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-        <i data-lucide="plus" class="w-4 h-4"></i>Add Product
+        <i data-lucide="plus" class="w-4 h-4"></i>{{ __('product.add_product') }}
       </a>
     </div>
   </div>
@@ -23,19 +23,19 @@
   {{-- Stats --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Products</p>
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">{{ __('product.total_products') }}</p>
       <p class="text-2xl font-bold text-slate-900">{{ $products->total() }}</p>
     </div>
     <div class="bg-white rounded-xl border {{ $lowStockCount > 0 ? 'border-amber-200' : 'border-slate-200' }} shadow-sm p-4 text-center">
-      <p class="text-xs {{ $lowStockCount > 0 ? 'text-amber-500' : 'text-slate-400' }} uppercase tracking-wider mb-1">Low Stock</p>
+      <p class="text-xs {{ $lowStockCount > 0 ? 'text-amber-500' : 'text-slate-400' }} uppercase tracking-wider mb-1">{{ __('product.low_stock') }}</p>
       <p class="text-2xl font-bold {{ $lowStockCount > 0 ? 'text-amber-600' : 'text-slate-900' }}">{{ $lowStockCount }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Stock Value</p>
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">{{ __('product.stock_value') }}</p>
       <p class="text-xl font-bold text-slate-900">PKR {{ number_format($totalValue) }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Categories</p>
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">{{ __('product.categories') }}</p>
       <p class="text-2xl font-bold text-slate-900">{{ $categories->count() }}</p>
     </div>
   </div>
@@ -45,13 +45,13 @@
     <form method="GET" class="flex flex-wrap gap-3 items-center">
       <div class="relative flex-1 min-w-36">
         <i data-lucide="search" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none"></i>
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search products..."
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('product.search_ph') }}"
                class="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
       </div>
       <div class="relative">
         <i data-lucide="tag" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none"></i>
         <select name="category" class="appearance-none pl-8 pr-7 py-1.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-          <option value="">All Categories</option>
+          <option value="">{{ __('product.all_categories') }}</option>
           @foreach($categories as $cat)
           <option value="{{ $cat }}" @selected(request('category')===$cat)>{{ $cat }}</option>
           @endforeach
@@ -61,15 +61,15 @@
       <div class="relative">
         <i data-lucide="package" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none"></i>
         <select name="stock" class="appearance-none pl-8 pr-7 py-1.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-          <option value="">All Stock</option>
-          <option value="low" @selected(request('stock')==='low')>Low Stock</option>
-          <option value="out" @selected(request('stock')==='out')>Out of Stock</option>
+          <option value="">{{ __('product.all_stock') }}</option>
+          <option value="low" @selected(request('stock')==='low')>{{ __('product.low_stock') }}</option>
+          <option value="out" @selected(request('stock')==='out')>{{ __('product.out_of_stock') }}</option>
         </select>
         <i data-lucide="chevron-down" class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
       </div>
-      <button type="submit" class="bg-green-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-green-700">Filter</button>
+      <button type="submit" class="bg-green-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-green-700">{{ __('common.filter') }}</button>
       @if(request()->hasAny(['search','category','stock']))
-      <a href="{{ route('products.index') }}" class="text-sm text-slate-400 hover:text-slate-600">Clear</a>
+      <a href="{{ route('products.index') }}" class="text-sm text-slate-400 hover:text-slate-600">{{ __('common.clear') }}</a>
       @endif
       <div class="ml-auto text-sm text-slate-500">{{ $products->total() }} products</div>
     </form>
@@ -81,12 +81,12 @@
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Product</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Category</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Cost</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Sale Price</th>
-          <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Stock</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('product.col_product') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('product.col_category') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('product.col_cost') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('product.col_sale_price') }}</th>
+          <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">{{ __('product.col_stock') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('product.col_actions') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -111,7 +111,7 @@
           </td>
           <td class="px-4 py-3 text-center">
             @if($product->stock_qty === 0)
-              <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Out of Stock</span>
+              <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">{{ __('product.out_of_stock') }}</span>
             @elseif($product->isLowStock())
               <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-700">{{ $product->stock_qty }} {{ $product->unit }} ⚠️</span>
             @else
@@ -120,8 +120,8 @@
           </td>
           <td class="px-4 py-3 text-right">
             <div class="flex items-center justify-end gap-1.5">
-              <a href="{{ route('products.show', $product) }}" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium">View</a>
-              <a href="{{ route('products.edit', $product) }}" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium">Edit</a>
+              <a href="{{ route('products.show', $product) }}" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium">{{ __('common.view') }}</a>
+              <a href="{{ route('products.edit', $product) }}" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium">{{ __('common.edit') }}</a>
             </div>
           </td>
         </tr>
@@ -132,8 +132,8 @@
     @else
     <div class="px-4 py-12 text-center">
       <i data-lucide="package" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-      <p class="text-slate-400">No products found</p>
-      <a href="{{ route('products.create') }}" class="text-green-600 text-sm hover:underline mt-1 inline-block">Add first product</a>
+      <p class="text-slate-400">{{ __('product.no_products') }}</p>
+      <a href="{{ route('products.create') }}" class="text-green-600 text-sm hover:underline mt-1 inline-block">{{ __('product.add_first') }}</a>
     </div>
     @endif
   </div>
