@@ -10,16 +10,40 @@ use Illuminate\Support\Str;
 
 class TenantController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tenants = Tenant::latest()->get();
+        // Stats are always computed over ALL tenants, regardless of filters.
+        $all = Tenant::all();
         $stats = [
-            'total'          => $tenants->count(),
-            'active'         => $tenants->where('is_active', true)->count(),
-            'expired'        => $tenants->filter(fn($t) => $t->plan_expires_at && $t->plan_expires_at < now())->count(),
+            'total'          => $all->count(),
+            'active'         => $all->where('is_active', true)->filter(fn($t) => !$t->plan_expires_at || $t->plan_expires_at >= now())->count(),
+            'expired'        => $all->filter(fn($t) => $t->plan_expires_at && $t->plan_expires_at < now())->count(),
             'revenue_month'  => SubscriptionPayment::whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount'),
             'revenue_total'  => SubscriptionPayment::sum('amount'),
         ];
+
+        // Filtered list
+        $query = Tenant::query();
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('shop_name', 'like', "%{$s}%")
+                  ->orWhere('owner_name', 'like', "%{$s}%")
+                  ->orWhere('owner_email', 'like', "%{$s}%")
+                  ->orWhere('owner_phone', 'like', "%{$s}%")
+                  ->orWhere('id', 'like', "%{$s}%");
+            });
+        }
+        if ($request->filled('plan'))      $query->where('plan', $request->plan);
+        if ($request->filled('shop_type')) $query->where('shop_type', $request->shop_type);
+        if ($request->status === 'expired') {
+            $query->whereNotNull('plan_expires_at')->where('plan_expires_at', '<', now());
+        } elseif ($request->status === 'active') {
+            $query->where('is_active', true)->where(fn($q) => $q->whereNull('plan_expires_at')->orWhere('plan_expires_at', '>=', now()));
+        }
+
+        $tenants = $query->latest()->get();
+
         return view('admin.tenants.index', compact('tenants', 'stats'));
     }
 

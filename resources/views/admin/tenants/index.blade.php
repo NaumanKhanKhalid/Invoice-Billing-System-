@@ -62,6 +62,41 @@
   </div>
   @endif
 
+  {{-- Filters --}}
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3">
+    <form method="GET" class="flex flex-wrap items-center gap-3">
+      <div class="flex rounded-lg border border-slate-200 overflow-hidden">
+        @foreach(['all'=>'All','active'=>'Active','expired'=>'Expired'] as $k=>$lbl)
+        <a href="{{ route('admin.tenants.index', array_merge(request()->except('status'), $k==='all' ? [] : ['status'=>$k])) }}"
+           class="px-4 py-2 text-sm font-medium border-l first:border-l-0 border-slate-200 transition-colors {{ (request('status','all')===$k || (!request('status') && $k==='all')) ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">{{ $lbl }}</a>
+        @endforeach
+      </div>
+      <select name="plan" onchange="this.form.submit()" class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 outline-none focus:ring-2 focus:ring-green-300">
+        <option value="">All Plans</option>
+        @foreach(['free','pro','business'] as $p)<option value="{{ $p }}" {{ request('plan')==$p?'selected':'' }}>{{ ucfirst($p) }}</option>@endforeach
+      </select>
+      <select name="shop_type" onchange="this.form.submit()" class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 outline-none focus:ring-2 focus:ring-green-300">
+        <option value="">All Types</option>
+        @foreach(['chicken','hardware','mobile','bike','general','medical','coaching'] as $t)<option value="{{ $t }}" {{ request('shop_type')==$t?'selected':'' }}>{{ ucfirst($t) }}</option>@endforeach
+      </select>
+      @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
+      <div class="relative flex-1 min-w-[180px]">
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Shop, owner, email, phone..."
+               class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
+      </div>
+      <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="search" class="w-4 h-4"></i>Search
+      </button>
+      @if(request()->hasAny(['search','plan','shop_type','status']))
+      <a href="{{ route('admin.tenants.index') }}" class="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm transition-colors">
+        <i data-lucide="x" class="w-4 h-4"></i>Clear
+      </a>
+      @endif
+      <span class="ml-auto text-sm text-slate-500"><span class="font-semibold text-slate-700">{{ $tenants->count() }}</span> shown</span>
+    </form>
+  </div>
+
   {{-- Table --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full">
@@ -88,10 +123,13 @@
             <p class="text-xs text-slate-400">{{ $tenant->id }}</p>
           </td>
           <td class="px-4 py-3">
-            @php $typeColors = ['chicken'=>'green','bike'=>'blue','hardware'=>'orange','mobile'=>'purple','general'=>'gray','medical'=>'teal','coaching'=>'indigo'] @endphp
-            <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-{{ $typeColors[$tenant->shop_type] ?? 'gray' }}-100 text-{{ $typeColors[$tenant->shop_type] ?? 'gray' }}-700">
-              {{ ucfirst($tenant->shop_type) }}
-            </span>
+            @php $typeClass = [
+              'chicken'=>'bg-green-100 text-green-700','bike'=>'bg-blue-100 text-blue-700',
+              'hardware'=>'bg-orange-100 text-orange-700','mobile'=>'bg-purple-100 text-purple-700',
+              'general'=>'bg-slate-100 text-slate-700','medical'=>'bg-teal-100 text-teal-700',
+              'coaching'=>'bg-indigo-100 text-indigo-700',
+            ][$tenant->shop_type] ?? 'bg-slate-100 text-slate-700'; @endphp
+            <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium {{ $typeClass }}">{{ ucfirst($tenant->shop_type) }}</span>
           </td>
           <td class="px-4 py-3">
             <p class="text-sm font-medium text-slate-900">{{ $tenant->owner_name }}</p>
