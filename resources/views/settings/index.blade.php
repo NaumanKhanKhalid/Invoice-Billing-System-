@@ -4,8 +4,8 @@
 @section('content')
 <div class="space-y-5">
     <div>
-        <h1 class="text-2xl font-bold text-slate-900">Settings</h1>
-        <p class="text-sm text-slate-500 mt-1">Manage your company information</p>
+        <h1 class="text-2xl font-bold text-slate-900">{{ __('pages.settings') }}</h1>
+        <p class="text-sm text-slate-500 mt-1">{{ __('pages.settings_sub') }}</p>
     </div>
 
     {{-- Google Drive Backup --}}
@@ -130,7 +130,7 @@
                 <i data-lucide="toggle-right" class="w-4 h-4 text-green-600"></i>
                 Features On / Off
             </h2>
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Save Features</button>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">{{ __('pages.save_features') }}</button>
         </div>
         <p class="text-xs text-slate-400 mb-4">Jo feature aapki dukaan ko nahi chahiye usko off kar dein — sidebar aur buttons se ghayab ho jayega.</p>
         @php $shopTypeForFeatures = tenant()->shop_type ?? 'general'; @endphp
@@ -178,43 +178,43 @@
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.company_name') }}</label>
                     <input type="text" name="company_name" value="{{ $settings['company_name'] ?? '' }}"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                            placeholder="InvoicePro Ltd.">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Company Email</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.company_email') }}</label>
                     <input type="email" name="company_email" value="{{ $settings['company_email'] ?? '' }}"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                            placeholder="contact@company.pk">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('common.phone') }}</label>
                     <input type="text" name="company_phone" value="{{ $settings['company_phone'] ?? '' }}"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                            placeholder="+92 21 1234567">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Logo</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.logo') }}</label>
                     <input type="file" name="logo" accept="image/*"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                     @if(!empty($settings['logo_path']))
                     <div class="mt-2 flex items-center gap-3">
                       <img src="{{ tenant_asset($settings['logo_path']) }}" alt="Logo"
                            class="h-12 w-12 object-contain rounded-lg border border-slate-200 bg-white p-1">
-                      <span class="text-xs text-slate-400">Current logo — sidebar aur receipts par show hoga</span>
+                      <span class="text-xs text-slate-400">{{ __('pages.current_logo') }}</span>
                     </div>
                     @endif
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Address</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.address') }}</label>
                     <textarea name="company_address" rows="2"
                               class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none"
                               placeholder="Company address...">{{ $settings['company_address'] ?? '' }}</textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Currency</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.currency') }}</label>
                     <div class="relative">
                       <select name="currency" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
                         @foreach(['PKR'=>'PKR — Pakistani Rupee','USD'=>'USD — US Dollar','EUR'=>'EUR — Euro'] as $val=>$label)
@@ -225,18 +225,18 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">NTN Number (optional)</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.ntn') }}</label>
                     <input type="text" name="ntn_number" value="{{ $settings['ntn_number'] ?? '' }}"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                            placeholder="1234567-8">
-                    <p class="text-xs text-slate-400 mt-1">FBR registered shops ke liye — receipt par show hoga</p>
+                    <p class="text-xs text-slate-400 mt-1">{{ __('pages.fbr_note') }}</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Sales Tax % (optional)</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('pages.sales_tax') }}</label>
                     <input type="number" name="sales_tax_percent" value="{{ $settings['sales_tax_percent'] ?? '' }}" min="0" max="100" step="0.01"
                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                            placeholder="18">
-                    <p class="text-xs text-slate-400 mt-1">FBR registered shops ke liye — receipt par show hoga</p>
+                    <p class="text-xs text-slate-400 mt-1">{{ __('pages.fbr_note') }}</p>
                 </div>
                 <div class="sm:col-span-2">
                     <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 hover:border-green-300 hover:bg-green-50/40 cursor-pointer transition-colors">

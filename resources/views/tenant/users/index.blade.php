@@ -4,7 +4,7 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-xl font-bold text-slate-900">Team Members</h1>
+      <h1 class="text-xl font-bold text-slate-900">{{ __('pages.team_members') }}</h1>
       <p class="text-sm text-slate-500">{{ $users->count() }} of {{ $limit === PHP_INT_MAX ? '∞' : $limit }} users used</p>
     </div>
     @if($users->count() < $limit)
@@ -21,14 +21,14 @@
   @if($limit !== PHP_INT_MAX)
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
     <div class="flex items-center justify-between mb-2">
-      <span class="text-sm font-medium text-slate-700">User Slots</span>
+      <span class="text-sm font-medium text-slate-700">{{ __('pages.user_slots') }}</span>
       <span class="text-sm text-slate-500">{{ $users->count() }}/{{ $limit }}</span>
     </div>
     <div class="w-full bg-slate-100 rounded-full h-2">
       <div class="bg-green-500 h-2 rounded-full transition-all" style="width: {{ min(100, ($users->count()/$limit)*100) }}%"></div>
     </div>
     @if($users->count() >= $limit)
-    <p class="text-xs text-amber-600 mt-2">Upgrade your plan to add more team members.</p>
+    <p class="text-xs text-amber-600 mt-2">{{ __('pages.upgrade_slots') }}</p>
     @endif
   </div>
   @endif
@@ -38,10 +38,10 @@
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Email</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Role</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('common.name') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('pages.email') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('pages.role') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('common.actions') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -93,27 +93,27 @@
           <td colspan="4" class="p-0">
             <div x-show="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
               <div @click.outside="show=false" class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
-                <h3 class="font-bold text-slate-900 mb-1">Reset Password</h3>
+                <h3 class="font-bold text-slate-900 mb-1">{{ __('pages.reset_password') }}</h3>
                 <p class="text-sm text-slate-500 mb-4">{{ $user->name }}</p>
                 <form method="POST" action="{{ route('tenant.users.reset-password', $user) }}">
                   @csrf
                   <div class="space-y-3">
                     <div>
-                      <label class="block text-xs font-medium text-slate-600 mb-1">New Password</label>
-                      <input type="password" name="password" required minlength="6" placeholder="Min 6 characters"
+                      <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('pages.new_password') }}</label>
+                      <input type="password" name="password" required minlength="6" placeholder="{{ __('pages.min6') }}"
                              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                     </div>
                     <div>
-                      <label class="block text-xs font-medium text-slate-600 mb-1">Confirm Password</label>
+                      <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('pages.confirm_password') }}</label>
                       <input type="password" name="password_confirmation" required
                              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                     </div>
                   </div>
                   <div class="flex gap-2 mt-4">
                     <button type="button" @click="show=false"
-                            class="flex-1 px-4 py-2 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700">Cancel</button>
+                            class="flex-1 px-4 py-2 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700">{{ __('common.cancel') }}</button>
                     <button type="submit"
-                            class="flex-1 px-4 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">Update</button>
+                            class="flex-1 px-4 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">{{ __('common.update') }}</button>
                   </div>
                 </form>
               </div>
@@ -126,7 +126,7 @@
     @else
     <div class="px-4 py-12 text-center">
       <i data-lucide="users" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-      <p class="text-slate-400">No team members yet</p>
+      <p class="text-slate-400">{{ __('pages.no_team') }}</p>
     </div>
     @endif
   </div>
