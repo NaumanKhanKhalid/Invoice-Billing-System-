@@ -6,18 +6,18 @@
   {{-- Header --}}
   <div class="flex items-center justify-between flex-wrap gap-2">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Udhar Book</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Credit sales and payment tracking</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('udhar.title') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('udhar.subtitle') }}</p>
     </div>
     <div class="flex gap-2">
       <a href="{{ route('udhar-customers.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="users" class="w-4 h-4"></i>Customers
+        <i data-lucide="users" class="w-4 h-4"></i>{{ __('udhar.customers') }}
       </a>
       <a href="{{ route('udhar.report') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>Report
+        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>{{ __('udhar.report') }}
       </a>
       <a href="{{ route('udhar.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="plus" class="w-4 h-4"></i>New Udhar
+        <i data-lucide="plus" class="w-4 h-4"></i>{{ __('udhar.new_udhar') }}
       </a>
     </div>
   </div>
@@ -26,33 +26,33 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Due</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('udhar.total_due') }}</p>
         <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
           <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
         </div>
       </div>
       <p class="text-2xl font-bold text-red-600">{{ formatCurrency($stats['total_due']) }}</p>
-      <p class="text-xs text-slate-400 mt-1">Total outstanding balance</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('udhar.total_outstanding') }}</p>
     </div>
     <div class="bg-white rounded-xl border border-red-300 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Overdue Records</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('udhar.overdue_records') }}</p>
         <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
           <i data-lucide="clock" class="w-4 h-4 text-red-600"></i>
         </div>
       </div>
       <p class="text-2xl font-bold text-red-700">{{ $stats['overdue_count'] }}</p>
-      <p class="text-xs text-slate-400 mt-1">Past due date</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('udhar.past_due') }}</p>
     </div>
     <div class="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Due Today</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('udhar.due_today') }}</p>
         <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
           <i data-lucide="calendar-clock" class="w-4 h-4 text-amber-500"></i>
         </div>
       </div>
       <p class="text-2xl font-bold text-amber-600">{{ $stats['today_due'] }}</p>
-      <p class="text-xs text-slate-400 mt-1">Due today</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('udhar.due_today_sub') }}</p>
     </div>
   </div>
 
@@ -61,11 +61,11 @@
     <div class="flex flex-wrap items-center gap-3">
       <div class="flex rounded-lg border border-slate-200 overflow-hidden">
         <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'all'])) }}"
-           class="px-4 py-2 text-sm font-medium transition-colors {{ request('status','all')==='all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">All</a>
+           class="px-4 py-2 text-sm font-medium transition-colors {{ request('status','all')==='all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">{{ __('udhar.all') }}</a>
         <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'unpaid'])) }}"
-           class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='unpaid' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Unpaid</a>
+           class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='unpaid' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">{{ __('udhar.unpaid') }}</a>
         <a href="{{ route('udhar.index', array_merge(request()->except('status','page'), ['status'=>'overdue'])) }}"
-           class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='overdue' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Overdue</a>
+           class="px-4 py-2 text-sm font-medium border-l border-slate-200 transition-colors {{ request('status')==='overdue' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">{{ __('udhar.overdue') }}</a>
       </div>
 
       <form method="GET" class="flex gap-2 flex-1 min-w-[200px]">
@@ -73,15 +73,15 @@
         <div class="relative flex-1">
           <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
           <input type="text" name="search" value="{{ request('search') }}"
-                 placeholder="Search customer or phone..."
+                 placeholder="{{ __('udhar.search_ph') }}"
                  class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
         </div>
         <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-          <i data-lucide="search" class="w-4 h-4"></i> Search
+          <i data-lucide="search" class="w-4 h-4"></i> {{ __('common.search') }}
         </button>
         @if(request('search'))
         <a href="{{ route('udhar.index', request()->except('search','page')) }}" class="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm transition-colors">
-          <i data-lucide="x" class="w-4 h-4"></i> Clear
+          <i data-lucide="x" class="w-4 h-4"></i> {{ __('common.clear') }}
         </a>
         @endif
       </form>
@@ -89,7 +89,7 @@
       <div class="ml-auto flex items-center gap-4 text-sm text-slate-500">
         <span class="flex items-center gap-1.5">
           <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
-          <span class="font-semibold text-slate-700">{{ $records->total() }}</span> customers
+          <span class="font-semibold text-slate-700">{{ $records->total() }}</span> {{ __('udhar.customers_count') }}
         </span>
       </div>
     </div>
@@ -102,8 +102,8 @@
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
     <div class="flex-1">
-      <p class="text-sm font-medium text-green-800">{{ $records->total() }} overdue customer(s) — send WhatsApp reminders</p>
-      <p class="text-xs text-green-600 mt-0.5">Click each customer's View button, then use the WhatsApp button on their page.</p>
+      <p class="text-sm font-medium text-green-800">{{ __('udhar.wa_title', ['count' => $records->total()]) }}</p>
+      <p class="text-xs text-green-600 mt-0.5">{{ __('udhar.wa_hint') }}</p>
     </div>
     <div class="flex flex-wrap gap-2">
       @foreach($records->filter(fn($r) => $r->phone) as $r)
@@ -126,14 +126,14 @@
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Customer</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Phone</th>
-          <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Sales</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Total</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Paid</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Total Baqi</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Next Due</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_customer') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_phone') }}</th>
+          <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_sales') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_total') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_paid') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_baqi') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_next_due') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('udhar.col_actions') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -151,7 +151,7 @@
               <div>
                 <span class="text-slate-900 font-semibold">{{ $record->customer_name }}</span>
                 @if($isOverdue)
-                  <span class="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 align-middle">Overdue</span>
+                  <span class="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 align-middle">{{ __('udhar.overdue') }}</span>
                 @endif
               </div>
             </div>
@@ -160,7 +160,7 @@
           <td class="px-4 py-3 text-sm text-center text-slate-600">
             {{ $record->sale_count }}
             @if($record->open_count < $record->sale_count)
-              <span class="text-[11px] text-slate-400">({{ $record->open_count }} open)</span>
+              <span class="text-[11px] text-slate-400">({{ $record->open_count }} {{ __('udhar.open') }})</span>
             @endif
           </td>
           <td class="px-4 py-3 text-sm text-right text-slate-500">{{ formatCurrency($record->total_amount) }}</td>
@@ -174,12 +174,12 @@
               @if($record->udhar_customer_id)
               <a href="{{ route('ledger.udhar-customer', $record->udhar_customer_id) }}"
                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
-                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>View Ledger
+                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>{{ __('udhar.view_ledger') }}
               </a>
               @else
               <a href="{{ route('udhar.index', ['search' => $record->customer_name]) }}"
                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
-                <i data-lucide="eye" class="w-3.5 h-3.5"></i>View
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>{{ __('udhar.view') }}
               </a>
               @endif
             </div>
@@ -189,8 +189,8 @@
         <tr>
           <td colspan="8" class="px-4 py-12 text-center">
             <i data-lucide="book-open" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-            <p class="text-slate-500 font-medium">No udhar records found</p>
-            <a href="{{ route('udhar.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Add first udhar record</a>
+            <p class="text-slate-500 font-medium">{{ __('udhar.no_records') }}</p>
+            <a href="{{ route('udhar.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">{{ __('udhar.add_first') }}</a>
           </td>
         </tr>
         @endforelse
