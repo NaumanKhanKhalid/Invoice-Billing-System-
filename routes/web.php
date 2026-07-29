@@ -19,9 +19,11 @@ Route::middleware('auth')->group(function () {
 
 // ─── Central Admin Panel ──────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->group(function () {
-    Route::get('/', fn() => redirect()->route('admin.tenants.index'));
+    Route::get('/', fn() => redirect()->route('admin.dashboard'));
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('tenants', TenantController::class);
     Route::post('/tenants/{tenant}/renew', [TenantController::class, 'renewPlan'])->name('tenants.renew');
+    Route::post('/tenants/{tenant}/toggle-active', [TenantController::class, 'toggleActive'])->name('tenants.toggle-active');
     Route::get('/tenants/{tenant}/payments', [TenantController::class, 'payments'])->name('tenants.payments');
     Route::post('/tenants/{tenant}/impersonate', [ImpersonateController::class, 'start'])->name('tenants.impersonate');
     Route::get('/plans', fn() => view('admin.plans'))->name('plans');

@@ -172,6 +172,21 @@
               <a href="{{ route('admin.tenants.edit', $tenant) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
               </a>
+              <form method="POST" action="{{ route('admin.tenants.toggle-active', $tenant) }}"
+                    data-confirm-title="{{ $tenant->is_active ? 'Suspend shop?' : 'Activate shop?' }}"
+                    data-confirm-message="{{ $tenant->shop_name }} ko {{ $tenant->is_active ? 'suspend' : 'activate' }} karna hai?"
+                    data-confirm-text="Haan">
+                @csrf
+                @if($tenant->is_active)
+                <button type="submit" title="Suspend" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
+                  <i data-lucide="pause" class="w-3.5 h-3.5"></i>Suspend
+                </button>
+                @else
+                <button type="submit" title="Activate" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-medium transition-colors">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>Activate
+                </button>
+                @endif
+              </form>
             </div>
           </td>
         </tr>

@@ -52,6 +52,13 @@ class TenantController extends Controller
         return view('admin.tenants.create');
     }
 
+    public function toggleActive(Tenant $tenant)
+    {
+        $tenant->update(['is_active' => ! $tenant->is_active]);
+
+        return back()->with('success', $tenant->shop_name . ' ab ' . ($tenant->is_active ? 'ACTIVE' : 'SUSPEND') . ' hai.');
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

@@ -382,6 +382,9 @@
             @endif
             @else
             {{-- ── Admin / Central domain sidebar ── --}}
+            <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+            </a>
             <a href="{{ route('admin.tenants.index') }}" class="nav-item {{ request()->routeIs('admin.tenants.*') ? 'active' : '' }}">
                 <i data-lucide="store" class="w-4 h-4"></i> Tenants
             </a>
