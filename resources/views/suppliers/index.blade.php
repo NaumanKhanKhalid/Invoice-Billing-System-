@@ -4,11 +4,11 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Suppliers</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Manage your chicken suppliers</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('pages.suppliers') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('pages.suppliers_sub') }}</p>
     </div>
     <a href="{{ route('suppliers.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-      <i data-lucide="plus" class="w-4 h-4"></i>Add Supplier
+      <i data-lucide="plus" class="w-4 h-4"></i>{{ __('pages.add_supplier') }}
     </a>
   </div>
 
@@ -16,7 +16,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Suppliers</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.total_suppliers') }}</p>
         <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
           <i data-lucide="truck" class="w-4 h-4 text-slate-500"></i>
         </div>
@@ -25,7 +25,7 @@
     </div>
     <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('common.active') }}</p>
         <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
           <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
         </div>
@@ -34,7 +34,7 @@
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Purchased</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.total_purchased') }}</p>
         <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
           <i data-lucide="shopping-cart" class="w-4 h-4 text-blue-500"></i>
         </div>
@@ -43,7 +43,7 @@
     </div>
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Outstanding</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.outstanding') }}</p>
         <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
           <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
         </div>
@@ -57,15 +57,15 @@
     <form method="GET" class="flex flex-wrap gap-3 items-center">
       <div class="relative flex-1 min-w-48">
         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or phone..."
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('pages.search_name_phone') }}"
           class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
       </div>
       <div class="relative">
         <i data-lucide="circle-dot" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
         <select name="status" class="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white text-slate-700 appearance-none cursor-pointer">
-          <option value="">All Status</option>
-          <option value="active"   {{ request('status')=='active'  ?'selected':'' }}>Active</option>
-          <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Inactive</option>
+          <option value="">{{ __('common.all_status') }}</option>
+          <option value="active"   {{ request('status')=='active'  ?'selected':'' }}>{{ __('common.active') }}</option>
+          <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>{{ __('common.inactive') }}</option>
         </select>
         <i data-lucide="chevron-down" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
       </div>
@@ -91,13 +91,13 @@
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Supplier</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Credit Days</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Purchased</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Outstanding</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.supplier') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.phone') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('pages.credit_days') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('pages.total_purchased') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('pages.outstanding') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.status') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.actions') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -143,8 +143,8 @@
         <tr>
           <td colspan="7" class="px-4 py-12 text-center">
             <i data-lucide="truck" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-            <p class="text-slate-500 font-medium">No suppliers found</p>
-            <a href="{{ route('suppliers.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Add your first supplier</a>
+            <p class="text-slate-500 font-medium">{{ __('pages.no_suppliers') }}</p>
+            <a href="{{ route('suppliers.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">{{ __('pages.add_first_supplier') }}</a>
           </td>
         </tr>
         @endforelse
