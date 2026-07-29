@@ -12,6 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Apply the user's chosen language (session) to every web request.
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         $middleware->alias([
             'auth'                => \App\Http\Middleware\Authenticate::class,
             'admin'               => \App\Http\Middleware\EnsureUserIsAdmin::class,

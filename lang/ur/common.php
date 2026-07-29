@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'save'          => 'Save Karein',
+    'cancel'        => 'Cancel',
+    'delete'        => 'Delete',
+    'edit'          => 'Edit',
+    'view'          => 'Dekhein',
+    'search'        => 'Talash',
+    'add'           => 'Shamil Karein',
+    'new'           => 'Naya',
+    'back'          => 'Wapas',
+    'update'        => 'Update Karein',
+    'clear'         => 'Saaf Karein',
+    'filter'        => 'Filter',
+    'print'         => 'Print',
+    'export'        => 'Export',
+    'total'         => 'Total',
+    'amount'        => 'Raqam',
+    'date'          => 'Tareekh',
+    'status'        => 'Status',
+    'actions'       => 'Actions',
+    'name'          => 'Naam',
+    'phone'         => 'Phone',
+    'yes'           => 'Haan',
+    'no'            => 'Nahi',
+    'language'      => 'Zabaan',
+];

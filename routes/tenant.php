@@ -55,6 +55,14 @@ Route::middleware([
         return redirect()->route('dashboard');
     });
 
+    // Language switch (English / Roman Urdu)
+    Route::get('/lang/{locale}', function (string $locale) {
+        if (in_array($locale, \App\Http\Middleware\SetLocale::SUPPORTED, true)) {
+            session(['locale' => $locale]);
+        }
+        return back();
+    })->name('lang.switch');
+
     // Impersonation — no auth required (token IS the auth)
     Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'start'])->middleware('throttle:10,1')->name('impersonate.start');
     Route::post('/impersonate/stop', [TenantImpersonateController::class, 'stop'])->name('impersonate.stop');

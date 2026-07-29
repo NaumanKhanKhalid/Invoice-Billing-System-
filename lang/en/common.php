@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'save'          => 'Save',
+    'cancel'        => 'Cancel',
+    'delete'        => 'Delete',
+    'edit'          => 'Edit',
+    'view'          => 'View',
+    'search'        => 'Search',
+    'add'           => 'Add',
+    'new'           => 'New',
+    'back'          => 'Back',
+    'update'        => 'Update',
+    'clear'         => 'Clear',
+    'filter'        => 'Filter',
+    'print'         => 'Print',
+    'export'        => 'Export',
+    'total'         => 'Total',
+    'amount'        => 'Amount',
+    'date'          => 'Date',
+    'status'        => 'Status',
+    'actions'       => 'Actions',
+    'name'          => 'Name',
+    'phone'         => 'Phone',
+    'yes'           => 'Yes',
+    'no'            => 'No',
+    'language'      => 'Language',
+];

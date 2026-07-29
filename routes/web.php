@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Route;
 // ─── Landing page ─────────────────────────────────────────────────────────────
 Route::get('/', fn() => view('landing'))->name('home');
 
+// ─── Language switch (English / Roman Urdu) ───────────────────────────────────
+Route::get('/lang/{locale}', function (string $locale) {
+    if (in_array($locale, \App\Http\Middleware\SetLocale::SUPPORTED, true)) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('lang.switch');
+
 // ─── Admin Login (separate URL — no conflict with tenant /login) ───────────────
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
