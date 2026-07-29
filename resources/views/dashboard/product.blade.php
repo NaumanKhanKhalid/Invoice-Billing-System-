@@ -10,7 +10,7 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
   {{-- Header --}}
   <div class="flex items-center justify-between flex-wrap gap-3">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('nav.dashboard') }}</h1>
       <p class="text-sm text-slate-500 mt-0.5">{{ now()->format('l, d M Y') }}</p>
     </div>
     <div class="flex gap-2">
@@ -37,7 +37,7 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
           @endif
           @if(($expiredCount ?? 0) > 0 && ($expiringSoonCount ?? 0) > 0)<span class="text-amber-400">·</span>@endif
           @if(($expiringSoonCount ?? 0) > 0)
-          <span>{{ $expiringSoonCount }} agle 30 din mein expire</span>
+          <span>{{ __('dash.expiring_30', ['count' => $expiringSoonCount]) }}</span>
           @endif
         </p>
         {{-- Nearest few items --}}
@@ -51,13 +51,13 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
             <span class="font-medium text-slate-700 truncate">{{ $b->product->name ?? 'Product' }} <span class="text-slate-400">({{ rtrim(rtrim(number_format($b->qty,2),'0'),'.') }})</span></span>
             <span class="whitespace-nowrap font-semibold {{ $isPast ? 'text-red-600' : ($days <= 7 ? 'text-amber-700' : 'text-slate-500') }}">
               {{ $b->expiry_date->format('d M Y') }}
-              @if($isPast) · expired @else · {{ $days }} din @endif
+              @if($isPast) · {{ __('dash.expired_word') }} @else · {{ $days }} {{ __('dash.days') }} @endif
             </span>
           </div>
           @endforeach
         </div>
       </div>
-      <a href="{{ route('expiry-report.index') }}" class="text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">Report →</a>
+      <a href="{{ route('expiry-report.index') }}" class="text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">{{ __('dash.report') }}</a>
     </div>
   </div>
   @endif
@@ -69,10 +69,10 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
       <i data-lucide="package-x" class="w-4 h-4 text-red-600"></i>
     </div>
     <div class="flex-1">
-      <p class="text-sm font-semibold text-red-800">{{ $outOfStock }} product{{ $outOfStock > 1 ? 's' : '' }} out of stock!</p>
-      <p class="text-xs text-red-600">Immediately restock karna zaroor hai</p>
+      <p class="text-sm font-semibold text-red-800">{{ __('dash.out_of_stock', ['count' => $outOfStock]) }}</p>
+      <p class="text-xs text-red-600">{{ __('dash.restock_now') }}</p>
     </div>
-    <a href="{{ route('products.index') }}" class="text-xs font-medium text-red-700 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">View →</a>
+    <a href="{{ route('products.index') }}" class="text-xs font-medium text-red-700 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">{{ __('dash.view') }}</a>
   </div>
   @elseif($lowStock > 0)
   <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
@@ -80,10 +80,10 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
       <i data-lucide="package" class="w-4 h-4 text-amber-600"></i>
     </div>
     <div class="flex-1">
-      <p class="text-sm font-semibold text-amber-800">{{ $lowStock }} product{{ $lowStock > 1 ? 's' : '' }} running low on stock</p>
-      <p class="text-xs text-amber-600">Restock karna zaroor hai before running out</p>
+      <p class="text-sm font-semibold text-amber-800">{{ __('dash.low_stock', ['count' => $lowStock]) }}</p>
+      <p class="text-xs text-amber-600">{{ __('dash.restock_before') }}</p>
     </div>
-    <a href="{{ route('products.index') }}" class="text-xs font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">View →</a>
+    <a href="{{ route('products.index') }}" class="text-xs font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0">{{ __('dash.view') }}</a>
   </div>
   @endif
 
@@ -91,7 +91,7 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Today's Sales</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.todays_sales') }}</p>
         <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
           <i data-lucide="trending-up" class="w-4 h-4 text-green-600"></i>
         </div>
@@ -102,29 +102,29 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Today's Purchases</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.todays_purchases') }}</p>
         <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
           <i data-lucide="shopping-cart" class="w-4 h-4 text-orange-600"></i>
         </div>
       </div>
       <p class="kpi-value money text-2xl font-bold text-orange-600">{{ formatCurrency($todayPurchases) }}</p>
-      <p class="text-xs text-slate-400 mt-1">Stock purchased today</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('dash.stock_purchased') }}</p>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Today's Expenses</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.todays_expenses') }}</p>
         <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
           <i data-lucide="wallet" class="w-4 h-4 text-red-500"></i>
         </div>
       </div>
       <p class="kpi-value money text-2xl font-bold text-red-500">{{ formatCurrency($todayExpenses) }}</p>
-      <p class="text-xs text-slate-400 mt-1">Daily expenses</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('dash.daily_expenses') }}</p>
     </div>
 
     <div class="bg-{{ $todayProfit >= 0 ? 'green' : 'red' }}-50 rounded-xl border border-{{ $todayProfit >= 0 ? 'green' : 'red' }}-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-500 uppercase tracking-wider">Today's Profit</p>
+        <p class="text-xs font-semibold text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-500 uppercase tracking-wider">{{ __('dash.todays_profit') }}</p>
         <div class="w-8 h-8 rounded-lg bg-{{ $todayProfit >= 0 ? 'green' : 'red' }}-100 flex items-center justify-center">
           <i data-lucide="{{ $todayProfit >= 0 ? 'circle-dollar-sign' : 'trending-down' }}" class="w-4 h-4 text-{{ $todayProfit >= 0 ? 'green' : 'red' }}-600"></i>
         </div>
@@ -138,7 +138,7 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Month Sales</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.month_sales') }}</p>
         <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
           <i data-lucide="calendar" class="w-4 h-4 text-green-600"></i>
         </div>
@@ -149,7 +149,7 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Month Profit</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.month_profit') }}</p>
         <div class="w-8 h-8 rounded-lg bg-{{ $monthProfit >= 0 ? 'green' : 'red' }}-100 flex items-center justify-center">
           <i data-lucide="bar-chart-2" class="w-4 h-4 text-{{ $monthProfit >= 0 ? 'green' : 'red' }}-600"></i>
         </div>
@@ -160,24 +160,24 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Products</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.products') }}</p>
         <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
           <i data-lucide="package" class="w-4 h-4 text-blue-600"></i>
         </div>
       </div>
       <p class="text-xl font-bold text-slate-900">{{ $totalProducts }}</p>
-      <p class="text-xs text-slate-400 mt-1">Active products</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('dash.active_products') }}</p>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Supplier Due</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('dash.supplier_due') }}</p>
         <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
           <i data-lucide="truck" class="w-4 h-4 text-purple-600"></i>
         </div>
       </div>
       <p class="money text-xl font-bold text-slate-900">{{ formatCurrency($supplierDue2) }}</p>
-      <p class="text-xs text-slate-400 mt-1">Pending purchase dues</p>
+      <p class="text-xs text-slate-400 mt-1">{{ __('dash.pending_dues') }}</p>
     </div>
   </div>
 
@@ -187,24 +187,24 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
       <h2 class="font-semibold text-slate-900 flex items-center gap-2">
         <i data-lucide="book-open" class="w-4 h-4 text-green-600"></i> Credit Book (Udhar)
       </h2>
-      <a href="{{ route('udhar.index') }}" class="text-xs text-green-600 hover:underline font-medium">View all →</a>
+      <a href="{{ route('udhar.index') }}" class="text-xs text-green-600 hover:underline font-medium">{{ __('dash.view_all') }}</a>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <div class="text-center p-3 rounded-lg bg-{{ $udharTotalDue > 0 ? 'red' : 'slate' }}-50 border border-{{ $udharTotalDue > 0 ? 'red' : 'slate' }}-100">
         <p class="money text-lg font-bold text-{{ $udharTotalDue > 0 ? 'red-600' : 'slate-400' }}">{{ formatCurrency($udharTotalDue) }}</p>
-        <p class="text-xs text-slate-500 mt-0.5">Total Pending</p>
+        <p class="text-xs text-slate-500 mt-0.5">{{ __('dash.total_pending') }}</p>
       </div>
       <div class="text-center p-3 rounded-lg bg-{{ $udharOverdueCount > 0 ? 'red' : 'slate' }}-50 border border-{{ $udharOverdueCount > 0 ? 'red' : 'slate' }}-100">
         <p class="text-lg font-bold text-{{ $udharOverdueCount > 0 ? 'red-600' : 'slate-400' }}">{{ $udharOverdueCount }}</p>
-        <p class="text-xs text-slate-500 mt-0.5">Overdue</p>
+        <p class="text-xs text-slate-500 mt-0.5">{{ __('dash.overdue') }}</p>
       </div>
       <div class="text-center p-3 rounded-lg bg-{{ $udharDueTodayCount > 0 ? 'amber' : 'slate' }}-50 border border-{{ $udharDueTodayCount > 0 ? 'amber' : 'slate' }}-100">
         <p class="text-lg font-bold text-{{ $udharDueTodayCount > 0 ? 'amber-600' : 'slate-400' }}">{{ $udharDueTodayCount }}</p>
-        <p class="text-xs text-slate-500 mt-0.5">Due Today</p>
+        <p class="text-xs text-slate-500 mt-0.5">{{ __('dash.due_today') }}</p>
       </div>
       <div class="text-center p-3 rounded-lg bg-slate-50 border border-slate-100">
         <p class="text-lg font-bold text-slate-700">{{ $udharDueThisWeek }}</p>
-        <p class="text-xs text-slate-500 mt-0.5">Due This Week</p>
+        <p class="text-xs text-slate-500 mt-0.5">{{ __('dash.due_week') }}</p>
       </div>
     </div>
   </div>
@@ -214,10 +214,10 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="font-semibold text-slate-900">Sales &amp; Profit — 6 Months</h2>
+          <h2 class="font-semibold text-slate-900">{{ __('dash.sales_profit_6m') }}</h2>
           <div class="flex items-center gap-3 mt-1">
-            <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-sm bg-green-600"></span>Sales</span>
-            <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Profit</span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-sm bg-green-600"></span>{{ __('dash.sales') }}</span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>{{ __('dash.profit') }}</span>
           </div>
         </div>
         <div class="text-right">
@@ -230,8 +230,8 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h2 class="font-semibold text-slate-900">Recent POS Sales</h2>
-        <a href="{{ route('pos.index') }}" class="text-xs text-green-600 hover:underline font-medium">View all →</a>
+        <h2 class="font-semibold text-slate-900">{{ __('dash.recent_sales') }}</h2>
+        <a href="{{ route('pos.index') }}" class="text-xs text-green-600 hover:underline font-medium">{{ __('dash.view_all') }}</a>
       </div>
       @forelse($recentSales as $s)
       <div class="flex items-center justify-between px-5 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors">
@@ -247,8 +247,8 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
       @empty
       <div class="px-5 py-10 text-center">
         <i data-lucide="scan-line" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
-        <p class="text-sm text-slate-400">No sales yet today.</p>
-        <a href="{{ route('pos.create') }}" class="text-xs text-green-600 hover:underline mt-1 inline-block">Start a sale →</a>
+        <p class="text-sm text-slate-400">{{ __('dash.no_sale_today') }}</p>
+        <a href="{{ route('pos.create') }}" class="text-xs text-green-600 hover:underline mt-1 inline-block">{{ __('dash.start_sale') }}</a>
       </div>
       @endforelse
     </div>
@@ -258,10 +258,10 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
     <div class="flex items-center justify-between mb-4">
       <div>
-        <h2 class="font-semibold text-slate-900">Top Products — This Month</h2>
-        <p class="text-xs text-slate-400 mt-0.5">Sabse zyada bikne wale (quantity)</p>
+        <h2 class="font-semibold text-slate-900">{{ __('dash.top_products') }}</h2>
+        <p class="text-xs text-slate-400 mt-0.5">{{ __('dash.top_products_sub') }}</p>
       </div>
-      <a href="{{ route('reports.index') }}" class="text-xs text-green-600 hover:underline font-medium">Reports →</a>
+      <a href="{{ route('reports.index') }}" class="text-xs text-green-600 hover:underline font-medium">{{ __('dash.reports_link') }}</a>
     </div>
     @php $maxQty = optional($topProducts->first())->qty ?: 1; @endphp
     @forelse($topProducts as $i => $tp)
@@ -278,7 +278,7 @@ $shopLabel  = $shopLabels[$shopType] ?? 'Shop';
       </div>
     </div>
     @empty
-    <p class="text-sm text-slate-400 text-center py-6">Is mahine abhi koi sale nahi hui.</p>
+    <p class="text-sm text-slate-400 text-center py-6">{{ __('dash.no_sale_month') }}</p>
     @endforelse
   </div>
 
