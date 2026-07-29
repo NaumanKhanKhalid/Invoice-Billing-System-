@@ -6,12 +6,12 @@
   {{-- Header --}}
   <div class="flex items-center justify-between flex-wrap gap-3">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Reports & Analytics</h1>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('pages.reports') }}</h1>
       <p class="text-sm text-slate-500 mt-0.5">{{ \Carbon\Carbon::parse($from)->format('d M Y') }} — {{ \Carbon\Carbon::parse($to)->format('d M Y') }}</p>
     </div>
     <form method="GET" class="flex flex-wrap items-end gap-2">
       <div>
-        <label class="block text-xs font-medium text-slate-500 mb-1">From</label>
+        <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('pages.from') }}</label>
         <input type="date" name="from_date" value="{{ $from }}"
                class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
       </div>
@@ -35,7 +35,7 @@
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sales Revenue</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.sales_revenue') }}</p>
         <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
           <i data-lucide="trending-up" class="w-4 h-4 text-green-600"></i>
         </div>
@@ -46,7 +46,7 @@
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Purchase Cost</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.purchase_cost') }}</p>
         <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
           <i data-lucide="shopping-cart" class="w-4 h-4 text-red-500"></i>
         </div>
@@ -57,7 +57,7 @@
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Expenses & Salaries</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.expenses_salaries') }}</p>
         <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
           <i data-lucide="wallet" class="w-4 h-4 text-orange-500"></i>
         </div>
@@ -68,7 +68,7 @@
 
     <div class="bg-{{ $netProfit >= 0 ? 'green' : 'red' }}-50 rounded-xl border border-{{ $netProfit >= 0 ? 'green' : 'red' }}-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-{{ $netProfit >= 0 ? 'green' : 'red' }}-500 uppercase tracking-wider">Net Profit</p>
+        <p class="text-xs font-semibold text-{{ $netProfit >= 0 ? 'green' : 'red' }}-500 uppercase tracking-wider">{{ __('pages.net_profit') }}</p>
         <div class="w-8 h-8 rounded-lg bg-{{ $netProfit >= 0 ? 'green' : 'red' }}-100 flex items-center justify-center">
           <i data-lucide="{{ $netProfit >= 0 ? 'circle-dollar-sign' : 'trending-down' }}" class="w-4 h-4 text-{{ $netProfit >= 0 ? 'green' : 'red' }}-600"></i>
         </div>
@@ -85,15 +85,15 @@
     </h2>
     <div class="grid grid-cols-3 gap-4">
       <div class="text-center p-4 bg-slate-50 rounded-xl">
-        <p class="text-xs text-slate-500 font-semibold uppercase mb-1">Cost Value</p>
+        <p class="text-xs text-slate-500 font-semibold uppercase mb-1">{{ __('pages.cost_value') }}</p>
         <p class="text-xl font-bold text-slate-700">{{ formatCurrency($stockValueCost) }}</p>
       </div>
       <div class="text-center p-4 bg-blue-50 rounded-xl">
-        <p class="text-xs text-blue-500 font-semibold uppercase mb-1">Sale Value</p>
+        <p class="text-xs text-blue-500 font-semibold uppercase mb-1">{{ __('pages.sale_value') }}</p>
         <p class="text-xl font-bold text-blue-700">{{ formatCurrency($stockValueSale) }}</p>
       </div>
       <div class="text-center p-4 bg-green-50 rounded-xl">
-        <p class="text-xs text-green-600 font-semibold uppercase mb-1">Potential Margin</p>
+        <p class="text-xs text-green-600 font-semibold uppercase mb-1">{{ __('pages.potential_margin') }}</p>
         <p class="text-xl font-bold text-green-700">{{ formatCurrency($stockValueSale - $stockValueCost) }}</p>
       </div>
     </div>
@@ -132,7 +132,7 @@
         @endforeach
       </div>
       @else
-      <div class="px-5 py-10 text-center text-slate-400 text-sm">No sales in this period</div>
+      <div class="px-5 py-10 text-center text-slate-400 text-sm">{{ __('pages.no_sales_period') }}</div>
       @endif
     </div>
 
@@ -157,7 +157,7 @@
           @endforeach
         </div>
         @else
-        <div class="px-5 py-8 text-center text-slate-400 text-sm">No sales in this period</div>
+        <div class="px-5 py-8 text-center text-slate-400 text-sm">{{ __('pages.no_sales_period') }}</div>
         @endif
       </div>
 
@@ -178,7 +178,7 @@
           @endforeach
         </div>
         @else
-        <div class="px-5 py-8 text-center text-slate-400 text-sm">No expenses in this period</div>
+        <div class="px-5 py-8 text-center text-slate-400 text-sm">{{ __('pages.no_expenses_period') }}</div>
         @endif
       </div>
     </div>
@@ -196,10 +196,10 @@
       <table class="w-full text-sm">
         <thead class="bg-slate-50 border-b border-slate-100">
           <tr>
-            <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Product</th>
-            <th class="text-right px-4 py-2.5 font-semibold text-slate-600">Stock</th>
-            <th class="text-right px-4 py-2.5 font-semibold text-slate-600">Alert Level</th>
-            <th class="text-right px-4 py-2.5 font-semibold text-slate-600">Action</th>
+            <th class="text-left px-4 py-2.5 font-semibold text-slate-600">{{ __('product.col_product') }}</th>
+            <th class="text-right px-4 py-2.5 font-semibold text-slate-600">{{ __('product.col_stock') }}</th>
+            <th class="text-right px-4 py-2.5 font-semibold text-slate-600">{{ __('pages.alert_level') }}</th>
+            <th class="text-right px-4 py-2.5 font-semibold text-slate-600">{{ __('common.action') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -209,7 +209,7 @@
             <td class="px-4 py-2.5 text-right font-bold {{ $p->stock_qty <= 0 ? 'text-red-600' : 'text-orange-600' }}">{{ rtrim(rtrim(number_format($p->stock_qty, 2), '0'), '.') }} {{ $p->unit }}</td>
             <td class="px-4 py-2.5 text-right text-slate-500">{{ $p->low_stock_alert }}</td>
             <td class="px-4 py-2.5 text-right">
-              <a href="{{ route('products.show', $p) }}" class="text-xs text-blue-600 hover:underline">View</a>
+              <a href="{{ route('products.show', $p) }}" class="text-xs text-blue-600 hover:underline">{{ __('common.view') }}</a>
             </td>
           </tr>
           @endforeach

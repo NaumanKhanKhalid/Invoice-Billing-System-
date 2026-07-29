@@ -6,8 +6,8 @@
   {{-- Header --}}
   <div class="flex items-center justify-between flex-wrap gap-3">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Quotations</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Customer ko estimate / quote bhejein</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('pages.quotations') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('pages.quotations_sub') }}</p>
     </div>
     <a href="{{ route('quotations.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
       <i data-lucide="plus" class="w-4 h-4"></i> New Quotation
@@ -18,28 +18,28 @@
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Total</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ __('common.total') }}</p>
         <span class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-slate-500"></i></span>
       </div>
       <p class="text-2xl font-bold text-slate-800 mt-2">{{ $counts['all'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-amber-200 shadow-sm p-4">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-amber-500 uppercase tracking-wider font-semibold">Sent</p>
+        <p class="text-xs text-amber-500 uppercase tracking-wider font-semibold">{{ __('pages.sent') }}</p>
         <span class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center"><i data-lucide="send" class="w-4 h-4 text-amber-600"></i></span>
       </div>
       <p class="text-2xl font-bold text-amber-700 mt-2">{{ $counts['sent'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-green-200 shadow-sm p-4">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-green-500 uppercase tracking-wider font-semibold">Accepted</p>
+        <p class="text-xs text-green-500 uppercase tracking-wider font-semibold">{{ __('pages.accepted') }}</p>
         <span class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-600"></i></span>
       </div>
       <p class="text-2xl font-bold text-green-700 mt-2">{{ $counts['accepted'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Accepted Value</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ __('pages.accepted_value') }}</p>
         <span class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4 text-green-600"></i></span>
       </div>
       <p class="text-xl font-bold text-slate-900 mt-2 tabular-nums">PKR {{ number_format($acceptedValue) }}</p>
@@ -61,7 +61,7 @@
         @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
         <div class="relative flex-1">
           <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
-          <input type="text" name="search" value="{{ request('search') }}" placeholder="Quote #, customer ya phone..."
+          <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('pages.search_quote') }}"
                  class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
         </div>
         <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -82,12 +82,12 @@
       <table class="w-full">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Quote #</th>
-            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Customer</th>
-            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date</th>
-            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Valid Until</th>
-            <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
-            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('pages.quote_no') }}</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('common.customer') }}</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('common.date') }}</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('pages.valid_until') }}</th>
+            <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('common.amount') }}</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('common.status') }}</th>
             <th class="px-5 py-3"></th>
           </tr>
         </thead>
@@ -117,7 +117,7 @@
             <td class="px-5 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $q->date->format('d M Y') }}</td>
             <td class="px-5 py-3 text-sm whitespace-nowrap {{ $isExpired ? 'text-red-500 font-semibold' : 'text-slate-500' }}">
               {{ $q->valid_until ? $q->valid_until->format('d M Y') : '—' }}
-              @if($isExpired)<span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600">Expired</span>@endif
+              @if($isExpired)<span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600">{{ __('pages.expired') }}</span>@endif
             </td>
             <td class="px-5 py-3 text-sm font-bold text-slate-900 text-right whitespace-nowrap tabular-nums">PKR {{ number_format($q->total) }}</td>
             <td class="px-5 py-3">
@@ -131,7 +131,7 @@
           <tr>
             <td colspan="7" class="px-5 py-16 text-center">
               <i data-lucide="file-text" class="w-10 h-10 text-slate-200 mx-auto mb-3"></i>
-              <p class="text-slate-400 text-sm">Koi quotation nahi mili</p>
+              <p class="text-slate-400 text-sm">{{ __('pages.no_quotations') }}</p>
               <a href="{{ route('quotations.create') }}" class="mt-3 inline-flex items-center gap-1 text-green-600 hover:underline text-sm font-medium">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i> Pehli quotation banayein
               </a>

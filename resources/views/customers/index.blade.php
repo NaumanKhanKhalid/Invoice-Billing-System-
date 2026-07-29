@@ -13,8 +13,8 @@ $typeBadge = [
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Customers</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Manage your customers</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('pages.customers') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('pages.customers_sub') }}</p>
     </div>
     <a href="{{ route('customers.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
       <i data-lucide="plus" class="w-4 h-4"></i>Add Customer
@@ -25,7 +25,7 @@ $typeBadge = [
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Customers</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.total_customers') }}</p>
         <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
           <i data-lucide="users" class="w-4 h-4 text-slate-500"></i>
         </div>
@@ -34,7 +34,7 @@ $typeBadge = [
     </div>
     <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('common.active') }}</p>
         <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
           <i data-lucide="user-check" class="w-4 h-4 text-green-600"></i>
         </div>
@@ -43,7 +43,7 @@ $typeBadge = [
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Billed</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.total_billed') }}</p>
         <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
           <i data-lucide="receipt" class="w-4 h-4 text-blue-500"></i>
         </div>
@@ -52,7 +52,7 @@ $typeBadge = [
     </div>
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Outstanding</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('pages.outstanding') }}</p>
         <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
           <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
         </div>
@@ -66,13 +66,13 @@ $typeBadge = [
     <form method="GET" class="flex flex-wrap gap-3 items-center">
       <div class="relative flex-1 min-w-48">
         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or phone..."
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('pages.search_name_phone') }}"
           class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
       </div>
       <div class="relative">
         <i data-lucide="layers" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
         <select name="type" class="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white text-slate-700 appearance-none cursor-pointer">
-          <option value="">All Types</option>
+          <option value="">{{ __('pages.all_types') }}</option>
           @foreach(['retail','hotel','restaurant','company','reseller'] as $t)
             <option value="{{ $t }}" {{ request('type')===$t?'selected':'' }}>{{ ucfirst($t) }}</option>
           @endforeach
@@ -82,9 +82,9 @@ $typeBadge = [
       <div class="relative">
         <i data-lucide="circle-dot" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
         <select name="status" class="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white text-slate-700 appearance-none cursor-pointer">
-          <option value="">All Status</option>
-          <option value="active"   {{ request('status')=='active'  ?'selected':'' }}>Active</option>
-          <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Inactive</option>
+          <option value="">{{ __('common.all_status') }}</option>
+          <option value="active"   {{ request('status')=='active'  ?'selected':'' }}>{{ __('common.active') }}</option>
+          <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>{{ __('common.inactive') }}</option>
         </select>
         <i data-lucide="chevron-down" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
       </div>
@@ -110,12 +110,12 @@ $typeBadge = [
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Customer</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Credit Days</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Outstanding</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.customer') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('pages.type') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('pages.credit_days') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('pages.outstanding') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.status') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('common.actions') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -126,7 +126,7 @@ $typeBadge = [
             <p class="text-xs text-slate-400 mt-0.5">
               {{ $customer->phone }}
               @if($customer->is_blacklisted)
-                <span class="badge badge-red ml-1">Blacklisted</span>
+                <span class="badge badge-red ml-1">{{ __('pages.blacklisted') }}</span>
               @endif
             </p>
           </td>
@@ -167,8 +167,8 @@ $typeBadge = [
         <tr>
           <td colspan="6" class="px-4 py-12 text-center">
             <i data-lucide="users" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-            <p class="text-slate-500 font-medium">No customers found</p>
-            <a href="{{ route('customers.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">Add your first customer</a>
+            <p class="text-slate-500 font-medium">{{ __('pages.no_customers') }}</p>
+            <a href="{{ route('customers.create') }}" class="text-green-600 text-sm mt-1 inline-block hover:underline">{{ __('pages.add_first_customer') }}</a>
           </td>
         </tr>
         @endforelse
