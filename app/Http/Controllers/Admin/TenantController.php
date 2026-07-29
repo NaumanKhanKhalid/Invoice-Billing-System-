@@ -180,4 +180,10 @@ class TenantController extends Controller
         $payments = $tenant->subscriptionPayments()->latest('paid_at')->get();
         return view('admin.tenants.payments', compact('tenant', 'payments'));
     }
+
+    public function paymentReceipt(SubscriptionPayment $payment)
+    {
+        $tenant = Tenant::findOrFail($payment->tenant_id);
+        return view('admin.payments.receipt', compact('payment', 'tenant'));
+    }
 }

@@ -29,6 +29,7 @@
           <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Amount</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Method</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Reference</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Receipt</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -46,6 +47,11 @@
           <td class="px-4 py-3 text-sm text-right font-bold text-slate-900">PKR {{ number_format($p->amount) }}</td>
           <td class="px-4 py-3 text-sm text-slate-600 capitalize">{{ $p->method }}</td>
           <td class="px-4 py-3 text-sm text-slate-400">{{ $p->reference ?? '—' }}</td>
+          <td class="px-4 py-3 text-right">
+            <a href="{{ route('admin.payments.receipt', $p) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>View
+            </a>
+          </td>
         </tr>
         @endforeach
       </tbody>
@@ -53,7 +59,7 @@
         <tr>
           <td colspan="3" class="px-4 py-3 text-sm font-bold text-slate-900">Total</td>
           <td class="px-4 py-3 text-sm text-right font-bold text-green-600">PKR {{ number_format($payments->sum('amount')) }}</td>
-          <td colspan="2"></td>
+          <td colspan="3"></td>
         </tr>
       </tfoot>
     </table>

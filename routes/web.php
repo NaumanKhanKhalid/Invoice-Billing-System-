@@ -25,6 +25,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->gro
     Route::post('/tenants/{tenant}/renew', [TenantController::class, 'renewPlan'])->name('tenants.renew');
     Route::post('/tenants/{tenant}/toggle-active', [TenantController::class, 'toggleActive'])->name('tenants.toggle-active');
     Route::get('/tenants/{tenant}/payments', [TenantController::class, 'payments'])->name('tenants.payments');
+    Route::get('/payments/{payment}/receipt', [TenantController::class, 'paymentReceipt'])->name('payments.receipt');
     Route::post('/tenants/{tenant}/impersonate', [ImpersonateController::class, 'start'])->name('tenants.impersonate');
     Route::get('/plans', fn() => view('admin.plans'))->name('plans');
     Route::get('/logs', [\App\Http\Controllers\Admin\LogViewerController::class, 'index'])->name('logs');
