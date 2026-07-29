@@ -82,7 +82,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="text" x-ref="mainInput" x-model="searchQ"
                @keydown.enter.prevent="tryBarcodeEnter()"
-               placeholder="Search products or scan barcode..."
+               placeholder="{{ __('pos.search_products') }}"
                class="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-300 focus:bg-white outline-none transition"
                autofocus>
       </div>
@@ -112,10 +112,10 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       <div class="flex items-center rounded-xl border border-slate-200 overflow-hidden shrink-0 text-xs font-semibold">
         <button type="button" @click="priceMode = 'retail'"
                 :class="priceMode === 'retail' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'"
-                class="px-3 py-2 transition">Retail</button>
+                class="px-3 py-2 transition">{{ __('pos.retail') }}</button>
         <button type="button" @click="priceMode = 'wholesale'"
                 :class="priceMode === 'wholesale' ? 'bg-amber-500 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'"
-                class="px-3 py-2 transition">Wholesale</button>
+                class="px-3 py-2 transition">{{ __('pos.wholesale') }}</button>
       </div>
 
       @if(feature_enabled('open_tabs'))
@@ -153,7 +153,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
               :class="hideOutOfStock ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'">
         <svg x-show="!hideOutOfStock" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
         <svg x-show="hideOutOfStock" x-cloak style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
-        <span x-text="hideOutOfStock ? 'Out of stock chhupe' : 'Out of stock'"></span>
+        <span x-text="hideOutOfStock ? '{{ __('pos.out_of_stock_hide') }}' : '{{ __('pos.out_of_stock') }}'"></span>
       </button>
     </div>
 
@@ -204,7 +204,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
             </div>
-            <p class="text-slate-400 text-sm font-medium">Koi product nahi mila</p>
+            <p class="text-slate-400 text-sm font-medium">{{ __('pos.no_products') }}</p>
           </div>
         </template>
       </div>
@@ -266,7 +266,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
       <div class="flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-        <span class="text-slate-900 font-bold text-sm">Cart</span>
+        <span class="text-slate-900 font-bold text-sm">{{ __('pos.cart') }}</span>
         <span x-show="cart.length > 0"
               class="bg-green-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
               x-text="cart.length"></span>
@@ -280,7 +280,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
     {{-- Customer --}}
     <div class="shrink-0 px-3 py-2.5 border-b border-slate-100 bg-white" @click.outside="showCustList = false">
-      <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1.5">Customer Information</p>
+      <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1.5">{{ __('pos.customer_info') }}</p>
       {{-- Search / walk-in state — dropdown with search + add-new inside --}}
       <template x-if="!selectedCustomer && !addingCustomer">
         <div class="relative">
@@ -308,7 +308,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
               <div class="relative">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 <input type="text" x-ref="custSearch" x-model="customerQuery"
-                       placeholder="Naam ya number se dhoondein"
+                       placeholder="{{ __('pos.search_customer') }}"
                        class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
               </div>
             </div>
@@ -341,20 +341,20 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
               <span class="w-5 h-5 rounded-md bg-green-600 text-white flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
               </span>
-              <p class="text-[11px] text-green-800 font-bold uppercase tracking-wider">Naya Customer</p>
+              <p class="text-[11px] text-green-800 font-bold uppercase tracking-wider">{{ __('pos.new_customer') }}</p>
             </div>
-            <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">Cancel</button>
+            <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">{{ __('common.cancel') }}</button>
           </div>
 
           <div class="space-y-2">
             <div class="relative">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <input type="text" x-model="customerName" placeholder="Customer ka naam" @keydown.enter.prevent="saveNewCustomer()"
+              <input type="text" x-model="customerName" placeholder="{{ __('pos.customer_name') }}" @keydown.enter.prevent="saveNewCustomer()"
                      class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
             </div>
             <div class="relative">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <input type="tel" x-model="customerPhone" placeholder="Phone number" @keydown.enter.prevent="saveNewCustomer()"
+              <input type="tel" x-model="customerPhone" placeholder="{{ __('pos.phone_number') }}" @keydown.enter.prevent="saveNewCustomer()"
                      class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
             </div>
             <p class="text-[11px] text-slate-400 leading-snug">Udhar sale ke liye phone number zaroori hai.</p>
@@ -400,8 +400,8 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           <div class="w-14 h-14 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
-          <p class="text-slate-500 text-sm font-medium">Cart khali hai</p>
-          <p class="text-slate-400 text-xs mt-1">Product card click karein</p>
+          <p class="text-slate-500 text-sm font-medium">{{ __('pos.cart_empty') }}</p>
+          <p class="text-slate-400 text-xs mt-1">{{ __('pos.click_product') }}</p>
         </div>
       </template>
 
@@ -437,7 +437,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         {{-- Totals --}}
         <div class="px-4 pt-2 pb-1.5 space-y-1">
           <div class="flex justify-between text-[13px] text-slate-500">
-            <span>Subtotal</span>
+            <span>{{ __('pos.subtotal') }}</span>
             <span x-text="'PKR ' + subtotal.toLocaleString()" class="tabular-nums text-slate-700"></span>
           </div>
           <div class="flex justify-between items-center text-[13px] text-slate-500">
@@ -456,7 +456,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             </div>
           </div>
           <div class="flex justify-between items-baseline pt-1 border-t border-slate-100">
-            <span class="text-slate-700 font-semibold text-sm">Total</span>
+            <span class="text-slate-700 font-semibold text-sm">{{ __('pos.total') }}</span>
             <span class="text-slate-900 text-lg font-extrabold tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
           </div>
         </div>
@@ -468,7 +468,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           <button type="button" @click="openPaymentModal()" :disabled="cart.length === 0 || submitting"
                   class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white py-2.5 rounded-xl font-extrabold text-[13px] transition flex items-center justify-center gap-2 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span x-text="submitting ? 'Processing...' : 'Complete Sale'"></span>
+            <span x-text="submitting ? 'Processing...' : '{{ __('pos.complete_sale') }}'"></span>
           </button>
           @if(feature_enabled('quotations'))
           <button type="button" @click="saveQuotation()" :disabled="cart.length === 0" title="Quotation banayein"
@@ -493,7 +493,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     </span>
     <span class="flex items-center gap-2">
       <span class="text-white font-extrabold text-sm tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
-      <span class="bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-xl">View Cart</span>
+      <span class="bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-xl">{{ __('pos.view_cart') }}</span>
     </span>
   </button>
 
@@ -505,7 +505,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden" @click.outside="closeCamera()">
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
         <div>
-          <h3 class="font-bold text-slate-900">Camera Scanner</h3>
+          <h3 class="font-bold text-slate-900">{{ __('pos.camera_scanner') }}</h3>
           <p class="text-xs text-slate-400 mt-0.5" x-text="cameraStatus"></p>
         </div>
         <button @click="closeCamera()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
@@ -517,7 +517,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
       </div>
       <div class="px-5 py-4 text-center">
-        <p class="text-xs text-slate-500">Barcode ko camera ke saamne rakhen</p>
+        <p class="text-xs text-slate-500">{{ __('pos.barcode_hint') }}</p>
         <p x-show="lastCameraResult" class="mt-1.5 text-sm font-mono font-bold text-green-700" x-text="lastCameraResult"></p>
       </div>
     </div>
@@ -532,7 +532,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden" @click.outside="holdModalOpen = false">
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
         <div>
-          <h3 class="font-bold text-slate-900" x-text="holdId ? 'Hold Update Karein' : 'Sale Hold Karein'"></h3>
+          <h3 class="font-bold text-slate-900" x-text="holdId ? '{{ __('pos.update_hold') }}' : '{{ __('pos.hold_sale') }}'"></h3>
           <p class="text-xs text-slate-400 mt-0.5">Cart save ho jayega, baad mein resume karein</p>
         </div>
         <button type="button" @click="holdModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">✕</button>
@@ -555,7 +555,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
         <button type="submit" :disabled="holdSaving || !holdCustomerName.trim()"
                 class="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white py-2.5 rounded-xl font-bold text-sm transition"
-                x-text="holdSaving ? 'Saving...' : (holdId ? 'Hold Update Karein' : 'Hold Karein — ' + cart.length + ' item(s)')"></button>
+                x-text="holdSaving ? 'Saving...' : (holdId ? '{{ __('pos.update_hold') }}' : '{{ __('pos.hold_sale') }} — ' + cart.length + ' item(s)')"></button>
       </form>
     </div>
   </div>
@@ -568,7 +568,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
          x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
         <div>
-          <h3 class="font-bold text-slate-900">Today's Sales</h3>
+          <h3 class="font-bold text-slate-900">{{ __('pos.todays_sales') }}</h3>
           <p class="text-xs text-slate-400 mt-0.5" x-text="recentSales.length + ' sale(s) · PKR ' + recentSales.reduce((s,r)=>s+Number(r.total||0),0).toLocaleString()"></p>
         </div>
         <div class="flex items-center gap-2">
@@ -582,7 +582,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             <div class="w-14 h-14 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center mb-3">
               <svg style="width:24px;height:24px" class="text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
             </div>
-            <p class="text-slate-500 text-sm font-medium">Aaj abhi koi sale nahi hui</p>
+            <p class="text-slate-500 text-sm font-medium">{{ __('pos.no_sale_today') }}</p>
           </div>
         </template>
         <template x-for="s in recentSales" :key="s.number">
@@ -617,7 +617,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 leading-tight">Held Sales</h3>
+            <h3 class="font-bold text-slate-900 leading-tight">{{ __('pos.held_sales') }}</h3>
             <p class="text-xs text-slate-400 mt-0.5" x-text="heldSales.length + ' hold' + (heldSales.length === 1 ? '' : 's') + ' pending'"></p>
           </div>
         </div>
@@ -626,7 +626,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
       {{-- Total value bar --}}
       <div x-show="heldSales.length > 0" class="flex items-center justify-between px-5 py-2.5 bg-amber-50/60 border-b border-amber-100 shrink-0">
-        <span class="text-xs font-semibold text-amber-700 uppercase tracking-wide">Total held value</span>
+        <span class="text-xs font-semibold text-amber-700 uppercase tracking-wide">{{ __('pos.total_held') }}</span>
         <span class="text-sm font-extrabold text-amber-700 tabular-nums" x-text="'PKR ' + heldSales.reduce((s,h)=>s+Number(h.total||0),0).toLocaleString()"></span>
       </div>
 
@@ -636,7 +636,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
             </div>
-            <p class="text-slate-400 text-sm font-medium">Koi hold nahi hai</p>
+            <p class="text-slate-400 text-sm font-medium">{{ __('pos.no_holds') }}</p>
             <p class="text-slate-300 text-xs mt-1">Cart mein "Hold" button se sale save karein</p>
           </div>
         </template>
@@ -659,7 +659,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
               <button type="button" @click="resumeHold(h)"
                       class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white py-2 rounded-lg text-xs font-bold transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                Resume
+                {{ __('pos.resume') }}
               </button>
               <button type="button" @click="confirmDeleteId = h.id" title="Delete hold"
                       class="w-8 h-8 inline-flex items-center justify-center border border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition shrink-0">
@@ -673,7 +673,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
               <button type="button" @click="deleteHold(h)"
                       class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition">Haan, delete</button>
               <button type="button" @click="confirmDeleteId = null"
-                      class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold transition">Nahi</button>
+                      class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold transition">{{ __('common.no') }}</button>
             </div>
           </div>
         </template>
@@ -692,7 +692,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
          @click.outside="finalizeModalOpen = false">
       {{-- Header --}}
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
-        <h3 class="font-bold text-slate-900">Payment</h3>
+        <h3 class="font-bold text-slate-900">{{ __('pos.payment') }}</h3>
         <button type="button" @click="finalizeModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
       </div>
 
@@ -700,14 +700,14 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       {{-- Total --}}
       <div class="px-5 pt-4">
         <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-3">
-          <span class="text-sm text-slate-500 font-medium">Total to pay</span>
+          <span class="text-sm text-slate-500 font-medium">{{ __('pos.total_to_pay') }}</span>
           <span class="text-2xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
         </div>
       </div>
 
       {{-- Method selector --}}
       <div class="px-5 pt-4">
-        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Payment Method</p>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.payment_method') }}</p>
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem">
           <template x-for="pm in payMethods" :key="pm.value">
             <button type="button" @click="payMethod = pm.value"
@@ -723,7 +723,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       {{-- Cash / Online amount --}}
       <div class="px-5 pt-4" x-show="payMethod === 'cash' || payMethod === 'online'">
         <div class="flex items-center justify-between mb-1">
-          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider" x-text="payMethod === 'online' ? 'Amount Received' : 'Cash Received'"></label>
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider" x-text="payMethod === 'online' ? '{{ __('pos.amount_received') }}' : '{{ __('pos.cash_received') }}'"></label>
         </div>
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold">PKR</span>
@@ -731,7 +731,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                  class="w-full pl-12 pr-3 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-lg font-bold outline-none focus:ring-2 focus:ring-green-300 transition tabular-nums">
         </div>
         <div class="flex items-center justify-between mt-3 px-1">
-          <span class="text-sm text-slate-500 font-medium">Change to return</span>
+          <span class="text-sm text-slate-500 font-medium">{{ __('pos.change_to_return') }}</span>
           <span class="text-lg font-extrabold tabular-nums" :class="change > 0 ? 'text-emerald-600' : 'text-slate-400'" x-text="'PKR ' + change.toLocaleString()"></span>
         </div>
       </div>
@@ -782,7 +782,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           <p x-show="splitUdhar > 0 && (!customerName.trim() || !customerPhone.trim())" x-cloak class="text-[11px] text-amber-600 font-semibold mt-1">⚠ Udhar ke liye customer select karein.</p>
         </div>
         <div class="flex items-center justify-between text-sm px-1 pt-1">
-          <span class="text-slate-500" x-text="splitAllocated > total ? 'Extra' : 'Remaining'"></span>
+          <span class="text-slate-500" x-text="splitAllocated > total ? '{{ __('pos.extra') }}' : '{{ __('pos.remaining') }}'"></span>
           <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-emerald-600' : 'text-red-500'" x-text="'PKR ' + Math.abs(splitAllocated - total).toLocaleString()"></span>
         </div>
       </div>
@@ -795,7 +795,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           <button type="button" @click="confirmPayment(false)" :disabled="submitting"
                   class="flex-1 bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-1.5 shadow-sm shadow-green-600/20">
             <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span x-text="submitting ? '...' : 'Complete Sale'"></span>
+            <span x-text="submitting ? '...' : '{{ __('pos.complete_sale') }}'"></span>
           </button>
 
           {{-- 2) Complete Sale + Print Invoice --}}
@@ -803,7 +803,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
           <button type="button" @click="confirmPayment(true)" :disabled="submitting" title="Complete Sale & Print Invoice"
                   class="flex-1 bg-white border border-green-500 hover:bg-green-50 active:scale-[.99] disabled:opacity-50 text-green-700 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-1.5">
             <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            <span>Complete &amp; Print</span>
+            <span>{{ __('pos.complete_print') }}</span>
           </button>
           @endif
         </div>
@@ -849,7 +849,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     <div class="bg-white rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col max-h-[85vh]" style="max-width:24rem" @click.outside="variantModalOpen = false">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 shrink-0">
         <div class="min-w-0">
-          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Variant chunein</p>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ __('pos.choose_variant') }}</p>
           <h3 class="font-bold text-slate-900 truncate" x-text="variantGroupName"></h3>
         </div>
         <button type="button" @click="variantModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">✕</button>
@@ -865,7 +865,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             <div class="flex-1 min-w-0 text-left">
               <p class="text-sm font-bold text-slate-800 truncate" x-text="v.variant_name || v.name"></p>
               <p class="text-[11px] font-semibold" :class="v.stock_qty <= 0 ? 'text-red-500' : 'text-slate-400'"
-                 x-text="v.stock_qty <= 0 ? 'Out of stock' : v.stock_qty + ' ' + v.unit + ' available'"></p>
+                 x-text="v.stock_qty <= 0 ? '{{ __('pos.out_of_stock') }}' : v.stock_qty + ' ' + v.unit + ' available'"></p>
             </div>
             <p class="text-sm font-extrabold text-green-600 shrink-0" x-text="'PKR ' + Number(priceFor(v)).toLocaleString()"></p>
           </button>
@@ -898,8 +898,8 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
       {{-- Title --}}
       <div class="pt-3 pb-1 px-6 text-center">
-        <h3 class="text-xl font-extrabold text-slate-900">Sale Complete!</h3>
-        <p class="text-[13px] text-green-600 font-semibold mt-0.5">Payment received</p>
+        <h3 class="text-xl font-extrabold text-slate-900">{{ __('pos.sale_complete') }}</h3>
+        <p class="text-[13px] text-green-600 font-semibold mt-0.5">{{ __('pos.payment_received') }}</p>
         <p class="text-[11px] text-slate-400 font-mono mt-1" x-text="lastSale.number"></p>
       </div>
 
@@ -939,7 +939,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         <button type="button" @click="closeSaleModal()"
                 class="w-full py-3.5 rounded-2xl bg-green-600 hover:bg-green-700 active:scale-[.99] text-white font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
-          New Sale
+          {{ __('pos.new_sale') }}
         </button>
       </div>
     </div>
