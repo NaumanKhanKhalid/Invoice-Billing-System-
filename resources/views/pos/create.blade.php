@@ -585,9 +585,9 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       <div class="overflow-y-auto">
       {{-- Total --}}
       <div class="px-4 pt-2.5">
-        <div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-2.5">
-          <span class="text-sm text-slate-500 font-medium">{{ __('pos.total_to_pay') }}</span>
-          <span class="text-xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
+        <div class="flex items-center justify-between rounded-xl px-4 py-3" style="background:linear-gradient(135deg,#ecfdf5 0%,#f0fdfa 100%)">
+          <span class="text-sm text-emerald-700/70 font-semibold">{{ __('pos.total_to_pay') }}</span>
+          <span class="text-2xl font-extrabold text-emerald-700 tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
         </div>
       </div>
 
@@ -608,7 +608,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform" :class="showCustList ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
               </button>
               <button type="button" @click="startAddCustomer()" title="Naya customer add karein"
-                      class="w-10 h-10 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
+                      class="w-10 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
               </button>
             </div>
@@ -653,7 +653,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                      class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition">
               <p class="text-[11px] text-slate-400 leading-snug">Udhar sale ke liye phone number zaroori hai.</p>
               <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
-                      class="w-full py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition">Customer add karein</button>
+                      class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition">Customer add karein</button>
             </div>
           </div>
         </template>
@@ -684,7 +684,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem">
           <template x-for="pm in payMethods" :key="pm.value">
             <button type="button" @click="payMethod = pm.value"
-                    :class="payMethod === pm.value ? 'border-green-500 bg-green-50 text-green-700' : 'border-slate-200 bg-white text-slate-500 hover:border-green-300'"
+                    :class="payMethod === pm.value ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' : 'border-slate-200 bg-white text-slate-500 hover:border-emerald-300'"
                     class="flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl border transition">
               <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x-html="pm.icon"></svg>
               <span x-text="pm.label" class="text-[10px] font-bold"></span>
@@ -706,7 +706,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
         <div class="flex items-center justify-between mt-2 px-1">
           <span class="text-xs text-slate-500 font-medium">{{ __('pos.change_to_return') }}</span>
-          <span class="text-base font-extrabold tabular-nums" :class="change > 0 ? 'text-green-600' : 'text-slate-400'" x-text="'PKR ' + change.toLocaleString()"></span>
+          <span class="text-base font-extrabold tabular-nums" :class="change > 0 ? 'text-emerald-600' : 'text-slate-400'" x-text="'PKR ' + change.toLocaleString()"></span>
         </div>
       </div>
 
@@ -757,7 +757,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
         <div class="flex items-center justify-between text-sm px-1 pt-1">
           <span class="text-slate-500" x-text="splitAllocated > total ? '{{ __('pos.extra') }}' : '{{ __('pos.remaining') }}'"></span>
-          <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-green-600' : 'text-red-500'" x-text="'PKR ' + Math.abs(splitAllocated - total).toLocaleString()"></span>
+          <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-emerald-600' : 'text-red-500'" x-text="'PKR ' + Math.abs(splitAllocated - total).toLocaleString()"></span>
         </div>
       </div>
       </div>
@@ -766,20 +766,20 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       <div class="px-4 py-3 shrink-0 border-t border-slate-100 bg-slate-50/50">
         @if(feature_enabled('receipt_print'))
         <div @click="toggleAutoPrint()" role="switch" :aria-checked="autoPrint"
-             class="flex items-center justify-between gap-2 mb-2 cursor-pointer select-none">
-          <span class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
-            <svg style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+             class="flex items-center justify-between gap-2 mb-2.5 px-3 py-2 rounded-xl bg-white border border-slate-200 cursor-pointer select-none hover:border-emerald-300 transition">
+          <span class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+            <svg style="width:14px;height:14px" class="text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Har sale par auto-print
           </span>
-          <span class="relative inline-block shrink-0 rounded-full border transition-colors" style="width:36px;height:20px"
-                :style="autoPrint ? 'background:#22c55e;border-color:#16a34a' : 'background:#e2e8f0;border-color:#cbd5e1'">
-            <span class="absolute rounded-full bg-white shadow transition-transform" style="top:2px;left:2px;width:14px;height:14px"
-                  :style="autoPrint ? 'transform:translateX(16px)' : 'transform:translateX(0)'"></span>
+          <span class="relative inline-block shrink-0 rounded-full transition-colors" style="width:40px;height:22px"
+                :style="autoPrint ? 'background:#059669' : 'background:#cbd5e1'">
+            <span class="absolute rounded-full bg-white shadow-md transition-transform" style="top:2px;left:2px;width:18px;height:18px"
+                  :style="autoPrint ? 'transform:translateX(18px)' : 'transform:translateX(0)'"></span>
           </span>
         </div>
         @endif
         <button type="button" @click="confirmPayment(false)" :disabled="submitting"
-                class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
+                class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/25">
           <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           <span x-text="submitting ? '...' : '{{ __('pos.complete_sale') }}'"></span>
         </button>
