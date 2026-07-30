@@ -4,8 +4,8 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Tenant Management</h1>
-      <p class="text-sm text-slate-500 mt-0.5">All client shops on this platform</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('admin.tenant_management') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('admin.all_shops') }}</p>
     </div>
     <a href="{{ route('admin.tenants.create') }}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
       <i data-lucide="plus" class="w-4 h-4"></i>New Tenant
@@ -15,19 +15,19 @@
   {{-- Stats --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 text-center">
-      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Total Shops</p>
+      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">{{ __('admin.total_shops') }}</p>
       <p class="text-3xl font-bold text-slate-900">{{ $stats['total'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-green-200 shadow-sm p-5 text-center">
-      <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">Active</p>
+      <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">{{ __('common.active') }}</p>
       <p class="text-3xl font-bold text-green-600">{{ $stats['active'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5 text-center">
-      <p class="text-xs text-red-500 font-semibold uppercase tracking-wider mb-1">Expired</p>
+      <p class="text-xs text-red-500 font-semibold uppercase tracking-wider mb-1">{{ __('admin.expired') }}</p>
       <p class="text-3xl font-bold text-red-600">{{ $stats['expired'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-5 text-center">
-      <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider mb-1">This Month</p>
+      <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider mb-1">{{ __('common.this_month') }}</p>
       <p class="text-2xl font-bold text-blue-600">{{ number_format($stats['revenue_month']) }}</p>
       <p class="text-xs text-slate-400 mt-0.5">Total: PKR {{ number_format($stats['revenue_total']) }}</p>
     </div>
@@ -72,17 +72,17 @@
         @endforeach
       </div>
       <select name="plan" onchange="this.form.submit()" class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 outline-none focus:ring-2 focus:ring-green-300">
-        <option value="">All Plans</option>
+        <option value="">{{ __('admin.all_plans') }}</option>
         @foreach(['free','pro','business'] as $p)<option value="{{ $p }}" {{ request('plan')==$p?'selected':'' }}>{{ ucfirst($p) }}</option>@endforeach
       </select>
       <select name="shop_type" onchange="this.form.submit()" class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 outline-none focus:ring-2 focus:ring-green-300">
-        <option value="">All Types</option>
+        <option value="">{{ __('admin.all_types') }}</option>
         @foreach(['chicken','hardware','mobile','bike','general','medical','coaching'] as $t)<option value="{{ $t }}" {{ request('shop_type')==$t?'selected':'' }}>{{ ucfirst($t) }}</option>@endforeach
       </select>
       @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
       <div class="relative flex-1 min-w-[180px]">
         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Shop, owner, email, phone..."
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('admin.search_tenant') }}"
                class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
       </div>
       <button type="submit" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -102,13 +102,13 @@
     <table class="w-full">
       <thead class="bg-slate-50">
         <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Shop</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Owner</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Plan</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Expires</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('admin.shop') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('pages.type') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('admin.owner') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('admin.plan') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('admin.expires') }}</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('common.status') }}</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">{{ __('common.actions') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -145,7 +145,7 @@
             @if($tenant->plan_expires_at)
               {{ $tenant->plan_expires_at->format('d M Y') }}
               @if(!$expired && $daysLeft <= 30)<br><span class="text-xs">{{ $daysLeft }} days left</span>@endif
-              @if($expired)<br><span class="text-xs">Expired</span>@endif
+              @if($expired)<br><span class="text-xs">{{ __('admin.expired') }}</span>@endif
             @else —
             @endif
           </td>
@@ -193,8 +193,8 @@
         @empty
         <tr><td colspan="7" class="px-4 py-12 text-center">
           <i data-lucide="store" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-          <p class="text-slate-400">No tenants yet</p>
-          <a href="{{ route('admin.tenants.create') }}" class="text-green-600 text-sm hover:underline mt-1 inline-block">Create first tenant</a>
+          <p class="text-slate-400">{{ __('admin.no_tenants') }}</p>
+          <a href="{{ route('admin.tenants.create') }}" class="text-green-600 text-sm hover:underline mt-1 inline-block">{{ __('admin.create_first_tenant') }}</a>
         </td></tr>
         @endforelse
       </tbody>

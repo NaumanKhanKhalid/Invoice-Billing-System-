@@ -4,8 +4,8 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between flex-wrap gap-3">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Platform overview — revenue, growth &amp; tenants</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('admin.admin_dashboard') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('admin.platform_overview') }}</p>
     </div>
     <a href="{{ route('admin.tenants.index') }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
       <i data-lucide="store" class="w-4 h-4"></i>Manage Tenants
@@ -16,15 +16,15 @@
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">MRR (est.)</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ __('admin.mrr') }}</p>
         <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><i data-lucide="trending-up" class="w-4 h-4 text-green-600"></i></span>
       </div>
       <p class="text-2xl font-bold text-slate-900 mt-2 tabular-nums">PKR {{ number_format($stats['mrr']) }}</p>
-      <p class="text-xs text-slate-400 mt-0.5">Active paid plans / month</p>
+      <p class="text-xs text-slate-400 mt-0.5">{{ __('admin.mrr_sub') }}</p>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">This Month</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ __('common.this_month') }}</p>
         <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4 text-blue-600"></i></span>
       </div>
       <p class="text-2xl font-bold text-slate-900 mt-2 tabular-nums">PKR {{ number_format($stats['revenue_month']) }}</p>
@@ -32,7 +32,7 @@
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Active Shops</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ __('admin.active_shops') }}</p>
         <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-600"></i></span>
       </div>
       <p class="text-2xl font-bold text-green-600 mt-2">{{ $stats['active'] }}<span class="text-base text-slate-400 font-medium"> / {{ $stats['total'] }}</span></p>
@@ -40,22 +40,22 @@
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">New (This Month)</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ __('admin.new_this_month') }}</p>
         <span class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center"><i data-lucide="user-plus" class="w-4 h-4 text-indigo-600"></i></span>
       </div>
       <p class="text-2xl font-bold text-slate-900 mt-2">{{ $stats['new_this_month'] }}</p>
-      <p class="text-xs text-slate-400 mt-0.5">New signups</p>
+      <p class="text-xs text-slate-400 mt-0.5">{{ __('admin.new_signups') }}</p>
     </div>
   </div>
 
   {{-- Charts --}}
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-      <h2 class="text-sm font-bold text-slate-800 mb-4">Revenue &amp; Signups — last 6 months</h2>
+      <h2 class="text-sm font-bold text-slate-800 mb-4">{{ __('admin.revenue_signups') }}</h2>
       <canvas id="trendChart" height="110"></canvas>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-      <h2 class="text-sm font-bold text-slate-800 mb-4">Plan Distribution</h2>
+      <h2 class="text-sm font-bold text-slate-800 mb-4">{{ __('admin.plan_distribution') }}</h2>
       <canvas id="planChart" height="180"></canvas>
       <div class="mt-4 space-y-1.5">
         @foreach($planDist as $plan => $cnt)
@@ -71,7 +71,7 @@
   {{-- Shop-type breakdown + Expiring --}}
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-      <h2 class="text-sm font-bold text-slate-800 mb-4">Shops by Type</h2>
+      <h2 class="text-sm font-bold text-slate-800 mb-4">{{ __('admin.shops_by_type') }}</h2>
       @php $maxType = $typeDist->max() ?: 1; @endphp
       <div class="space-y-2.5">
         @forelse($typeDist as $type => $cnt)
@@ -85,14 +85,14 @@
           </div>
         </div>
         @empty
-        <p class="text-sm text-slate-400">No shops yet</p>
+        <p class="text-sm text-slate-400">{{ __('admin.no_shops') }}</p>
         @endforelse
       </div>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-bold text-slate-800">Expiring within 7 days</h2>
+        <h2 class="text-sm font-bold text-slate-800">{{ __('admin.expiring_7') }}</h2>
         <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">{{ $expiringSoon->count() }}</span>
       </div>
       <div class="space-y-2">
@@ -111,7 +111,7 @@
           </div>
         </div>
         @empty
-        <p class="text-sm text-slate-400 py-6 text-center">Koi plan is hafte expire nahi ho raha ✓</p>
+        <p class="text-sm text-slate-400 py-6 text-center">{{ __('admin.none_expiring') }}</p>
         @endforelse
       </div>
     </div>
@@ -119,7 +119,7 @@
 
   {{-- Recent signups --}}
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="px-5 py-3 border-b border-slate-100"><h2 class="text-sm font-bold text-slate-800">Recent Signups</h2></div>
+    <div class="px-5 py-3 border-b border-slate-100"><h2 class="text-sm font-bold text-slate-800">{{ __('admin.recent_signups') }}</h2></div>
     <table class="w-full">
       <tbody class="divide-y divide-slate-100">
         @forelse($recent as $t)
@@ -132,7 +132,7 @@
           <td class="px-5 py-3 text-right text-xs text-slate-400 whitespace-nowrap">{{ $t->created_at ? $t->created_at->format('d M Y') : '—' }}</td>
         </tr>
         @empty
-        <tr><td class="px-5 py-8 text-center text-sm text-slate-400">No tenants yet</td></tr>
+        <tr><td class="px-5 py-8 text-center text-sm text-slate-400">{{ __('admin.no_tenants') }}</td></tr>
         @endforelse
       </tbody>
     </table>
