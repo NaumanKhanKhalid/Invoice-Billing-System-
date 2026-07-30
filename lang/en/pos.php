@@ -44,4 +44,5 @@ return [
     'new_sale'          => 'New Sale',
     'choose_variant'    => 'Choose Variant',
     'select_customer'   => 'Udhar ke liye upar se customer select karein.',
+    'payment_subtitle' => "Choose a method to finish this sale",
 ];
