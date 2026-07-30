@@ -573,18 +573,18 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
        style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px);"
        @keydown.escape.window="finalizeModalOpen = false">
-    <div class="bg-white rounded-3xl shadow-2xl w-full overflow-hidden flex flex-col max-h-[92vh]" style="max-width:26rem"
+    <div class="bg-white rounded-3xl shadow-2xl w-full overflow-hidden flex flex-col max-h-[88vh]" style="max-width:23rem"
          x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
          @click.outside="finalizeModalOpen = false">
       {{-- Header --}}
-      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 shrink-0">
         <h3 class="font-bold text-slate-900">{{ __('pos.payment') }}</h3>
         <button type="button" @click="finalizeModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
       </div>
 
       <div class="overflow-y-auto">
       {{-- Total --}}
-      <div class="px-5 pt-4">
+      <div class="px-4 pt-3">
         <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-3">
           <span class="text-sm text-slate-500 font-medium">{{ __('pos.total_to_pay') }}</span>
           <span class="text-2xl font-extrabold text-slate-900 tabular-nums" x-text="'PKR ' + total.toLocaleString()"></span>
@@ -592,7 +592,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Customer (same dropdown as before, now the single place) --}}
-      <div class="px-5 pt-4 relative z-30" @click.outside="showCustList = false">
+      <div class="px-4 pt-3 relative z-30" @click.outside="showCustList = false">
         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.customer_info') }}</p>
 
         {{-- Search / walk-in state --}}
@@ -679,7 +679,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Method selector --}}
-      <div class="px-5 pt-4">
+      <div class="px-4 pt-3">
         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.payment_method') }}</p>
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem">
           <template x-for="pm in payMethods" :key="pm.value">
@@ -695,7 +695,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
 
 
       {{-- Cash / Online amount --}}
-      <div class="px-5 pt-4" x-show="payMethod === 'cash' || payMethod === 'online'">
+      <div class="px-4 pt-3" x-show="payMethod === 'cash' || payMethod === 'online'">
         <div class="flex items-center justify-between mb-1">
           <label class="text-xs font-bold text-slate-500 uppercase tracking-wider" x-text="payMethod === 'online' ? '{{ __('pos.amount_received') }}' : '{{ __('pos.cash_received') }}'"></label>
         </div>
@@ -711,7 +711,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Udhar (full credit) --}}
-      <div class="px-5 pt-4" x-show="payMethod === 'credit'" x-cloak>
+      <div class="px-4 pt-3" x-show="payMethod === 'credit'" x-cloak>
         <div class="rounded-2xl border p-4" :class="(customerName.trim() && customerPhone.trim()) ? 'border-green-200 bg-green-50/60' : 'border-amber-200 bg-amber-50/60'">
           <template x-if="customerName.trim() && customerPhone.trim()">
             <p class="text-sm text-slate-700">Poori raqam <b class="text-green-700" x-text="'PKR ' + total.toLocaleString()"></b> <b x-text="customerName"></b> ke udhaar khaate me jayegi.</p>
@@ -723,7 +723,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
 
       {{-- Split tenders --}}
-      <div class="px-5 pt-4 space-y-3" x-show="payMethod === 'split'" x-cloak>
+      <div class="px-4 pt-3 space-y-2.5" x-show="payMethod === 'split'" x-cloak>
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -762,25 +762,28 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       </div>
       </div>
 
-      {{-- Actions — two buttons on one line --}}
-      <div class="p-5 pt-4 shrink-0 border-t border-slate-100 bg-slate-50/50">
-        <div class="flex gap-2.5">
-          {{-- 1) Complete Sale only --}}
-          <button type="button" @click="confirmPayment(false)" :disabled="submitting"
-                  class="flex-1 bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-1.5 shadow-sm shadow-green-600/20">
-            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span x-text="submitting ? '...' : '{{ __('pos.complete_sale') }}'"></span>
-          </button>
+      {{-- Actions — single Sale Complete button + auto-print toggle --}}
+      <div class="p-4 shrink-0 border-t border-slate-100 bg-slate-50/50 space-y-2.5">
+        <button type="button" @click="confirmPayment(false)" :disabled="submitting"
+                class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
+          <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span x-text="submitting ? '...' : '{{ __('pos.complete_sale') }} — PKR ' + total.toLocaleString()"></span>
+        </button>
 
-          {{-- 2) Complete Sale + Print Invoice --}}
-          @if(feature_enabled('receipt_print'))
-          <button type="button" @click="confirmPayment(true)" :disabled="submitting" title="Complete Sale & Print Invoice"
-                  class="flex-1 bg-white border border-green-500 hover:bg-green-50 active:scale-[.99] disabled:opacity-50 text-green-700 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-1.5">
-            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            <span>{{ __('pos.complete_print') }}</span>
-          </button>
-          @endif
+        @if(feature_enabled('receipt_print'))
+        <div @click="toggleAutoPrint()" role="switch" :aria-checked="autoPrint"
+             class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white border border-slate-100 cursor-pointer select-none">
+          <span class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Har sale par auto-print
+          </span>
+          <span class="relative inline-block shrink-0 rounded-full transition-colors" style="width:38px;height:22px"
+                :style="autoPrint ? 'background:#22c55e' : 'background:#cbd5e1'">
+            <span class="absolute rounded-full bg-white shadow transition-transform" style="top:3px;left:3px;width:16px;height:16px"
+                  :style="autoPrint ? 'transform:translateX(16px)' : 'transform:translateX(0)'"></span>
+          </span>
         </div>
+        @endif
       </div>
     </div>
   </div>
