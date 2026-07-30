@@ -6,7 +6,7 @@
     <a href="{{ route('products.show', $product) }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
       <i data-lucide="arrow-left" class="w-4 h-4"></i>
     </a>
-    <h1 class="text-xl font-bold text-slate-900">Edit Product</h1>
+    <h1 class="text-xl font-bold text-slate-900">{{ __('forms.edit_product') }}</h1>
   </div>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
@@ -16,27 +16,27 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="sm:col-span-2">
-          <label class="block text-xs font-medium text-slate-600 mb-1">Product Name *</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.product_name') }} *</label>
           <input type="text" name="name" value="{{ old('name', $product->name) }}" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none @error('name') border-red-400 @enderror">
           @error('name')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">SKU / Code</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.sku') }}</label>
           <input type="text" name="sku" value="{{ old('sku', $product->sku) }}"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Barcode (EAN/UPC)</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.barcode') }}</label>
           <input type="text" name="barcode" value="{{ old('barcode', $product->barcode) }}"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none font-mono"
                  placeholder="e.g. 6901234567890">
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Category</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.category') }}</label>
           <input type="text" name="category" value="{{ old('category', $product->category) }}" list="cat-list"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           <datalist id="cat-list">
@@ -52,7 +52,7 @@
           <datalist id="vg-list">
             @foreach(\App\Models\Product::whereNotNull('variant_group')->distinct()->pluck('variant_group') as $vg)<option value="{{ $vg }}">@endforeach
           </datalist>
-          <p class="text-[11px] text-slate-400 mt-1">Same group ke products POS par ek card me aayenge.</p>
+          <p class="text-[11px] text-slate-400 mt-1">{{ __('forms.variant_group_hint') }}</p>
         </div>
 
         <div>
@@ -63,7 +63,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Unit *</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.unit') }} *</label>
           <div class="relative">
             <select name="unit" x-model="unit" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
               @foreach(['pcs'=>'Pieces','kg'=>'KG','liter'=>'Liter','meter'=>'Meter','box'=>'Box','dozen'=>'Dozen','pair'=>'Pair'] as $val=>$label)
@@ -75,13 +75,13 @@
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Cost Price (PKR) *</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.cost_price') }} *</label>
           <input type="number" name="cost_price" value="{{ old('cost_price', $product->cost_price) }}" required min="0" step="0.01"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Sale Price (PKR) *</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.sale_price') }} *</label>
           <input type="number" name="sale_price" value="{{ old('sale_price', $product->sale_price) }}" required min="0" step="0.01"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
@@ -90,17 +90,17 @@
           <label class="block text-xs font-medium text-slate-600 mb-1">Wholesale Price (optional)</label>
           <input type="number" name="wholesale_price" value="{{ old('wholesale_price', $product->wholesale_price) }}" min="0" step="0.01"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
-          <p class="text-xs text-slate-400 mt-1">Mechanic/thekedaar rate — khali chhodo to sab ko retail</p>
+          <p class="text-xs text-slate-400 mt-1">{{ __('forms.wholesale_hint') }}</p>
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Low Stock Alert At</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.low_stock_alert') }}</label>
           <input type="number" name="low_stock_alert" value="{{ old('low_stock_alert', $product->low_stock_alert) }}" min="0"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
+          <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.description') }}</label>
           <textarea name="description" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none">{{ old('description', $product->description) }}</textarea>
         </div>
 
@@ -125,17 +125,17 @@
         <div class="sm:col-span-2 flex items-start gap-3">
           <input type="checkbox" name="track_serial" value="1" id="track_serial" @checked(old('track_serial', $product->track_serial)) class="rounded border-slate-300 text-green-600 mt-0.5">
           <div>
-            <label for="track_serial" class="text-sm text-slate-700">Track IMEI/Serial Numbers</label>
-            <p class="text-xs text-slate-400">Mobile phones waghera ke liye — har sale par IMEI record hoga</p>
+            <label for="track_serial" class="text-sm text-slate-700">{{ __('forms.track_serial') }}</label>
+            <p class="text-xs text-slate-400">{{ __('forms.track_serial_hint') }}</p>
           </div>
         </div>
 
         <div class="sm:col-span-2 border border-slate-200 rounded-lg p-4 space-y-3">
           <h3 class="text-sm font-semibold text-slate-700">Unit Conversion (optional)</h3>
-          <p class="text-xs text-slate-400">Maal bade unit mein aata hai to yahan set karo</p>
+          <p class="text-xs text-slate-400">{{ __('forms.bulk_unit_hint') }}</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-slate-600 mb-1">Purchase Unit</label>
+              <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.purchase_unit') }}</label>
               <input type="text" name="purchase_unit" x-model="pu" value="{{ old('purchase_unit', $product->purchase_unit) }}" maxlength="30"
                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none"
                      placeholder="e.g. Roll">

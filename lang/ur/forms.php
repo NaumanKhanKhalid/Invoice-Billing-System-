@@ -76,4 +76,8 @@ return [
   'default_15' => "Default: 15 din",
   'active_supplier' => "Active supplier",
   'internal_notes' => "Andaruni notes",
+  'edit_product' => "Product Edit Karein",
+  'edit_customer' => "Customer Edit Karein",
+  'edit_supplier' => "Supplier Edit Karein",
+  'customer_info' => "Customer Ki Maloomat",
 ];

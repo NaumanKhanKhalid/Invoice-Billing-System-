@@ -49,13 +49,13 @@
           <div class="p-5 space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1.5">Name <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">{{ __('common.name') }} span class="text-red-500">*</span></label>
                 <input type="text" name="name" value="{{ old('name') }}" required
                   class="w-full px-3 py-2 text-sm border @error('name') border-red-400 @else border-slate-200 @enderror rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                 @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1.5">Phone <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">{{ __('common.phone') }} span class="text-red-500">*</span></label>
                 <input type="text" name="phone" value="{{ old('phone') }}" required
                   class="w-full px-3 py-2 text-sm border @error('phone') border-red-400 @else border-slate-200 @enderror rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
                 @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror

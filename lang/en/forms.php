@@ -76,4 +76,8 @@ return [
   'default_15' => "Default: 15 days",
   'active_supplier' => "Active supplier",
   'internal_notes' => "Internal notes",
+  'edit_product' => "Edit Product",
+  'edit_customer' => "Edit Customer",
+  'edit_supplier' => "Edit Supplier",
+  'customer_info' => "Customer Info",
 ];
