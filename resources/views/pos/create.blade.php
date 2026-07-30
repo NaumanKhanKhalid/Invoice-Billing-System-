@@ -775,11 +775,11 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             Har sale par auto-print
           </span>
           <span class="relative inline-flex items-center shrink-0 rounded-full transition-colors duration-200"
-                style="width:44px;height:24px;padding:2px;background:#cbd5e1;border:1px solid #b6c0cc"
-                :style="autoPrint ? 'background:#16a34a;border-color:#15803d' : ''">
+                style="width:44px;height:24px;padding:2px;border:1px solid #b6c0cc"
+                :style="{ background: autoPrint ? '#16a34a' : '#cbd5e1', borderColor: autoPrint ? '#15803d' : '#b6c0cc' }">
             <span class="rounded-full shadow transition-transform duration-200 ease-out"
                   style="width:18px;height:18px;background:#ffffff"
-                  :style="autoPrint ? 'transform:translateX(20px)' : 'transform:translateX(0)'"></span>
+                  :style="{ transform: autoPrint ? 'translateX(20px)' : 'translateX(0px)' }"></span>
           </span>
         </div>
         @endif
