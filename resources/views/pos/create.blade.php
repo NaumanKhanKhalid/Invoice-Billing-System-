@@ -706,7 +706,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
         <div class="flex items-center justify-between mt-2 px-1">
           <span class="text-xs text-slate-500 font-medium">{{ __('pos.change_to_return') }}</span>
-          <span class="text-base font-extrabold tabular-nums" :class="change > 0 ? 'text-emerald-600' : 'text-slate-400'" x-text="'PKR ' + change.toLocaleString()"></span>
+          <span class="text-base font-extrabold tabular-nums" :class="change > 0 ? 'text-green-600' : 'text-slate-400'" x-text="'PKR ' + change.toLocaleString()"></span>
         </div>
       </div>
 
@@ -757,7 +757,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
         <div class="flex items-center justify-between text-sm px-1 pt-1">
           <span class="text-slate-500" x-text="splitAllocated > total ? '{{ __('pos.extra') }}' : '{{ __('pos.remaining') }}'"></span>
-          <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-emerald-600' : 'text-red-500'" x-text="'PKR ' + Math.abs(splitAllocated - total).toLocaleString()"></span>
+          <span class="font-bold tabular-nums" :class="splitAllocated >= total ? 'text-green-600' : 'text-red-500'" x-text="'PKR ' + Math.abs(splitAllocated - total).toLocaleString()"></span>
         </div>
       </div>
       </div>
@@ -781,7 +781,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         <button type="button" @click="confirmPayment(false)" :disabled="submitting"
                 class="w-full bg-green-600 hover:bg-green-700 active:scale-[.99] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm shadow-green-600/20">
           <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          <span x-text="submitting ? '...' : '{{ __('pos.complete_sale') }} — PKR ' + total.toLocaleString()"></span>
+          <span x-text="submitting ? '...' : '{{ __('pos.complete_sale') }}'"></span>
         </button>
       </div>
     </div>
