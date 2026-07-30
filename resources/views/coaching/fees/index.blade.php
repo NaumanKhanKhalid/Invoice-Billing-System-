@@ -5,7 +5,7 @@
 
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Fee Collection</h1>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('coaching.fee_collection') }}</h1>
       <p class="text-sm text-slate-500 mt-0.5">{{ $monthDate->format('F Y') }}</p>
     </div>
     <form method="GET" class="flex items-center gap-2">
@@ -19,19 +19,19 @@
   {{-- Summary Cards --}}
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Total</p>
+      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">{{ __('common.total') }}</p>
       <p class="text-2xl font-bold text-slate-900">{{ $summary['total'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-green-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">Paid</p>
+      <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">{{ __('common.paid') }}</p>
       <p class="text-2xl font-bold text-green-600">{{ $summary['paid'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-yellow-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-yellow-600 font-semibold uppercase tracking-wider mb-1">Partial</p>
+      <p class="text-xs text-yellow-600 font-semibold uppercase tracking-wider mb-1">{{ __('common.partial') }}</p>
       <p class="text-2xl font-bold text-yellow-600">{{ $summary['partial'] }}</p>
     </div>
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-4 text-center">
-      <p class="text-xs text-red-500 font-semibold uppercase tracking-wider mb-1">Pending</p>
+      <p class="text-xs text-red-500 font-semibold uppercase tracking-wider mb-1">{{ __('coaching.pending') }}</p>
       <p class="text-2xl font-bold text-red-600">{{ $summary['pending'] }}</p>
     </div>
   </div>
@@ -40,22 +40,22 @@
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
     <div class="grid grid-cols-3 gap-4">
       <div class="text-center p-3 bg-green-50 rounded-xl">
-        <p class="text-xs text-green-600 font-semibold uppercase mb-1">Collected</p>
+        <p class="text-xs text-green-600 font-semibold uppercase mb-1">{{ __('coaching.collected') }}</p>
         <p class="text-xl font-bold text-green-700">PKR {{ number_format($summary['collected']) }}</p>
       </div>
       <div class="text-center p-3 bg-slate-50 rounded-xl">
-        <p class="text-xs text-slate-500 font-semibold uppercase mb-1">Expected</p>
+        <p class="text-xs text-slate-500 font-semibold uppercase mb-1">{{ __('coaching.expected') }}</p>
         <p class="text-xl font-bold text-slate-700">PKR {{ number_format($summary['expected']) }}</p>
       </div>
       <div class="text-center p-3 bg-red-50 rounded-xl">
-        <p class="text-xs text-red-500 font-semibold uppercase mb-1">Remaining</p>
+        <p class="text-xs text-red-500 font-semibold uppercase mb-1">{{ __('coaching.remaining') }}</p>
         <p class="text-xl font-bold text-red-600">PKR {{ number_format($summary['balance']) }}</p>
       </div>
     </div>
     @if($summary['expected'] > 0)
     <div class="mt-4">
       <div class="flex justify-between text-xs text-slate-500 mb-1">
-        <span>Collection Progress</span>
+        <span>{{ __('coaching.collection_progress') }}</span>
         <span>{{ round(($summary['collected']/$summary['expected'])*100) }}%</span>
       </div>
       <div class="w-full bg-slate-100 rounded-full h-2.5">
@@ -71,13 +71,13 @@
       <table class="w-full text-sm">
         <thead class="bg-slate-50 border-b border-slate-200">
           <tr>
-            <th class="text-left px-4 py-3 font-semibold text-slate-600">Student</th>
-            <th class="text-left px-4 py-3 font-semibold text-slate-600">Batch</th>
-            <th class="text-right px-4 py-3 font-semibold text-slate-600">Due</th>
-            <th class="text-right px-4 py-3 font-semibold text-slate-600">Paid</th>
-            <th class="text-right px-4 py-3 font-semibold text-slate-600">Balance</th>
-            <th class="text-center px-4 py-3 font-semibold text-slate-600">Status</th>
-            <th class="text-right px-4 py-3 font-semibold text-slate-600">Action</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-600">{{ __('coaching.student') }}</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-600">{{ __('coaching.batch') }}</th>
+            <th class="text-right px-4 py-3 font-semibold text-slate-600">{{ __('common.due') }}</th>
+            <th class="text-right px-4 py-3 font-semibold text-slate-600">{{ __('common.paid') }}</th>
+            <th class="text-right px-4 py-3 font-semibold text-slate-600">{{ __('coaching.balance') }}</th>
+            <th class="text-center px-4 py-3 font-semibold text-slate-600">{{ __('common.status') }}</th>
+            <th class="text-right px-4 py-3 font-semibold text-slate-600">{{ __('common.action') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -98,11 +98,11 @@
             <td class="px-4 py-3 text-right text-red-600">{{ number_format($fee->balance_due) }}</td>
             <td class="px-4 py-3 text-center">
               @if($fee->status === 'paid')
-              <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Paid</span>
+              <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{{ __('common.paid') }}</span>
               @elseif($fee->status === 'partial')
-              <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">Partial</span>
+              <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">{{ __('common.partial') }}</span>
               @else
-              <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Pending</span>
+              <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">{{ __('coaching.pending') }}</span>
               @endif
             </td>
             <td class="px-4 py-3 text-right">
@@ -131,14 +131,14 @@
                   @csrf
                   <div class="grid grid-cols-2 gap-2">
                     <div>
-                      <label class="text-xs text-slate-500">Amount (PKR)</label>
+                      <label class="text-xs text-slate-500">{{ __('coaching.amount_pkr') }}</label>
                       <input name="amount_paid" type="number" min="0" value="{{ $fee->balance_due }}"
                              class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
                     </div>
                     <div>
-                      <label class="text-xs text-slate-500">Method</label>
+                      <label class="text-xs text-slate-500">{{ __('common.method') }}</label>
                       <select name="payment_method" class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <option value="cash">Cash</option>
+                        <option value="cash">{{ __('coaching.cash') }}</option>
                         <option value="jazzcash">JazzCash</option>
                         <option value="easypaisa">Easypaisa</option>
                         <option value="bank">Bank</option>

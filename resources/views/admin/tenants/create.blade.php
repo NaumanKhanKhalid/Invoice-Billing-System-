@@ -7,8 +7,8 @@
       <i data-lucide="arrow-left" class="w-4 h-4"></i>
     </a>
     <div>
-      <h1 class="text-xl font-bold text-slate-900">New Tenant</h1>
-      <p class="text-sm text-slate-500">Create a new client shop</p>
+      <h1 class="text-xl font-bold text-slate-900">{{ __('admin.new_tenant') }}</h1>
+      <p class="text-sm text-slate-500">{{ __('admin.create_shop') }}</p>
     </div>
   </div>
 
@@ -29,19 +29,19 @@
   }">
     @csrf
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-      <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">Shop Details</h2>
+      <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">{{ __('admin.shop_details') }}</h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Shop Name *</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.shop_name') }} *</label>
           <input type="text" name="shop_name" x-model="shopName" @input="autoSlug()" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           @error('shop_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Shop Type *</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.shop_type') }} *</label>
           <select name="shop_type" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
-            <option value="">Select type...</option>
+            <option value="">{{ __('admin.select_type') }}</option>
             <option value="chicken" {{ old('shop_type')=='chicken'?'selected':'' }}>🍗 Chicken Shop</option>
             <option value="bike"    {{ old('shop_type')=='bike'   ?'selected':'' }}>🏍️ Bike Spare Parts</option>
             <option value="hardware"{{ old('shop_type')=='hardware'?'selected':'' }}>🔧 Hardware Shop</option>
@@ -55,7 +55,7 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Subdomain *</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.subdomain') }} *</label>
         <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-green-300">
           <input type="text" name="subdomain" x-model="subdomain" @input="userEditedSub=true" required placeholder="ahmed-bikes"
                  class="flex-1 px-3 py-2 text-sm outline-none">
@@ -66,21 +66,21 @@
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-      <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">Owner Details</h2>
+      <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">{{ __('admin.owner_details') }}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Owner Name *</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.owner_name') }} *</label>
           <input type="text" name="owner_name" value="{{ old('owner_name') }}" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           @error('owner_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Owner Phone</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.owner_phone') }}</label>
           <input type="text" name="owner_phone" value="{{ old('owner_phone') }}"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
         <div class="sm:col-span-2">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Owner Email *</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.owner_email') }} *</label>
           <input type="email" name="owner_email" value="{{ old('owner_email') }}" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           <p class="text-xs text-slate-400 mt-1">This will be the login email. Temp password: <strong>password123</strong></p>
@@ -90,10 +90,10 @@
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-      <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">Subscription</h2>
+      <h2 class="font-semibold text-slate-900 text-sm uppercase tracking-wider text-slate-500">{{ __('admin.subscription') }}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Plan *</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.plan_req') }} *</label>
           <select name="plan" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
             <option value="basic"    {{ old('plan')=='basic'   ?'selected':'' }}>Basic — PKR 1,500/mo</option>
             <option value="pro"      {{ old('plan')=='pro'     ?'selected':'' }}>Pro — PKR 3,000/mo</option>
@@ -101,7 +101,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Duration (months) *</label>
+          <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.duration_months') }} *</label>
           <select name="plan_months" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
             <option value="1">1 month</option>
             <option value="3">3 months</option>
@@ -111,7 +111,7 @@
         </div>
       </div>
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('admin.notes') }}</label>
         <textarea name="notes" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">{{ old('notes') }}</textarea>
       </div>
     </div>
@@ -120,7 +120,7 @@
       <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
         Create Tenant & Database
       </button>
-      <a href="{{ route('admin.tenants.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-6 py-2.5 rounded-lg text-sm font-medium">Cancel</a>
+      <a href="{{ route('admin.tenants.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-6 py-2.5 rounded-lg text-sm font-medium">{{ __('common.cancel') }}</a>
     </div>
   </form>
 </div>

@@ -5,8 +5,8 @@
 
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Courses & Batches</h1>
-      <p class="text-sm text-slate-500 mt-0.5">Manage your courses and class batches</p>
+      <h1 class="text-2xl font-bold text-slate-900">{{ __('coaching.courses') }}</h1>
+      <p class="text-sm text-slate-500 mt-0.5">{{ __('coaching.courses_sub') }}</p>
     </div>
     <button onclick="document.getElementById('addCourseModal').classList.remove('hidden')"
             class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
@@ -29,7 +29,7 @@
           <div class="flex items-center gap-3">
             <p class="font-medium text-slate-900">{{ $course->name }}</p>
             @if(!$course->is_active)
-            <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Inactive</span>
+            <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ __('common.inactive') }}</span>
             @endif
           </div>
           @if($course->description)
@@ -79,7 +79,7 @@
             <p class="font-medium text-slate-900">{{ $batch->name }}</p>
             <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{{ $batch->course->name }}</span>
             @if(!$batch->is_active)
-            <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Inactive</span>
+            <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ __('common.inactive') }}</span>
             @endif
           </div>
           <div class="flex items-center gap-4 mt-1">
@@ -104,7 +104,7 @@
         </div>
       </div>
       @empty
-      <div class="px-5 py-10 text-center text-slate-400 text-sm">No batches yet.</div>
+      <div class="px-5 py-10 text-center text-slate-400 text-sm">{{ __('coaching.no_batches') }}</div>
       @endforelse
     </div>
   </div>
@@ -115,17 +115,17 @@
 <div id="addCourseModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-      <h3 class="font-semibold text-slate-900">Add Course</h3>
+      <h3 class="font-semibold text-slate-900">{{ __('coaching.add_course') }}</h3>
       <button onclick="document.getElementById('addCourseModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <form action="{{ route('coaching.courses.store') }}" method="POST" class="p-6 space-y-4">
       @csrf
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Course Name</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.course_name') }}</label>
         <input name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Matriculation (Science)">
       </div>
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Monthly Fee (PKR)</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.monthly_fee_pkr') }}</label>
         <input name="monthly_fee" type="number" min="0" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="2500">
       </div>
       <div>
@@ -134,8 +134,8 @@
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('addCourseModal').classList.add('hidden')"
-                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">Cancel</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">Add Course</button>
+                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
+        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">{{ __('coaching.add_course') }}</button>
       </div>
     </form>
   </div>
@@ -145,27 +145,27 @@
 <div id="editCourseModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-      <h3 class="font-semibold text-slate-900">Edit Course</h3>
+      <h3 class="font-semibold text-slate-900">{{ __('coaching.edit_course') }}</h3>
       <button onclick="document.getElementById('editCourseModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <form id="editCourseForm" method="POST" class="p-6 space-y-4">
       @csrf @method('PATCH')
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Course Name</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.course_name') }}</label>
         <input id="editCourseName" name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Monthly Fee (PKR)</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.monthly_fee_pkr') }}</label>
         <input id="editCourseFee" name="monthly_fee" type="number" min="0" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('common.description') }}</label>
         <textarea id="editCourseDesc" name="description" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('editCourseModal').classList.add('hidden')"
-                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">Cancel</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">Save Changes</button>
+                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
+        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">{{ __('coaching.save_changes') }}</button>
       </div>
     </form>
   </div>
@@ -215,7 +215,7 @@
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('addBatchModal').classList.add('hidden')"
-                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">Cancel</button>
+                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
         <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">Add Batch</button>
       </div>
     </form>
@@ -265,8 +265,8 @@
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('editBatchModal').classList.add('hidden')"
-                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">Cancel</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">Save Changes</button>
+                class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
+        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">{{ __('coaching.save_changes') }}</button>
       </div>
     </form>
   </div>
