@@ -10,7 +10,7 @@
     <a href="{{ route('quotations.index') }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
       <i data-lucide="arrow-left" class="w-4 h-4"></i>
     </a>
-    <h1 class="text-xl font-bold text-slate-900">New Quotation</h1>
+    <h1 class="text-xl font-bold text-slate-900">{{ __('forms.new_quotation') }}</h1>
   </div>
 
   @if($errors->any())
@@ -24,42 +24,42 @@
 
     {{-- Header --}}
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-      <h2 class="font-semibold text-slate-900">Quote Details</h2>
+      <h2 class="font-semibold text-slate-900">{{ __('forms.quote_details') }}</h2>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Quote Number</label>
+          <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('forms.quote_number') }}</label>
           <input type="text" name="quote_number" value="{{ old('quote_number', $quoteNumber) }}" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-slate-50 font-mono font-semibold">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Date</label>
+          <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('common.date') }}</label>
           <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Customer Name</label>
+          <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('forms.customer_name') }}</label>
           <input type="text" name="customer_name" value="{{ old('customer_name') }}" placeholder="Optional"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Customer Phone</label>
+          <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('forms.customer_phone') }}</label>
           <input type="text" name="customer_phone" value="{{ old('customer_phone') }}" placeholder="Optional"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Valid Until</label>
+          <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('forms.valid_until') }}</label>
           <input type="date" name="valid_until" value="{{ old('valid_until') }}"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Discount (PKR)</label>
+          <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('forms.discount') }}</label>
           <input type="number" name="discount" value="{{ old('discount', 0) }}" min="0" step="0.01"
                  x-model="discount" @input="calcTotal()"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
       </div>
       <div>
-        <label class="block text-xs font-medium text-slate-500 mb-1">Notes</label>
+        <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('forms.notes') }}</label>
         <textarea name="notes" rows="2" placeholder="Optional notes for customer..."
                   class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none">{{ old('notes') }}</textarea>
       </div>
@@ -68,7 +68,7 @@
     {{-- Items --}}
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h2 class="font-semibold text-slate-900">Items</h2>
+        <h2 class="font-semibold text-slate-900">{{ __('forms.items') }}</h2>
         <button type="button" @click="addRow()"
                 class="inline-flex items-center gap-1.5 text-green-600 hover:text-green-700 text-sm font-medium">
           <i data-lucide="plus" class="w-4 h-4"></i> Add Item
@@ -78,7 +78,7 @@
       {{-- Product search --}}
       <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
         <input type="text" x-model="search" @input="filterProducts()"
-               placeholder="Search products to add..."
+               placeholder="{{ __('forms.search_products_add') }}"
                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white">
         <div x-show="search && filtered.length" class="mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-40 overflow-y-auto">
           <template x-for="p in filtered" :key="p.id">
@@ -89,17 +89,17 @@
             </button>
           </template>
         </div>
-        <p x-show="search && !filtered.length" class="mt-1 text-xs text-slate-400 px-1">No products match</p>
+        <p x-show="search && !filtered.length" class="mt-1 text-xs text-slate-400 px-1">{{ __('forms.no_products_match') }}</p>
       </div>
 
       <div class="overflow-x-auto">
       <table class="w-full min-w-[520px]">
         <thead class="bg-slate-50 border-b border-slate-100">
           <tr>
-            <th class="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Description</th>
-            <th class="px-4 py-2 text-center text-xs font-semibold text-slate-500 uppercase w-20">Qty</th>
-            <th class="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase w-32">Unit Price</th>
-            <th class="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase w-28">Total</th>
+            <th class="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">{{ __('common.description') }}</th>
+            <th class="px-4 py-2 text-center text-xs font-semibold text-slate-500 uppercase w-20">{{ __('forms.qty') }}</th>
+            <th class="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase w-32">{{ __('forms.unit_price') }}</th>
+            <th class="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase w-28">{{ __('common.total') }}</th>
             <th class="px-4 py-2 w-10"></th>
           </tr>
         </thead>
@@ -138,15 +138,15 @@
 
       <div class="px-5 py-4 bg-slate-50 border-t border-slate-200 space-y-1.5">
         <div class="flex justify-between text-sm text-slate-600">
-          <span>Subtotal</span>
+          <span>{{ __('pos.subtotal') }}</span>
           <span x-text="'PKR ' + Number(subtotal).toLocaleString()"></span>
         </div>
         <div class="flex justify-between text-sm text-slate-600">
-          <span>Discount</span>
+          <span>{{ __('forms.discount') }}</span>
           <span class="text-red-500" x-text="'- PKR ' + Number(discount).toLocaleString()"></span>
         </div>
         <div class="flex justify-between text-base font-bold text-slate-900 pt-1 border-t border-slate-200">
-          <span>Total</span>
+          <span>{{ __('common.total') }}</span>
           <span x-text="'PKR ' + Number(grandTotal).toLocaleString()"></span>
         </div>
       </div>

@@ -25,7 +25,7 @@
     <a href="{{ route('product-purchases.index') }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
       <i data-lucide="arrow-left" class="w-4 h-4"></i>
     </a>
-    <h1 class="text-xl font-bold text-slate-900">New Product Purchase</h1>
+    <h1 class="text-xl font-bold text-slate-900">{{ __('forms.new_purchase') }}</h1>
   </div>
 
   <form method="POST" action="{{ route('product-purchases.store') }}">
@@ -35,10 +35,10 @@
       {{-- Left: Product selector --}}
       <div class="lg:col-span-2 space-y-4">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h2 class="font-semibold text-slate-900 mb-3">Select Products</h2>
+          <h2 class="font-semibold text-slate-900 mb-3">{{ __('forms.select_products') }}</h2>
           <div class="relative mb-3">
             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
-            <input type="text" x-model="searchQ" placeholder="Search product or SKU..."
+            <input type="text" x-model="searchQ" placeholder="{{ __('forms.search_product_sku') }}"
                    class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
@@ -57,19 +57,19 @@
 
         {{-- Cart --}}
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h2 class="font-semibold text-slate-900 mb-3">Purchase Items</h2>
+          <h2 class="font-semibold text-slate-900 mb-3">{{ __('forms.purchase_items') }}</h2>
           <template x-if="items.length === 0">
-            <p class="text-sm text-slate-400 text-center py-6">Upar se product add karein</p>
+            <p class="text-sm text-slate-400 text-center py-6">{{ __('forms.add_from_above') }}</p>
           </template>
           <template x-if="items.length > 0">
             <div>
               <table class="w-full text-sm mb-3">
                 <thead>
                   <tr class="text-xs text-slate-500 uppercase border-b border-slate-100">
-                    <th class="pb-2 text-left">Product</th>
-                    <th class="pb-2 text-center w-24">Qty</th>
-                    <th class="pb-2 text-right w-28">Cost/Unit</th>
-                    <th class="pb-2 text-right w-24">Total</th>
+                    <th class="pb-2 text-left">{{ __('product.col_product') }}</th>
+                    <th class="pb-2 text-center w-24">{{ __('forms.qty') }}</th>
+                    <th class="pb-2 text-right w-28">{{ __('forms.cost_unit') }}</th>
+                    <th class="pb-2 text-right w-24">{{ __('common.total') }}</th>
                     <th class="pb-2 w-8"></th>
                   </tr>
                 </thead>
@@ -119,7 +119,7 @@
                 </tbody>
                 <tfoot>
                   <tr class="border-t border-slate-200">
-                    <td colspan="3" class="pt-2 text-sm font-bold text-slate-900">Total</td>
+                    <td colspan="3" class="pt-2 text-sm font-bold text-slate-900">{{ __('common.total') }}</td>
                     <td class="pt-2 text-right font-bold text-green-600" x-text="'PKR ' + subtotal.toLocaleString()"></td>
                     <td></td>
                   </tr>
@@ -133,13 +133,13 @@
       {{-- Right: Details --}}
       <div class="space-y-4">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-          <h2 class="font-semibold text-slate-900">Purchase Details</h2>
+          <h2 class="font-semibold text-slate-900">{{ __('forms.purchase_details') }}</h2>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Supplier</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('common.supplier') }}</label>
             <div class="relative">
               <select name="supplier_id" class="appearance-none w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none bg-white pr-8">
-                <option value="">No Supplier</option>
+                <option value="">{{ __('forms.no_supplier') }}</option>
                 @foreach($suppliers as $s)
                 <option value="{{ $s->id }}">{{ $s->name }}</option>
                 @endforeach
@@ -149,46 +149,46 @@
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Date *</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('common.date') }} *</label>
             <input type="date" name="date" value="{{ date('Y-m-d') }}" required
                    class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Supplier Invoice #</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.supplier_invoice') }}</label>
             <input type="text" name="invoice_number" placeholder="Optional"
                    class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Amount Paid (PKR) *</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.amount_paid') }} *</label>
             <input type="number" name="amount_paid" x-model.number="amountPaid" min="0" step="0.01" required
                    class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           </div>
 
           <div x-show="due > 0">
-            <label class="block text-xs font-medium text-slate-600 mb-1">Due Date</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.due_date') }}</label>
             <input type="date" name="due_date"
                    class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
           </div>
 
           <div class="bg-slate-50 rounded-lg p-3 space-y-1 text-sm">
             <div class="flex justify-between text-slate-600">
-              <span>Subtotal</span>
+              <span>{{ __('pos.subtotal') }}</span>
               <span x-text="'PKR ' + subtotal.toLocaleString()"></span>
             </div>
             <div class="flex justify-between text-slate-600">
-              <span>Paid</span>
+              <span>{{ __('common.paid') }}</span>
               <span class="text-green-600" x-text="'PKR ' + amountPaid.toLocaleString()"></span>
             </div>
             <div class="flex justify-between font-bold border-t border-slate-200 pt-1 mt-1">
-              <span>Due</span>
+              <span>{{ __('common.due') }}</span>
               <span :class="due > 0 ? 'text-red-600' : 'text-green-600'" x-text="'PKR ' + due.toLocaleString()"></span>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Notes</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">{{ __('forms.notes') }}</label>
             <textarea name="notes" rows="2" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none resize-none"></textarea>
           </div>
 
