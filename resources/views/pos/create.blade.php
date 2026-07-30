@@ -720,6 +720,52 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
       </div>
 
+      {{-- Inline Udhar customer picker (shows whenever udhar is involved) --}}
+      <div class="px-5 pt-4" x-show="payMethod === 'credit' || (payMethod === 'split' && splitUdhar > 0)" x-cloak>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.customer_info') }}</p>
+
+        {{-- Selected --}}
+        <template x-if="selectedCustomer">
+          <div class="flex items-center justify-between gap-2 rounded-xl border border-green-200 bg-green-50/60 px-3 py-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold shrink-0" x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></span>
+              <div class="min-w-0">
+                <span class="block text-sm font-bold text-slate-800 truncate" x-text="selectedCustomer.name"></span>
+                <span class="block text-xs text-slate-500" x-text="selectedCustomer.phone || '{{ __('pos.no_phone') }}'"></span>
+              </div>
+            </div>
+            <button type="button" @click="clearCustomer()" class="text-xs font-bold text-slate-500 hover:text-red-600 shrink-0">Change</button>
+          </div>
+        </template>
+
+        {{-- Pick / add --}}
+        <template x-if="!selectedCustomer">
+          <div>
+            <input type="text" x-model="customerQuery" placeholder="{{ __('pos.search_customer') }}"
+                   class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-300">
+            <div x-show="customerQuery.trim().length" class="mt-1 border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-50 max-h-36 overflow-y-auto">
+              <template x-for="c in filteredCustomers" :key="c.id ?? c.phone">
+                <button type="button" @click="pickCustomer(c)" class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2">
+                  <span class="text-sm text-slate-700 truncate" x-text="c.name"></span>
+                  <span class="text-xs text-slate-400 shrink-0" x-text="c.phone"></span>
+                </button>
+              </template>
+              <div x-show="!filteredCustomers.length" class="px-3 py-2 text-xs text-slate-400">Koi match nahi — neeche naya add karein</div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+              <input type="text" x-model="customerName" placeholder="{{ __('pos.customer_name') }}"
+                     class="px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-300">
+              <input type="tel" x-model="customerPhone" placeholder="{{ __('pos.phone_number') }}"
+                     class="px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-300">
+            </div>
+            <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
+                    class="mt-2 w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold disabled:bg-slate-200 disabled:text-slate-400 transition">
+              Is customer par udhar set karein
+            </button>
+          </div>
+        </template>
+      </div>
+
       {{-- Cash / Online amount --}}
       <div class="px-5 pt-4" x-show="payMethod === 'cash' || payMethod === 'online'">
         <div class="flex items-center justify-between mb-1">
