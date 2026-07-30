@@ -774,9 +774,11 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             <svg style="width:14px;height:14px" class="text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Har sale par auto-print
           </span>
-          <span class="relative inline-flex items-center shrink-0 rounded-full transition-colors duration-200" style="width:44px;height:24px;padding:2px"
-                :style="autoPrint ? 'background:#16a34a' : 'background:#cbd5e1'">
-            <span class="rounded-full bg-white shadow transition-transform duration-200 ease-out" style="width:20px;height:20px"
+          <span class="relative inline-flex items-center shrink-0 rounded-full transition-colors duration-200"
+                style="width:44px;height:24px;padding:2px;background:#cbd5e1;border:1px solid #b6c0cc"
+                :style="autoPrint ? 'background:#16a34a;border-color:#15803d' : ''">
+            <span class="rounded-full shadow transition-transform duration-200 ease-out"
+                  style="width:18px;height:18px;background:#ffffff"
                   :style="autoPrint ? 'transform:translateX(20px)' : 'transform:translateX(0)'"></span>
           </span>
         </div>
