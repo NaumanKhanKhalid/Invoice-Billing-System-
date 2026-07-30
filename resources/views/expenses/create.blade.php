@@ -9,8 +9,8 @@
       <i data-lucide="arrow-left" class="w-4 h-4"></i>
     </a>
     <div>
-      <h1 class="text-xl font-bold text-slate-900">Add Expense</h1>
-      <p class="text-sm text-slate-500">Record a business expense</p>
+      <h1 class="text-xl font-bold text-slate-900">{{ __('pages.add_expense') }}</h1>
+      <p class="text-sm text-slate-500">{{ __('forms.record_expense') }}</p>
     </div>
   </div>
 
@@ -37,8 +37,8 @@
               <i data-lucide="receipt" class="w-3.5 h-3.5 text-slate-600"></i>
             </span>
             <div>
-              <p class="text-sm font-semibold text-slate-800">Expense Details</p>
-              <p class="text-xs text-slate-500">Date, category, and description</p>
+              <p class="text-sm font-semibold text-slate-800">{{ __('forms.expense_details') }}</p>
+              <p class="text-xs text-slate-500">{{ __('forms.expense_details_sub') }}</p>
             </div>
           </div>
           <div class="p-5 space-y-4">
@@ -75,8 +75,8 @@
               <i data-lucide="banknote" class="w-3.5 h-3.5 text-green-700"></i>
             </span>
             <div>
-              <p class="text-sm font-semibold text-slate-800">Payment Details</p>
-              <p class="text-xs text-slate-500">Amount, payee, and receipt</p>
+              <p class="text-sm font-semibold text-slate-800">{{ __('forms.payment_details') }}</p>
+              <p class="text-xs text-slate-500">{{ __('forms.payment_details_sub') }}</p>
             </div>
           </div>
           <div class="p-5 space-y-4">
@@ -91,11 +91,11 @@
                 @error('amount')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1.5">Paid To</label>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">{{ __('forms.paid_to') }}</label>
                 <input type="text" name="paid_to" value="{{ old('paid_to') }}" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1.5">Receipt #</label>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">{{ __('forms.receipt_no') }}</label>
                 <input type="text" name="receipt_number" value="{{ old('receipt_number') }}" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
               </div>
             </div>
@@ -113,7 +113,7 @@
             <span class="w-7 h-7 rounded-lg bg-yellow-200 flex items-center justify-center">
               <i data-lucide="info" class="w-3.5 h-3.5 text-yellow-700"></i>
             </span>
-            <p class="text-sm font-semibold text-slate-800">Quick Tips</p>
+            <p class="text-sm font-semibold text-slate-800">{{ __('forms.quick_tips') }}</p>
           </div>
           <div class="p-5 space-y-3 text-xs text-slate-500">
             <div class="flex gap-2">
