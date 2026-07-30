@@ -278,120 +278,6 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
               class="md:hidden w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">✕</button>
     </div>
 
-    {{-- Customer --}}
-    <div class="shrink-0 px-3 py-2.5 border-b border-slate-100 bg-white" @click.outside="showCustList = false">
-      <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1.5">{{ __('pos.customer_info') }}</p>
-      {{-- Search / walk-in state — dropdown with search + add-new inside --}}
-      <template x-if="!selectedCustomer && !addingCustomer">
-        <div class="relative">
-          {{-- Trigger + add-new button --}}
-          <div class="flex gap-1.5">
-            <button type="button"
-                    @click="showCustList = !showCustList; if (showCustList) $nextTick(() => $refs.custSearch && $refs.custSearch.focus())"
-                    class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition"
-                    :class="showCustList ? 'ring-2 ring-green-300 bg-white' : ''">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span class="flex-1 text-left text-slate-500 truncate">Walk-in Customer</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform" :class="showCustList ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <button type="button" @click="startAddCustomer()" title="Naya customer add karein"
-                    class="w-9 h-9 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            </button>
-          </div>
-
-          {{-- Dropdown panel --}}
-          <div x-show="showCustList" x-cloak x-transition.opacity.duration.100ms
-               class="absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden">
-            {{-- Search --}}
-            <div class="p-2 border-b border-slate-100">
-              <div class="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="text" x-ref="custSearch" x-model="customerQuery"
-                       placeholder="{{ __('pos.search_customer') }}"
-                       class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
-              </div>
-            </div>
-            {{-- List --}}
-            <div class="max-h-52 overflow-y-auto">
-              <template x-for="c in filteredCustomers" :key="c.id">
-                <button type="button" @click="pickCustomer(c)"
-                        class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2 border-b border-slate-50 last:border-0 transition">
-                  <span class="min-w-0">
-                    <span class="block text-sm font-semibold text-slate-800 truncate" x-text="c.name"></span>
-                    <span class="block text-xs text-slate-400" x-text="c.phone || '—'"></span>
-                  </span>
-                  <span x-show="c.current_balance > 0" class="text-[11px] font-bold text-amber-600 whitespace-nowrap"
-                        x-text="'Udhar ' + Number(c.current_balance).toLocaleString()"></span>
-                </button>
-              </template>
-              <div x-show="!filteredCustomers.length" class="px-3 py-4 text-center text-xs text-slate-400">
-                Koi customer nahi mila
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-
-      {{-- Add-new inline form --}}
-      <template x-if="addingCustomer">
-        <div class="rounded-2xl border border-green-200 bg-green-50/60 p-3">
-          <div class="flex items-center justify-between mb-3.5">
-            <div class="flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-md bg-green-600 text-white flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-              </span>
-              <p class="text-[11px] text-green-800 font-bold uppercase tracking-wider">{{ __('pos.new_customer') }}</p>
-            </div>
-            <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">{{ __('common.cancel') }}</button>
-          </div>
-
-          <div class="space-y-2">
-            <div class="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <input type="text" x-model="customerName" placeholder="{{ __('pos.customer_name') }}" @keydown.enter.prevent="saveNewCustomer()"
-                     class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
-            </div>
-            <div class="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <input type="tel" x-model="customerPhone" placeholder="{{ __('pos.phone_number') }}" @keydown.enter.prevent="saveNewCustomer()"
-                     class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 transition">
-            </div>
-            <p class="text-[11px] text-slate-400 leading-snug">Udhar sale ke liye phone number zaroori hai.</p>
-            <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
-                    class="w-full py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition flex items-center justify-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              Customer add karein
-            </button>
-          </div>
-        </div>
-      </template>
-
-      {{-- Selected customer — same field style as the dropdown --}}
-      <template x-if="selectedCustomer">
-        <div class="flex gap-1.5">
-          <button type="button" title="Customer badlein"
-                  @click="clearCustomer(); showCustList = true; $nextTick(() => $refs.custSearch && $refs.custSearch.focus())"
-                  class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition">
-            <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-[11px] shrink-0"
-                  x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></span>
-            <span class="flex-1 text-left min-w-0">
-              <span class="block text-slate-800 font-semibold leading-tight truncate" x-text="selectedCustomer.name"></span>
-              <span class="block text-[11px] text-slate-400 leading-tight truncate"
-                    x-text="(selectedCustomer.phone || 'No phone') + (selectedCustomer.current_balance > 0 ? '  ·  Udhar PKR ' + Number(selectedCustomer.current_balance).toLocaleString() : '')"></span>
-            </span>
-          </button>
-          <button type="button" @click="clearCustomer()" title="Hatayein"
-                  class="w-9 h-9 rounded-xl border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 flex items-center justify-center shrink-0 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-      </template>
-
-      {{-- Udhar reminder --}}
-      <p x-show="payMethod === 'credit' && !customerPhone.trim()" x-cloak
-         class="text-[11px] text-amber-600 font-semibold mt-1.5">Udhar sale ke liye customer name aur phone zaroori hai.</p>
-    </div>
 
     {{-- Cart items (scrollable, compact list) --}}
     <div class="overflow-y-auto bg-white" style="flex:1 1 0; min-height:0;">
@@ -705,6 +591,93 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
       </div>
 
+      {{-- Customer (same dropdown as before, now the single place) --}}
+      <div class="px-5 pt-4 relative z-30" @click.outside="showCustList = false">
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.customer_info') }}</p>
+
+        {{-- Search / walk-in state --}}
+        <template x-if="!selectedCustomer && !addingCustomer">
+          <div class="relative">
+            <div class="flex gap-1.5">
+              <button type="button"
+                      @click="showCustList = !showCustList; if (showCustList) $nextTick(() => $refs.custSearchPop && $refs.custSearchPop.focus())"
+                      class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition"
+                      :class="showCustList ? 'ring-2 ring-green-300 bg-white' : ''">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="flex-1 text-left text-slate-500 truncate">Walk-in Customer</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform" :class="showCustList ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <button type="button" @click="startAddCustomer()" title="Naya customer add karein"
+                      class="w-10 h-10 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shrink-0 transition shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </button>
+            </div>
+
+            <div x-show="showCustList" x-cloak x-transition.opacity.duration.100ms
+                 class="absolute z-40 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden">
+              <div class="p-2 border-b border-slate-100">
+                <div class="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  <input type="text" x-ref="custSearchPop" x-model="customerQuery" placeholder="{{ __('pos.search_customer') }}"
+                         class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-300 focus:bg-white transition">
+                </div>
+              </div>
+              <div class="max-h-52 overflow-y-auto">
+                <template x-for="c in filteredCustomers" :key="c.id">
+                  <button type="button" @click="pickCustomer(c)"
+                          class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2 border-b border-slate-50 last:border-0 transition">
+                    <span class="min-w-0">
+                      <span class="block text-sm font-semibold text-slate-800 truncate" x-text="c.name"></span>
+                      <span class="block text-xs text-slate-400" x-text="c.phone || '—'"></span>
+                    </span>
+                    <span x-show="c.current_balance > 0" class="text-[11px] font-bold text-amber-600 whitespace-nowrap" x-text="'Udhar ' + Number(c.current_balance).toLocaleString()"></span>
+                  </button>
+                </template>
+                <div x-show="!filteredCustomers.length" class="px-3 py-4 text-center text-xs text-slate-400">Koi customer nahi mila</div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        {{-- Add-new inline --}}
+        <template x-if="addingCustomer">
+          <div class="rounded-2xl border border-green-200 bg-green-50/60 p-3">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[11px] text-green-800 font-bold uppercase tracking-wider">{{ __('pos.new_customer') }}</p>
+              <button type="button" @click="cancelAddCustomer()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">{{ __('common.cancel') }}</button>
+            </div>
+            <div class="space-y-2">
+              <input type="text" x-model="customerName" placeholder="{{ __('pos.customer_name') }}" @keydown.enter.prevent="saveNewCustomer()"
+                     class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition">
+              <input type="tel" x-model="customerPhone" placeholder="{{ __('pos.phone_number') }}" @keydown.enter.prevent="saveNewCustomer()"
+                     class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm outline-none focus:ring-2 focus:ring-green-300 transition">
+              <p class="text-[11px] text-slate-400 leading-snug">Udhar sale ke liye phone number zaroori hai.</p>
+              <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
+                      class="w-full py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition">Customer add karein</button>
+            </div>
+          </div>
+        </template>
+
+        {{-- Selected --}}
+        <template x-if="selectedCustomer">
+          <div class="flex gap-1.5">
+            <button type="button" title="Customer badlein"
+                    @click="clearCustomer(); showCustList = true; $nextTick(() => $refs.custSearchPop && $refs.custSearchPop.focus())"
+                    class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm hover:border-green-300 transition">
+              <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-[11px] shrink-0" x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></span>
+              <span class="flex-1 text-left min-w-0">
+                <span class="block text-slate-800 font-semibold leading-tight truncate" x-text="selectedCustomer.name"></span>
+                <span class="block text-[11px] text-slate-400 leading-tight truncate" x-text="(selectedCustomer.phone || '{{ __('pos.no_phone') }}') + (selectedCustomer.current_balance > 0 ? '  ·  Udhar PKR ' + Number(selectedCustomer.current_balance).toLocaleString() : '')"></span>
+              </span>
+            </button>
+            <button type="button" @click="clearCustomer()" title="Hatayein"
+                    class="w-10 h-10 rounded-xl border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 flex items-center justify-center shrink-0 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </template>
+      </div>
+
       {{-- Method selector --}}
       <div class="px-5 pt-4">
         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.payment_method') }}</p>
@@ -720,51 +693,6 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         </div>
       </div>
 
-      {{-- Inline Udhar customer picker (shows whenever udhar is involved) --}}
-      <div class="px-5 pt-4" x-show="payMethod === 'credit' || (payMethod === 'split' && splitUdhar > 0)" x-cloak>
-        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">{{ __('pos.customer_info') }}</p>
-
-        {{-- Selected --}}
-        <template x-if="selectedCustomer">
-          <div class="flex items-center justify-between gap-2 rounded-xl border border-green-200 bg-green-50/60 px-3 py-2.5">
-            <div class="flex items-center gap-2.5 min-w-0">
-              <span class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold shrink-0" x-text="(selectedCustomer.name || '?').charAt(0).toUpperCase()"></span>
-              <div class="min-w-0">
-                <span class="block text-sm font-bold text-slate-800 truncate" x-text="selectedCustomer.name"></span>
-                <span class="block text-xs text-slate-500" x-text="selectedCustomer.phone || '{{ __('pos.no_phone') }}'"></span>
-              </div>
-            </div>
-            <button type="button" @click="clearCustomer()" class="text-xs font-bold text-slate-500 hover:text-red-600 shrink-0">Change</button>
-          </div>
-        </template>
-
-        {{-- Pick / add --}}
-        <template x-if="!selectedCustomer">
-          <div>
-            <input type="text" x-model="customerQuery" placeholder="{{ __('pos.search_customer') }}"
-                   class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-300">
-            <div x-show="customerQuery.trim().length" class="mt-1 border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-50 max-h-36 overflow-y-auto">
-              <template x-for="c in filteredCustomers" :key="c.id ?? c.phone">
-                <button type="button" @click="pickCustomer(c)" class="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2">
-                  <span class="text-sm text-slate-700 truncate" x-text="c.name"></span>
-                  <span class="text-xs text-slate-400 shrink-0" x-text="c.phone"></span>
-                </button>
-              </template>
-              <div x-show="!filteredCustomers.length" class="px-3 py-2 text-xs text-slate-400">Koi match nahi — neeche naya add karein</div>
-            </div>
-            <div class="grid grid-cols-2 gap-2 mt-2">
-              <input type="text" x-model="customerName" placeholder="{{ __('pos.customer_name') }}"
-                     class="px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-300">
-              <input type="tel" x-model="customerPhone" placeholder="{{ __('pos.phone_number') }}"
-                     class="px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-300">
-            </div>
-            <button type="button" @click="saveNewCustomer()" :disabled="!customerName.trim()"
-                    class="mt-2 w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold disabled:bg-slate-200 disabled:text-slate-400 transition">
-              Is customer par udhar set karein
-            </button>
-          </div>
-        </template>
-      </div>
 
       {{-- Cash / Online amount --}}
       <div class="px-5 pt-4" x-show="payMethod === 'cash' || payMethod === 'online'">
