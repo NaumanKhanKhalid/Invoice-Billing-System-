@@ -806,9 +806,9 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
        class="fixed z-50 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
        :style="(calcX === null
                  ? 'top:4rem;right:1rem;'
-                 : 'top:' + calcY + 'px;left:' + calcX + 'px;') + 'width:' + (calcBig ? '20rem' : '15rem')"
+                 : 'top:' + calcY + 'px;left:' + calcX + 'px;') + 'width:' + (calcW !== null ? calcW + 'px' : (calcBig ? '20rem' : '15rem'))"
        @keydown.window="calcKey($event)"
-       @pointermove.window="calcDragMove($event)" @pointerup.window="calcDragEnd()">
+       @pointermove.window="calcDragMove($event); calcResizeMove($event)" @pointerup.window="calcDragEnd(); calcResizeEnd()">
     {{-- Header = drag handle --}}
     <div class="flex items-center justify-between px-3 py-2 bg-slate-800 text-white cursor-move select-none"
          @pointerdown="calcDragStart($event)">
@@ -817,7 +817,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
         Calculator
       </span>
       <div class="flex items-center gap-1">
-        <button type="button" @click="calcBig = !calcBig" :title="calcBig ? 'Chota karein' : 'Bada karein'"
+        <button type="button" @click="calcW = null; calcBig = !calcBig" :title="calcBig ? 'Chota karein' : 'Bada karein'"
                 class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center text-slate-300">
           <template x-if="!calcBig"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></template>
           <template x-if="calcBig"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg></template>
@@ -841,6 +841,11 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                 ]"
                 class="rounded-xl font-bold transition" x-text="k"></button>
       </template>
+    </div>
+    {{-- Free-resize grip (bottom-right) --}}
+    <div @pointerdown="calcResizeStart($event)" title="Drag kar ke size badlein"
+         class="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize flex items-end justify-end p-1 text-slate-300 hover:text-slate-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 22 2 22 22 2"/><path d="M22 12 12 22"/><path d="M22 17 17 22"/></svg>
     </div>
   </div>
 
@@ -1024,8 +1029,23 @@ function posApp() {
     calcOpen: false,
     calcExpr: '',
     calcBig: false,
+    calcW: null,                       // custom width in px (free resize); null = preset
     calcX: null, calcY: null,          // null = default corner position
     calcDrag: { active: false, dx: 0, dy: 0 },
+    calcResize: { active: false, x0: 0, w0: 0 },
+    calcResizeStart(e) {
+      const el = this.$refs.calcPanel; if (!el) return;
+      e.stopPropagation();
+      this.calcResize = { active: true, x0: e.clientX, w0: el.offsetWidth };
+    },
+    calcResizeMove(e) {
+      if (!this.calcResize.active) return;
+      const el = this.$refs.calcPanel;
+      const left = el ? el.getBoundingClientRect().left : 0;
+      const max = window.innerWidth - left - 8;
+      this.calcW = Math.min(max, Math.max(200, this.calcResize.w0 + (e.clientX - this.calcResize.x0)));
+    },
+    calcResizeEnd() { this.calcResize.active = false; },
     calcDragStart(e) {
       const el = this.$refs.calcPanel; if (!el) return;
       const r = el.getBoundingClientRect();
