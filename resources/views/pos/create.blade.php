@@ -541,7 +541,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
             </p>
 
             {{-- Normal actions --}}
-            <div class="flex items-center gap-2 mt-3" x-show="confirmDeleteId !== h.id">
+            <div class="flex items-center gap-2 mt-3" x-show="confirmDeleteId !== h.id && confirmResumeId !== h.id">
               <button type="button" @click="resumeHold(h)"
                       class="flex-1 inline-flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 active:scale-[.99] text-white py-2 rounded-lg text-xs font-bold transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -551,6 +551,15 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
                       class="w-8 h-8 inline-flex items-center justify-center border border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
               </button>
+            </div>
+
+            {{-- Inline resume confirm (cart me items hain) --}}
+            <div class="mt-3 bg-amber-50 border border-amber-100 rounded-xl p-2.5 flex items-center gap-2" x-show="confirmResumeId === h.id" x-cloak>
+              <span class="text-xs text-amber-700 font-medium flex-1">Cart me items hain — replace karke resume karein?</span>
+              <button type="button" @click="doResume(h)"
+                      class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition">Haan</button>
+              <button type="button" @click="confirmResumeId = null"
+                      class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold transition">{{ __('common.no') }}</button>
             </div>
 
             {{-- Inline delete confirm (replaces the native browser popup) --}}
@@ -1020,6 +1029,7 @@ function posApp() {
     heldSales: window.__POS_HOLDS__ || [],
     holdsPanelOpen: false,
     confirmDeleteId: null,
+    confirmResumeId: null,
     holdModalOpen: false,
     holdSaving: false,
     holdId: null,          // set when cart was resumed from a hold → re-hold updates in place
@@ -1625,8 +1635,14 @@ function posApp() {
       }
     },
 
-    async resumeHold(h) {
-      if (this.cart.length > 0 && !confirm('Cart mein pehle se items hain — unko hata kar yeh hold load karein?')) return;
+    resumeHold(h) {
+      // Cart mein items hain to inline confirm dikhao (native JS alert nahi)
+      if (this.cart.length > 0) { this.confirmResumeId = h.id; return; }
+      this.doResume(h);
+    },
+
+    async doResume(h) {
+      this.confirmResumeId = null;
       try {
         const res = await fetch('{{ url('/pos/hold') }}/' + h.id, { headers: { 'Accept': 'application/json' } });
         if (!res.ok) { this.flash('Hold load nahi hua (HTTP ' + res.status + ')', false); return; }
