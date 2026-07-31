@@ -105,7 +105,7 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
       {{-- Calculator --}}
       <button type="button" @click="calcOpen = !calcOpen" title="Calculator"
               class="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-700 flex items-center justify-center shrink-0 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="8" x2="8" y1="14" y2="14"/><line x1="12" x2="12" y1="14" y2="14"/><line x1="16" x2="16" y1="14" y2="14"/><line x1="8" x2="8" y1="18" y2="18"/><line x1="12" x2="12" y1="18" y2="18"/><line x1="16" x2="16" y1="18" y2="18"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
       </button>
 
       {{-- Retail | Wholesale price toggle --}}
@@ -801,32 +801,45 @@ window.__POS_RECENT__ = @json($recentSales ?? []);
     </div>
   </div>
 
-  {{-- ══ Calculator (floating) ══ --}}
-  <div x-show="calcOpen" x-cloak x-transition
+  {{-- ══ Calculator (floating, draggable, resizable) ══ --}}
+  <div x-show="calcOpen" x-cloak x-transition x-ref="calcPanel"
        class="fixed z-50 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
-       style="top:4rem;right:1rem;width:15rem"
-       @keydown.window="calcKey($event)" @click.outside="calcOpen = false">
-    <div class="flex items-center justify-between px-3 py-2 bg-slate-800 text-white">
+       :style="(calcX === null
+                 ? 'top:4rem;right:1rem;'
+                 : 'top:' + calcY + 'px;left:' + calcX + 'px;') + 'width:' + (calcBig ? '20rem' : '15rem')"
+       @keydown.window="calcKey($event)"
+       @pointermove.window="calcDragMove($event)" @pointerup.window="calcDragEnd()">
+    {{-- Header = drag handle --}}
+    <div class="flex items-center justify-between px-3 py-2 bg-slate-800 text-white cursor-move select-none"
+         @pointerdown="calcDragStart($event)">
       <span class="text-xs font-bold flex items-center gap-1.5">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
         Calculator
       </span>
-      <button type="button" @click="calcOpen = false" class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center text-slate-300">✕</button>
+      <div class="flex items-center gap-1">
+        <button type="button" @click="calcBig = !calcBig" :title="calcBig ? 'Chota karein' : 'Bada karein'"
+                class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center text-slate-300">
+          <template x-if="!calcBig"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></template>
+          <template x-if="calcBig"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg></template>
+        </button>
+        <button type="button" @click="calcOpen = false" title="Band karein" class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center text-slate-300">✕</button>
+      </div>
     </div>
     <div class="px-3 pt-3 pb-1 text-right">
-      <p class="text-2xl font-extrabold text-slate-900 tabular-nums truncate" x-text="calcExpr || '0'"></p>
+      <p class="font-extrabold text-slate-900 tabular-nums truncate" :class="calcBig ? 'text-3xl' : 'text-2xl'" x-text="calcExpr || '0'"></p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.375rem;padding:0.625rem">
       <template x-for="k in ['C','DEL','%','÷','7','8','9','×','4','5','6','-','1','2','3','+','0','.','=']" :key="k">
         <button type="button" @click="calcPress(k)"
                 :style="k === '=' ? 'grid-column:span 2' : ''"
-                :class="{
-                  'bg-slate-100 text-slate-700 hover:bg-slate-200': ['C','DEL','%'].includes(k),
-                  'bg-slate-800 text-white hover:bg-slate-700': ['÷','×','-','+'].includes(k),
-                  'bg-green-600 text-white hover:bg-green-700': k === '=',
-                  'bg-slate-50 text-slate-900 hover:bg-slate-100': !['C','DEL','%','÷','×','-','+','='].includes(k)
-                }"
-                class="py-2.5 rounded-xl font-bold text-sm transition" x-text="k"></button>
+                :class="[
+                  { 'bg-slate-100 text-slate-700 hover:bg-slate-200': ['C','DEL','%'].includes(k),
+                    'bg-slate-800 text-white hover:bg-slate-700': ['÷','×','-','+'].includes(k),
+                    'bg-green-600 text-white hover:bg-green-700': k === '=',
+                    'bg-slate-50 text-slate-900 hover:bg-slate-100': !['C','DEL','%','÷','×','-','+','='].includes(k) },
+                  calcBig ? 'py-3.5 text-lg' : 'py-2.5 text-sm'
+                ]"
+                class="rounded-xl font-bold transition" x-text="k"></button>
       </template>
     </div>
   </div>
@@ -1010,6 +1023,24 @@ function posApp() {
     printAfter: false,
     calcOpen: false,
     calcExpr: '',
+    calcBig: false,
+    calcX: null, calcY: null,          // null = default corner position
+    calcDrag: { active: false, dx: 0, dy: 0 },
+    calcDragStart(e) {
+      const el = this.$refs.calcPanel; if (!el) return;
+      const r = el.getBoundingClientRect();
+      // switch to absolute px positioning from current spot
+      this.calcX = r.left; this.calcY = r.top;
+      this.calcDrag = { active: true, dx: e.clientX - r.left, dy: e.clientY - r.top };
+    },
+    calcDragMove(e) {
+      if (!this.calcDrag.active) return;
+      const w = this.$refs.calcPanel ? this.$refs.calcPanel.offsetWidth : 240;
+      const h = this.$refs.calcPanel ? this.$refs.calcPanel.offsetHeight : 320;
+      this.calcX = Math.min(Math.max(0, e.clientX - this.calcDrag.dx), window.innerWidth  - w);
+      this.calcY = Math.min(Math.max(0, e.clientY - this.calcDrag.dy), window.innerHeight - h);
+    },
+    calcDragEnd() { this.calcDrag.active = false; },
     variantModalOpen: false,
     variantGroupName: '',
     variantOptions: [],
