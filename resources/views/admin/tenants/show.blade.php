@@ -72,7 +72,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Amount (PKR) *</label>
-          <input type="number" name="amount" required placeholder="{{ config('plans.'.$tenant->plan.'.price', 0) }}"
+          <input type="number" name="amount" required placeholder="{{ plan_value($tenant->plan, 'price', 0) }}"
                  class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-300 outline-none">
         </div>
         <div>

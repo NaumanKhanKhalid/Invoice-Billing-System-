@@ -16,8 +16,8 @@ class DashboardController extends Controller
         $activeTenants = $tenants->filter(fn ($t) => $t->is_active && (!$t->plan_expires_at || $t->plan_expires_at >= now()));
         $expired       = $tenants->filter(fn ($t) => $t->plan_expires_at && $t->plan_expires_at < now());
 
-        // Monthly Recurring Revenue estimate from active paid plans (price from config/plans.php)
-        $mrr = $activeTenants->sum(fn ($t) => (int) config("plans.{$t->plan}.price", 0));
+        // Monthly Recurring Revenue estimate from active paid plans (DB-backed plans)
+        $mrr = $activeTenants->sum(fn ($t) => (int) plan_value($t->plan, 'price', 0));
 
         $stats = [
             'total'         => $tenants->count(),

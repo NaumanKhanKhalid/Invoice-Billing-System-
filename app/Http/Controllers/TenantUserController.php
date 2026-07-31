@@ -11,7 +11,8 @@ class TenantUserController extends Controller
     private function planLimit(): int
     {
         $plan = tenant()->plan ?? 'basic';
-        return config("plans.{$plan}.max_users", 1);
+        $max  = (int) plan_value($plan, 'max_users', 1);
+        return $max < 0 ? PHP_INT_MAX : $max;   // -1 = unlimited
     }
 
     public function index()

@@ -35,6 +35,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'super.admin'])->gro
     Route::get('/tenants/{tenant}/payments', [TenantController::class, 'payments'])->name('tenants.payments');
     Route::get('/payments/{payment}/receipt', [TenantController::class, 'paymentReceipt'])->name('payments.receipt');
     Route::post('/tenants/{tenant}/impersonate', [ImpersonateController::class, 'start'])->name('tenants.impersonate');
-    Route::get('/plans', fn() => view('admin.plans'))->name('plans');
+    Route::get('/plans', [\App\Http\Controllers\Admin\PlanController::class, 'index'])->name('plans');
+    Route::post('/plans', [\App\Http\Controllers\Admin\PlanController::class, 'store'])->name('plans.store');
+    Route::put('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'update'])->name('plans.update');
+    Route::delete('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'destroy'])->name('plans.destroy');
     Route::get('/logs', [\App\Http\Controllers\Admin\LogViewerController::class, 'index'])->name('logs');
 });

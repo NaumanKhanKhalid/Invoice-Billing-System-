@@ -89,23 +89,23 @@
       <p class="text-slate-500">No hidden charges. Monthly ya yearly — aap ki marzi.</p>
     </div>
     <div class="grid md:grid-cols-3 gap-6">
-      @foreach(config('plans') as $key => $plan)
-      <div class="rounded-2xl border {{ $key === 'pro' ? 'border-green-400 shadow-xl ring-2 ring-green-200 relative' : 'border-slate-200 shadow-sm' }} p-6">
-        @if($key === 'pro')
+      @foreach(app_plans() as $key => $plan)
+      <div class="rounded-2xl border {{ $plan->is_popular ?? ($key === 'pro') ? 'border-green-400 shadow-xl ring-2 ring-green-200 relative' : 'border-slate-200 shadow-sm' }} p-6">
+        @if($plan->is_popular ?? ($key === 'pro'))
         <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</div>
         @endif
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{{ $plan['name'] }}</p>
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{{ $plan->name }}</p>
         <div class="flex items-end gap-1 mb-4">
-          <span class="text-3xl font-extrabold text-slate-900">PKR {{ number_format($plan['price']) }}</span>
+          <span class="text-3xl font-extrabold text-slate-900">PKR {{ number_format($plan->price) }}</span>
           <span class="text-slate-400 text-sm mb-1">/month</span>
         </div>
         <ul class="space-y-2 text-sm text-slate-600 mb-6">
-          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> {{ $plan['max_users'] === PHP_INT_MAX ? 'Unlimited' : $plan['max_users'] }} User{{ $plan['max_users'] > 1 ? 's' : '' }}</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> {{ $plan->max_users < 0 ? 'Unlimited' : $plan->max_users }} User{{ $plan->max_users == 1 ? '' : 's' }}</li>
           <li class="flex items-center gap-2"><span class="text-green-500">✓</span> All Core Modules</li>
-          @if($plan['staff_module'])<li class="flex items-center gap-2"><span class="text-green-500">✓</span> Staff Management</li>@else<li class="flex items-center gap-2 text-slate-300"><span>✗</span> Staff Management</li>@endif
-          @if($plan['google_backup'])<li class="flex items-center gap-2"><span class="text-green-500">✓</span> Google Drive Backup</li>@else<li class="flex items-center gap-2 text-slate-300"><span>✗</span> Google Drive Backup</li>@endif
+          @if($plan->staff_module)<li class="flex items-center gap-2"><span class="text-green-500">✓</span> Staff Management</li>@else<li class="flex items-center gap-2 text-slate-300"><span>✗</span> Staff Management</li>@endif
+          @if($plan->google_backup)<li class="flex items-center gap-2"><span class="text-green-500">✓</span> Google Drive Backup</li>@else<li class="flex items-center gap-2 text-slate-300"><span>✗</span> Google Drive Backup</li>@endif
         </ul>
-        <a href="#contact" class="block text-center {{ $key === 'pro' ? 'bg-green-600 hover:bg-green-700 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-700' }} py-2.5 rounded-xl text-sm font-semibold transition-colors">Get Started</a>
+        <a href="#contact" class="block text-center {{ ($plan->is_popular ?? ($key === 'pro')) ? 'bg-green-600 hover:bg-green-700 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-700' }} py-2.5 rounded-xl text-sm font-semibold transition-colors">Get Started</a>
       </div>
       @endforeach
     </div>

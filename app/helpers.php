@@ -151,3 +151,47 @@ if (!function_exists('payment_label')) {
         ][$method] ?? ucfirst((string) $method);
     }
 }
+
+if (!function_exists('app_plans')) {
+    /**
+     * All subscription plans, DB-backed (super-admin editable) with a graceful
+     * fallback to config/plans.php when the table isn't there yet.
+     * Returns a collection keyed by plan `key`.
+     */
+    function app_plans(): \Illuminate\Support\Collection
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('plans')) {
+                $rows = \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get();
+                if ($rows->isNotEmpty()) {
+                    return $rows->keyBy('key');
+                }
+            }
+        } catch (\Throwable $e) {
+            // fall through to config
+        }
+
+        return collect(config('plans', []))->map(function ($p, $key) {
+            return (object) [
+                'key'              => $key,
+                'name'             => $p['name'] ?? ucfirst($key),
+                'price'            => (int) ($p['price'] ?? 0),
+                'max_users'        => ($p['max_users'] ?? 1) === PHP_INT_MAX ? -1 : (int) ($p['max_users'] ?? 1),
+                'staff_module'     => (bool) ($p['staff_module'] ?? false),
+                'google_backup'    => (bool) ($p['google_backup'] ?? false),
+                'priority_support' => $key === 'business',
+                'is_popular'       => $key === 'pro',
+            ];
+        });
+    }
+}
+
+if (!function_exists('plan_value')) {
+    /** Get one field of a plan by key (price, name, max_users…) with fallback. */
+    function plan_value(?string $key, string $field, $default = null)
+    {
+        $plan = app_plans()->get($key);
+        if (!$plan) return $default;
+        return is_object($plan) ? ($plan->{$field} ?? $default) : ($plan[$field] ?? $default);
+    }
+}
