@@ -82,7 +82,9 @@
             @if(!$demoSeeded)
             <form method="POST" action="{{ route('demo.seed') }}"
                   data-confirm-title="Sample data load karein?"
-                  data-confirm-message="Aapke shop type ke hisab se customers, suppliers, invoices waghera add ho jayenge.">
+                  data-confirm-message="Aapke shop type ke hisab se customers, suppliers, invoices waghera add ho jayenge."
+                  data-confirm-text="Haan, load karein"
+                  data-confirm-danger="false">
                 @csrf
                 <button type="submit"
                         class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -95,10 +97,12 @@
             <span class="inline-flex items-center gap-1.5 text-sm text-green-700 font-medium bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
                 <i data-lucide="check-circle" class="w-4 h-4"></i>Demo data loaded
             </span>
-            <form method="POST" action="{{ route('demo.delete') }}">
+            <form method="POST" action="{{ route('demo.delete') }}"
+                  data-confirm-title="Demo data delete karein?"
+                  data-confirm-message="Saara sample data (customers, suppliers, invoices) hat jayega. Ye wapas nahi hoga."
+                  data-confirm-text="Haan, delete karein">
                 @csrf
                 <button type="submit"
-                        onclick="return confirm('Delete all demo data? This cannot be undone.')"
                         class="inline-flex items-center gap-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                     Delete Demo Data
