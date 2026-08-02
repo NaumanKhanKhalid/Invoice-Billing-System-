@@ -118,31 +118,35 @@
   @endphp
   @if($payRows->count())
   <div class="px-8 pt-5">
-    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Payment History</p>
-    <div class="rounded-xl border border-slate-100 overflow-hidden">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="w-6 h-6 rounded-md bg-green-100 flex items-center justify-center"><i data-lucide="history" class="w-3.5 h-3.5 text-green-600"></i></span>
+      <p class="text-xs font-bold text-slate-700 uppercase tracking-wider">Payment History</p>
+      <span class="text-[11px] text-slate-400">({{ $payRows->count() }} {{ $payRows->count() == 1 ? 'payment' : 'payments' }})</span>
+    </div>
+    <div class="rounded-xl border border-slate-200 overflow-hidden">
       <table class="w-full text-xs">
         <thead>
-          <tr class="bg-slate-50 text-slate-400">
-            <th class="px-3 py-2 text-left font-semibold">#</th>
-            <th class="px-3 py-2 text-left font-semibold">Date</th>
-            <th class="px-3 py-2 text-left font-semibold">Method</th>
-            <th class="px-3 py-2 text-right font-semibold">Amount</th>
+          <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+            <th class="px-3 py-2.5 text-left font-bold w-8">#</th>
+            <th class="px-3 py-2.5 text-left font-bold">Date</th>
+            <th class="px-3 py-2.5 text-left font-bold">Method</th>
+            <th class="px-3 py-2.5 text-right font-bold">Amount</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-50">
+        <tbody class="divide-y divide-slate-100">
           @foreach($payRows as $i => $p)
-          <tr>
-            <td class="px-3 py-2 text-slate-400">{{ $i + 1 }}</td>
-            <td class="px-3 py-2 text-slate-600">{{ $p->paid_on ? \Carbon\Carbon::parse($p->paid_on)->format('d M Y') : '—' }}</td>
-            <td class="px-3 py-2 text-slate-500 capitalize">{{ $p->method }}</td>
-            <td class="px-3 py-2 text-right font-semibold text-slate-800 tabular-nums">PKR {{ number_format($p->amount) }}</td>
+          <tr class="{{ $i % 2 ? 'bg-slate-50/40' : 'bg-white' }}">
+            <td class="px-3 py-2.5 text-slate-400 font-semibold">{{ $i + 1 }}</td>
+            <td class="px-3 py-2.5 text-slate-700 font-medium whitespace-nowrap">{{ $p->paid_on ? \Carbon\Carbon::parse($p->paid_on)->format('d M Y') : '—' }}</td>
+            <td class="px-3 py-2.5 text-slate-600 capitalize">{{ $p->method }}</td>
+            <td class="px-3 py-2.5 text-right font-bold text-slate-900 tabular-nums">PKR {{ number_format($p->amount) }}</td>
           </tr>
           @endforeach
         </tbody>
         <tfoot>
-          <tr class="border-t border-slate-200">
-            <td class="px-3 py-2 font-bold text-slate-700" colspan="3">Total Paid</td>
-            <td class="px-3 py-2 text-right font-extrabold text-green-700 tabular-nums">PKR {{ number_format($payRows->sum('amount')) }}</td>
+          <tr class="bg-green-50 border-t-2 border-green-200">
+            <td class="px-3 py-2.5 font-bold text-green-800" colspan="3">Total Paid</td>
+            <td class="px-3 py-2.5 text-right font-extrabold text-green-700 tabular-nums">PKR {{ number_format($payRows->sum('amount')) }}</td>
           </tr>
         </tfoot>
       </table>
