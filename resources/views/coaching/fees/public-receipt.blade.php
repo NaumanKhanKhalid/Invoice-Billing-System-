@@ -11,7 +11,7 @@
     <style>body{background:#f1f5f9;font-family:ui-sans-serif,system-ui,sans-serif;}</style>
 </head>
 <body class="min-h-screen py-8 px-4">
-  <div class="max-w-xl mx-auto">
+  <div class="max-w-3xl mx-auto">
     <div class="flex justify-end mb-3 print:hidden">
       <button type="button" onclick="saveReceiptImage()"
               class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium shadow-sm">
