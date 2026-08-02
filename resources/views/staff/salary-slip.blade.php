@@ -1,105 +1,152 @@
 @extends('layouts.app')
 @section('title','Salary Slip')
 @section('content')
-<div class="max-w-md mx-auto">
-
-  <div class="flex items-center justify-between mb-4 print:hidden">
-    <a href="{{ route('staff.show', $staff) }}" class="text-slate-400 hover:text-slate-600">
-      <i data-lucide="arrow-left" class="w-5 h-5"></i>
-    </a>
-    @if(feature_enabled('receipt_print'))
-    <button onclick="window.print()" class="flex items-center gap-2 bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800">
-      <i data-lucide="printer" class="w-4 h-4"></i>Print
-    </button>
-    @endif
+@php
+  $acName  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? config('app.name'));
+  $acPhone = \App\Models\Setting::getValue('company_phone');
+  $acAddr  = \App\Models\Setting::getValue('company_address');
+  $logoPath = \App\Models\Setting::getValue('logo_path');
+  $slipNo  = 'SAL-' . str_pad((string) $payment->id, 4, '0', STR_PAD_LEFT);
+@endphp
+<div>
+  {{-- Toolbar --}}
+  <div class="flex items-center justify-between gap-3 mb-5 print:hidden">
+    <div class="flex items-center gap-3 min-w-0">
+      <a href="{{ route('staff.show', $staff) }}" class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm shrink-0">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      </a>
+      <div class="min-w-0">
+        <h1 class="text-lg font-bold text-slate-900 leading-tight">Salary Slip</h1>
+        <p class="text-xs text-slate-400 font-mono">{{ $slipNo }}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button type="button" onclick="downloadSlipPdf()" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span class="hidden sm:inline">PDF</span>
+      </button>
+      <button type="button" onclick="saveSlipImage()" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium">
+        <i data-lucide="image" class="w-4 h-4"></i><span class="hidden sm:inline">Image</span>
+      </button>
+      @if(feature_enabled('receipt_print'))
+      <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        <i data-lucide="printer" class="w-4 h-4"></i>Print
+      </button>
+      @endif
+    </div>
   </div>
 
-  <div id="slip" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0">
-    {{-- Header --}}
-    <div class="bg-slate-800 text-white px-6 py-5 text-center">
-      <h1 class="text-xl font-bold">Salary Slip</h1>
-      <p class="text-slate-300 text-sm mt-1">{{ \App\Models\Setting::getValue('company_name') ?? config('app.name') }}</p>
-    </div>
+  {{-- Document canvas --}}
+  <div class="rounded-2xl px-4 sm:px-8 py-8 print:p-0 print:bg-transparent" style="background:linear-gradient(180deg,#eef2f7 0%,#e2e8f0 100%)">
+    <div style="filter:drop-shadow(0 20px 35px rgba(15,23,42,0.15))">
+      <div id="slip" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0 mx-auto" style="max-width:40rem">
 
-    <div class="px-6 py-5 space-y-5">
-      {{-- Staff Info --}}
-      <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
-          <span class="text-slate-500">Staff Name</span>
-          <span class="font-semibold text-slate-900">{{ $staff->name }}</span>
+        {{-- Letterhead --}}
+        <div class="px-8 pt-8 pb-6 flex items-start justify-between gap-6">
+          <div class="flex items-start gap-3 min-w-0">
+            @if($logoPath)
+            <img src="{{ tenant_asset($logoPath) }}" alt="Logo" style="max-height:3.5rem;width:auto;border-radius:0.5rem;">
+            @else
+            <div class="w-12 h-12 rounded-xl bg-green-600 text-white flex items-center justify-center text-xl font-extrabold shrink-0">{{ mb_substr($acName,0,1) }}</div>
+            @endif
+            <div class="min-w-0">
+              <h2 class="text-base font-extrabold text-slate-900 leading-tight">{{ $acName }}</h2>
+              @if($acAddr)<p class="text-xs text-slate-500 leading-snug">{{ $acAddr }}</p>@endif
+              @if($acPhone)<p class="text-xs text-slate-500 leading-snug">{{ $acPhone }}</p>@endif
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <h1 class="text-2xl font-black tracking-tight text-green-700 leading-none">SALARY SLIP</h1>
+            <p class="text-xs text-slate-400 mt-2">No: <span class="font-bold text-slate-700 font-mono">{{ $slipNo }}</span></p>
+            <p class="text-xs text-slate-400">Date: <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span></p>
+          </div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-slate-500">Role</span>
-          <span class="text-slate-700">{{ ucfirst($staff->role) }}</span>
+
+        {{-- Paid To + details --}}
+        <div class="px-8 grid grid-cols-2 gap-6 pb-6">
+          <div>
+            <p class="text-[11px] font-bold text-green-700 uppercase tracking-wider mb-1.5">Paid To</p>
+            <p class="font-bold text-slate-900 text-sm">{{ $staff->name }}</p>
+            <p class="text-xs text-slate-500 capitalize">{{ $staff->role }}</p>
+            @if($staff->phone)<p class="text-xs text-slate-500">{{ $staff->phone }}</p>@endif
+          </div>
+          <div class="text-right text-xs space-y-1">
+            <div class="flex justify-end gap-2"><span class="text-slate-400">Salary Month:</span><span class="font-semibold text-slate-700">{{ \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y') }}</span></div>
+            <div class="flex justify-end gap-2"><span class="text-slate-400">Payment Date:</span><span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span></div>
+          </div>
         </div>
-        @if($staff->phone)
-        <div class="flex justify-between">
-          <span class="text-slate-500">Phone</span>
-          <span class="text-slate-700">{{ $staff->phone }}</span>
+
+        {{-- Amount --}}
+        <div class="px-8">
+          <div class="flex items-center justify-between rounded-xl px-5 py-4" style="background:linear-gradient(135deg,#ecfdf5 0%,#f0fdf4 100%)">
+            <span class="text-sm font-bold text-green-800 uppercase tracking-wide">Amount Paid</span>
+            <span class="text-3xl font-extrabold text-green-700 tabular-nums">PKR {{ number_format($payment->amount) }}</span>
+          </div>
+        </div>
+
+        @if($payment->note)
+        <div class="px-8 pt-4">
+          <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-600"><span class="font-semibold">Note: </span>{{ $payment->note }}</div>
         </div>
         @endif
-        <div class="flex justify-between">
-          <span class="text-slate-500">Salary Month</span>
-          <span class="font-medium text-slate-900">{{ \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y') }}</span>
+
+        {{-- Signatures --}}
+        <div class="px-8 py-8 flex items-end justify-between gap-8">
+          <div class="text-center">
+            <div class="w-40 border-t border-slate-300"></div>
+            <p class="text-[11px] text-slate-500 mt-1">Employer</p>
+          </div>
+          <div class="text-center">
+            <div class="w-40 border-t border-slate-300"></div>
+            <p class="text-[11px] text-slate-500 mt-1">Employee</p>
+          </div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-slate-500">Payment Date</span>
-          <span class="text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span>
-        </div>
-      </div>
 
-      <hr class="border-slate-100">
-
-      {{-- Amount --}}
-      <div class="flex justify-between font-bold text-base">
-        <span class="text-slate-900">Amount Paid</span>
-        <span class="text-green-700">PKR {{ number_format($payment->amount) }}</span>
-      </div>
-
-      @if($payment->note)
-      <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-600">
-        <span class="font-medium">Note: </span>{{ $payment->note }}
-      </div>
-      @endif
-
-      {{-- Signatures --}}
-      <div class="grid grid-cols-2 gap-8 pt-10 text-sm">
-        <div class="text-center">
-          <div class="border-t border-slate-300 pt-2 text-slate-500">Employer</div>
-        </div>
-        <div class="text-center">
-          <div class="border-t border-slate-300 pt-2 text-slate-500">Employee</div>
+        <div class="bg-slate-50 border-t border-slate-100 px-8 py-3 text-center">
+          <p class="text-[11px] text-slate-400">This is a record of salary payment. Keep this slip for your records.</p>
         </div>
       </div>
-    </div>
-
-    <div class="bg-slate-50 border-t border-slate-100 px-6 py-3 text-center">
-      <p class="text-xs text-slate-400">This is a record of salary payment. Keep this slip for your records.</p>
     </div>
   </div>
-
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+async function saveSlipImage() {
+  const el = document.getElementById('slip');
+  if (!el || typeof html2canvas === 'undefined') { window.print(); return; }
+  const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+  const link = document.createElement('a');
+  link.download = 'salary-{{ $slipNo }}.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+async function downloadSlipPdf() {
+  const el = document.getElementById('slip');
+  if (!el || typeof html2canvas === 'undefined' || !window.jspdf) { window.print(); return; }
+  const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+  const img = canvas.toDataURL('image/png');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+  const iw = pw - 40, ih = canvas.height * iw / canvas.width;
+  pdf.addImage(img, 'PNG', 20, 20, iw, Math.min(ih, ph - 40));
+  pdf.save('salary-{{ $slipNo }}.pdf');
+}
+</script>
 <style>
 @media print {
   @page { size: A5 portrait; margin: 10mm; }
   aside, nav, header, footer, .print\:hidden, .no-print { display: none !important; }
-  body, #main-content { background: white !important; padding: 0 !important; margin: 0 !important; }
+  body, #main-content { background: #fff !important; padding: 0 !important; margin: 0 !important; }
   body * { visibility: hidden; }
   #slip, #slip * { visibility: visible; }
   #slip {
-    position: absolute; top: 0; left: 0;
-    width: 100% !important;
-    margin: 0 !important;
-    color: #000 !important; background: #fff !important;
-    border: 1px solid #000 !important; border-radius: 0 !important; box-shadow: none !important;
-    overflow: visible !important;
+    position: static !important; margin: 0 auto !important;
+    width: 100% !important; max-width: 100% !important;
+    border: none !important; border-radius: 0 !important; box-shadow: none !important; filter: none !important;
   }
-  #slip * {
-    color: #000 !important; background: transparent !important;
-    box-shadow: none !important; border-radius: 0 !important;
-  }
-  #slip [class*="border"] { border-color: #000 !important; }
+  #slip * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
 @endsection
