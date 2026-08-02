@@ -54,7 +54,8 @@
       <div class="flex justify-end gap-2"><span class="text-slate-400">Payment Mode:</span><span class="font-semibold text-slate-700 capitalize">{{ $fee->payment_method ?? 'cash' }}</span></div>
       <div class="flex justify-end items-center gap-2">
         <span class="text-slate-400">Status:</span>
-        <span class="font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide text-white" style="background:{{ $stColor }}">{{ $stLabel }}</span>
+        <span class="inline-flex items-center justify-center font-bold rounded-full text-[10px] uppercase text-white whitespace-nowrap leading-none"
+              style="background:{{ $stColor }};padding:4px 10px">{{ $stLabel }}</span>
       </div>
     </div>
   </div>
