@@ -10,7 +10,7 @@
     </div>
     <form method="GET" class="flex items-center gap-2">
       <input type="month" name="month" value="{{ $month }}"
-             class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+             class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       <button type="submit" class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800">Go</button>
     </form>
   </div>
@@ -84,7 +84,7 @@
           @forelse($fees as $fee)
           <tr class="hover:bg-slate-50" x-data="{open:false}">
             <td class="px-4 py-3">
-              <a href="{{ route('coaching.students.show', $fee->student) }}" class="font-medium text-slate-900 hover:text-blue-600">{{ $fee->student->name }}</a>
+              <a href="{{ route('coaching.students.show', $fee->student) }}" class="font-medium text-slate-900 hover:text-green-600">{{ $fee->student->name }}</a>
               @if($fee->payment_date)
               <p class="text-xs text-slate-400">{{ \Carbon\Carbon::parse($fee->payment_date)->format('d M') }} · {{ ucfirst($fee->payment_method ?? '') }}</p>
               @endif
@@ -108,7 +108,7 @@
             <td class="px-4 py-3 text-right">
               <div class="flex items-center justify-end gap-2">
                 @if($fee->status !== 'paid')
-                <button @click="open=!open" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium transition-colors">
+                <button @click="open=!open" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 text-xs font-medium transition-colors">
                   <i data-lucide="banknote" class="w-3.5 h-3.5"></i>Collect
                 </button>
                 @else

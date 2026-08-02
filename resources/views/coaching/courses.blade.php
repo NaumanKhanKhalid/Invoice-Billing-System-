@@ -9,7 +9,7 @@
       <p class="text-sm text-slate-500 mt-0.5">{{ __('coaching.courses_sub') }}</p>
     </div>
     <button onclick="document.getElementById('addCourseModal').classList.remove('hidden')"
-            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+            class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700">
       <i data-lucide="plus" class="w-4 h-4"></i>Add Course
     </button>
   </div>
@@ -39,7 +39,7 @@
         </div>
         <div class="flex items-center gap-2 ml-4">
           <button onclick="openEditCourse({{ $course->id }}, '{{ addslashes($course->name) }}', {{ $course->monthly_fee }}, '{{ addslashes($course->description ?? '') }}')"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
           </button>
           <form action="{{ route('coaching.courses.destroy', $course) }}" method="POST"
@@ -67,7 +67,7 @@
         <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>Batches
       </h2>
       <button onclick="document.getElementById('addBatchModal').classList.remove('hidden')"
-              class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+              class="text-xs text-green-600 hover:underline flex items-center gap-1">
         <i data-lucide="plus" class="w-3 h-3"></i>Add Batch
       </button>
     </div>
@@ -77,7 +77,7 @@
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-3">
             <p class="font-medium text-slate-900">{{ $batch->name }}</p>
-            <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{{ $batch->course->name }}</span>
+            <span class="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{{ $batch->course->name }}</span>
             @if(!$batch->is_active)
             <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ __('common.inactive') }}</span>
             @endif
@@ -91,7 +91,7 @@
         </div>
         <div class="flex items-center gap-2 ml-4">
           <button onclick="openEditBatch({{ $batch->id }}, {{ $batch->course_id }}, '{{ addslashes($batch->name) }}', '{{ addslashes($batch->timing ?? '') }}', '{{ addslashes($batch->days ?? '') }}', '{{ addslashes($batch->teacher_name ?? '') }}', {{ $batch->capacity }})"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
           </button>
           <form action="{{ route('coaching.batches.destroy', $batch) }}" method="POST"
@@ -122,20 +122,20 @@
       @csrf
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.course_name') }}</label>
-        <input name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Matriculation (Science)">
+        <input name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="e.g., Matriculation (Science)">
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.monthly_fee_pkr') }}</label>
-        <input name="monthly_fee" type="number" min="0" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="2500">
+        <input name="monthly_fee" type="number" min="0" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="2500">
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">Description (optional)</label>
-        <textarea name="description" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Brief course description"></textarea>
+        <textarea name="description" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Brief course description"></textarea>
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('addCourseModal').classList.add('hidden')"
                 class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">{{ __('coaching.add_course') }}</button>
+        <button type="submit" class="flex-1 bg-green-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-green-700">{{ __('coaching.add_course') }}</button>
       </div>
     </form>
   </div>
@@ -152,20 +152,20 @@
       @csrf @method('PATCH')
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.course_name') }}</label>
-        <input id="editCourseName" name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input id="editCourseName" name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('coaching.monthly_fee_pkr') }}</label>
-        <input id="editCourseFee" name="monthly_fee" type="number" min="0" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input id="editCourseFee" name="monthly_fee" type="number" min="0" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('common.description') }}</label>
-        <textarea id="editCourseDesc" name="description" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="editCourseDesc" name="description" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('editCourseModal').classList.add('hidden')"
                 class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">{{ __('coaching.save_changes') }}</button>
+        <button type="submit" class="flex-1 bg-green-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-green-700">{{ __('coaching.save_changes') }}</button>
       </div>
     </form>
   </div>
@@ -182,7 +182,7 @@
       @csrf
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">Course</label>
-        <select name="course_id" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select name="course_id" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
           <option value="">Select course...</option>
           @foreach($courses as $course)
           <option value="{{ $course->id }}">{{ $course->name }}</option>
@@ -191,32 +191,32 @@
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">Batch Name</label>
-        <input name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Morning Batch A">
+        <input name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="e.g., Morning Batch A">
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Timing</label>
-          <input name="timing" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="8:00 AM – 10:00 AM">
+          <input name="timing" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="8:00 AM – 10:00 AM">
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Days</label>
-          <input name="days" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Mon, Wed, Fri">
+          <input name="days" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Mon, Wed, Fri">
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Teacher Name</label>
-          <input name="teacher_name" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Optional">
+          <input name="teacher_name" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Optional">
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Capacity</label>
-          <input name="capacity" type="number" min="1" max="200" value="20" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <input name="capacity" type="number" min="1" max="200" value="20" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('addBatchModal').classList.add('hidden')"
                 class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">Add Batch</button>
+        <button type="submit" class="flex-1 bg-green-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-green-700">Add Batch</button>
       </div>
     </form>
   </div>
@@ -233,7 +233,7 @@
       @csrf @method('PATCH')
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">Course</label>
-        <select id="editBatchCourse" name="course_id" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select id="editBatchCourse" name="course_id" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
           @foreach($courses as $course)
           <option value="{{ $course->id }}">{{ $course->name }}</option>
           @endforeach
@@ -241,32 +241,32 @@
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">Batch Name</label>
-        <input id="editBatchName" name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input id="editBatchName" name="name" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Timing</label>
-          <input id="editBatchTiming" name="timing" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <input id="editBatchTiming" name="timing" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Days</label>
-          <input id="editBatchDays" name="days" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <input id="editBatchDays" name="days" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Teacher Name</label>
-          <input id="editBatchTeacher" name="teacher_name" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <input id="editBatchTeacher" name="teacher_name" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Capacity</label>
-          <input id="editBatchCapacity" name="capacity" type="number" min="1" max="200" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <input id="editBatchCapacity" name="capacity" type="number" min="1" max="200" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
       </div>
       <div class="flex gap-3 pt-2">
         <button type="button" onclick="document.getElementById('editBatchModal').classList.add('hidden')"
                 class="flex-1 border border-slate-300 text-slate-700 rounded-lg py-2 text-sm font-medium hover:bg-slate-50">{{ __('common.cancel') }}</button>
-        <button type="submit" class="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700">{{ __('coaching.save_changes') }}</button>
+        <button type="submit" class="flex-1 bg-green-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-green-700">{{ __('coaching.save_changes') }}</button>
       </div>
     </form>
   </div>

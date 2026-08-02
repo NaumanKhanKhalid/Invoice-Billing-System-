@@ -18,9 +18,9 @@
       <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">Active</p>
       <p class="text-3xl font-bold text-green-600">{{ $activeStudents }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-5 text-center">
-      <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider mb-1">Batches Running</p>
-      <p class="text-3xl font-bold text-blue-600">{{ $totalBatches }}</p>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 text-center">
+      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Batches Running</p>
+      <p class="text-3xl font-bold text-green-600">{{ $totalBatches }}</p>
     </div>
     <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5 text-center">
       <p class="text-xs text-red-500 font-semibold uppercase tracking-wider mb-1">Fee Pending</p>
@@ -130,8 +130,8 @@
       <div class="w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="user-plus" class="w-4 h-4 text-green-600"></i></div>
       <span class="text-sm font-medium text-slate-700">Enroll Student</span>
     </a>
-    <a href="{{ route('coaching.fees.index') }}" class="flex items-center gap-3 bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 rounded-xl p-4 transition-all">
-      <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="banknote" class="w-4 h-4 text-blue-600"></i></div>
+    <a href="{{ route('coaching.fees.index') }}" class="flex items-center gap-3 bg-white border border-slate-200 hover:border-green-300 hover:bg-green-50 rounded-xl p-4 transition-all">
+      <div class="w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="banknote" class="w-4 h-4 text-green-600"></i></div>
       <span class="text-sm font-medium text-slate-700">Collect Fees</span>
     </a>
     <a href="{{ route('coaching.students.index') }}" class="flex items-center gap-3 bg-white border border-slate-200 hover:border-purple-300 hover:bg-purple-50 rounded-xl p-4 transition-all">

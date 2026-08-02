@@ -19,14 +19,14 @@
   <form method="GET" class="flex flex-wrap gap-3">
     <input name="search" value="{{ request('search') }}"
            placeholder="{{ __('pages.search_name_phone') }}"
-           class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56">
-    <select name="batch_id" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+           class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 w-56">
+    <select name="batch_id" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       <option value="">{{ __('coaching.all_batches') }}</option>
       @foreach($batches as $batch)
       <option value="{{ $batch->id }}" @selected(request('batch_id')==$batch->id)>{{ $batch->course->name }} – {{ $batch->name }}</option>
       @endforeach
     </select>
-    <select name="status" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <select name="status" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       <option value="">{{ __('common.all_status') }}</option>
       <option value="active" @selected(request('status')=='active')>{{ __('common.active') }}</option>
       <option value="completed" @selected(request('status')=='completed')>{{ __('coaching.completed') }}</option>
@@ -55,7 +55,7 @@
           @forelse($students as $student)
           <tr class="hover:bg-slate-50">
             <td class="px-4 py-3">
-              <a href="{{ route('coaching.students.show', $student) }}" class="font-medium text-slate-900 hover:text-blue-600">{{ $student->name }}</a>
+              <a href="{{ route('coaching.students.show', $student) }}" class="font-medium text-slate-900 hover:text-green-600">{{ $student->name }}</a>
               @if($student->guardian_name)
               <p class="text-xs text-slate-400">Guardian: {{ $student->guardian_name }}</p>
               @endif
@@ -82,7 +82,7 @@
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i>View
                 </a>
                 <a href="{{ route('coaching.students.edit', $student) }}"
-                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-500 hover:text-blue-700 text-xs font-medium transition-colors">
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-500 hover:text-green-700 text-xs font-medium transition-colors">
                   <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
                 </a>
               </div>
