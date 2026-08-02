@@ -399,7 +399,7 @@
 
         <!-- User section -->
         <div class="border-t border-slate-700/50 px-3 py-4">
-            <!-- Language toggle -->
+            {{-- Language toggle (English/Urdu) — hidden for now
             @php $curLocale = app()->getLocale(); @endphp
             <div class="flex items-center gap-1 bg-slate-800/60 rounded-lg p-1 mb-3">
                 <a href="{{ route('lang.switch', 'en') }}"
@@ -407,6 +407,7 @@
                 <a href="{{ route('lang.switch', 'ur') }}"
                    class="flex-1 text-center text-xs font-bold py-1.5 rounded-md transition-colors {{ $curLocale === 'ur' ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-slate-200' }}">Urdu</a>
             </div>
+            --}}
             <div class="flex items-center gap-3 px-2 py-2">
                 <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                     {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
