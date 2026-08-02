@@ -73,10 +73,12 @@ function salarySlipPreview() {
     },
     close() { this.open = false; document.body.style.overflow = ''; },
     printIt() {
-      // Salary slip is a short single-page doc — print it in place.
-      // The card's print CSS hides everything except #slip and resets it to
-      // normal flow, so no separate page/tab is needed.
-      window.print();
+      // The slide-over lives on a tall page (staff info + salary table), and
+      // hidden-but-present content leaves a blank first page when printing in
+      // place. So print the standalone slip page (?print=1) which contains only
+      // the document — it auto-prints and closes itself (just a quick flash).
+      if (this.full) { window.open(this.full + (this.full.includes('?') ? '&' : '?') + 'print=1', '_blank'); }
+      else { window.print(); }
     },
     async saveImage() {
       const el = this.$refs.body.querySelector('#slip');
