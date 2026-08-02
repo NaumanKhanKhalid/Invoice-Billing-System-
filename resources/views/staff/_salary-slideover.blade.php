@@ -37,6 +37,17 @@
   </div>
 </div>
 
+<style>
+@media print {
+  /* Neutralise the fixed slide-over so #slip prints in normal flow (not clipped). */
+  [x-data="salarySlipPreview()"], [x-data="salarySlipPreview()"] * {
+    position: static !important; overflow: visible !important;
+    inset: auto !important; width: auto !important; max-width: none !important;
+    background: transparent !important; box-shadow: none !important;
+    transform: none !important;
+  }
+}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
@@ -58,8 +69,10 @@ function salarySlipPreview() {
     },
     close() { this.open = false; document.body.style.overflow = ''; },
     printIt() {
-      if (this.full) { window.open(this.full + (this.full.includes('?') ? '&' : '?') + 'print=1', '_blank'); }
-      else { window.print(); }
+      // Salary slip is a short single-page doc — print it in place.
+      // The card's print CSS hides everything except #slip and resets it to
+      // normal flow, so no separate page/tab is needed.
+      window.print();
     },
     async saveImage() {
       const el = this.$refs.body.querySelector('#slip');
