@@ -3,9 +3,8 @@
 @section('content')
 @php
   $slipNo  = 'SAL-' . str_pad((string) $payment->id, 4, '0', STR_PAD_LEFT);
-  $isPrint = request()->boolean('print');
 @endphp
-<div @if($isPrint) x-init="setTimeout(() => window.print(), 300)" @endif>
+<div>
   {{-- Toolbar --}}
   <div class="flex items-center justify-between gap-3 mb-5 print:hidden">
     <div class="flex items-center gap-3 min-w-0">
@@ -43,6 +42,13 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
+// Opened from the slide-over "Print" action (?print=1) → print immediately, then close.
+if (new URLSearchParams(location.search).get('print') === '1') {
+  window.addEventListener('load', () => setTimeout(() => {
+    window.print();
+    window.addEventListener('afterprint', () => window.close());
+  }, 400));
+}
 async function saveSlipImage() {
   const el = document.getElementById('slip');
   if (!el || typeof html2canvas === 'undefined') { window.print(); return; }
