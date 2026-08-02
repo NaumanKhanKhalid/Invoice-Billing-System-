@@ -19,7 +19,9 @@
         <i data-lucide="edit-2" class="w-4 h-4"></i>Edit
       </a>
       <form action="{{ route('coaching.students.destroy', $student) }}" method="POST"
-            onsubmit="return confirm('Remove this student?')">
+            data-confirm-title="Student remove karein?"
+            data-confirm-message="{{ $student->name }} aur inka fee record hat jayega."
+            data-confirm-text="Haan, remove">
         @csrf @method('DELETE')
         <button class="flex items-center gap-2 border border-red-200 text-red-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-50">
           <i data-lucide="trash-2" class="w-4 h-4"></i>Remove

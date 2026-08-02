@@ -43,7 +43,9 @@
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
           </button>
           <form action="{{ route('coaching.courses.destroy', $course) }}" method="POST"
-                onsubmit="return confirm('Delete course?')">
+                data-confirm-title="Course delete karein?"
+                data-confirm-message="Is course ke saath juday batches/students bhi affect ho sakte hain."
+                data-confirm-text="Haan, delete">
             @csrf @method('DELETE')
             <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete
@@ -95,7 +97,9 @@
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit
           </button>
           <form action="{{ route('coaching.batches.destroy', $batch) }}" method="POST"
-                onsubmit="return confirm('Delete batch?')">
+                data-confirm-title="Batch delete karein?"
+                data-confirm-message="Is batch ke students affect ho sakte hain."
+                data-confirm-text="Haan, delete">
             @csrf @method('DELETE')
             <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-700 text-xs font-medium transition-colors">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete
