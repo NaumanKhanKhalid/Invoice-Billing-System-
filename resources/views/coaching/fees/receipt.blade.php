@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Fee Receipt')
 @section('content')
-<div class="max-w-md mx-auto">
+<div class="max-w-xl mx-auto">
 
   <div class="flex items-center justify-between mb-4 print:hidden">
     <a href="{{ route('coaching.fees.index') }}"
