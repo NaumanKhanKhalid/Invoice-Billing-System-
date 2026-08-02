@@ -96,14 +96,16 @@ class CoachingFeeController extends Controller
 
     public function receipt(CoachingFeeCollection $fee)
     {
-        $fee->load('student.batch.course', 'payments');
+        $fee->load('student.batch.course');
+        if (\Illuminate\Support\Facades\Schema::hasTable('coaching_fee_payments')) { $fee->load('payments'); }
         return view('coaching.fees.receipt', compact('fee'));
     }
 
     /** Layout-free receipt fragment for the in-page slide-over preview. */
     public function preview(CoachingFeeCollection $fee)
     {
-        $fee->load('student.batch.course', 'payments');
+        $fee->load('student.batch.course');
+        if (\Illuminate\Support\Facades\Schema::hasTable('coaching_fee_payments')) { $fee->load('payments'); }
         return view('coaching.fees.preview', compact('fee'));
     }
 
@@ -113,7 +115,8 @@ class CoachingFeeController extends Controller
      */
     public function publicReceipt(CoachingFeeCollection $fee)
     {
-        $fee->load('student.batch.course', 'payments');
+        $fee->load('student.batch.course');
+        if (\Illuminate\Support\Facades\Schema::hasTable('coaching_fee_payments')) { $fee->load('payments'); }
         return view('coaching.fees.public-receipt', compact('fee'));
     }
 }
