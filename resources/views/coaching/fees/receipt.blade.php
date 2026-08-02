@@ -1,17 +1,23 @@
 @extends('layouts.app')
 @section('title','Fee Receipt')
 @section('content')
-<div class="max-w-3xl mx-auto">
+<div>
 
-  <div class="flex items-center justify-between mb-4 print:hidden">
-    <a href="{{ route('coaching.fees.index') }}"
-       class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 transition-colors">
-      <i data-lucide="arrow-left" class="w-4 h-4"></i>Back
-    </a>
-    <div class="flex items-center gap-2">
+  {{-- Toolbar --}}
+  <div class="flex items-center justify-between gap-3 mb-5 print:hidden">
+    <div class="flex items-center gap-3 min-w-0">
+      <a href="{{ route('coaching.fees.index') }}"
+         class="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm shrink-0">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      </a>
+      <div class="min-w-0">
+        <h1 class="text-lg font-bold text-slate-900 leading-tight">Fee Receipt</h1>
+        <p class="text-xs text-slate-400 font-mono">{{ $fee->receipt_number }}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
       @if($fee->student->phone && feature_enabled('whatsapp_share'))
       @php
-        // Public link parent taps to open the real receipt in the browser
         $publicUrl = \Illuminate\Support\Facades\URL::signedRoute('coaching.fees.public-receipt', ['fee' => $fee->id]);
         $waText = urlencode("*Fee Receipt — {$fee->receipt_number}*\n"
           . ($fee->student->name) . "\n"
@@ -24,12 +30,12 @@
       @endphp
       <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank"
          class="inline-flex items-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp
+        <i data-lucide="message-circle" class="w-4 h-4"></i><span class="hidden sm:inline">WhatsApp</span>
       </a>
       @endif
       <button type="button" onclick="saveReceiptImage()"
-              class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="image" class="w-4 h-4"></i>Save Image
+              class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="image" class="w-4 h-4"></i><span class="hidden sm:inline">Save Image</span>
       </button>
       @if(feature_enabled('receipt_print'))
       <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -39,7 +45,13 @@
     </div>
   </div>
 
-  @include('coaching.fees._card')
+  {{-- Document canvas — makes the white invoice read like a real document preview --}}
+  <div class="rounded-2xl px-4 sm:px-8 py-8 print:p-0 print:bg-transparent"
+       style="background:linear-gradient(180deg,#eef2f7 0%,#e2e8f0 100%)">
+    <div class="print:shadow-none" style="filter:drop-shadow(0 20px 35px rgba(15,23,42,0.15))">
+      @include('coaching.fees._card')
+    </div>
+  </div>
 
 </div>
 
