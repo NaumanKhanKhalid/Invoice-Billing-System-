@@ -7,7 +7,7 @@
   <div x-show="open"
        x-transition:enter="transition transform duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
        x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-       class="fixed right-0 inset-y-0 z-50 w-full max-w-2xl bg-slate-100 shadow-2xl flex flex-col">
+       class="fixed right-0 inset-y-0 z-50 w-full max-w-3xl bg-slate-100 shadow-2xl flex flex-col">
     {{-- header --}}
     <div class="flex items-center justify-between gap-2 px-4 py-3 bg-white border-b border-slate-200 shrink-0">
       <div class="flex items-center gap-2 min-w-0">

@@ -93,16 +93,16 @@
       @if($fee->discount_amount > 0)
       <div class="flex justify-between py-1.5 text-green-600"><span>Discount</span><span class="tabular-nums">− PKR {{ number_format($fee->discount_amount) }}</span></div>
       @endif
+      <div class="flex justify-between py-1.5 border-t border-slate-100 mt-1"><span class="font-semibold text-slate-700">Amount Paid</span><span class="font-bold text-slate-900 tabular-nums">PKR {{ number_format($fee->amount_paid) }}</span></div>
       @if($fee->balance_due > 0)
-      <div class="flex justify-between py-1.5"><span class="text-slate-500">Amount Paid</span><span class="text-slate-700 tabular-nums">PKR {{ number_format($fee->amount_paid) }}</span></div>
-      <div class="flex justify-between items-center mt-1 px-3 py-2.5 rounded-lg text-white" style="background:#dc2626">
+      <div class="flex justify-between items-center mt-1.5 px-3 py-2.5 rounded-lg text-white" style="background:#dc2626">
         <span class="font-bold text-sm">Balance Due</span>
         <span class="font-extrabold text-lg tabular-nums">PKR {{ number_format($fee->balance_due) }}</span>
       </div>
       @else
-      <div class="flex justify-between items-center mt-1 px-3 py-2.5 rounded-lg text-white" style="background:#16a34a">
-        <span class="font-bold text-sm">Total Paid</span>
-        <span class="font-extrabold text-lg tabular-nums">PKR {{ number_format($fee->amount_paid) }}</span>
+      <div class="flex items-center justify-center gap-1.5 mt-1.5 px-3 py-2.5 rounded-lg text-white font-bold text-sm" style="background:#16a34a">
+        <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        PAID IN FULL
       </div>
       @endif
     </div>
