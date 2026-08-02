@@ -134,44 +134,67 @@
                 </a>
                 @endif
               </div>
-              {{-- Collect Form --}}
-              <div x-show="open" x-cloak class="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-3 text-left">
-                <form action="{{ route('coaching.fees.collect', $fee) }}" method="POST" class="space-y-2">
-                  @csrf
-                  <div class="grid grid-cols-2 gap-2">
+              {{-- Collect Fee — modal popup --}}
+              <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 text-left"
+                   style="background:rgba(15,23,42,0.55);backdrop-filter:blur(2px)"
+                   @keydown.escape.window="open=false" @click.self="open=false">
+                <div class="bg-white rounded-2xl shadow-2xl w-full overflow-hidden" style="max-width:26rem"
+                     x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+                  {{-- header --}}
+                  <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                     <div>
-                      <label class="text-xs text-slate-500">{{ __('coaching.amount_pkr') }}</label>
-                      <input name="amount_paid" type="number" min="0" value="{{ $fee->balance_due }}"
-                             class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      <h3 class="font-bold text-slate-900">Collect Fee</h3>
+                      <p class="text-xs text-slate-400 mt-0.5">{{ $fee->student->name }} · {{ \Carbon\Carbon::parse($fee->month)->format('F Y') }}</p>
                     </div>
-                    <div>
-                      <label class="text-xs text-slate-500">{{ __('common.method') }}</label>
-                      <select name="payment_method" class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <option value="cash">{{ __('coaching.cash') }}</option>
-                        <option value="jazzcash">JazzCash</option>
-                        <option value="easypaisa">Easypaisa</option>
-                        <option value="bank">Bank</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
+                    <button type="button" @click="open=false" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
                   </div>
-                  <div class="grid grid-cols-2 gap-2">
-                    <div>
-                      <label class="text-xs text-slate-500">Discount (is mahine)</label>
-                      <input name="discount_amount" type="number" min="0" value="{{ $fee->discount_amount }}"
-                             placeholder="PKR chhoot"
-                             class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+
+                  <form action="{{ route('coaching.fees.collect', $fee) }}" method="POST" class="p-5 space-y-4">
+                    @csrf
+                    {{-- balance banner --}}
+                    <div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-2.5">
+                      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Balance Due</span>
+                      <span class="text-lg font-extrabold text-red-600 tabular-nums">PKR {{ number_format($fee->balance_due) }}</span>
                     </div>
-                    <div>
-                      <label class="text-xs text-slate-500">Notes</label>
-                      <input name="notes" class="w-full border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Optional">
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">{{ __('coaching.amount_pkr') }}</label>
+                        <input name="amount_paid" type="number" min="0" value="{{ $fee->balance_due }}"
+                               class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-300">
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">{{ __('common.method') }}</label>
+                        <select name="payment_method" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-300">
+                          <option value="cash">{{ __('coaching.cash') }}</option>
+                          <option value="jazzcash">JazzCash</option>
+                          <option value="easypaisa">Easypaisa</option>
+                          <option value="bank">Bank</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-2 pt-1">
-                    <button type="button" @click="open=false" class="flex-1 border border-slate-300 text-slate-600 rounded py-1 text-xs">Cancel</button>
-                    <button type="submit" class="flex-1 bg-green-600 text-white rounded py-1 text-xs font-medium hover:bg-green-700">Record Payment</button>
-                  </div>
-                </form>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Discount (is mahine)</label>
+                        <input name="discount_amount" type="number" min="0" value="{{ $fee->discount_amount }}" placeholder="0"
+                               class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Notes</label>
+                        <input name="notes" placeholder="Optional"
+                               class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                      </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-1">
+                      <button type="button" @click="open=false" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50">Cancel</button>
+                      <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white rounded-xl py-2.5 text-sm font-bold transition">
+                        <i data-lucide="check" class="w-4 h-4"></i>Record Payment
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </td>
           </tr>
