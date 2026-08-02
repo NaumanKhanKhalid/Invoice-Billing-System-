@@ -39,17 +39,17 @@
 
 <style>
 @media print {
-  /* Hide overlay + header (they'd otherwise leave a blank first page). */
-  [x-data="salarySlipPreview()"] .print\:hidden { display: none !important; }
-  /* Neutralise the fixed slide-over so #slip prints in normal flow (not clipped). */
-  [x-data="salarySlipPreview()"], [x-data="salarySlipPreview()"] .flex-1,
-  [x-data="salarySlipPreview()"] > div {
-    position: static !important; overflow: visible !important;
-    inset: auto !important; width: auto !important; max-width: none !important;
-    padding: 0 !important; margin: 0 !important;
-    background: transparent !important; box-shadow: none !important;
-    transform: none !important; display: block !important;
+  /* Print only the cloned slip; hide every other direct body child so their
+     layout space is gone (no blank first page). */
+  body.salary-printing > *:not(#salary-print-root) { display: none !important; }
+  #salary-print-root {
+    display: block !important; position: static !important;
+    margin: 0 auto !important; width: 100% !important; max-width: 100% !important;
   }
+  #salary-print-root #slip {
+    box-shadow: none !important; border: none !important; border-radius: 0 !important;
+  }
+  #salary-print-root #slip * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -73,12 +73,24 @@ function salarySlipPreview() {
     },
     close() { this.open = false; document.body.style.overflow = ''; },
     printIt() {
-      // The slide-over lives on a tall page (staff info + salary table), and
-      // hidden-but-present content leaves a blank first page when printing in
-      // place. So print the standalone slip page (?print=1) which contains only
-      // the document — it auto-prints and closes itself (just a quick flash).
-      if (this.full) { window.open(this.full + (this.full.includes('?') ? '&' : '?') + 'print=1', '_blank'); }
-      else { window.print(); }
+      // Print in place (no separate tab). The host page is tall, so we clone
+      // the slip into a print-only root at <body> level and hide every other
+      // direct body child during print — that removes their layout space and
+      // avoids a blank first page. Clean up after printing.
+      const el = this.$refs.body.querySelector('#slip');
+      if (!el) { window.print(); return; }
+      const holder = document.createElement('div');
+      holder.id = 'salary-print-root';
+      holder.appendChild(el.cloneNode(true));
+      document.body.appendChild(holder);
+      document.body.classList.add('salary-printing');
+      const cleanup = () => {
+        document.body.classList.remove('salary-printing');
+        holder.remove();
+        window.removeEventListener('afterprint', cleanup);
+      };
+      window.addEventListener('afterprint', cleanup);
+      setTimeout(() => window.print(), 60);
     },
     async saveImage() {
       const el = this.$refs.body.querySelector('#slip');
