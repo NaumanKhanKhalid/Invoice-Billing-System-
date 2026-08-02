@@ -30,47 +30,49 @@
     </div>
   </div>
 
-  <div class="px-7 py-6 space-y-5">
+  <div class="px-6 py-5 space-y-4">
     {{-- Received from --}}
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 gap-4 bg-slate-50 rounded-xl px-4 py-3">
       <div>
-        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Received From</p>
-        <p class="font-bold text-slate-900">{{ $fee->student->name }}</p>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Received From</p>
+        <p class="font-bold text-slate-900 leading-tight">{{ $fee->student->name }}</p>
         @if($fee->student->phone)<p class="text-xs text-slate-500">{{ $fee->student->phone }}</p>@endif
       </div>
       <div class="text-right">
-        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Course &amp; Batch</p>
-        <p class="font-semibold text-slate-800 text-sm">{{ $fee->student->batch->course->name }}</p>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Course &amp; Batch</p>
+        <p class="font-semibold text-slate-800 text-sm leading-tight">{{ $fee->student->batch->course->name }}</p>
         <p class="text-xs text-slate-500">{{ $fee->student->batch->name }}</p>
       </div>
     </div>
 
-    {{-- Fee detail table --}}
-    <table class="w-full text-sm border-t border-b border-slate-100">
-      <tbody class="divide-y divide-slate-50">
-        <tr>
-          <td class="py-2.5 text-slate-500">Fee for the month</td>
-          <td class="py-2.5 text-right font-semibold text-slate-800">{{ \Carbon\Carbon::parse($fee->month)->format('F Y') }}</td>
-        </tr>
-        <tr>
-          <td class="py-2.5 text-slate-500">Fee Due</td>
-          <td class="py-2.5 text-right text-slate-700 tabular-nums">PKR {{ number_format($fee->amount_due) }}</td>
-        </tr>
-        @if($fee->discount_amount > 0)
-        <tr class="text-green-600">
-          <td class="py-2.5">Discount</td>
-          <td class="py-2.5 text-right tabular-nums">− PKR {{ number_format($fee->discount_amount) }}</td>
-        </tr>
-        @endif
-        <tr>
-          <td class="py-2.5 text-slate-500">Payment Method</td>
-          <td class="py-2.5 text-right text-slate-700 capitalize">{{ $fee->payment_method ?? 'cash' }}</td>
-        </tr>
-      </tbody>
-    </table>
+    {{-- Fee detail (grouped box) --}}
+    <div class="rounded-xl border border-slate-100 overflow-hidden">
+      <table class="w-full text-sm">
+        <tbody class="divide-y divide-slate-100">
+          <tr>
+            <td class="px-4 py-2 text-slate-500">Fee for the month</td>
+            <td class="px-4 py-2 text-right font-semibold text-slate-800">{{ \Carbon\Carbon::parse($fee->month)->format('F Y') }}</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 text-slate-500">Fee Due</td>
+            <td class="px-4 py-2 text-right text-slate-700 tabular-nums">PKR {{ number_format($fee->amount_due) }}</td>
+          </tr>
+          @if($fee->discount_amount > 0)
+          <tr class="text-green-600">
+            <td class="px-4 py-2">Discount</td>
+            <td class="px-4 py-2 text-right tabular-nums">− PKR {{ number_format($fee->discount_amount) }}</td>
+          </tr>
+          @endif
+          <tr>
+            <td class="px-4 py-2 text-slate-500">Payment Method</td>
+            <td class="px-4 py-2 text-right text-slate-700 capitalize">{{ $fee->payment_method ?? 'cash' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     {{-- Amount paid highlight --}}
-    <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-5 py-3.5">
+    <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-5 py-3">
       <div>
         <p class="text-sm font-semibold text-green-800">Amount Paid</p>
         @if($fee->status === 'paid')
@@ -94,10 +96,10 @@
     @endif
 
     {{-- Signature line --}}
-    <div class="flex items-end justify-between pt-8">
-      <p class="text-[11px] text-slate-400">Shukriya! Ye receipt apne paas mehfooz rakhein.</p>
+    <div class="flex items-end justify-between pt-5">
+      <p class="text-[11px] text-slate-400 max-w-[55%]">Shukriya! Ye receipt apne paas mehfooz rakhein.</p>
       <div class="text-center">
-        <div class="w-36 border-t border-slate-300"></div>
+        <div class="w-32 border-t border-slate-300"></div>
         <p class="text-[11px] text-slate-500 mt-1">Received by / Signature</p>
       </div>
     </div>
