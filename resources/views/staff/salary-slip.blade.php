@@ -55,8 +55,8 @@
             </div>
           </div>
           <div class="text-right shrink-0">
-            <h1 class="text-2xl font-black tracking-tight text-green-700 leading-none">SALARY SLIP</h1>
-            <p class="text-xs text-slate-400 mt-2">No: <span class="font-bold text-slate-700 font-mono">{{ $slipNo }}</span></p>
+            <h1 class="text-3xl font-black tracking-tight text-green-700 leading-none">SALARY</h1>
+            <p class="text-xs text-slate-400 mt-2">Slip No: <span class="font-bold text-slate-700 font-mono">{{ $slipNo }}</span></p>
             <p class="text-xs text-slate-400">Date: <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span></p>
           </div>
         </div>
@@ -75,11 +75,37 @@
           </div>
         </div>
 
-        {{-- Amount --}}
+        {{-- Line items table (same as fee invoice) --}}
         <div class="px-8">
-          <div class="flex items-center justify-between rounded-xl px-5 py-4" style="background:linear-gradient(135deg,#ecfdf5 0%,#f0fdf4 100%)">
-            <span class="text-sm font-bold text-green-800 uppercase tracking-wide">Amount Paid</span>
-            <span class="text-3xl font-extrabold text-green-700 tabular-nums">PKR {{ number_format($payment->amount) }}</span>
+          <table class="w-full text-sm">
+            <thead>
+              <tr style="background:#16a34a;color:#fff">
+                <th class="px-3 py-2.5 text-left text-xs font-bold rounded-l-lg">#</th>
+                <th class="px-3 py-2.5 text-left text-xs font-bold">Description</th>
+                <th class="px-3 py-2.5 text-right text-xs font-bold rounded-r-lg">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-100">
+                <td class="px-3 py-3 text-slate-500">1</td>
+                <td class="px-3 py-3">
+                  <p class="font-semibold text-slate-800">Salary — {{ \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y') }}</p>
+                  <p class="text-xs text-slate-400 capitalize">{{ $staff->role }}</p>
+                </td>
+                <td class="px-3 py-3 text-right font-semibold text-slate-900 tabular-nums">PKR {{ number_format($payment->amount) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {{-- Total --}}
+        <div class="px-8 pt-4 flex justify-end">
+          <div class="w-full sm:w-72 text-sm">
+            <div class="flex justify-between py-1.5"><span class="text-slate-500">Subtotal</span><span class="text-slate-700 tabular-nums">PKR {{ number_format($payment->amount) }}</span></div>
+            <div class="flex justify-between items-center py-2 border-t-2 border-slate-200 mt-1">
+              <span class="font-bold text-slate-800">Total Paid</span>
+              <span class="font-extrabold text-lg text-green-700 tabular-nums">PKR {{ number_format($payment->amount) }}</span>
+            </div>
           </div>
         </div>
 
