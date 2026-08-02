@@ -75,38 +75,31 @@
           </div>
         </div>
 
-        {{-- Line items table (same as fee invoice) --}}
+        {{-- Earnings table (full-width, with Total row) --}}
         <div class="px-8">
           <table class="w-full text-sm">
             <thead>
               <tr style="background:#16a34a;color:#fff">
-                <th class="px-3 py-2.5 text-left text-xs font-bold rounded-l-lg">#</th>
-                <th class="px-3 py-2.5 text-left text-xs font-bold">Description</th>
-                <th class="px-3 py-2.5 text-right text-xs font-bold rounded-r-lg">Amount</th>
+                <th class="px-4 py-2.5 text-left text-xs font-bold rounded-l-lg">Description</th>
+                <th class="px-4 py-2.5 text-right text-xs font-bold rounded-r-lg">Amount</th>
               </tr>
             </thead>
             <tbody>
               <tr class="border-b border-slate-100">
-                <td class="px-3 py-3 text-slate-500">1</td>
-                <td class="px-3 py-3">
+                <td class="px-4 py-3">
                   <p class="font-semibold text-slate-800">Salary — {{ \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y') }}</p>
                   <p class="text-xs text-slate-400 capitalize">{{ $staff->role }}</p>
                 </td>
-                <td class="px-3 py-3 text-right font-semibold text-slate-900 tabular-nums">PKR {{ number_format($payment->amount) }}</td>
+                <td class="px-4 py-3 text-right font-semibold text-slate-900 tabular-nums">PKR {{ number_format($payment->amount) }}</td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr>
+                <td class="px-4 py-3 font-bold text-green-800" style="background:#f0fdf4">Total Paid</td>
+                <td class="px-4 py-3 text-right font-extrabold text-lg text-green-700 tabular-nums" style="background:#f0fdf4">PKR {{ number_format($payment->amount) }}</td>
+              </tr>
+            </tfoot>
           </table>
-        </div>
-
-        {{-- Total --}}
-        <div class="px-8 pt-4 flex justify-end">
-          <div class="w-full sm:w-72 text-sm">
-            <div class="flex justify-between py-1.5"><span class="text-slate-500">Subtotal</span><span class="text-slate-700 tabular-nums">PKR {{ number_format($payment->amount) }}</span></div>
-            <div class="flex justify-between items-center py-2 border-t-2 border-slate-200 mt-1">
-              <span class="font-bold text-slate-800">Total Paid</span>
-              <span class="font-extrabold text-lg text-green-700 tabular-nums">PKR {{ number_format($payment->amount) }}</span>
-            </div>
-          </div>
         </div>
 
         @if($payment->note)
@@ -116,7 +109,7 @@
         @endif
 
         {{-- Signatures --}}
-        <div class="px-8 py-8 flex items-end justify-between gap-8">
+        <div class="px-8 pt-10 pb-6 flex items-end justify-between gap-8">
           <div class="text-center">
             <div class="w-40 border-t border-slate-300"></div>
             <p class="text-[11px] text-slate-500 mt-1">Employer</p>
