@@ -108,6 +108,39 @@
     </div>
   </div>
 
+  {{-- Payment history (installments) --}}
+  @if($fee->relationLoaded('payments') && $fee->payments->count() > 1)
+  <div class="px-8 pt-5">
+    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Payment History</p>
+    <div class="rounded-xl border border-slate-100 overflow-hidden">
+      <table class="w-full text-xs">
+        <thead>
+          <tr class="bg-slate-50 text-slate-400">
+            <th class="px-3 py-2 text-left font-semibold">Date</th>
+            <th class="px-3 py-2 text-left font-semibold">Method</th>
+            <th class="px-3 py-2 text-right font-semibold">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+          @foreach($fee->payments as $p)
+          <tr>
+            <td class="px-3 py-2 text-slate-600">{{ \Carbon\Carbon::parse($p->paid_on)->format('d M Y') }}</td>
+            <td class="px-3 py-2 text-slate-500 capitalize">{{ $p->method }}</td>
+            <td class="px-3 py-2 text-right font-semibold text-slate-800 tabular-nums">PKR {{ number_format($p->amount) }}</td>
+          </tr>
+          @endforeach
+        </tbody>
+        <tfoot>
+          <tr class="border-t border-slate-200">
+            <td class="px-3 py-2 font-bold text-slate-700" colspan="2">Total Paid</td>
+            <td class="px-3 py-2 text-right font-extrabold text-green-700 tabular-nums">PKR {{ number_format($fee->payments->sum('amount')) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  @endif
+
   @if($fee->notes)
   <div class="px-8 pt-4">
     <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-600"><span class="font-semibold">Note: </span>{{ $fee->notes }}</div>

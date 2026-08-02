@@ -79,6 +79,16 @@ class CoachingFeeController extends Controller
                 'status'          => $status,
                 'notes'           => $data['notes'] ?? $fee->notes,
             ]);
+
+            // Record this installment in the payment ledger (only if money changed hands)
+            if ((float) $data['amount_paid'] > 0) {
+                $fee->payments()->create([
+                    'amount'  => $data['amount_paid'],
+                    'paid_on' => today()->toDateString(),
+                    'method'  => $data['payment_method'],
+                    'note'    => $data['notes'] ?? null,
+                ]);
+            }
         });
 
         return back()->with('success', 'Payment recorded for ' . $fee->student->name);
@@ -86,14 +96,14 @@ class CoachingFeeController extends Controller
 
     public function receipt(CoachingFeeCollection $fee)
     {
-        $fee->load('student.batch.course');
+        $fee->load('student.batch.course', 'payments');
         return view('coaching.fees.receipt', compact('fee'));
     }
 
     /** Layout-free receipt fragment for the in-page slide-over preview. */
     public function preview(CoachingFeeCollection $fee)
     {
-        $fee->load('student.batch.course');
+        $fee->load('student.batch.course', 'payments');
         return view('coaching.fees.preview', compact('fee'));
     }
 
@@ -103,7 +113,7 @@ class CoachingFeeController extends Controller
      */
     public function publicReceipt(CoachingFeeCollection $fee)
     {
-        $fee->load('student.batch.course');
+        $fee->load('student.batch.course', 'payments');
         return view('coaching.fees.public-receipt', compact('fee'));
     }
 }
