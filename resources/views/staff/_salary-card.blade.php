@@ -1,8 +1,10 @@
-{{-- Salary payslip document (Earnings / Deductions / Net Pay) --}}
+{{-- Professional salary invoice — A4 document style --}}
 @php
   $acName  = \App\Models\Setting::getValue('company_name', tenant()->shop_name ?? config('app.name'));
   $acPhone = \App\Models\Setting::getValue('company_phone');
   $acAddr  = \App\Models\Setting::getValue('company_address');
+  $acEmail = \App\Models\Setting::getValue('company_email');
+  $acNtn   = \App\Models\Setting::getValue('ntn_number');
   $logoPath = \App\Models\Setting::getValue('logo_path');
   $slipNo  = 'SAL-' . str_pad((string) $payment->id, 4, '0', STR_PAD_LEFT);
 
@@ -12,10 +14,17 @@
   $bonus   = $diff < 0 ? abs($diff) : 0;
   $deduct  = $diff > 0 ? $diff : 0;
   $grossEarnings = $basic + $bonus;          // Basic + Bonus
-@endphp
-<div id="slip" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0 mx-auto" style="max-width:40rem">
 
-  {{-- Letterhead --}}
+  // Build line items like the fee invoice
+  $items = [];
+  $items[] = ['desc' => 'Basic Salary', 'sub' => \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y'), 'amount' => $basic];
+  if ($bonus > 0) {
+    $items[] = ['desc' => 'Bonus / Extra', 'sub' => 'Additional earning', 'amount' => $bonus];
+  }
+@endphp
+<div id="slip" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print:shadow-none print:border-0 mx-auto" style="max-width:44rem">
+
+  {{-- Header --}}
   <div class="px-8 pt-8 pb-6 flex items-start justify-between gap-6">
     <div class="flex items-start gap-3 min-w-0">
       @if($logoPath)
@@ -27,97 +36,73 @@
         <h2 class="text-base font-extrabold text-slate-900 leading-tight">{{ $acName }}</h2>
         @if($acAddr)<p class="text-xs text-slate-500 leading-snug">{{ $acAddr }}</p>@endif
         @if($acPhone)<p class="text-xs text-slate-500 leading-snug">{{ $acPhone }}</p>@endif
+        @if($acEmail)<p class="text-xs text-slate-500 leading-snug">{{ $acEmail }}</p>@endif
+        @if($acNtn)<p class="text-xs text-slate-500 leading-snug">NTN: {{ $acNtn }}</p>@endif
       </div>
     </div>
     <div class="text-right shrink-0">
       <h1 class="text-3xl font-black tracking-tight text-green-700 leading-none">SALARY</h1>
-      <p class="text-xs text-slate-400 mt-2">Slip No: <span class="font-bold text-slate-700 font-mono">{{ $slipNo }}</span></p>
-      <p class="text-xs text-slate-400">Date: <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span></p>
-    </div>
-  </div>
-
-  {{-- Employee info strip --}}
-  <div class="mx-8 mb-6 rounded-xl border border-slate-200 overflow-hidden">
-    <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-slate-100 text-xs">
-      <div class="px-4 py-3">
-        <p class="text-slate-400 mb-0.5">Employee</p>
-        <p class="font-bold text-slate-800">{{ $staff->name }}</p>
-      </div>
-      <div class="px-4 py-3">
-        <p class="text-slate-400 mb-0.5">Designation</p>
-        <p class="font-semibold text-slate-700 capitalize">{{ $staff->role ?: '—' }}</p>
-      </div>
-      <div class="px-4 py-3 border-t sm:border-t-0 border-slate-100">
-        <p class="text-slate-400 mb-0.5">Pay Period</p>
-        <p class="font-semibold text-slate-700">{{ \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y') }}</p>
-      </div>
-      <div class="px-4 py-3 border-t sm:border-t-0 border-slate-100">
-        <p class="text-slate-400 mb-0.5">Pay Date</p>
-        <p class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</p>
+      <div class="mt-3 text-xs space-y-0.5">
+        <p class="text-slate-400">Slip No: <span class="font-bold text-slate-700 font-mono">{{ $slipNo }}</span></p>
+        <p class="text-slate-400">Pay Date: <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span></p>
       </div>
     </div>
   </div>
 
-  {{-- Earnings & Deductions --}}
-  <div class="px-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-    {{-- Earnings --}}
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-      <div class="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white" style="background:#16a34a">Earnings</div>
-      <table class="w-full text-sm">
-        <tbody>
-          <tr class="border-b border-slate-100">
-            <td class="px-4 py-2.5 text-slate-600">Basic Salary</td>
-            <td class="px-4 py-2.5 text-right font-semibold text-slate-800 tabular-nums">{{ number_format($basic) }}</td>
-          </tr>
-          @if($bonus > 0)
-          <tr class="border-b border-slate-100">
-            <td class="px-4 py-2.5 text-slate-600">Bonus / Extra</td>
-            <td class="px-4 py-2.5 text-right font-semibold text-slate-800 tabular-nums">{{ number_format($bonus) }}</td>
-          </tr>
-          @endif
-        </tbody>
-        <tfoot>
-          <tr style="background:#f0fdf4">
-            <td class="px-4 py-2.5 font-bold text-green-800">Total Earnings</td>
-            <td class="px-4 py-2.5 text-right font-extrabold text-green-700 tabular-nums">{{ number_format($grossEarnings) }}</td>
-          </tr>
-        </tfoot>
-      </table>
+  {{-- Paid To / Details --}}
+  <div class="px-8 grid grid-cols-2 gap-6 pb-6">
+    <div>
+      <p class="text-[11px] font-bold text-green-700 uppercase tracking-wider mb-1.5">Paid To</p>
+      <p class="font-bold text-slate-900 text-sm">{{ $staff->name }}</p>
+      <p class="text-xs text-slate-500 capitalize">{{ $staff->role ?: '—' }}</p>
+      @if($staff->phone)<p class="text-xs text-slate-500">{{ $staff->phone }}</p>@endif
     </div>
-    {{-- Deductions --}}
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-      <div class="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white" style="background:#64748b">Deductions</div>
-      <table class="w-full text-sm">
-        <tbody>
-          @if($deduct > 0)
-          <tr class="border-b border-slate-100">
-            <td class="px-4 py-2.5 text-slate-600">Deduction / Advance</td>
-            <td class="px-4 py-2.5 text-right font-semibold text-slate-800 tabular-nums">{{ number_format($deduct) }}</td>
-          </tr>
-          @else
-          <tr class="border-b border-slate-100">
-            <td class="px-4 py-2.5 text-slate-400 italic" colspan="2">No deductions</td>
-          </tr>
-          @endif
-        </tbody>
-        <tfoot>
-          <tr style="background:#f8fafc">
-            <td class="px-4 py-2.5 font-bold text-slate-700">Total Deductions</td>
-            <td class="px-4 py-2.5 text-right font-extrabold text-slate-700 tabular-nums">{{ number_format($deduct) }}</td>
-          </tr>
-        </tfoot>
-      </table>
+    <div class="text-right text-xs space-y-1">
+      <div class="flex justify-end gap-2"><span class="text-slate-400">Pay Period:</span><span class="font-semibold text-slate-700">{{ \Carbon\Carbon::createFromDate($payment->year, $payment->month, 1)->format('F Y') }}</span></div>
+      <div class="flex justify-end gap-2"><span class="text-slate-400">Payment Date:</span><span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span></div>
+      <div class="flex justify-end items-center gap-2">
+        <span class="text-slate-400">Status:</span>
+        <span style="color:#16a34a;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;">Paid</span>
+      </div>
     </div>
   </div>
 
-  {{-- Net Pay --}}
-  <div class="px-8 pt-4">
-    <div class="flex items-center justify-between px-5 py-3.5 rounded-xl text-white" style="background:#16a34a">
-      <div>
-        <p class="text-[11px] uppercase tracking-wider font-semibold opacity-90">Net Pay</p>
-        <p class="text-[11px] opacity-80">Total Earnings − Total Deductions</p>
+  {{-- Line items table --}}
+  <div class="px-8">
+    <table class="w-full text-sm">
+      <thead>
+        <tr style="background:#16a34a;color:#fff">
+          <th class="px-3 py-2.5 text-left text-xs font-bold rounded-l-lg">#</th>
+          <th class="px-3 py-2.5 text-left text-xs font-bold">Description</th>
+          <th class="px-3 py-2.5 text-right text-xs font-bold rounded-r-lg">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($items as $i => $it)
+        <tr class="border-b border-slate-100">
+          <td class="px-3 py-3 text-slate-500">{{ $i + 1 }}</td>
+          <td class="px-3 py-3">
+            <p class="font-semibold text-slate-800">{{ $it['desc'] }}</p>
+            <p class="text-xs text-slate-400">{{ $it['sub'] }}</p>
+          </td>
+          <td class="px-3 py-3 text-right font-semibold text-slate-900 tabular-nums">{{ number_format($it['amount']) }}</td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+
+  {{-- Totals --}}
+  <div class="px-8 pt-4 flex justify-end">
+    <div class="w-full sm:w-72 text-sm">
+      <div class="flex justify-between py-1.5"><span class="text-slate-500">Gross Earnings</span><span class="text-slate-700 tabular-nums">PKR {{ number_format($grossEarnings) }}</span></div>
+      @if($deduct > 0)
+      <div class="flex justify-between py-1.5 text-slate-600 border-t border-slate-100 mt-1"><span>Deduction / Advance</span><span class="tabular-nums">− PKR {{ number_format($deduct) }}</span></div>
+      @endif
+      <div class="flex justify-between items-center mt-1.5 px-3 py-2.5 rounded-lg text-white" style="background:#16a34a">
+        <span class="font-bold text-sm">Net Pay</span>
+        <span class="font-extrabold text-lg tabular-nums">PKR {{ number_format($paid) }}</span>
       </div>
-      <span class="text-2xl font-black tabular-nums">PKR {{ number_format($paid) }}</span>
     </div>
   </div>
 
@@ -128,14 +113,14 @@
   @endif
 
   {{-- Signatures --}}
-  <div class="px-8 pt-10 pb-6 flex items-end justify-between gap-8">
+  <div class="px-8 py-8 flex items-end justify-between gap-8">
     <div class="text-center">
       <div class="w-40 border-t border-slate-300"></div>
       <p class="text-[11px] text-slate-500 mt-1">Employer</p>
     </div>
     <div class="text-center">
       <div class="w-40 border-t border-slate-300"></div>
-      <p class="text-[11px] text-slate-500 mt-1">Employee</p>
+      <p class="text-[11px] text-slate-500 mt-1">Employee / Signature</p>
     </div>
   </div>
 
@@ -146,7 +131,7 @@
 
 <style>
 @media print {
-  @page { size: A5 portrait; margin: 10mm; }
+  @page { size: A4 portrait; margin: 12mm; }
   aside, nav, header, footer, .print\:hidden, .no-print { display: none !important; }
   body, #main-content { background: #fff !important; padding: 0 !important; margin: 0 !important; }
   body * { visibility: hidden; }
