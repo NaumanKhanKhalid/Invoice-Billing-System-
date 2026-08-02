@@ -1,7 +1,7 @@
 {{-- In-page salary slip preview slide-over (opened via 'open-salary' event) --}}
 <div x-data="salarySlipPreview()" @open-salary.window="show($event.detail)" x-cloak>
   {{-- overlay --}}
-  <div x-show="open" x-transition.opacity class="fixed inset-0 z-50 bg-black/50" @click="close()"></div>
+  <div x-show="open" x-transition.opacity class="fixed inset-0 z-50 bg-black/50 print:hidden" @click="close()"></div>
 
   {{-- panel --}}
   <div x-show="open"
@@ -9,7 +9,7 @@
        x-transition:leave="transition transform duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
        class="fixed right-0 inset-y-0 z-50 w-full max-w-2xl bg-slate-100 shadow-2xl flex flex-col">
     {{-- header --}}
-    <div class="flex items-center justify-between gap-2 px-4 py-3 bg-white border-b border-slate-200 shrink-0">
+    <div class="flex items-center justify-between gap-2 px-4 py-3 bg-white border-b border-slate-200 shrink-0 print:hidden">
       <div class="flex items-center gap-2 min-w-0">
         <button @click="close()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">✕</button>
         <h3 class="font-bold text-slate-900">Salary Slip</h3>
@@ -39,12 +39,16 @@
 
 <style>
 @media print {
+  /* Hide overlay + header (they'd otherwise leave a blank first page). */
+  [x-data="salarySlipPreview()"] .print\:hidden { display: none !important; }
   /* Neutralise the fixed slide-over so #slip prints in normal flow (not clipped). */
-  [x-data="salarySlipPreview()"], [x-data="salarySlipPreview()"] * {
+  [x-data="salarySlipPreview()"], [x-data="salarySlipPreview()"] .flex-1,
+  [x-data="salarySlipPreview()"] > div {
     position: static !important; overflow: visible !important;
     inset: auto !important; width: auto !important; max-width: none !important;
+    padding: 0 !important; margin: 0 !important;
     background: transparent !important; box-shadow: none !important;
-    transform: none !important;
+    transform: none !important; display: block !important;
   }
 }
 </style>
