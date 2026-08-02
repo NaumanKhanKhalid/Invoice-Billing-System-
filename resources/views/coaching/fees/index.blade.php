@@ -112,10 +112,19 @@
                   <i data-lucide="banknote" class="w-3.5 h-3.5"></i>Collect
                 </button>
                 @else
-                <a href="{{ route('coaching.fees.receipt', $fee) }}"
-                   class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition-colors">
+                @php
+                  $previewWa = ($fee->student->phone && feature_enabled('whatsapp_share'))
+                    ? 'https://wa.me/'.wa_number($fee->student->phone).'?text='.urlencode("*Fee Receipt — {$fee->receipt_number}*\n".$fee->student->name."\n".\Carbon\Carbon::parse($fee->month)->format('F Y')." ki fees\nPaid: PKR ".number_format($fee->amount_paid).($fee->balance_due > 0 ? "\nBalance: PKR ".number_format($fee->balance_due) : "")."\n\nReceipt: ".\Illuminate\Support\Facades\URL::signedRoute('coaching.fees.public-receipt', ['fee' => $fee->id])."\n\nShukriya! 🙏")
+                    : '';
+                @endphp
+                <button type="button"
+                        data-preview-url="{{ route('coaching.fees.preview', $fee) }}"
+                        data-preview-wa="{{ $previewWa }}"
+                        data-preview-full="{{ route('coaching.fees.receipt', $fee) }}"
+                        onclick="window.dispatchEvent(new CustomEvent('open-receipt',{detail:{url:this.dataset.previewUrl,wa:this.dataset.previewWa,full:this.dataset.previewFull}}))"
+                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition-colors">
                   <i data-lucide="receipt" class="w-3.5 h-3.5"></i>Receipt
-                </a>
+                </button>
                 @endif
                 @if($fee->student->phone && feature_enabled('whatsapp_share'))
                 <a href="https://wa.me/{{ wa_number($fee->student->phone) }}?text={{ urlencode('Assalam o Alaikum ' . $fee->student->name . ' — ' . $monthDate->format('F Y') . ' ki fees abhi tak nahi ayi. Please jald ada karein. Balance: PKR ' . number_format($fee->balance_due)) }}"
@@ -178,4 +187,5 @@
     </div>
   </div>
 </div>
+@include('coaching.fees._preview-slideover')
 @endsection

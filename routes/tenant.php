@@ -272,6 +272,7 @@ Route::middleware([
         Route::get('/coaching/fees', [CoachingFeeController::class, 'index'])->name('coaching.fees.index');
         Route::post('/coaching/fees/{fee}/collect', [CoachingFeeController::class, 'collect'])->name('coaching.fees.collect');
         Route::get('/coaching/fees/{fee}/receipt', [CoachingFeeController::class, 'receipt'])->name('coaching.fees.receipt');
+        Route::get('/coaching/fees/{fee}/preview', [CoachingFeeController::class, 'preview'])->name('coaching.fees.preview');
 
         // Data Export (owner only)
         Route::get('/settings/export-data', [DataExportController::class, 'download'])

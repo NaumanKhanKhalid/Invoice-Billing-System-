@@ -90,6 +90,13 @@ class CoachingFeeController extends Controller
         return view('coaching.fees.receipt', compact('fee'));
     }
 
+    /** Layout-free receipt fragment for the in-page slide-over preview. */
+    public function preview(CoachingFeeCollection $fee)
+    {
+        $fee->load('student.batch.course');
+        return view('coaching.fees.preview', compact('fee'));
+    }
+
     /**
      * Public receipt — opened by parents from the WhatsApp link.
      * No login; access is guarded by the signed-URL middleware.
