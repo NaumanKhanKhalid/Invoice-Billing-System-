@@ -33,9 +33,13 @@
         <i data-lucide="message-circle" class="w-4 h-4"></i><span class="hidden sm:inline">WhatsApp</span>
       </a>
       @endif
+      <button type="button" onclick="downloadReceiptPdf()"
+              class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span class="hidden sm:inline">PDF</span>
+      </button>
       <button type="button" onclick="saveReceiptImage()"
               class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="image" class="w-4 h-4"></i><span class="hidden sm:inline">Save Image</span>
+        <i data-lucide="image" class="w-4 h-4"></i><span class="hidden sm:inline">Image</span>
       </button>
       @if(feature_enabled('receipt_print'))
       <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -56,6 +60,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 async function saveReceiptImage() {
   const el = document.getElementById('receipt');
@@ -65,6 +70,18 @@ async function saveReceiptImage() {
   link.download = 'receipt-{{ $fee->receipt_number }}.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
+}
+async function downloadReceiptPdf() {
+  const el = document.getElementById('receipt');
+  if (!el || typeof html2canvas === 'undefined' || !window.jspdf) { window.print(); return; }
+  const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+  const img = canvas.toDataURL('image/png');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+  const iw = pw - 40, ih = canvas.height * iw / canvas.width;
+  pdf.addImage(img, 'PNG', 20, 20, iw, Math.min(ih, ph - 40));
+  pdf.save('receipt-{{ $fee->receipt_number }}.pdf');
 }
 </script>
 @endsection
