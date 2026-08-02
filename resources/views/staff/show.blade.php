@@ -52,9 +52,13 @@
               <td class="px-4 py-3 text-sm text-slate-600">{{ \Carbon\Carbon::parse($p->payment_date)->format('d M Y') }}</td>
               <td class="px-4 py-3 text-sm text-slate-500">{{ $p->note ?? '-' }}</td>
               <td class="px-4 py-3 text-sm text-right">
-                <a href="{{ route('staff.salary-slip', [$staff, $p]) }}" class="inline-flex items-center gap-1 text-slate-500 hover:text-slate-700 font-medium">
+                <button type="button"
+                        data-preview-url="{{ route('staff.salary-slip.preview', [$staff, $p]) }}"
+                        data-preview-full="{{ route('staff.salary-slip', [$staff, $p]) }}"
+                        onclick="window.dispatchEvent(new CustomEvent('open-salary',{detail:{url:this.dataset.previewUrl,full:this.dataset.previewFull}}))"
+                        class="inline-flex items-center gap-1 text-slate-500 hover:text-slate-700 font-medium">
                   <i data-lucide="receipt" class="w-4 h-4"></i>Slip
-                </a>
+                </button>
               </td>
             </tr>
             @empty
@@ -101,4 +105,5 @@
     </div>
   </div>
 </div>
+@include('staff._salary-slideover')
 @endsection

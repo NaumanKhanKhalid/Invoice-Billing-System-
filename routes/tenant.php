@@ -188,6 +188,7 @@ Route::middleware([
             Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
             Route::post('/staff/{staff}/salary', [StaffController::class, 'storeSalary'])->name('staff.salary');
             Route::get('/staff/{staff}/salary-slip/{payment}', [StaffController::class, 'salarySlip'])->name('staff.salary-slip');
+            Route::get('/staff/{staff}/salary-slip/{payment}/preview', [StaffController::class, 'salarySlipPreview'])->name('staff.salary-slip.preview');
         });
 
         // Udhar Book

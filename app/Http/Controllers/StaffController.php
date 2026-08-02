@@ -106,4 +106,11 @@ class StaffController extends Controller
 
         return view('staff.salary-slip', compact('staff', 'payment'));
     }
+
+    public function salarySlipPreview(Staff $staff, SalaryPayment $payment)
+    {
+        abort_unless($payment->staff_id === $staff->id, 404);
+
+        return view('staff.salary-preview', compact('staff', 'payment'));
+    }
 }
