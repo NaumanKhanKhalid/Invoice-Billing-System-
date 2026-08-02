@@ -116,7 +116,7 @@
           ? collect([(object) ['paid_on' => $fee->payment_date, 'method' => $fee->payment_method ?? 'cash', 'amount' => $fee->amount_paid]])
           : collect());
   @endphp
-  @if($payRows->count())
+  @if($payRows->count() > 1)
   <div class="px-8 pt-5">
     <div class="flex items-center gap-2 mb-2">
       <p class="text-xs font-bold text-slate-700 uppercase tracking-wider">Payment History</p>
@@ -181,13 +181,16 @@
   @page { size: A4 portrait; margin: 12mm; }
   aside, nav, header, footer, .print\:hidden, .no-print { display: none !important; }
   body, #main-content { background: #fff !important; padding: 0 !important; margin: 0 !important; }
+  /* Hide everything, then reveal only the receipt — in NORMAL flow so a tall
+     invoice paginates correctly top-to-bottom (no reversed / duplicated pages). */
   body * { visibility: hidden; }
   #receipt, #receipt * { visibility: visible; }
   #receipt {
-    position: absolute; top: 0; left: 0; right: 0; margin: 0 auto !important;
+    position: static !important; margin: 0 auto !important;
     width: 100% !important; max-width: 100% !important;
     border: none !important; border-radius: 0 !important; box-shadow: none !important;
+    filter: none !important;
   }
-  #receipt thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #receipt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>

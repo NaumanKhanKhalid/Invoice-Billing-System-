@@ -62,7 +62,12 @@ function feeReceiptPreview() {
       this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
     },
     close() { this.open = false; document.body.style.overflow = ''; },
-    printIt() { window.print(); },
+    printIt() {
+      // Print the standalone receipt page (correct pagination) instead of the
+      // fixed slide-over panel, which breaks print positioning.
+      if (this.full) { window.open(this.full + (this.full.includes('?') ? '&' : '?') + 'print=1', '_blank'); }
+      else { window.print(); }
+    },
     async saveImage() {
       const el = this.$refs.body.querySelector('#receipt');
       if (!el || typeof html2canvas === 'undefined') { window.print(); return; }
