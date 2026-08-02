@@ -159,7 +159,19 @@
                 </td>
                 <td class="px-4 py-3 text-right">
                   @if($fee->receipt_number)
-                  <a href="{{ route('coaching.fees.receipt', $fee) }}" class="text-xs text-blue-600 hover:underline">{{ $fee->receipt_number }}</a>
+                  @php
+                    $previewWa = ($student->phone && feature_enabled('whatsapp_share'))
+                      ? 'https://wa.me/'.wa_number($student->phone).'?text='.urlencode("*Fee Receipt — {$fee->receipt_number}*\n".$student->name."\n".\Carbon\Carbon::parse($fee->month)->format('F Y')." ki fees\nPaid: PKR ".number_format($fee->amount_paid).($fee->balance_due > 0 ? "\nBalance: PKR ".number_format($fee->balance_due) : "")."\n\nReceipt: ".\Illuminate\Support\Facades\URL::signedRoute('coaching.fees.public-receipt', ['fee' => $fee->id])."\n\nShukriya! 🙏")
+                      : '';
+                  @endphp
+                  <button type="button"
+                          data-preview-url="{{ route('coaching.fees.preview', $fee) }}"
+                          data-preview-wa="{{ $previewWa }}"
+                          data-preview-full="{{ route('coaching.fees.receipt', $fee) }}"
+                          onclick="window.dispatchEvent(new CustomEvent('open-receipt',{detail:{url:this.dataset.previewUrl,wa:this.dataset.previewWa,full:this.dataset.previewFull}}))"
+                          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-100 text-slate-600 hover:text-green-700 text-xs font-medium transition-colors">
+                    <i data-lucide="receipt" class="w-3.5 h-3.5"></i>{{ $fee->receipt_number }}
+                  </button>
                   @else
                   <span class="text-xs text-slate-300">—</span>
                   @endif
@@ -177,4 +189,5 @@
 
   </div>
 </div>
+@include('coaching.fees._preview-slideover')
 @endsection
